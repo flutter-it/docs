@@ -1,21 +1,36 @@
 {
+  "$schema": "https://docs.page/schema.json",
   "name": "flutter_it",
   "description": "My documentation site",
-  "sidebar": [
-  {
-    "group": "Getting Started",
-    "pages": [
+  "sidebar": {
+    "en": [
       {
-        "title": "Getting to know docs.page",
-        "href": "/",
-        "icon": "rocket"
-      },
+        "group": "Getting Started",
+        "pages": [
+          {
+            "title": "Getting to know docs.page",
+            "href": "/",
+            "icon": "rocket"
+          },
+          {
+            "title": "Next Steps",
+            "href": "/next-steps",
+            "icon": "arrow-right"
+          }
+        ]
+      }
+    ],
+    "es": [
       {
-        "title": "Next Steps",
-        "href": "/next-steps",
-        "icon": "arrow-right"
+        "group": "Getting Started",
+        "pages": [
+          {
+            "title": "Getting to know docs.page",
+            "href": "/",
+            "icon": "rocket"
+          }
+        ]
       }
     ]
   }
-]
 }
