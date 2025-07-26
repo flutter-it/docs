@@ -1,36 +1,32 @@
 {
   "$schema": "https://docs.page/schema.json",
   "name": "flutter_it",
-  "description": "My documentation site",
-  "sidebar": {
-    "en": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          {
-            "title": "Getting to know docs.page",
-            "href": "/",
-            "icon": "rocket"
-          },
-          {
-            "title": "Next Steps",
-            "href": "/next-steps",
-            "icon": "arrow-right"
-          }
-        ]
-      }
-    ],
-    "es": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          {
-            "title": "Getting to know docs.page",
-            "href": "/",
-            "icon": "rocket"
-          }
-        ]
-      }
-    ]
-  }
+  "description": "All you need for organizing your flutter apps",
+  "sidebar": [
+    {
+      "group": "Getting started",
+      "pages": [
+        {
+          "title": "get_it",
+          "href": "/getting_started/get_it",
+          "icon": "hand"
+        },
+        {
+          "title": "watch_it",
+          "href": "/getting_started/watch_it",
+          "icon": "eye"
+        },
+        {
+          "title": "command_it",
+          "href": "/getting_started/command_it",
+          "icon": "hand-spock"
+        },
+        {
+          "title": "listen_it",
+          "href": "/getting_started/listen_it",
+          "icon": "ear-listen"
+        }
+      ]
+    }
+  ]
 }
