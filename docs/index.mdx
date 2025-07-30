@@ -1,9 +1,25 @@
 ---
 title: Welcome to Flutter-it!
-description: Get started with Flutter-it
 ---
 
-# Welcome to Flutter-it!
+<Info> This is a work in progress. The documentation is not yet complete. </Info>
 
 Flutter-it is a collection of packages that help you build well organized, performant, testable and maintainable Flutter applications with ease. 
 Each package focuses on specific problems one may encounter while developing Flutter applications.
+
+The current packages solve the following problems:
+
+- [`get_it`](https://pub.dev/packages/get_it) is a simple service locator for Dart and Flutter projects with some additional goodies. It can be used instead of `InheritedWidget` or `Provider` to access objects e.g. from your UI.
+- [`watch_it`](https://pub.dev/packages/watch_it) is a simple state management solution powered by get_it.
+- [`command_it`](https://pub.dev/packages/command_it) gives you more control over your state management by using the `Command` design pattern and sophisticated error handling.
+- [`listen_it`](https://pub.dev/packages/listen_it) lets you work with `ValueListenable` the way you are used to from the `Stream` and ReactiveExtensions API.
+
+My packages follow what I call the "LEGO" approach. Instead of offering one big package that does everything, I offer a set of packages that each solve a specific problem. This way you can pick and choose the packages that best fit your needs and you can easily mix and match them.
+
+I try to make my APIs as simple and intuitive as possible if possible without any need for boilerplate code.
+
+If you are new to Flutter-it, you might want to start with the [What to do with which package](getting_started/what_to_do_with_which_package) page.
+
+Enjoy!
+
+Thomas Burkhart
