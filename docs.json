@@ -2,6 +2,35 @@
   "$schema": "https://docs.page/schema.json",
   "name": "flutter_it",
   "description": "All you need for organizing your flutter apps",
+  "content": {
+    "showPageTitle": false
+  },
+  "social": {
+    "github": "https://github.com/flutter-it",
+    "discord": "https://discord.gg/g5hUvhRz"
+  },
+  "anchors": [
+        {
+            "title": "Blog",
+            "icon": "blog",
+            "href": "https://blog.burkharts.net"
+        },
+        {
+            "title": "GitHub",
+            "icon": "github",
+            "href": "https://github.com/flutter-it"
+        },
+        {
+            "title": "Discord",
+            "icon": "discord",
+            "href": "https://discord.gg/g5hUvhRz"
+        },
+        {
+            "title": "@ThomasBurkhartB",
+            "icon": "twitter",
+            "href": "https://x.com/ThomasBurkhartB"
+        }
+    ],
   "sidebar": [
     {
       "group": "Getting started",
@@ -24,6 +53,31 @@
         {
           "title": "listen_it",
           "href": "/getting_started/listen_it",
+          "icon": "ear-listen"
+        }
+      ]
+    },
+    {
+      "group": "Packages",
+      "pages": [
+        {
+          "title": "get_it",
+          "href": "/packages/get_it",
+          "icon": "hand"
+        },
+        {
+          "title": "watch_it",
+          "href": "/packages/watch_it",
+          "icon": "eye"
+        },
+        {
+          "title": "command_it",
+          "href": "/packages/command_it",
+          "icon": "hand-spock"
+        },
+        {
+          "title": "listen_it",
+          "href": "/packages/listen_it",
           "icon": "ear-listen"
         }
       ]
