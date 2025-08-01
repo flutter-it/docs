@@ -45,5 +45,11 @@ Will help you with 1. get_it is a service locator that allows you to register ob
 # watch_it
 Will help you with 2. watch_it is a library that allows you to watch a value and automatically rebuild your Widgets when the value changes. It can access data registered inside get_it.
 
+# command_it
+Will help you with 3. command_it is a library that allows you to implement the command pattern in your application. It encapsulates logic for loading state, enabling/diabling commands, and sophisticated error handling. A command can be observed with watch_it so that your UI can react to state changes of the command.
+
+# listen_it
+Allows you to logically combine multiple ValueListenables into a single ValueListenable. It also contains a `listen()` extension method to add and remove listeners from a ValueListenable like you would do with a Stream. 
+
 
 
