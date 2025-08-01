@@ -1,0 +1,75 @@
+---
+title: Advanced techniques with GetIt
+---
+
+#### Implementing the `Disposable` interface
+
+Instead of passing a disposing function on registration or when pushing a Scope from V7.0 on your objects `onDispose()` method will be called
+if the object that you register implements the `Disposable` interface:
+
+```dart
+abstract class Disposable {
+  FutureOr onDispose();
+}
+```
+
+### Named registration
+
+Ok, you have been warned! All registration functions have an optional named parameter `instanceName`. Providing a name with factory/singleton here registers that instance with that name and a type. Consequently `get()` has also an optional parameter `instanceName` to access
+factories/singletons that were registered by name.
+
+**IMPORTANT:** Each name must be unique per type.
+
+```dart
+  abstract class RestService {}
+  class RestService1 implements RestService{
+    Future<RestService1> init() async {
+      Future.delayed(Duration(seconds: 1));
+      return this;
+    }
+  }
+  class RestService2 implements RestService{
+    Future<RestService2> init() async {
+      Future.delayed(Duration(seconds: 1));
+      return this;
+    }
+  }
+
+  getIt.registerSingletonAsync<RestService>(() async => RestService1().init(), instanceName : "restService1");
+  getIt.registerSingletonAsync<RestService>(() async => RestService2().init(), instanceName : "restService2");
+
+  getIt.registerSingletonWithDependencies<AppModel>(
+      () {
+          RestService restService1 = GetIt.I.get<RestService>(instanceName: "restService1");
+          return AppModelImplmentation(restService1);
+      },
+      dependsOn: [InitDependency(RestService, instanceName:"restService1")],
+  );
+```
+
+### Accessing an object inside GetIt by a runtime type
+
+In rare occasions you might be faced with the problem that you don't know the type that you want to retrieve from GetIt at compile time which means you can't pass it as a generic parameter. For this the `get` functions have an optional `type` parameter
+
+```dart
+    getIt.registerSingleton(TestClass());
+
+    final instance1 = getIt.get(type: TestClass);
+
+    expect(instance1 is TestClass, true);
+```
+
+Be careful that the receiving variable has the correct type and don't pass `type` and a generic parameter.
+
+### More than one instance of GetIt
+
+While not recommended, you can create your own independent instance of `GetIt` if you don't want to share your locator with some
+other package or because the physics of your planet demands it :-)
+
+```dart
+/// To make sure you really know what you are doing
+/// you have to first enable this feature:
+GetIt myOwnInstance = GetIt.asNewInstance();
+```
+
+This new instance does not share any registrations with the singleton instance.

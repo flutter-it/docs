@@ -20,7 +20,7 @@ Remi Rousselet talked to me about that `ValueNotifier` and how much easier they 
 
 Let's start with the (in)famous counter example but by using a `Command`. As said before a `Command` wraps a function and can publish the result in a way that can be consumed by the UI. It does this by implementing the `ValueListenable` interface which means a command behaves like `ValueNotifier`. A command has the type:
 
-```Dart
+```dart
 Command<TParam,TResult>
 ```
 at which `TParam` is the type of the parameter which the wrapped function expects as argument and `TResult` is the type of the result of it, which means the `Command` behaves like a `ValueNotifier<TResult>`. 
@@ -30,7 +30,7 @@ A `Command` by default will always notify changes unlike, `ValueNotifier` which 
 
 
 In the included project `counter_example` the command is defined as:
-```Dart
+```dart
 class _MyHomePageState extends State<MyHomePage> {
   int counter = 0;
   /// This command does not expect any parameters when called therefore TParam 
@@ -49,7 +49,7 @@ To create a `Command` the `Command` class [offers](#how-to-create-commands) diff
 
 Our widget tree now looks like this:
 
-```Dart
+```dart
 
   body: Center(
     child: Column(
@@ -94,14 +94,14 @@ Let's explore this features by examining the included `example` app which querie
 
 The app uses a `WeatherManager` which contains the `Command` to update the `ListView` by making a REST call:
 
-```Dart
+```dart
 Command<String, List<WeatherEntry>> updateWeatherCommand;
 ```
 The `updateWeatherCommand` expects a search term and will return a list of `WeatherEntry`.
 The `Command` gets initialized in the constructor of the `WeatherManager`:
 
 
-```Dart
+```dart
 updateWeatherCommand = Command.createAsync<String, List<WeatherEntry>>(
     update, // Wrapped function
     [],     // Initial value
@@ -114,7 +114,7 @@ updateWeatherCommand = Command.createAsync<String, List<WeatherEntry>>(
 ### Updating the ListView
 In `listview.dart`:
 
-```Dart
+```dart
 class WeatherListView extends StatelessWidget {
   WeatherListView();
   @override
@@ -131,13 +131,13 @@ class WeatherListView extends StatelessWidget {
 ### Reacting on changes of the function execution state
 `Command` has a property 
 
-```Dart
+```dart
 ValueListenable<bool> isExecuting;
 ```
 that has the value of `false` while the wrapped function isn't executed and `true` when it is.
 So we use this in the UI in `homepage.dart` to display a progress indicator while the app waits for the result of the REST call:
 
-```Dart
+```dart
 child: ValueListenableBuilder<bool>(
     valueListenable:
         weatherManager.updateWeatherCommand.isExecuting,
@@ -165,7 +165,7 @@ As we don't want to send a new HTTP request on every keypress in the search fiel
 
 For this a synchronous `Command` is sufficient:
 
-```Dart
+```dart
 // in weather_viewmodel.dart:
 Command<String, String> textChangedCommand;
 // and in the constructor:
@@ -184,7 +184,7 @@ textChangedCommand.debounce(Duration(milliseconds: 500)).listen(
 );
 ```
 In the `homepage.dart`:
-```Dart
+```dart
 child: TextField(
     /// I omitted some properties from the example here
     onChanged: weatherManager.textChangedCommand,
@@ -195,7 +195,7 @@ child: TextField(
 Sometimes it is desirable to make the execution of a `Command` depending on some other state. For this you can pass a `ValueListenable<bool>` as `restriction` parameter, when you create a command. If you do so the command will only be executed if the value of the passed listenable is `false`.
 In the example app we can restrict the execution by changing the state of a `Switch`. To handle changes of the `Switch` we use..., you guessed it, another command in the `WeatherManager`:
 
-```Dart
+```dart
 WeatherManager() {
     // Command expects a bool value when executed and sets it as its own value
     setExecutionStateCommand = Command.createSync<bool, bool>((b) => b, true);
@@ -211,7 +211,7 @@ WeatherManager() {
 ...
 ```
 To update the `Switch` we use again a `ValueListenableBuilder`:
-```Dart
+```dart
 ValueListenableBuilder<bool>(
     valueListenable:
         weatherManager.setExecutionStateCommand,
@@ -230,7 +230,7 @@ The update button should not be active while an update is running or when the
 
 So we can easily solve this requirement with another....wait for it...`ValueListenableBuilder`
 
-```Dart
+```dart
 child: ValueListenableBuilder<bool>(
   valueListenable: weatherManager
       .updateWeatherCommand
@@ -254,7 +254,7 @@ If the wrapped function inside a `Command` throws an `Exception` the `Command` c
 Instead it will wrap the caught error together with the value that was passed when the command was executed in a `CommandError` object and assign it to the `Command's` `thrownExeceptions` property which is a `ValueListenable<CommandError>`.
 So to react on occurring error you can register your handler with `addListener` or use my `listen` extension function from `listen_it` as it is done in the example:
 
-```Dart
+```dart
 /// in HomePage.dart
 @override
 void didChangeDependencies() {
@@ -280,7 +280,7 @@ You can tweak the behaviour of the error handling by passing a `catchAlways` par
 
 `Command` also offers a static global Exception handler:
 
-```Dart
+```dart
 static void Function(String commandName, CommandError<Object> error) globalExceptionHandler;
 ```
 If you assign a handler function to it, it will be called for all Exceptions thrown by any `Command` in your app independent of the value of `catchAlways` if the `Command` has no listeners on `errors` or on `results`.
@@ -294,7 +294,7 @@ The overall work flow of exception handling in command_it is depicted in the fol
 `isExecuting` and `errors` are great properties but what if you don't want to use separate `ValueListenableBuilders` for each of them plus one for the data?
 `Command` got you covered with the `results` property that is an `ValueListenable<CommandResult>` which combines all needed data and is updated several times during a `Command` execution.
 
-```Dart
+```dart
 /// Combined execution state of an `Command`
 /// Will be updated for any state change of any of the fields
 /// 1. If the command was just newly created `results.value` has the value:
@@ -320,7 +320,7 @@ class CommandResult<TParam, TResult> {
 
 You can find a Version of the Weather app that uses this approach in `example_command_results`. There the `homepage.dart` looks like:
 
-```Dart
+```dart
 child: ValueListenableBuilder<
     CommandResult<String, List<WeatherEntry>>>(
   valueListenable:
@@ -357,7 +357,7 @@ If you want to be able to always display data (while loading or in case of an er
 ### CommandBuilder, reducing boilerplate
 `command_it` includes a `CommandBuilder` widget which makes the code above a bit nicer:
 
-```Dart
+```dart
 child: CommandBuilder<String, List<WeatherEntry>>(
   command: weatherManager.updateWeatherCommand,
   whileExecuting: (context, _) => Center(
@@ -384,7 +384,7 @@ In case your Command does not return a value you can use the `onSuccess` builder
 ### toWidget() extension method on Command Result
 I you are using a package `get_it_mixin`, `provider` or `flutter_hooks` you probably don't want to use the `CommandBuilder` for you there is an extension method for the `CommandResult` type that you can use like this:
 
-```Dart
+```dart
 return result.toWidget(
   whileExecuting: (lastValue, _) => Center(
     child: SizedBox(
@@ -408,7 +408,7 @@ return result.toWidget(
 ## How to create Commands
 ´Command´ offers different static factory functions for the different function types you want to wrap:
 
-```Dart
+```dart
   /// for syncronous functions with no parameter and no result
   static Command<void, void> createSyncNoParamNoResult(
     void Function() action, {
@@ -500,7 +500,7 @@ This can be nicely used to push a login screen in the case described above.
 ## Logging
 If you are not sure what's going on in your App you can register an handler function to 
 
-```Dart
+```dart
 static void Function(String commandName, CommandResult result) loggingHandler;
 ```
 It will get executed on every `Command` execution in your App. `commandName` is the optional `debugName` that you can pass when creating a command.
@@ -511,7 +511,7 @@ In case you really need to await the completion of a command you can use the `ex
 
 The main reason that this function exists is that you can use `RefreshIndicator` directly with a command like:
 
-```Dart
+```dart
 return RefreshIndicator(
   onRefresh: () => updateMovieCmd.executeWithFuture(),
   child: GridView.extent(

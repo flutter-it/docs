@@ -10,14 +10,14 @@ Lets you work with a `ValueListenable` as it should be by installing a handler f
 
 If we want to print every new value of a `ValueListenable<int>` we can do:
 
-```Dart
+```dart
 final listenable = ValueNotifier<int>(0);
 final subscription = listenable.listen((x, _) => print(x));
 ```
 The returned `subscription` can be used to deactivate the passed handler function. As you might need to uninstall the handler function from inside the handler 
 you get the subscription object passed to the handler function as second parameter like:
 
-```Dart
+```dart
 listenable.listen((x, subscription) {
   print(x);
   if (x == 42){
@@ -30,7 +30,7 @@ listenable.listen((x, subscription) {
 Lets you convert the value of one `ValueListenable` to anything you want.
 Imagine we have a `ValueNotifier<String>` in an Model object that we can't change but we need it's value all UPPER CASE in our UI:
 
-```Dart
+```dart
   ValueNotifier<String> source;  //this is the one from the model object
 
   final upperCaseSource = source.map( (s)=>s.toUpperCase() );
@@ -38,7 +38,7 @@ Imagine we have a `ValueNotifier<String>` in an Model object that we can't chang
 
 or you can change the type:
 
-```Dart
+```dart
   ValueNotifier<int> intNotifier;  
 
   final stringNotifier = intNotifier.map<String>( (s)=>s.toString() );
@@ -49,7 +49,7 @@ or you can change the type:
 Lets you filter the values that a ValueListenable can have:
 
 
-```Dart
+```dart
   ValueNotifier<int> intNotifier;  
   bool onlyEven = false; // depending on this variable we want only even values or all
 
@@ -62,7 +62,7 @@ Lets you filter the values that a ValueListenable can have:
 Lets you react only on changes to selected properties of a ValueListenable value.
 
 This is usefully when you have a complex state model, and only want to react when a specific property change.
-```Dart
+```dart
   ValueNotifier<User> notifier = ValueNotifier(User(age: 18, property2: "John"));
 
   final birthdayNotifier = notifier.select<int>((model)=> model.age); //selectedNotifier will ignore changes that does not affect age
@@ -73,7 +73,7 @@ The selector function that you pass to `select` is called on every new value, bu
 As all the extension function (with the exception of `listen`) return a new `ValueNotifier` we can chain these extension functions as we need them like: 
 
 
-```Dart
+```dart
   ValueNotifier<int> intNotifier;  
 
   intNotifier.where((x)=>x.isEven).map<String>( (s)=>s.toString() ).listen(print);
@@ -83,7 +83,7 @@ As all the extension function (with the exception of `listen`) return a new `Val
 If you don't want or can't handle too rapid value changes `debounce` is your friend. It only propagates values if there is a pause after a value changes. Most typical example is you have a search function that polls a REST API and in every change of the search term you execute a http request. To avoid overloading your REST server you probably want to avoid that a new request is made on every keypress. I makes much more sense to wait till the user stops modifying the search term for a moment.
 
 
-```Dart
+```dart
   ValueNotifier<String> searchTerm;  //this is the one from the model object
 
   searchTerm.debounce(const Duration(milliseconds: 500)).listen((s)  => callRestApi(s) );
@@ -95,7 +95,7 @@ If you don't want or can't handle too rapid value changes `debounce` is your fri
 Combines two source `ValueListenables` to one that gets updated with the combined source values when any of the sources values changed.
 This comes in handy if you want to use one `ValueListenableBuilder` with two `ValueNotifiers`.
 
-```Dart
+```dart
 class StringIntWrapper {
   final String s;
   final int i;
@@ -143,7 +143,7 @@ For details on the functions check the source documentation, the tests and the e
 
 ## CustomValueNotifier
 
-```Dart
+```dart
 enum CustomNotifierMode { normal, manual, always }
 
 /// Sometimes you want a ValueNotifier where you can control when its
