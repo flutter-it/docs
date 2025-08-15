@@ -7,6 +7,7 @@ export default defineConfig({
   
   // Ensure proper file handling
   cleanUrls: true,
+  base: '/docs/',
   
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
