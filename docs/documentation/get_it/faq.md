@@ -1,0 +1,51 @@
+---
+title: FAQ
+---
+
+# FAQ
+
+<Card title="Why do we need get_it?">
+I do not understand the benefits of using get_it or InheritedWidget.
+I've looked into why we need InheritedWidget, this solves the data passing problem. However for that we have a state management system so we do not need InheritedWidget at all.
+
+I've looked into get_it and from my understanding if we are already using a state management system the only benefit we would have is the ability to encapsulate the services/methods related to a chunk of widgets into one place. (dependency injection)
+
+For example if we have a map and a locate me button then they could share the same _locateMe service.
+For this we would create an abstract class that defines the _locateMe method and connect it with the dependency injection using a locator.registerLazySingleton.
+
+But what is the point? I can just create a methods.dart file with the locateMe method without any classes, we can just put the method into the methods.dart which is faster and easier and we can access it from anywhere.
+I am not sure how dart internally works, what makes sense for me is that registerLazySingleton would remove the _locateMe method from memory after I use the _locateMe method. And if we put the locateMe method inside a normal .dart file without classes or anything else it will be always in memory hence less performant.
+Is my assumption true? Is there something I am missing?
+
+<Success>
+Let me put it this way, you are not completely wrong. You definitely can use just global functions and global variables to make state accessible to your UI.
+The real power of dependency injection comes from using abstract interface classes when registering the types. This allows you to switch implementations at one time without changing any other part of your code.
+This is especially helpful when it comes to write unit tests or UI tests so that you can easily inject mock objects.
+
+Another aspect is scoping of the objects. Inherited widgets as well as get_it allow you to override registered objects based on a current scope. For inherited widgets this scope is defined by your current position in the widget tree, in get_it you can push and pop registrations scopes independent of the widget tree.
+
+Scopes allow you to override existing behaviour or to easily manage the lifetime and disposal of objects.
+
+The general idea of any dependency injection system is that you have defined point in your code where you have all your setup and configuration.
+Furthermore GetIt helps you initialise your synchronous business objects while automatically care for dependencies between such objects.
+
+You wrote your already using some sort of state management solution. Which probably means that the solution already offer some sort of object location. In this case you probably won't need get_it.
+Together with the [watch_it](/documentation/watch_it/watch_it) however you don't need any other state management solution if you already use get_it.
+</Success>
+
+
+
+
+
+
+
+
+
+</Card>
+
+
+
+
+
+
+ 
