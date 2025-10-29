@@ -25,8 +25,8 @@ export default defineConfig({
         items: [
           { text: 'What to do with which package', link: '/getting_started/what_to_do_with_which_package.md' },
           { text: 'get_it', link: '/documentation/get_it/getting_started.md' },
-          { text: 'watch_it', link: '/documentation/watch_it/watch_it.md' },
-          { text: 'command_it', link: '/documentation/command_it/command_it.md' },
+          { text: 'watch_it', link: '/documentation/watch_it/getting_started.md' },
+          { text: 'command_it', link: '/documentation/command_it/getting_started.md' },
           { text: 'listen_it', link: '/documentation/listen_it/listen_it.md' }
         ]
       },
@@ -48,9 +48,60 @@ export default defineConfig({
               { text: 'FAQ', link: '/documentation/get_it/faq.md' }
             ]
           },
-          { text: 'watch_it', link: '/documentation/watch_it/watch_it.md' },
-          { text: 'command_it', link: '/documentation/command_it/command_it.md' },
-          { text: 'listen_it', link: '/documentation/listen_it/listen_it.md' }
+          {
+            text: 'watch_it',
+            collapsed: true,
+            items: [
+              { text: 'Getting started', link: '/documentation/watch_it/getting_started.md' },
+              { text: 'Watch functions', link: '/documentation/watch_it/watch_functions.md' },
+              { text: 'callOnce & createOnce', link: '/documentation/watch_it/call_once_create_once.md' },
+              { text: 'Additional goodies', link: '/documentation/watch_it/additional_goodies.md' },
+              { text: 'Integration with get_it', link: '/documentation/watch_it/integration.md' },
+              { text: 'Debugging and tracing', link: '/documentation/watch_it/debugging_tracing.md' },
+              { text: 'Best practices', link: '/documentation/watch_it/best_practices.md' },
+              { text: 'How does it work?', link: '/documentation/watch_it/how_it_works.md' }
+            ]
+          },
+          {
+            text: 'command_it',
+            collapsed: true,
+            items: [
+              { text: 'Getting started', link: '/documentation/command_it/getting_started.md' },
+              { text: 'Command types', link: '/documentation/command_it/command_types.md' },
+              { text: 'Command builders', link: '/documentation/command_it/command_builders.md' },
+              { text: 'Error handling', link: '/documentation/command_it/error_handling.md' }
+            ]
+          },
+          {
+            text: 'listen_it',
+            collapsed: true,
+            items: [
+              { text: 'Listen', link: '/documentation/listen_it/listen_it.md' },
+              {
+                text: 'Operators',
+                collapsed: true,
+                items: [
+                  { text: 'Overview', link: '/documentation/listen_it/operators/overview.md' },
+                  { text: 'Transform (map, select)', link: '/documentation/listen_it/operators/transform.md' },
+                  { text: 'Filter (where)', link: '/documentation/listen_it/operators/filter.md' },
+                  { text: 'Combine (combineLatest, mergeWith)', link: '/documentation/listen_it/operators/combine.md' },
+                  { text: 'Time (debounce)', link: '/documentation/listen_it/operators/time.md' }
+                ]
+              },
+              {
+                text: 'Collections',
+                collapsed: true,
+                items: [
+                  { text: 'Introduction', link: '/documentation/listen_it/collections/introduction.md' },
+                  { text: 'ListNotifier', link: '/documentation/listen_it/collections/list_notifier.md' },
+                  { text: 'MapNotifier', link: '/documentation/listen_it/collections/map_notifier.md' },
+                  { text: 'SetNotifier', link: '/documentation/listen_it/collections/set_notifier.md' },
+                  { text: 'Notification Modes', link: '/documentation/listen_it/collections/notification_modes.md' },
+                  { text: 'Transactions', link: '/documentation/listen_it/collections/transactions.md' }
+                ]
+              }
+            ]
+          }
         ]
       },
       {
