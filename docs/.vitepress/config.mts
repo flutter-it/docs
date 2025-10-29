@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "flutter_it",
-  description: "All you need for organizing your flutter apps",
+  description: "Build reactive Flutter apps the easy way - no codegen, no boilerplate, just code",
   
   // Ensure proper file handling
   cleanUrls: true,

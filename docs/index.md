@@ -2,42 +2,103 @@
 title: Welcome to flutter_it
 ---
 
-# Welcome to flutter_it
+# Build reactive Flutter apps the easy way
 
-A comprehensive set of packages for organizing your Flutter applications.
+**No codegen, no boilerplate, just code.**
 
-## What is flutter_it?
+flutter_it is a **modular construction set** of reactive tools for Flutter. Pick what you need, combine as you grow, or use them all together. Each package works independently and integrates seamlessly with the others.
 
-flutter_it provides a collection of packages that help you build well-organized, maintainable Flutter applications:
+## Why flutter_it?
+
+✅ **Zero build_runner** - No code generation, no waiting for builds
+✅ **Pure Dart** - Works with standard Flutter, no magic
+✅ **Modular by design** - Use one package or combine several—you choose
+✅ **Built on ChangeNotifier and ValueNotifier** - Seamless Flutter integration with familiar primitives
+✅ **Type-safe** - Full compile-time type checking
+✅ **Battle-tested** - Trusted by thousands of Flutter developers
+
+## See it in action
+
+```dart
+// 1. Register services anywhere in your app (get_it)
+final getIt = GetIt.instance;
+getIt.registerSingleton(CounterModel());
+
+// 2. Watch and react to changes automatically (watch_it)
+class CounterWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final count = watchValue((CounterModel m) => m.count);
+    return Text('Count: $count'); // Your widget automatically rebuilds on every change
+  }
+}
+
+// 3. Use reactive collections (listen_it)
+final items = ListNotifier<String>();
+items.add('New item'); // Automatically notifies listeners
+
+// 4. Encapsulate actions with commands (command_it)
+final saveCommand = Command.createAsyncNoResult<UserData>(
+  (userData) async => await api.save(userData),
+);
+// Access loading state, errors - all built-in
+```
+
+No setState(), no Provider boilerplate, no code generation. Just reactive Flutter.
+
+## The Construction Set
+
+> 💡 **Each package works standalone** - start with one, add others as needed.
 
 ### 🎯 get_it
-Simple service locator for dependency injection in Flutter applications.
+**Dependency injection without the framework**
 
-### 👁️ watch_it  
-Reactive state management with automatic dependency tracking.
+Simple service locator that works anywhere in your app—no BuildContext, no InheritedWidget trees, just clean dependency access.
+
+[Get started →](/documentation/get_it/getting_started) | [Examples →](/examples/get_it/get_it)
+
+---
+
+### 👁️ watch_it
+**Reactive UI updates, automatically**
+
+React to state changes without setState()—watch values and rebuild only what's needed. You'll almost never need a StatefulWidget anymore. Depends on get_it for service location.
+
+[Get started →](/documentation/watch_it/watch_it) | [Examples →](/examples/watch_it/watch_it)
+
+---
 
 ### ✋ command_it
-Command pattern implementation for Flutter applications.
+**Encapsulate actions with built-in state**
+
+Commands that track execution, handle errors, and provide loading states automatically. Handle exceptions the smart way. Perfect for async operations.
+
+[Get started →](/documentation/command_it/command_it) | [Examples →](/examples/command_it/command_it)
+
+---
 
 ### 👂 listen_it
-Event-driven architecture with easy event listening and dispatching.
+**Combine reactive state in an RxDart-like style that's easy to understand**
 
-## Quick Start
+Transform, filter, combine, and debounce operators for ValueNotifier—plus reactive collections (ListNotifier, MapNotifier, SetNotifier) that automatically notify on changes.
 
-Get started by learning [what to do with which package](/getting_started/what_to_do_with_which_package) or dive directly into the documentation:
+[Get started →](/documentation/listen_it/listen_it) | [Examples →](/examples/listen_it/listen_it)
 
-- [get_it Documentation](/documentation/get_it/getting_started)
-- [watch_it Documentation](/documentation/watch_it/watch_it)
-- [command_it Documentation](/documentation/command_it/command_it)
-- [listen_it Documentation](/documentation/listen_it/listen_it)
+---
 
-## Examples
+## Getting Started
 
-Check out our [examples](/examples/get_it/get_it) to see how to use these packages in real applications.
+**New to flutter_it?** Start here:
+
+1. **[What to do with which package](/getting_started/what_to_do_with_which_package)** - Find the right tool for your needs
+2. **[Complete Documentation](/documentation/overview)** - Deep dive into each package
+3. **[Real-world Examples](/examples/overview)** - See patterns in action
 
 ## Community
 
-- [GitHub](https://github.com/flutter-it)
-- [Discord](https://discord.gg/g5hUvhRz)
-- [Twitter](https://x.com/ThomasBurkhartB)
+Join the flutter_it community:
+
+- **[GitHub](https://github.com/flutter-it)** - Source code and issues
+- **[Discord](https://discord.gg/g5hUvhRz)** - Chat and support
+- **[Twitter](https://x.com/ThomasBurkhartB)** - Updates and news
 
