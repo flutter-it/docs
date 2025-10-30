@@ -6,6 +6,17 @@ title: What to do with which package?
 
 **flutter_it is a construction set** - each package solves a specific problem. Use one, combine several, or use them all together. This guide helps you choose the right tools for your needs.
 
+## Quick Decision Guide
+
+| You need to... | Use this package |
+|----------------|------------------|
+| Access services/dependencies anywhere in your app | **get_it** |
+| Update UI automatically when data changes | **watch_it** + **get_it** |
+| Handle async actions with loading/error states | **command_it** |
+| Transform, combine reactive data or use observable collections | **listen_it** |
+
+---
+
 ## Why these packages?
 
 Good Flutter architecture follows key principles: **separation of concerns**, **single source of truth**, and **testability**. The flutter_it packages help you implement these principles without the complexity of traditional frameworks.
@@ -23,21 +34,6 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 ![flutter_it Architecture](/images/architecture-diagram-light.svg)
 
 </div>
-
-### Package Relationships
-
-![Package Relationships](/images/package-relationships.svg)
-
----
-
-## Quick Decision Guide
-
-| You need to... | Use this package |
-|----------------|------------------|
-| Access services/dependencies anywhere in your app | **get_it** |
-| Update UI automatically when data changes | **watch_it** (requires get_it) |
-| Handle async actions with loading/error states | **command_it** |
-| Transform, combine reactive data or use observable collections | **listen_it** |
 
 ---
 
