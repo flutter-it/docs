@@ -55,9 +55,10 @@ void releaseInstance(Object instance)
 ### Recursive Navigation Example
 
 ```dart
-class DetailService {
+class DetailService extends ChangeNotifier {
   final String itemId;
   String? data;
+  bool isLoading = false;
 
   DetailService(this.itemId) {
     // Trigger async loading in constructor (fire and forget)
@@ -67,18 +68,20 @@ class DetailService {
   Future<void> _loadData() async {
     if (data != null) return; // Already loaded
 
+    isLoading = true;
+    notifyListeners();
+
     print('Loading data for $itemId from backend...');
     // Simulate backend call
     await Future.delayed(Duration(seconds: 1));
     data = 'Data for $itemId';
-  }
 
-  void dispose() {
-    print('Disposing service for $itemId');
+    isLoading = false;
+    notifyListeners();
   }
 }
 
-class DetailPage extends StatefulWidget {
+class DetailPage extends WatchingStatefulWidget {
   final String itemId;
   const DetailPage(this.itemId);
 
@@ -98,7 +101,6 @@ class _DetailPageState extends State<DetailPage> {
     _service = getIt.registerSingletonIfAbsent<DetailService>(
       () => DetailService(widget.itemId),
       instanceName: widget.itemId,
-      dispose: (service) => service.dispose(),
     );
   }
 
@@ -111,15 +113,16 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Note: In production, use watch_it to reactively rebuild when service state changes
-    // For simplicity, this example shows basic pattern
+    // Watch the service - rebuilds when notifyListeners() called
+    final service = watchIt<DetailService>(instanceName: widget.itemId);
+
     return Scaffold(
       appBar: AppBar(title: Text('Detail ${widget.itemId}')),
-      body: _service.data == null
+      body: service.isLoading
           ? Center(child: CircularProgressIndicator())
           : Column(
               children: [
-                Text(_service.data!),
+                Text(service.data ?? 'No data'),
                 ElevatedButton(
                   onPressed: () {
                     // Can push same page recursively
@@ -151,10 +154,15 @@ Pop DetailPage(item1)       → Release, refCount = 0 (service disposed)
 
 **Benefits:**
 - ✅ Service created synchronously (no async factory needed)
-- ✅ Async loading triggered after registration
-- ✅ No duplicate loading for same item
-- ✅ Automatic memory management
+- ✅ Async loading triggered in constructor
+- ✅ No duplicate loading for same item (checked before loading)
+- ✅ Automatic memory management via reference counting
+- ✅ Reactive UI updates via watch_it (rebuilds on state changes)
+- ✅ ChangeNotifier automatically disposed when refCount reaches 0
 - ✅ Each itemId uniquely identified via `instanceName`
+
+**Key Integration:**
+This example demonstrates how **get_it** (reference counting) and **watch_it** (reactive UI) work together seamlessly for complex navigation patterns.
 
 ### Nested Scope Example
 
