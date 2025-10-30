@@ -1,0 +1,21 @@
+/* Custom styles for light/dark mode images */
+
+/* Hide light mode diagram in dark mode */
+.dark .diagram-light {
+  display: none;
+}
+
+/* Hide dark mode diagram in light mode */
+html:not(.dark) .diagram-dark {
+  display: none;
+}
+
+/* Show dark mode diagram in dark mode */
+.dark .diagram-dark {
+  display: block;
+}
+
+/* Show light mode diagram in light mode */
+html:not(.dark) .diagram-light {
+  display: block;
+}

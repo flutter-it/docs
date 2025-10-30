@@ -12,7 +12,17 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 > 💡 **New to Flutter architecture?** [Jump to detailed architecture principles](#architecture-principles) to understand the foundation.
 
-![flutter_it Architecture](/images/architecture-diagram.svg?v=26)
+<div class="diagram-dark">
+
+![flutter_it Architecture](/images/architecture-diagram.svg)
+
+</div>
+
+<div class="diagram-light">
+
+![flutter_it Architecture](/images/architecture-diagram-light.svg)
+
+</div>
 
 ### Package Relationships
 

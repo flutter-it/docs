@@ -27,7 +27,7 @@
   <text x="380" y="135" text-anchor="middle" font-size="11" fill="#333">API Call</text>
 
   <!-- Arrow to Result Decision -->
-  <line x1="440" y1="125" x2="470" y2="125" stroke="#E65100" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <line x1="440" y1="125" x2="502" y2="125" stroke="#E65100" stroke-width="2" marker-end="url(#arrow-orange)"/>
 
   <!-- Result Decision Diamond -->
   <polygon points="510,125 540,95 570,125 540,155" fill="#FFE0B2" stroke="#E65100" stroke-width="2"/>
