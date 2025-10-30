@@ -189,6 +189,190 @@ Only use `ignoreReferenceCount: true` when you're certain no other code is using
 
 ---
 
+## Utility Methods
+
+### Safe Retrieval: `maybeGet<T>()`
+
+Returns `null` instead of throwing an exception if the type is not registered. Useful for optional dependencies and feature flags.
+
+```dart
+T? maybeGet<T>({
+  String? instanceName,
+  dynamic param1,
+  dynamic param2,
+  Type? type,
+})
+```
+
+**Example:**
+
+```dart
+// Feature flag scenario
+final analyticsService = getIt.maybeGet<AnalyticsService>();
+if (analyticsService != null) {
+  analyticsService.trackEvent('user_action');
+}
+
+// Optional dependency
+class MyWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final logger = getIt.maybeGet<Logger>();
+    logger?.log('Building MyWidget'); // Safe even if Logger not registered
+
+    return Text('Hello');
+  }
+}
+
+// Graceful degradation
+final premiumFeature = getIt.maybeGet<PremiumFeature>();
+if (premiumFeature != null) {
+  return PremiumUI(feature: premiumFeature);
+} else {
+  return BasicUI(); // Fallback when premium not available
+}
+```
+
+**When to use:**
+- ✅ Optional features that may or may not be registered
+- ✅ Feature flags (service registered only when feature enabled)
+- ✅ Platform-specific services (might not exist on all platforms)
+- ✅ Graceful degradation scenarios
+
+**Don't use when:**
+- ❌ The dependency is required - use `get<T>()` to fail fast
+- ❌ Missing registration indicates a bug - exception is helpful
+
+---
+
+### Instance Renaming: `changeTypeInstanceName()`
+
+Rename a registered instance without unregistering and re-registering (avoids triggering dispose functions).
+
+```dart
+void changeTypeInstanceName<T>({
+  String? instanceName,
+  required String newInstanceName,
+  T? instance,
+})
+```
+
+**Example:**
+
+```dart
+// Register with temporary name
+getIt.registerSingleton<UserSession>(
+  UserSession(),
+  instanceName: 'temp-session',
+);
+
+// Later, rename to permanent name (e.g., after authentication)
+getIt.changeTypeInstanceName<UserSession>(
+  instanceName: 'temp-session',
+  newInstanceName: 'authenticated-session',
+);
+
+// Now accessible with new name
+final session = getIt<UserSession>(instanceName: 'authenticated-session');
+```
+
+**Use cases:**
+- Dynamic naming schemes based on runtime conditions
+- Promoting temporary registrations to permanent ones
+- Avoiding disposal side effects from unregister/register cycle
+- Complex scope hierarchies with name-based lookups
+
+::: tip Avoids Dispose
+Unlike `unregister()` + `register()`, this doesn't trigger dispose functions, preserving the instance's state.
+:::
+
+---
+
+### Lazy Singleton Introspection: `checkLazySingletonInstanceExists()`
+
+Check if a lazy singleton has been instantiated yet (without triggering its creation).
+
+```dart
+bool checkLazySingletonInstanceExists<T>({
+  String? instanceName,
+})
+```
+
+**Example:**
+
+```dart
+// Register lazy singleton
+getIt.registerLazySingleton<HeavyService>(() => HeavyService());
+
+// Check if it's been created yet
+if (getIt.checkLazySingletonInstanceExists<HeavyService>()) {
+  print('HeavyService already created');
+} else {
+  print('HeavyService not created yet - will be lazy loaded');
+}
+
+// Access triggers creation
+final service = getIt<HeavyService>();
+
+// Now it exists
+assert(getIt.checkLazySingletonInstanceExists<HeavyService>() == true);
+```
+
+**Use cases:**
+- Performance monitoring (track which services have been initialized)
+- Conditional initialization (pre-warm services if not created)
+- Testing lazy loading behavior
+- Debugging initialization order issues
+
+**Example - Pre-warming:**
+
+```dart
+void preWarmCriticalServices() {
+  // Only initialize if not already created
+  if (!getIt.checkLazySingletonInstanceExists<DatabaseService>()) {
+    getIt<DatabaseService>(); // Trigger creation
+  }
+
+  if (!getIt.checkLazySingletonInstanceExists<CacheService>()) {
+    getIt<CacheService>(); // Trigger creation
+  }
+}
+```
+
+---
+
+### Advanced Introspection: `findFirstObjectRegistration<T>()`
+
+Get metadata about a registration without retrieving the instance.
+
+```dart
+ObjectRegistration? findFirstObjectRegistration<T>({
+  Object? instance,
+  String? instanceName,
+})
+```
+
+**Example:**
+
+```dart
+final registration = getIt.findFirstObjectRegistration<MyService>();
+
+if (registration != null) {
+  print('Type: ${registration.registrationType}'); // factory, singleton, lazy, etc.
+  print('Instance name: ${registration.instanceName}');
+  print('Is async: ${registration.isAsync}');
+  print('Is ready: ${registration.isReady}');
+}
+```
+
+**Use cases:**
+- Building tools/debugging utilities on top of GetIt
+- Runtime dependency graph visualization
+- Advanced lifecycle management
+- Debugging registration issues
+
+---
+
 ### Named registration
 
 Ok, you have been warned! All registration functions have an optional named parameter `instanceName`. Providing a name with factory/singleton here registers that instance with that name and a type. Consequently `get()` has also an optional parameter `instanceName` to access
