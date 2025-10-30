@@ -172,7 +172,6 @@ Only use `ignoreReferenceCount: true` when you're certain no other code is using
 
 ✅ **Good use cases:**
 - Recursive navigation (same page pushed multiple times)
-- Shared resources across nested scopes
 - Services needed by multiple simultaneously active features
 - Complex hierarchical component structures
 
