@@ -198,36 +198,6 @@ getIt.pushNewScope(
 - Building plugin systems where scope setup must be atomic
 - Preventing accidental registration after scope initialization
 
-### Cross-Scope Queries
-
-Retrieve all instances of a type across the entire scope hierarchy:
-
-```dart
-// Base scope
-getIt.registerSingleton<Plugin>(CorePlugin());
-
-// Scope 1
-getIt.pushNewScope();
-getIt.registerSingleton<Plugin>(FeatureAPlugin());
-
-// Scope 2
-getIt.pushNewScope();
-getIt.registerSingleton<Plugin>(FeatureBPlugin());
-
-// Get all plugins from all scopes
-final allPlugins = getIt.getAll<Plugin>(fromAllScopes: true);
-// Returns: [FeatureBPlugin, FeatureAPlugin, CorePlugin]
-
-// Get only from current scope (default)
-final currentPlugins = getIt.getAll<Plugin>();
-// Returns: [FeatureBPlugin]
-```
-
-**Use cases:**
-- Plugin systems where plugins register in different scopes
-- Modular architectures with feature-based scopes
-- Aggregating services across scope hierarchy
-
 ### Shadow Change Handlers
 
 Objects can be notified when they're shadowed or restored:
@@ -554,13 +524,6 @@ See [watch_it documentation](/documentation/watch_it/watch_it) for details.
 |-----------|-------------|
 | `ShadowChangeHandlers` | Implement to get notified when shadowed |
 | `Disposable` | Implement for automatic cleanup |
-
-### Cross-Scope Queries
-
-| Method | Description |
-|--------|-------------|
-| `getAll<T>({fromAllScopes})` | Get instances from current or all scopes |
-| `getAllAsync<T>({fromAllScopes})` | Async version of getAll |
 
 ---
 
