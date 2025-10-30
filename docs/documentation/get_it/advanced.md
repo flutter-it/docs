@@ -153,37 +153,7 @@ Pop DetailPage(item1)       → Release, refCount = 0 (service disposed)
 **Key Integration:**
 This example demonstrates how **get_it** (reference counting) and **watch_it** (reactive UI) work together seamlessly for complex navigation patterns.
 
-### Nested Scope Example
-
-```dart
-class FeatureManager {
-  void enterFeature(String featureId) {
-    getIt.pushNewScope(scopeName: 'feature-$featureId');
-
-    // Register shared resource with reference counting
-    final cache = getIt.registerSingletonIfAbsent<FeatureCache>(
-      () => FeatureCache(),
-      dispose: (cache) => cache.clear(),
-    );
-
-    cache.loadFeatureData(featureId);
-  }
-
-  void exitFeature() async {
-    // Release reference before popping scope
-    if (getIt.isRegistered<FeatureCache>()) {
-      getIt.releaseInstance(getIt<FeatureCache>());
-    }
-    await getIt.popScope();
-  }
-}
-
-// Multiple features can share the cache
-featureManager.enterFeature('feature-a');  // refCount = 1
-featureManager.enterFeature('feature-b');  // refCount = 2
-featureManager.exitFeature();              // refCount = 1 (cache stays)
-featureManager.exitFeature();              // refCount = 0 (cache disposed)
-```
+---
 
 ### Force Release: `ignoreReferenceCount`
 
