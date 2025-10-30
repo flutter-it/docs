@@ -194,7 +194,6 @@ getIt.pushNewScope(
 **Use when:**
 - Building plugin systems where scope setup must be atomic
 - Preventing accidental registration after scope initialization
-- Ensuring thread-safe scope creation in multi-threaded scenarios
 
 ---
 
