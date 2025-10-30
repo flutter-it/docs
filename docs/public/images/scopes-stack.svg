@@ -22,7 +22,7 @@
     <text x="60" y="30" class="state-label">State 1: Base Scope</text>
 
     <!-- Base Scope -->
-    <rect x="30" y="50" width="300" height="200" class="scope-box"/>
+    <rect x="30" y="50" width="300" height="180" class="scope-box"/>
     <text x="50" y="75" class="scope-title">Base Scope</text>
 
     <!-- Objects in base scope -->
@@ -30,21 +30,18 @@
     <text x="70" y="117" class="object-text">User: Guest</text>
 
     <rect x="190" y="95" width="120" height="35" class="object-box"/>
-    <text x="205" y="117" class="object-text">Cart: Empty</text>
+    <text x="235" y="117" class="object-text">Cart</text>
 
     <rect x="50" y="145" width="120" height="35" class="object-box"/>
     <text x="55" y="167" class="object-text">API: Public</text>
 
-    <rect x="190" y="145" width="120" height="35" class="object-box"/>
-    <text x="200" y="167" class="object-text">Perms: Guest</text>
-
-    <text x="80" y="230" class="label-text">All objects accessible</text>
+    <text x="80" y="215" class="label-text">All objects accessible</text>
   </g>
 
   <!-- Arrow: push -->
   <g id="push-arrow">
-    <path d="M 360 150 L 400 150" class="arrow"/>
-    <text x="365" y="140" class="action-label">pushNewScope()</text>
+    <path d="M 360 140 L 400 140" class="arrow"/>
+    <text x="365" y="130" class="action-label">pushNewScope()</text>
   </g>
 
   <!-- State 2: Two Scopes (After Push) -->
@@ -73,12 +70,9 @@
     <rect x="580" y="225" width="120" height="35" class="object-box-shadowed"/>
     <text x="600" y="247" class="object-text-shadowed">API: Public</text>
 
-    <!-- Non-shadowed objects still accessible -->
+    <!-- Non-shadowed object still accessible -->
     <rect x="440" y="275" width="120" height="35" class="object-box"/>
-    <text x="455" y="297" class="object-text">Cart: Empty</text>
-
-    <rect x="580" y="275" width="120" height="35" class="object-box"/>
-    <text x="590" y="297" class="object-text">Perms: Guest</text>
+    <text x="485" y="297" class="object-text">Cart</text>
 
     <!-- Search order arrow -->
     <path d="M 745 90 L 745 150" class="arrow"/>
@@ -90,8 +84,8 @@
 
   <!-- Arrow: pop -->
   <g id="pop-arrow">
-    <path d="M 750 350 L 790 350" class="arrow"/>
-    <text x="760" y="340" class="action-label">popScope()</text>
+    <path d="M 750 340 L 790 340" class="arrow"/>
+    <text x="760" y="330" class="action-label">popScope()</text>
   </g>
 
   <!-- State 3: One Scope Again (After Pop) -->
@@ -99,7 +93,7 @@
     <text x="840" y="30" class="state-label">State 3: After Pop</text>
 
     <!-- Base Scope Restored -->
-    <rect x="810" y="50" width="300" height="200" class="scope-box"/>
+    <rect x="810" y="50" width="300" height="180" class="scope-box"/>
     <text x="830" y="75" class="scope-title">Base Scope (restored)</text>
 
     <!-- Objects in base scope - all active again -->
@@ -107,15 +101,12 @@
     <text x="850" y="117" class="object-text">User: Guest</text>
 
     <rect x="970" y="95" width="120" height="35" class="object-box"/>
-    <text x="985" y="117" class="object-text">Cart: Empty</text>
+    <text x="1015" y="117" class="object-text">Cart</text>
 
     <rect x="830" y="145" width="120" height="35" class="object-box"/>
     <text x="835" y="167" class="object-text">API: Public</text>
 
-    <rect x="970" y="145" width="120" height="35" class="object-box"/>
-    <text x="980" y="167" class="object-text">Perms: Guest</text>
-
-    <text x="850" y="230" class="label-text">Original objects restored</text>
+    <text x="850" y="215" class="label-text">Original objects restored</text>
   </g>
 
   <!-- Legend -->
@@ -138,8 +129,8 @@
   <!-- Bottom explanation -->
   <g id="explanation">
     <text x="30" y="600" class="label-text" font-size="15px">get() search order: Current Scope → Lower Scopes (top to bottom)</text>
-    <text x="30" y="625" class="label-text" font-size="15px">When User is requested in State 2: Returns "Logged" (not "Guest")</text>
-    <text x="30" y="650" class="label-text" font-size="15px">When Cart is requested in State 2: Returns "Empty" (not shadowed, only one registration)</text>
-    <text x="30" y="675" class="label-text" font-size="15px">After popScope(): Login Scope disposed, Guest User automatically active again</text>
+    <text x="30" y="625" class="label-text" font-size="15px">State 2: get&lt;User&gt;() returns "Logged" (shadows "Guest"), get&lt;API&gt;() returns "Auth" (shadows "Public")</text>
+    <text x="30" y="650" class="label-text" font-size="15px">State 2: get&lt;Cart&gt;() returns "Cart" (NOT shadowed - only one registration exists)</text>
+    <text x="30" y="675" class="label-text" font-size="15px">After popScope(): Login Scope disposed, Guest User and Public API automatically active again</text>
   </g>
 </svg>
