@@ -1,78 +1,236 @@
 ---
-title: Different ways of registration
+title: Object Registration
 ---
 
-# Different ways of registration
+# Object Registration
 
-`GetIt` offers different ways how objects are registered that affect the lifetime of these objects.
+get_it offers different registration types that control when objects are created and how long they live. Choose the right type based on your needs.
 
-#### Factory
+## Quick Reference
+
+| Type | When Created | How Many Instances | Lifetime | Best For |
+|------|--------------|-------------------|----------|----------|
+| **Singleton** | Immediately | One | Permanent | Fast to create, needed at startup |
+| **LazySingleton** | First access | One | Permanent | Expensive to create, not always needed |
+| **Factory** | Every `get()` | Many | Per request | Temporary objects, new state each time |
+| **Cached Factory** | First access + after GC | Reused while in memory | Until garbage collected | Performance optimization |
+
+---
+
+## Singleton
 
 ```dart
-void registerFactory<T>(FactoryFunc<T> func)
+T registerSingleton<T>(
+  T instance, {
+  String? instanceName,
+  bool? signalsReady,
+  DisposingFunc<T>? dispose,
+})
 ```
 
-You have to pass a factory function `func` that returns a NEW instance of an implementation of `T`. Each time you call `get<T>()` you will get a new instance returned. How to pass parameters to a factory you can find [here](#passing-parameters-to-factories).
+You pass an instance of `T` that will **always** be returned on calls to `get<T>()`. The instance is created **immediately** when you register it.
 
-###### Passing Parameters to factories
+**Parameters:**
+- `instance` - The instance to register
+- `instanceName` - Optional name to register multiple instances of the same type
+- `signalsReady` - If true, this instance must signal when it's ready (used with async initialization)
+- `dispose` - Optional cleanup function called when unregistering or resetting
 
-In some cases, it's handy if you could pass changing values to factories when calling `get()`. For that there are two variants for registering factories:
+**Example:**
 
 ```dart
-/// registers a type so that a new instance will be created on each call of [get] on that type based on
-/// up to two parameters provided to [get()]
-/// [T] type to register
-/// [P1] type of param1
-/// [P2] type of param2
-/// if you use only one parameter pass void here
-/// [factoryfunc] factory function for this type that accepts two parameters
-/// [instanceName] if you provide a value here your factory gets registered with that
-/// name instead of a type. This should only be necessary if you need to register more
-/// than one instance of one type.
-///
-/// example:
-///    getIt.registerFactoryParam<TestClassParam,String,int>((s,i)
-///        => TestClassParam(param1:s, param2: i));
-///
-/// if you only use one parameter:
-///
-///    getIt.registerFactoryParam<TestClassParam,String,void>((s,_)
-///        => TestClassParam(param1:s);
-void registerFactoryParam<T,P1,P2>(FactoryFuncParam<T,P1,P2> factoryfunc, {String instanceName});
+void configureDependencies() {
+  // Simple registration
+  getIt.registerSingleton<Logger>(Logger());
 
+  // With disposal
+  getIt.registerSingleton<Database>(
+    Database(),
+    dispose: (db) => db.close(),
+  );
+}
 ```
 
-and
+**When to use Singleton:**
+- ✅ Service needed at app startup
+- ✅ Fast to create (no expensive initialization)
+- ❌ Avoid for slow initialization (use LazySingleton instead)
+
+---
+
+## LazySingleton
 
 ```dart
-  void registerFactoryParamAsync<T,P1,P2>(FactoryFuncParamAsync<T,P1,P2> factoryfunc, {String instanceName});
+void registerLazySingleton<T>(
+  FactoryFunc<T> factoryFunc, {
+  String? instanceName,
+  DisposingFunc<T>? dispose,
+  void Function(T instance)? onCreated,
+  bool useWeakReference = false,
+})
 ```
 
-The reason why I settled to use two parameters is that I can imagine some scenarios where you might want to register a builder function for Flutter Widgets that need to get a `BuildContext` and some data object.
+You pass a factory function that returns an instance of `T`. The function is **only called on first access** to `get<T>()`. After that, the same instance is always returned.
 
-When accessing these factories you pass the parameters a optional arguments to `get()`:
+**Parameters:**
+- `factoryFunc` - Function that creates the instance
+- `instanceName` - Optional name to register multiple instances of the same type
+- `dispose` - Optional cleanup function called when unregistering or resetting
+- `onCreated` - Optional callback invoked after the instance is created
+- `useWeakReference` - If true, uses weak reference (allows garbage collection if not used)
+
+**Example:**
 
 ```dart
-  var instance = getIt<TestClassParam>(param1: 'abc',param2:3);
+void configureDependencies() {
+  // Simple registration
+  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+
+  // With disposal and onCreated callback
+  getIt.registerLazySingleton<Database>(
+    () => Database(),
+    dispose: (db) => db.close(),
+    onCreated: (db) => print('Database initialized'),
+  );
+}
+
+// First access - factory function runs NOW
+final api = getIt<ApiClient>(); // ApiClient() constructor called
+
+// Subsequent calls - returns existing instance
+final sameApi = getIt<ApiClient>(); // Same instance, no constructor call
 ```
 
-These parameters are passed as `dynamics` (otherwise I would have had to add more generic parameters to `get()`), but they are checked at runtime to be the correct types.
+**When to use LazySingleton:**
+- ✅ Expensive-to-create services (database, HTTP client, etc.)
+- ✅ Services not always needed by every user
+- ✅ When you need to delay initialization
 
-### Cached Factories
+---
 
-Cached factories are a **performance optimization** that sits between regular factories and singletons. They create a new instance on first call but cache it with a weak reference, returning the cached instance if it hasn't been garbage collected yet.
+::: tip Concrete Types vs Interfaces
+You can register either concrete classes or abstract interfaces. **Register concrete classes directly** unless you expect multiple implementations (e.g., production vs test, different providers). This keeps your code simpler and IDE navigation easier.
+:::
+
+## Factory
 
 ```dart
-void registerCachedFactory<T>(FactoryFunc<T> func)
-void registerCachedFactoryParam<T, P1, P2>(FactoryFuncParam<T, P1, P2> func)
-void registerCachedFactoryAsync<T>(FactoryFuncAsync<T> func)
-void registerCachedFactoryParamAsync<T, P1, P2>(FactoryFuncParamAsync<T, P1, P2> func)
+void registerFactory<T>(
+  FactoryFunc<T> factoryFunc, {
+  String? instanceName,
+})
+```
+
+You pass a factory function that returns a **NEW instance** of `T` every time you call `get<T>()`. Unlike singletons, you get a different object each time.
+
+**Parameters:**
+- `factoryFunc` - Function that creates new instances
+- `instanceName` - Optional name to register multiple factories of the same type
+
+**Example:**
+
+```dart
+void configureDependencies() {
+  getIt.registerFactory<ShoppingCart>(() => ShoppingCart());
+}
+
+// Each call creates a NEW instance
+final cart1 = getIt<ShoppingCart>(); // New ShoppingCart()
+final cart2 = getIt<ShoppingCart>(); // Different ShoppingCart()
+
+print(identical(cart1, cart2)); // false - different objects
+```
+
+**When to use Factory:**
+- ✅ Temporary objects (dialogs, forms, temporary data holders)
+- ✅ Objects that need fresh state each time
+- ✅ Objects with short lifecycle
+- ❌ Avoid for expensive-to-create objects used frequently (consider Cached Factory)
+
+---
+
+## Passing Parameters to Factories
+
+In some cases, you need to pass values to factories when calling `get()`. get_it supports up to two parameters:
+
+```dart
+void registerFactoryParam<T, P1, P2>(
+  FactoryFuncParam<T, P1, P2> factoryFunc, {
+  String? instanceName,
+})
+
+void registerFactoryParamAsync<T, P1, P2>(
+  FactoryFuncParamAsync<T, P1, P2> factoryFunc, {
+  String? instanceName,
+})
+```
+
+**Example with two parameters:**
+
+```dart
+// Register factory accepting two parameters
+getIt.registerFactoryParam<UserViewModel, String, int>(
+  (userId, age) => UserViewModel(userId: userId, age: age),
+);
+
+// Access with parameters
+final vm = getIt<UserViewModel>(param1: 'user-123', param2: 25);
+```
+
+**Example with one parameter:**
+
+If you only need one parameter, pass `void` as the second type:
+
+```dart
+// Register with one parameter (second type is void)
+getIt.registerFactoryParam<ReportGenerator, String, void>(
+  (reportType, _) => ReportGenerator(reportType),
+);
+
+// Access with one parameter
+final report = getIt<ReportGenerator>(param1: 'sales');
+```
+
+**Why two parameters?**
+
+Two parameters cover common scenarios like Flutter widgets that need both `BuildContext` and a data object, or services that need both configuration and runtime values.
+
+::: warning Type Safety
+Parameters are passed as `dynamic` but are checked at runtime to match the registered types (`P1`, `P2`). Type mismatches will throw an error.
+:::
+
+---
+
+## Cached Factories
+
+Cached factories are a **performance optimization** that sits between regular factories and singletons. They create a new instance on first call but cache it with a weak reference, returning the cached instance as long as it's still in memory (meaning some part of your app still holds a reference to it).
+
+```dart
+void registerCachedFactory<T>(
+  FactoryFunc<T> factoryFunc, {
+  String? instanceName,
+})
+
+void registerCachedFactoryParam<T, P1, P2>(
+  FactoryFuncParam<T, P1, P2> factoryFunc, {
+  String? instanceName,
+})
+
+void registerCachedFactoryAsync<T>(
+  FactoryFuncAsync<T> factoryFunc, {
+  String? instanceName,
+})
+
+void registerCachedFactoryParamAsync<T, P1, P2>(
+  FactoryFuncParamAsync<T, P1, P2> factoryFunc, {
+  String? instanceName,
+})
 ```
 
 **How it works:**
 1. First call: Creates new instance (like factory)
 2. Subsequent calls: Returns cached instance if still in memory (like singleton)
-3. If garbage collected: Creates new instance again (like factory)
+3. If garbage collected (no references held by your app): Creates new instance again (like factory)
 4. For param versions: Also checks if parameters match before reusing
 
 **Example:**
@@ -152,112 +310,170 @@ final p6 = getIt<JsonParser>(); // Returns instance 4 (always)
 Cached factories use **weak references**, meaning the cached instance can be garbage collected when no other part of your code holds a reference to it. This provides automatic memory management while still benefiting from reuse.
 :::
 
-#### Singleton & LazySingleton
+---
 
-> Although I always would recommend using an abstract base class as a registration type so that you can vary the implementations you don't have to do this. You can also register concrete types.
+## Registering Multiple Implementations
 
-```dart
-T registerSingleton<T>(T instance)
-```
-
-You have to pass an instance of `T` or a derived class of `T` that you will always get returned on a call to `get<T>()`. The newly registered instance is also returned which can be sometimes convenient.
-
-As creating this instance can be time-consuming at app start-up you can shift the creation to the time the object is the first time requested with:
-
-```dart
-void registerLazySingleton<T>(FactoryFunc<T> func)
-```
-
-You have to pass a factory function `func` that returns an instance of an implementation of `T`. Only the first time you call `get<T>()` this factory function will be called to create a new instance. After that, you will always get the same instance returned.
-
-### Registering multiple implementations
-
-Get_it allows you to register multiple implementations of the same type and retrieve them all with `getAll<T>()`. This is useful for plugin systems, event handlers, and modular architectures.
-
-**Quick example:**
-
-```dart
-// Enable multiple registrations
-getIt.enableRegisteringMultipleInstancesOfOneType();
-
-// Register multiple implementations
-getIt.registerLazySingleton<Plugin>(() => CorePlugin());
-getIt.registerLazySingleton<Plugin>(() => LoggingPlugin());
-getIt.registerLazySingleton<Plugin>(() => AnalyticsPlugin());
-
-// Retrieve all implementations
-final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
-// Returns: [CorePlugin, LoggingPlugin, AnalyticsPlugin]
-```
+get_it supports multiple ways to register more than one instance of the same type. This is useful for plugin systems, event handlers, and modular architectures where you need to retrieve all implementations of a particular type.
 
 ::: tip Learn More
 See the [Multiple Registrations](/documentation/get_it/multiple_registrations) chapter for comprehensive documentation covering:
-- Why explicit enabling is required
+- Different approaches to registering multiple instances
+- Why explicit enabling is required for unnamed registrations
 - How `get<T>()` vs `getAll<T>()` behave differently
-- Unnamed vs named registrations
+- Named vs unnamed registrations
 - Scope behavior with `fromAllScopes`
 - Real-world patterns (plugins, observers, middleware)
 :::
 
-### Overwriting registrations
+---
 
-If you try to register a type more than once you will fail with an assertion in debug mode because normally this is not needed and probably a bug.
-If you really have to overwrite a registration, then you can by setting the property `allowReassignment = true`.
+## Managing Registrations
 
-### Skip Double registrations while testing
+### Checking if a Type is Registered
 
-If you try to register a type more than once and when `allowReassignment = false`  you will fail with an assertion in debug mode.
-If you want to just skip this double registration silently without an error, then you can by setting the property `skipDoubleRegistration = true`.
-This is only available inside tests where is can be handy.
-
-### Testing if a Singleton is already registered
-
-You can check if a certain Type or instance is already registered in GetIt with:
+You can test if a type or instance is already registered:
 
 ```dart
- /// Tests if an [instance] of an object or aType [T] or a name [instanceName]
- /// is registered inside GetIt
- bool isRegistered<T>({Object instance, String instanceName});
+bool isRegistered<T>({Object? instance, String? instanceName});
 ```
 
-### Unregistering Singletons or Factories
-
-If you need to you can also unregister your registered singletons and factories and pass an optional `disposingFunction` for clean-up.
+**Example:**
 
 ```dart
-/// Unregister an [instance] of an object or a factory/singleton by Type [T] or by name [instanceName]
-/// if you need to dispose some resources before the reset, you can
-/// provide a [disposingFunction]. This function overrides the disposing
-/// you might have provided when registering.
-void unregister<T>({Object instance,String instanceName, void Function(T) disposingFunction})
+// Check if type is registered
+if (getIt.isRegistered<ApiClient>()) {
+  print('ApiClient is already registered');
+}
+
+// Check by instance name
+if (getIt.isRegistered<Database>(instanceName: 'test-db')) {
+  print('Test database is registered');
+}
+
+// Check if specific instance is registered
+final myLogger = Logger();
+if (getIt.isRegistered<Logger>(instance: myLogger)) {
+  print('This specific logger instance is registered');
+}
 ```
 
-### Resetting LazySingletons
+### Unregistering Services
 
-In some cases, you might not want to unregister a LazySingleton but instead, reset its instance so that it gets newly created on the next access to it.
+You can remove a registered type from get_it, optionally calling a disposal function:
 
 ```dart
-  /// Clears the instance of a lazy singleton,
-  /// being able to call the factory function on the next call
-  /// of [get] on that type again.
-  /// you select the lazy Singleton you want to reset by either providing
-  /// an [instance], its registered type [T] or its registration name.
-  /// if you need to dispose some resources before the reset, you can
-  /// provide a [disposingFunction]. This function overrides the disposing
-  /// you might have provided when registering.
-void resetLazySingleton<T>({Object instance,
-                            String instanceName,
-                            void Function(T) disposingFunction})
+void unregister<T>({
+  Object? instance,
+  String? instanceName,
+  void Function(T)? disposingFunction,
+});
 ```
 
-### Resetting GetIt completely
+**Example:**
 
 ```dart
-/// Clears all registered types in the reverse order in which they were registered.
-/// Handy when writing unit tests or before quitting your application.
-/// If you provided dispose function when registering they will be called
-/// [dispose] if `false` it only resets without calling any dispose
-/// functions
-/// As dispose funcions can be async, you should await this function.
+// Unregister by type with cleanup
+getIt.unregister<Database>(
+  disposingFunction: (db) => db.close(),
+);
+
+// Unregister by instance name
+getIt.unregister<ApiClient>(instanceName: 'legacy-api');
+
+// Unregister specific instance
+final myService = getIt<MyService>();
+getIt.unregister<MyService>(
+  instance: myService,
+  disposingFunction: (s) => s.dispose(),
+);
+```
+
+::: tip
+The disposing function overrides any disposal function you provided during registration.
+:::
+
+### Resetting Lazy Singletons
+
+Sometimes you want to reset a lazy singleton (force recreation on next access) without unregistering it:
+
+```dart
+void resetLazySingleton<T>({
+  Object? instance,
+  String? instanceName,
+  void Function(T)? disposingFunction,
+});
+```
+
+**Example:**
+
+```dart
+// Reset so it recreates on next get()
+getIt.resetLazySingleton<UserCache>();
+
+// Next access will call the factory function again
+final cache = getIt<UserCache>(); // New instance created
+```
+
+**When to use:**
+- ✅ Refresh cached data (after login/logout)
+- ✅ Testing - reset state between tests
+- ✅ Development - reload configuration
+
+### Resetting All Registrations
+
+Clear all registered types (useful for tests or app shutdown):
+
+```dart
 Future<void> reset({bool dispose = true});
 ```
+
+**Example:**
+
+```dart
+// Reset everything and call disposal functions
+await getIt.reset();
+
+// Reset without calling disposals
+await getIt.reset(dispose: false);
+```
+
+::: warning Important
+- Registrations are cleared in **reverse order** (last registered, first disposed)
+- This is **async** - always `await` it
+- Disposal functions registered during setup will be called (unless `dispose: false`)
+:::
+
+**Use cases:**
+- Between unit tests (`tearDown` or `tearDownAll`)
+- Before app shutdown
+- Switching environments entirely
+
+### Overwriting Registrations
+
+By default, get_it prevents registering the same type twice (catches bugs). To allow overwriting:
+
+```dart
+getIt.allowReassignment = true;
+
+// Now you can re-register
+getIt.registerSingleton<Logger>(ConsoleLogger());
+getIt.registerSingleton<Logger>(FileLogger()); // Overwrites previous
+```
+
+::: warning Use Sparingly
+Allowing reassignment makes bugs harder to catch. Prefer using [scopes](/documentation/get_it/scopes) instead for temporary overrides (especially in tests).
+:::
+
+### Skip Double Registration (Testing Only)
+
+In tests, silently ignore double registration instead of throwing an error:
+
+```dart
+getIt.skipDoubleRegistration = true;
+
+// If already registered, this does nothing instead of throwing
+getIt.registerSingleton<Logger>(Logger());
+```
+
+**Only available in tests** - useful when multiple test files might register the same global services.
