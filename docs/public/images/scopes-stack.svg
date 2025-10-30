@@ -1,0 +1,145 @@
+<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .scope-box { fill: #1e293b; stroke: #3b82f6; stroke-width: 2; rx: 8; }
+      .scope-title { fill: #3b82f6; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 16px; font-weight: 600; }
+      .object-box { fill: #22c55e; stroke: #16a34a; stroke-width: 2; rx: 4; }
+      .object-box-shadowed { fill: #374151; stroke: #4b5563; stroke-width: 2; rx: 4; opacity: 0.5; }
+      .object-text { fill: #ffffff; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 14px; font-weight: 500; }
+      .object-text-shadowed { fill: #9ca3af; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 14px; font-weight: 500; }
+      .arrow { fill: none; stroke: #3b82f6; stroke-width: 2; marker-end: url(#arrowhead); }
+      .label-text { fill: #94a3b8; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 13px; }
+      .state-label { fill: #f59e0b; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 18px; font-weight: 700; }
+      .action-label { fill: #8b5cf6; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; font-size: 15px; font-weight: 600; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#3b82f6" />
+    </marker>
+  </defs>
+
+  <!-- State 1: One Scope (Base) -->
+  <g id="state1">
+    <text x="60" y="30" class="state-label">State 1: Base Scope</text>
+
+    <!-- Base Scope -->
+    <rect x="30" y="50" width="300" height="200" class="scope-box"/>
+    <text x="50" y="75" class="scope-title">Base Scope</text>
+
+    <!-- Objects in base scope -->
+    <rect x="50" y="95" width="120" height="35" class="object-box"/>
+    <text x="70" y="117" class="object-text">User: Guest</text>
+
+    <rect x="190" y="95" width="120" height="35" class="object-box"/>
+    <text x="205" y="117" class="object-text">Cart: Empty</text>
+
+    <rect x="50" y="145" width="120" height="35" class="object-box"/>
+    <text x="55" y="167" class="object-text">API: Public</text>
+
+    <rect x="190" y="145" width="120" height="35" class="object-box"/>
+    <text x="200" y="167" class="object-text">Perms: Guest</text>
+
+    <text x="80" y="230" class="label-text">All objects accessible</text>
+  </g>
+
+  <!-- Arrow: push -->
+  <g id="push-arrow">
+    <path d="M 360 150 L 400 150" class="arrow"/>
+    <text x="365" y="140" class="action-label">pushNewScope()</text>
+  </g>
+
+  <!-- State 2: Two Scopes (After Push) -->
+  <g id="state2">
+    <text x="450" y="30" class="state-label">State 2: Scope Pushed</text>
+
+    <!-- Login Scope (Top) -->
+    <rect x="420" y="50" width="300" height="120" class="scope-box"/>
+    <text x="440" y="75" class="scope-title">Login Scope (active)</text>
+
+    <!-- Objects in login scope -->
+    <rect x="440" y="95" width="130" height="35" class="object-box"/>
+    <text x="450" y="117" class="object-text">User: Logged</text>
+
+    <rect x="580" y="95" width="120" height="35" class="object-box"/>
+    <text x="600" y="117" class="object-text">API: Auth</text>
+
+    <!-- Base Scope (Bottom) - with shadowed objects -->
+    <rect x="420" y="180" width="300" height="150" class="scope-box"/>
+    <text x="440" y="205" class="scope-title">Base Scope</text>
+
+    <!-- Shadowed objects -->
+    <rect x="440" y="225" width="120" height="35" class="object-box-shadowed"/>
+    <text x="455" y="247" class="object-text-shadowed">User: Guest</text>
+
+    <rect x="580" y="225" width="120" height="35" class="object-box-shadowed"/>
+    <text x="600" y="247" class="object-text-shadowed">API: Public</text>
+
+    <!-- Non-shadowed objects still accessible -->
+    <rect x="440" y="275" width="120" height="35" class="object-box"/>
+    <text x="455" y="297" class="object-text">Cart: Empty</text>
+
+    <rect x="580" y="275" width="120" height="35" class="object-box"/>
+    <text x="590" y="297" class="object-text">Perms: Guest</text>
+
+    <!-- Search order arrow -->
+    <path d="M 745 90 L 745 150" class="arrow"/>
+    <text x="755" y="120" class="label-text">Search</text>
+    <text x="755" y="135" class="label-text">order</text>
+
+    <path d="M 745 190 L 745 250" class="arrow"/>
+  </g>
+
+  <!-- Arrow: pop -->
+  <g id="pop-arrow">
+    <path d="M 750 350 L 790 350" class="arrow"/>
+    <text x="760" y="340" class="action-label">popScope()</text>
+  </g>
+
+  <!-- State 3: One Scope Again (After Pop) -->
+  <g id="state3">
+    <text x="840" y="30" class="state-label">State 3: After Pop</text>
+
+    <!-- Base Scope Restored -->
+    <rect x="810" y="50" width="300" height="200" class="scope-box"/>
+    <text x="830" y="75" class="scope-title">Base Scope (restored)</text>
+
+    <!-- Objects in base scope - all active again -->
+    <rect x="830" y="95" width="120" height="35" class="object-box"/>
+    <text x="850" y="117" class="object-text">User: Guest</text>
+
+    <rect x="970" y="95" width="120" height="35" class="object-box"/>
+    <text x="985" y="117" class="object-text">Cart: Empty</text>
+
+    <rect x="830" y="145" width="120" height="35" class="object-box"/>
+    <text x="835" y="167" class="object-text">API: Public</text>
+
+    <rect x="970" y="145" width="120" height="35" class="object-box"/>
+    <text x="980" y="167" class="object-text">Perms: Guest</text>
+
+    <text x="850" y="230" class="label-text">Original objects restored</text>
+  </g>
+
+  <!-- Legend -->
+  <g id="legend" transform="translate(30, 400)">
+    <text x="0" y="0" class="scope-title">Legend:</text>
+
+    <rect x="0" y="15" width="80" height="30" class="object-box"/>
+    <text x="10" y="35" class="object-text">Active</text>
+    <text x="90" y="35" class="label-text">Object is accessible via get()</text>
+
+    <rect x="0" y="60" width="80" height="30" class="object-box-shadowed"/>
+    <text x="10" y="80" class="object-text-shadowed">Hidden</text>
+    <text x="90" y="80" class="label-text">Object is shadowed by one in higher scope</text>
+
+    <rect x="0" y="105" width="200" height="40" class="scope-box"/>
+    <text x="10" y="130" class="scope-title">Scope Container</text>
+    <text x="210" y="130" class="label-text">Holds registered objects</text>
+  </g>
+
+  <!-- Bottom explanation -->
+  <g id="explanation">
+    <text x="30" y="600" class="label-text" font-size="15px">get() search order: Current Scope → Lower Scopes (top to bottom)</text>
+    <text x="30" y="625" class="label-text" font-size="15px">When User is requested in State 2: Returns "Logged" (not "Guest")</text>
+    <text x="30" y="650" class="label-text" font-size="15px">When Cart is requested in State 2: Returns "Empty" (not shadowed, only one registration)</text>
+    <text x="30" y="675" class="label-text" font-size="15px">After popScope(): Login Scope disposed, Guest User automatically active again</text>
+  </g>
+</svg>
