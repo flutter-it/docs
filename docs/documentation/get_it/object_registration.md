@@ -172,37 +172,32 @@ You have to pass a factory function `func` that returns an instance of an implem
 
 ### Registering multiple implementations
 
-There are certain circumstances where you might wish to register multiple implementations of the same interface and then get a list of all of the relevant implementations later on. For instance, you might have a modular design where each module registers an interface defining a page and then all of these get injected into your navigation bar in your main layout without your layout needing to know about each module.
+Get_it allows you to register multiple implementations of the same type and retrieve them all with `getAll<T>()`. This is useful for plugin systems, event handlers, and modular architectures.
 
-> [!NOTE]  
-> To avoid this being a breaking change and to prevent you from erroneously re-registering a type without expecting this behaviour, to enable this you need to call:
->
->```dart
->getIt.enableRegisteringMultipleInstancesOfOneType();
->```
-
-Then, you just register your classes as you normally would:
+**Quick example:**
 
 ```dart
-getIt.registerLazySingleton<MyBase>(
-  () => ImplA(),
-);
-getIt.registerLazySingleton<MyBase>(
-  () => ImplB(),
-);
+// Enable multiple registrations
+getIt.enableRegisteringMultipleInstancesOfOneType();
+
+// Register multiple implementations
+getIt.registerLazySingleton<Plugin>(() => CorePlugin());
+getIt.registerLazySingleton<Plugin>(() => LoggingPlugin());
+getIt.registerLazySingleton<Plugin>(() => AnalyticsPlugin());
+
+// Retrieve all implementations
+final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
+// Returns: [CorePlugin, LoggingPlugin, AnalyticsPlugin]
 ```
 
-Then, later on you can fetch all instances of this interface by calling:
-
-```dart
-final Iterable<MyBase> instances = getIt.getAll<MyBase>();
-```
-The returned `Iterable` will then contain all registered instances of the requested interface with or without an instance name.
-There is also an `async` implementation available for this:
-
-```dart
-final Iterable<MyBase> instances = await getIt.getAllAsync<MyBase>();
-```
+::: tip Learn More
+See the [Multiple Registrations](/documentation/get_it/multiple_registrations) chapter for comprehensive documentation covering:
+- Why explicit enabling is required
+- How `get<T>()` vs `getAll<T>()` behave differently
+- Unnamed vs named registrations
+- Scope behavior with `fromAllScopes`
+- Real-world patterns (plugins, observers, middleware)
+:::
 
 ### Overwriting registrations
 

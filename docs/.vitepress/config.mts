@@ -43,8 +43,9 @@ export default defineConfig({
               { text: 'Object registration', link: '/documentation/get_it/object_registration.md' },
               { text: 'Scopes', link: '/documentation/get_it/scopes.md' },
               { text: 'Async objects', link: '/documentation/get_it/async_objects.md' },
-              { text: 'Testing', link: '/documentation/get_it/testing.md' },
+              { text: 'Multiple registrations', link: '/documentation/get_it/multiple_registrations.md' },
               { text: 'Advanced', link: '/documentation/get_it/advanced.md' },
+              { text: 'Testing', link: '/documentation/get_it/testing.md' },
               { text: 'FAQ', link: '/documentation/get_it/faq.md' }
             ]
           },

@@ -4,7 +4,60 @@ title: Advanced
 
 # Advanced
 
-#### Implementing the `Disposable` interface
+## Named Registration
+
+All registration functions have an optional named parameter `instanceName`. This is particularly useful when you need multiple instances of the same type with different configurations.
+
+**IMPORTANT:** Each name must be unique per type.
+
+```dart
+abstract class RestService {
+  Future<Response> get(String endpoint);
+}
+
+class RestServiceImpl implements RestService {
+  final String baseUrl;
+
+  RestServiceImpl(this.baseUrl);
+
+  @override
+  Future<Response> get(String endpoint) async {
+    return http.get('$baseUrl/$endpoint');
+  }
+}
+
+// Register multiple REST services with different base URLs
+getIt.registerSingleton<RestService>(
+  RestServiceImpl('https://api.example.com'),
+  instanceName: 'mainApi',
+);
+
+getIt.registerSingleton<RestService>(
+  RestServiceImpl('https://analytics.example.com'),
+  instanceName: 'analyticsApi',
+);
+
+// Access them by name
+class UserRepository {
+  UserRepository() {
+    _mainApi = getIt<RestService>(instanceName: 'mainApi');
+    _analyticsApi = getIt<RestService>(instanceName: 'analyticsApi');
+  }
+
+  late final RestService _mainApi;
+  late final RestService _analyticsApi;
+
+  Future<User> getUser(String id) async {
+    final response = await _mainApi.get('users/$id');
+    _analyticsApi.get('track/user_fetch'); // Track analytics
+    return User.fromJson(response.data);
+  }
+}
+```
+
+---
+
+## Implementing the `Disposable` Interface
 
 Instead of passing a disposing function on registration or when pushing a Scope from V7.0 on your objects `onDispose()` method will be called
 if the object that you register implements the `Disposable` interface:
@@ -391,40 +444,6 @@ if (registration != null) {
 - Debugging registration issues
 
 ---
-
-### Named registration
-
-Ok, you have been warned! All registration functions have an optional named parameter `instanceName`. Providing a name with factory/singleton here registers that instance with that name and a type. Consequently `get()` has also an optional parameter `instanceName` to access
-factories/singletons that were registered by name.
-
-**IMPORTANT:** Each name must be unique per type.
-
-```dart
-  abstract class RestService {}
-  class RestService1 implements RestService{
-    Future<RestService1> init() async {
-      Future.delayed(Duration(seconds: 1));
-      return this;
-    }
-  }
-  class RestService2 implements RestService{
-    Future<RestService2> init() async {
-      Future.delayed(Duration(seconds: 1));
-      return this;
-    }
-  }
-
-  getIt.registerSingletonAsync<RestService>(() async => RestService1().init(), instanceName : "restService1");
-  getIt.registerSingletonAsync<RestService>(() async => RestService2().init(), instanceName : "restService2");
-
-  getIt.registerSingletonWithDependencies<AppModel>(
-      () {
-          RestService restService1 = GetIt.I.get<RestService>(instanceName: "restService1");
-          return AppModelImplmentation(restService1);
-      },
-      dependsOn: [InitDependency(RestService, instanceName:"restService1")],
-  );
-```
 
 ### Accessing an object inside GetIt by a runtime type
 
