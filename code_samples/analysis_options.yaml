@@ -1,0 +1,23 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    # Signature files - intentionally incomplete API documentation
+    - lib/get_it/*_signature.dart
+
+  errors:
+    # Be strict about actual errors
+    undefined_identifier: error
+    undefined_class: error
+    invalid_assignment: error
+
+linter:
+  rules:
+    # Disable rules that don't make sense for example code
+    public_member_api_docs: false
+    prefer_const_constructors: false
+    avoid_print: false
+    # Enable important rules
+    avoid_relative_lib_imports: true
+    prefer_final_fields: true
+    unnecessary_null_checks: true

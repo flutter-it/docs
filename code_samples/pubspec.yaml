@@ -1,0 +1,36 @@
+name: code_samples
+description: Testable code samples for flutter_it documentation
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Use path dependencies for packages we're documenting
+  # This ensures samples work with the latest local versions
+  get_it:
+    path: ../../get_it
+  watch_it:
+    path: ../../watch_it
+  command_it: ^8.0.0
+  listen_it: ^5.0.0
+
+# Override to use local versions when needed during development
+dependency_overrides:
+  get_it:
+    path: ../../get_it
+  watch_it:
+    path: ../../watch_it
+  # Uncomment to test unreleased versions
+  # command_it:
+  #   path: ../../command_it
+  # listen_it:
+  #   path: ../../listen_it
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
