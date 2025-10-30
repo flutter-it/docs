@@ -260,27 +260,46 @@ void changeTypeInstanceName<T>({
 **Example:**
 
 ```dart
-// Register with temporary name
-getIt.registerSingleton<UserSession>(
-  UserSession(),
-  instanceName: 'temp-session',
-);
+class User extends ChangeNotifier {
+  String username;
+  String email;
 
-// Later, rename to permanent name (e.g., after authentication)
-getIt.changeTypeInstanceName<UserSession>(
-  instanceName: 'temp-session',
-  newInstanceName: 'authenticated-session',
-);
+  User(this.username, this.email);
+
+  Future<void> updateUsername(String newUsername) async {
+    // Update on backend
+    await api.updateUsername(username, newUsername);
+
+    final oldUsername = username;
+    username = newUsername;
+
+    // Rename the instance in GetIt to match new username
+    getIt.changeTypeInstanceName<User>(
+      instanceName: oldUsername,
+      newInstanceName: newUsername,
+    );
+
+    notifyListeners();
+  }
+}
+
+// Register user with username as instance name
+final user = User('alice', 'alice@example.com');
+getIt.registerSingleton<User>(user, instanceName: 'alice');
+
+// User changes their username
+await getIt<User>(instanceName: 'alice').updateUsername('alice_jones');
 
 // Now accessible with new name
-final session = getIt<UserSession>(instanceName: 'authenticated-session');
+final user = getIt<User>(instanceName: 'alice_jones'); // Works!
+// getIt<User>(instanceName: 'alice'); // Would throw - old name invalid
 ```
 
 **Use cases:**
-- Dynamic naming schemes based on runtime conditions
-- Promoting temporary registrations to permanent ones
+- User profile updates where username is the instance identifier
+- Dynamic entity names that can change at runtime
 - Avoiding disposal side effects from unregister/register cycle
-- Complex scope hierarchies with name-based lookups
+- Maintaining instance state while updating its identifier
 
 ::: tip Avoids Dispose
 Unlike `unregister()` + `register()`, this doesn't trigger dispose functions, preserving the instance's state.
