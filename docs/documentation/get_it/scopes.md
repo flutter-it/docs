@@ -142,31 +142,36 @@ print(getIt.currentScopeName); // Returns null for base scope, 'baseScope' for b
 
 ### Async Scope Initialization
 
-When scope setup requires async operations (loading config, database queries, API calls):
+When scope setup requires async operations (loading config files, establishing connections):
 
 ```dart
 await getIt.pushNewScopeAsync(
-  scopeName: 'user-session',
+  scopeName: 'tenant-workspace',
   init: (getIt) async {
-    // Load user preferences from database
-    final prefs = await database.loadPreferences(userId);
-    getIt.registerSingleton<UserPreferences>(prefs);
+    // Load tenant configuration from file/database
+    final config = await loadTenantConfig(tenantId);
+    getIt.registerSingleton<TenantConfig>(config);
 
-    // Fetch user data from API
-    final userData = await api.fetchUserData(userId);
-    getIt.registerSingleton<UserData>(userData);
+    // Establish database connection
+    final database = await DatabaseConnection.connect(config.dbUrl);
+    getIt.registerSingleton<DatabaseConnection>(database);
 
-    // Initialize services that depend on user data
-    getIt.registerSingleton<NotificationService>(
-      NotificationService(userData.notificationSettings),
-    );
+    // Load cached data
+    final cache = await CacheManager.initialize(tenantId);
+    getIt.registerSingleton<CacheManager>(cache);
   },
   dispose: () async {
-    // Async cleanup
-    await database.savePreferences(getIt<UserPreferences>());
+    // Close connections
+    await getIt<DatabaseConnection>().close();
+    await getIt<CacheManager>().flush();
   },
 );
 ```
+
+::: tip Async Dependencies Between Services
+For services with async initialization that **depend on each other**, use `registerSingletonAsync` with the `dependsOn` parameter instead. See [Async Objects documentation](/documentation/get_it/async_objects) for details.
+:::
+
 
 ### Final Scopes (Preventing Accidental Registrations)
 
