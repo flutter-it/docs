@@ -93,12 +93,15 @@ if (featureFlagEnabled) {
 **4. Test Isolation**
 ```dart
 setUp(() {
-  getIt.pushNewScope(); // Fresh scope per test
-  // Register test doubles
+  configureDependencies(); // Call your real DI setup
+
+  getIt.pushNewScope(); // Shadow specific services with mocks
+  getIt.registerSingleton<ApiClient>(MockApiClient());
+  getIt.registerSingleton<Database>(MockDatabase());
 });
 
 tearDown(() async {
-  await getIt.popScope(); // Clean slate for next test
+  await getIt.popScope(); // Remove mocks, clean slate for next test
 });
 ```
 
@@ -394,30 +397,41 @@ class FeatureManager {
 
 ### Testing with Scopes
 
+Use scopes to shadow real services with mocks while keeping the rest of your DI setup:
+
 ```dart
 group('UserService Tests', () {
   setUp(() {
-    // Create test scope
-    getIt.pushNewScope();
+    // Call your app's real DI initialization
+    configureDependencies();
 
-    // Register test doubles
+    // Push scope to shadow specific services with test doubles
+    getIt.pushNewScope();
     getIt.registerSingleton<ApiClient>(MockApiClient());
     getIt.registerSingleton<Database>(MockDatabase());
-    getIt.registerSingleton<UserService>(UserService());
+
+    // UserService uses real implementation but gets mock dependencies
   });
 
   tearDown(() async {
-    // Clean up test scope
+    // Pop scope - removes mocks, restores real services
     await getIt.popScope();
   });
 
   test('should load user data', () async {
+    // UserService gets MockApiClient and MockDatabase automatically
     final service = getIt<UserService>();
     final user = await service.loadUser('123');
     expect(user.id, '123');
   });
 });
 ```
+
+**Benefits:**
+- No need to duplicate all registrations in tests
+- Only mock what's necessary (ApiClient, Database)
+- Other services use real implementations
+- Automatic cleanup via popScope()
 
 ---
 
