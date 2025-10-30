@@ -84,6 +84,10 @@ class LoginPage extends StatelessWidget {
 
 **That's it!** No Provider wrappers, no InheritedWidgets, no BuildContext needed.
 
+::: warning Isolate Safety
+GetIt instances are not thread-safe and cannot be shared across isolates. Each isolate will get its own GetIt instance. This means objects registered in one isolate can't be accessed from another isolate.
+:::
+
 ---
 
 ## When to Use Which Registration Type

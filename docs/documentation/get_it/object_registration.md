@@ -420,6 +420,10 @@ final cache = getIt<UserCache>(); // New instance created
 - ✅ Testing - reset state between tests
 - ✅ Development - reload configuration
 
+::: tip Reset All Lazy Singletons
+If you need to reset **all** lazy singletons at once (instead of one at a time), use `resetLazySingletons()` which supports scope control and batch operations. See [resetLazySingletons() documentation](/documentation/get_it/advanced#reset-all-lazy-singletons-resetlazysingletons) for details.
+:::
+
 ### Resetting All Registrations
 
 Clear all registered types (useful for tests or app shutdown):

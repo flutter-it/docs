@@ -4,9 +4,210 @@ title: Multiple Registrations
 
 # Multiple Registrations
 
-get_it allows you to register multiple implementations of the same type and retrieve them all at once. This is particularly useful for plugin systems, event handlers, middleware chains, and modular architectures.
+get_it provides two different approaches for registering multiple instances of the same type, each suited to different use cases.
 
-## Enabling Multiple Registrations
+## Two Approaches Overview
+
+### Approach 1: Named Registration (Always Available)
+
+Register multiple instances of the same type by giving each a unique name. This is **always available** without any configuration.
+
+```dart
+// Register multiple REST services with different configurations
+getIt.registerSingleton<ApiClient>(
+  ApiClient('https://api.example.com'),
+  instanceName: 'mainApi',
+);
+
+getIt.registerSingleton<ApiClient>(
+  ApiClient('https://analytics.example.com'),
+  instanceName: 'analyticsApi',
+);
+
+// Access individually by name
+final mainApi = getIt<ApiClient>(instanceName: 'mainApi');
+final analyticsApi = getIt<ApiClient>(instanceName: 'analyticsApi');
+```
+
+**Best for:**
+- ✅ Different configurations of the same type (dev/prod endpoints)
+- ✅ Known set of instances accessed individually
+- ✅ Feature flags (old/new implementation)
+
+### Approach 2: Multiple Unnamed Registrations (Requires Opt-In)
+
+Register multiple instances without names and retrieve them all at once with `getAll<T>()`. Requires explicit opt-in.
+
+```dart
+// Enable feature first
+getIt.enableRegisteringMultipleInstancesOfOneType();
+
+// Register multiple plugins without names
+getIt.registerSingleton<Plugin>(CorePlugin());
+getIt.registerSingleton<Plugin>(LoggingPlugin());
+getIt.registerSingleton<Plugin>(AnalyticsPlugin());
+
+// Get all at once
+final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
+```
+
+**Best for:**
+- ✅ Plugin systems (modules can add implementations)
+- ✅ Observer/event handler patterns
+- ✅ Middleware chains
+- ✅ When you don't need to access instances individually
+
+::: tip You Can Combine Both Approaches
+Named and unnamed registrations can coexist. `getAll<T>()` returns both unnamed and named instances.
+:::
+
+---
+
+## Named Registration
+
+All registration functions accept an optional `instanceName` parameter. Each name must be **unique per type**.
+
+### Basic Usage
+
+```dart
+abstract class RestService {
+  Future<Response> get(String endpoint);
+}
+
+class RestServiceImpl implements RestService {
+  final String baseUrl;
+
+  RestServiceImpl(this.baseUrl);
+
+  @override
+  Future<Response> get(String endpoint) async {
+    return http.get('$baseUrl/$endpoint');
+  }
+}
+
+// Register multiple REST services with different base URLs
+getIt.registerSingleton<RestService>(
+  RestServiceImpl('https://api.example.com'),
+  instanceName: 'mainApi',
+);
+
+getIt.registerSingleton<RestService>(
+  RestServiceImpl('https://analytics.example.com'),
+  instanceName: 'analyticsApi',
+);
+
+// Access them by name
+class UserRepository {
+  UserRepository() {
+    _mainApi = getIt<RestService>(instanceName: 'mainApi');
+    _analyticsApi = getIt<RestService>(instanceName: 'analyticsApi');
+  }
+
+  late final RestService _mainApi;
+  late final RestService _analyticsApi;
+
+  Future<User> getUser(String id) async {
+    final response = await _mainApi.get('users/$id');
+    _analyticsApi.get('track/user_fetch'); // Track analytics
+    return User.fromJson(response.data);
+  }
+}
+```
+
+### Works with All Registration Types
+
+Named registration works with **every** registration method:
+
+```dart
+// Singleton
+getIt.registerSingleton<Logger>(
+  FileLogger(),
+  instanceName: 'fileLogger',
+);
+
+// Lazy Singleton
+getIt.registerLazySingleton<Cache>(
+  () => MemoryCache(),
+  instanceName: 'memory',
+);
+
+// Factory
+getIt.registerFactory<Report>(
+  () => DailyReport(),
+  instanceName: 'daily',
+);
+
+// Async Singleton
+getIt.registerSingletonAsync<Database>(
+  () async => Database.connect('prod'),
+  instanceName: 'production',
+);
+```
+
+### Named Registration Use Cases
+
+**Environment-specific configurations:**
+```dart
+void setupForEnvironment(String env) {
+  if (env == 'production') {
+    getIt.registerSingleton<ApiClient>(
+      ApiClient('https://api.prod.example.com'),
+      instanceName: 'api',
+    );
+  } else {
+    getIt.registerSingleton<ApiClient>(
+      MockApiClient(),
+      instanceName: 'api',
+    );
+  }
+}
+
+// Always access with same name
+final api = getIt<ApiClient>(instanceName: 'api');
+```
+
+**Feature flags:**
+```dart
+void setupPaymentProcessor(bool useNewVersion) {
+  if (useNewVersion) {
+    getIt.registerSingleton<PaymentProcessor>(
+      StripePaymentProcessor(),
+      instanceName: 'payment',
+    );
+  } else {
+    getIt.registerSingleton<PaymentProcessor>(
+      LegacyPaymentProcessor(),
+      instanceName: 'payment',
+    );
+  }
+}
+```
+
+**Multiple database connections:**
+```dart
+getIt.registerSingletonAsync<Database>(
+  () async => Database.connect('postgres://main-db'),
+  instanceName: 'mainDb',
+);
+
+getIt.registerSingletonAsync<Database>(
+  () async => Database.connect('postgres://analytics-db'),
+  instanceName: 'analyticsDb',
+);
+
+getIt.registerSingletonAsync<Database>(
+  () async => Database.connect('postgres://cache-db'),
+  instanceName: 'cacheDb',
+);
+```
+
+---
+
+## Multiple Unnamed Registrations
+
+For plugin systems, observers, and middleware where you want to retrieve **all** instances at once without knowing their names.
+
+### Enabling Multiple Registrations
 
 By default, get_it **prevents** registering the same type multiple times (without different instance names) to catch accidental duplicate registrations, which are usually bugs.
 
@@ -88,11 +289,19 @@ final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
 //          ALL unnamed + ALL named registrations
 ```
 
+::: tip Alternative: findAll() for Type-Based Discovery
+While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` finds instances by **type matching** - no multiple registration setup needed. See [Related: Finding Instances by Type](#related-finding-instances-by-type) below for when to use each approach.
+:::
+
 ---
 
 ## Scope Behavior
 
-By default, `getAll<T>()` only searches the **current scope**. To retrieve from **all scopes**, use `fromAllScopes: true`:
+`getAll<T>()` provides three scope control options:
+
+### Current Scope Only (Default)
+
+By default, searches only the **current scope**:
 
 ```dart
 getIt.enableRegisteringMultipleInstancesOfOneType();
@@ -106,14 +315,38 @@ getIt.pushNewScope(scopeName: 'feature');
 getIt.registerSingleton<Plugin>(FeatureAPlugin());
 getIt.registerSingleton<Plugin>(FeatureBPlugin());
 
-// Current scope only
+// Current scope only (default)
 final featurePlugins = getIt.getAll<Plugin>();
 // Returns: [FeatureAPlugin, FeatureBPlugin]
+```
 
+### All Scopes
+
+To retrieve from **all scopes**, use `fromAllScopes: true`:
+
+```dart
 // All scopes
 final allPlugins = getIt.getAll<Plugin>(fromAllScopes: true);
 // Returns: [FeatureAPlugin, FeatureBPlugin, CorePlugin, LoggingPlugin]
 ```
+
+### Specific Named Scope
+
+To search only a **specific named scope**, use `onlyInScope`:
+
+```dart
+// Only search the base scope
+final basePlugins = getIt.getAll<Plugin>(onlyInScope: 'baseScope');
+// Returns: [CorePlugin, LoggingPlugin]
+
+// Only search the 'feature' scope
+final featurePlugins = getIt.getAll<Plugin>(onlyInScope: 'feature');
+// Returns: [FeatureAPlugin, FeatureBPlugin]
+```
+
+::: tip Parameter Precedence
+If both `onlyInScope` and `fromAllScopes` are provided, `onlyInScope` takes precedence.
+:::
 
 See [Scopes documentation](/documentation/get_it/scopes) for more details on scope behavior.
 
@@ -136,10 +369,19 @@ await getIt.allReady();
 final Iterable<Plugin> plugins = await getIt.getAllAsync<Plugin>();
 ```
 
-**With scopes:**
+**With scope control:**
+
+`getAllAsync()` supports the same scope parameters as `getAll()`:
+
 ```dart
+// All scopes
 final Iterable<Plugin> allPlugins = await getIt.getAllAsync<Plugin>(
   fromAllScopes: true,
+);
+
+// Specific named scope
+final Iterable<Plugin> basePlugins = await getIt.getAllAsync<Plugin>(
+  onlyInScope: 'baseScope',
 );
 ```
 
@@ -313,30 +555,37 @@ final highContrastTheme = getIt<ThemeProvider>(instanceName: 'highContrast');
 
 ---
 
-## Comparison: Multiple Registrations vs Named Registrations
+## Choosing the Right Approach
 
-| Feature | Multiple Registrations | Named Registrations Only |
-|---------|----------------------|--------------------------|
-| **Enable required** | Yes (`enableRegisteringMultipleInstancesOfOneType()`) | No |
-| **Get all** | `getAll<T>()` returns all | Must call `get<T>(instanceName: 'name1')`, `get<T>(instanceName: 'name2')`, etc. individually |
-| **Get one** | `get<T>()` returns first | `get<T>(instanceName: 'name')` |
-| **Use case** | Plugin systems, observers, middleware | Different configurations of same type |
-| **Module independence** | Modules can add implementations without knowing about others | Must know all names upfront |
-| **Type safety** | ✅ All returned | ❌ Must know names as strings |
+| Feature | Named Registration | Multiple Unnamed Registration |
+|---------|-------------------|------------------------------|
+| **Enable required** | No | Yes (`enableRegisteringMultipleInstancesOfOneType()`) |
+| **Access pattern** | Individual by name: `get<T>(instanceName: 'name')` | All at once: `getAll<T>()` returns all |
+| **Get one** | `get<T>(instanceName: 'name')` | `get<T>()` returns first |
+| **Use case** | Different configurations, feature flags | Plugin systems, observers, middleware |
+| **Module independence** | Must know names upfront | Modules can add implementations without knowing about others |
+| **Access method** | String-based names | Type-based retrieval |
 
-**When to use multiple registrations:**
+**When to use named registration:**
+- ✅ Different configurations (dev/prod API endpoints)
+- ✅ Feature flags (old/new implementation)
+- ✅ Known set of instances accessed individually
+- ✅ Multiple database connections
+
+**When to use multiple unnamed registration:**
 - ✅ Modular plugin architecture
 - ✅ Observer/event handler pattern
 - ✅ Middleware chains
 - ✅ Validators/processors pipeline
 
-**When to use named registrations only:**
-- ✅ Different configurations (dev/prod API endpoints)
-- ✅ Feature flags (old/new implementation)
-- ✅ Known set of instances needed individually
+**Combining both approaches:**
 
-**You can combine both:**
+Named and unnamed registrations work together seamlessly:
+
 ```dart
+// Enable multiple unnamed registrations
+getIt.enableRegisteringMultipleInstancesOfOneType();
+
 // Core plugins (unnamed)
 getIt.registerSingleton<Plugin>(CorePlugin());
 getIt.registerSingleton<Plugin>(LoggingPlugin());
@@ -430,11 +679,59 @@ This is important for middleware/observer patterns where execution order matters
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `fromAllScopes` | `bool` | `false` | If `true`, searches all scopes instead of current only |
+| `onlyInScope` | `String?` | `null` | If provided, searches only the named scope (takes precedence over `fromAllScopes`) |
+
+---
+
+## Related: Finding Instances by Type
+
+While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` offers a different approach: finding instances by **type matching** criteria.
+
+**Key differences:**
+
+| Feature | `getAll<T>()` | `findAll<T>()` |
+|---------|---------------|----------------|
+| **Purpose** | Retrieve multiple explicit registrations | Find instances by type matching |
+| **Requires** | `enableRegisteringMultipleInstancesOfOneType()` | No special setup |
+| **Matches** | Exact type T (with optional names) | T and subtypes (configurable) |
+| **Performance** | O(1) map lookup | O(n) linear search |
+| **Use case** | Plugin systems, known multiple registrations | Finding implementations, testing, introspection |
+
+**Example comparison:**
+
+```dart
+abstract class ILogger {}
+class FileLogger implements ILogger {}
+class ConsoleLogger implements ILogger {}
+
+// Approach 1: Multiple registrations with getAll()
+getIt.enableRegisteringMultipleInstancesOfOneType();
+getIt.registerSingleton<ILogger>(FileLogger());
+getIt.registerSingleton<ILogger>(ConsoleLogger());
+
+final loggers1 = getIt.getAll<ILogger>();
+// Returns: [FileLogger, ConsoleLogger]
+
+// Approach 2: Different registration types with findAll()
+getIt.registerSingleton<FileLogger>(FileLogger());
+getIt.registerSingleton<ConsoleLogger>(ConsoleLogger());
+
+final loggers2 = getIt.findAll<ILogger>();
+// Returns: [FileLogger, ConsoleLogger] (matched by type)
+```
+
+::: tip When to Use Each
+- Use **`getAll()`** when you explicitly want multiple instances of the same type and will retrieve them all together
+- Use **`findAll()`** when you want to discover instances by type relationship, especially for testing or debugging
+:::
+
+See [findAll() documentation](/documentation/get_it/advanced#find-all-instances-by-type-findall-t) for comprehensive details on type matching, scope control, and advanced filtering options.
 
 ---
 
 ## See Also
 
-- [Named Registration](/documentation/get_it/advanced#named-registration) - Register multiple instances with different names
-- [Scopes](/documentation/get_it/scopes) - Hierarchical lifecycle management
-- [Object Registration](/documentation/get_it/object_registration) - Different registration types
+- [Scopes](/documentation/get_it/scopes) - Hierarchical lifecycle management and scope-specific registrations
+- [Object Registration](/documentation/get_it/object_registration) - Different registration types (factories, singletons, etc.)
+- [Async Objects](/documentation/get_it/async_objects) - Using `getAllAsync()` with async registrations
+- [Advanced - findAll()](/documentation/get_it/advanced#find-all-instances-by-type-findall-t) - Type-based instance discovery

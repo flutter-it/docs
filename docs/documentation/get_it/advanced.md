@@ -4,56 +4,9 @@ title: Advanced
 
 # Advanced
 
-## Named Registration
-
-All registration functions have an optional named parameter `instanceName`. This is particularly useful when you need multiple instances of the same type with different configurations.
-
-**IMPORTANT:** Each name must be unique per type.
-
-```dart
-abstract class RestService {
-  Future<Response> get(String endpoint);
-}
-
-class RestServiceImpl implements RestService {
-  final String baseUrl;
-
-  RestServiceImpl(this.baseUrl);
-
-  @override
-  Future<Response> get(String endpoint) async {
-    return http.get('$baseUrl/$endpoint');
-  }
-}
-
-// Register multiple REST services with different base URLs
-getIt.registerSingleton<RestService>(
-  RestServiceImpl('https://api.example.com'),
-  instanceName: 'mainApi',
-);
-
-getIt.registerSingleton<RestService>(
-  RestServiceImpl('https://analytics.example.com'),
-  instanceName: 'analyticsApi',
-);
-
-// Access them by name
-class UserRepository {
-  UserRepository() {
-    _mainApi = getIt<RestService>(instanceName: 'mainApi');
-    _analyticsApi = getIt<RestService>(instanceName: 'analyticsApi');
-  }
-
-  late final RestService _mainApi;
-  late final RestService _analyticsApi;
-
-  Future<User> getUser(String id) async {
-    final response = await _mainApi.get('users/$id');
-    _analyticsApi.get('track/user_fetch'); // Track analytics
-    return User.fromJson(response.data);
-  }
-}
-```
+::: tip Named Registration
+Documentation for registering multiple instances with instance names has moved to the [Multiple Registrations](/documentation/get_it/multiple_registrations) chapter, which covers both named and unnamed multiple registration approaches.
+:::
 
 ---
 
@@ -410,6 +363,254 @@ void preWarmCriticalServices() {
   }
 }
 ```
+
+---
+
+### Reset All Lazy Singletons: `resetLazySingletons()`
+
+Reset all instantiated lazy singletons at once. This clears their instances so they'll be recreated on next access.
+
+```dart
+Future<void> resetLazySingletons({
+  bool dispose = true,
+  bool inAllScopes = false,
+  String? onlyInScope,
+})
+```
+
+**Parameters:**
+- `dispose` - If true (default), calls dispose functions before resetting
+- `inAllScopes` - If true, resets lazy singletons across all scopes
+- `onlyInScope` - Reset only in the named scope (takes precedence over `inAllScopes`)
+
+**Example - Basic usage:**
+
+```dart
+// Register lazy singletons
+getIt.registerLazySingleton<CacheService>(() => CacheService());
+getIt.registerLazySingleton<UserPreferences>(() => UserPreferences());
+
+// Access them (creates instances)
+final cache = getIt<CacheService>();
+final prefs = getIt<UserPreferences>();
+
+// Reset all lazy singletons in current scope
+await getIt.resetLazySingletons();
+
+// Next access creates fresh instances
+final newCache = getIt<CacheService>(); // New instance
+```
+
+**Example - With scopes:**
+
+```dart
+// Base scope lazy singletons
+getIt.registerLazySingleton<GlobalCache>(() => GlobalCache());
+
+// Push scope and register more
+getIt.pushNewScope(scopeName: 'session');
+getIt.registerLazySingleton<SessionCache>(() => SessionCache());
+getIt.registerLazySingleton<UserState>(() => UserState());
+
+// Access them
+final globalCache = getIt<GlobalCache>();
+final sessionCache = getIt<SessionCache>();
+
+// Reset only current scope ('session')
+await getIt.resetLazySingletons();
+// GlobalCache NOT reset, SessionCache and UserState ARE reset
+
+// Reset all scopes
+await getIt.resetLazySingletons(inAllScopes: true);
+// Both GlobalCache and SessionCache are reset
+
+// Reset only specific scope
+await getIt.resetLazySingletons(onlyInScope: 'baseScope');
+// Only GlobalCache is reset
+```
+
+**Use cases:**
+- State reset between tests
+- User logout (clear session-specific lazy singletons)
+- Memory optimization (reset caches that can be recreated)
+- Scope-specific cleanup without popping the scope
+
+**Behavior:**
+- Only resets lazy singletons that have been **instantiated**
+- Uninstantiated lazy singletons are **not affected**
+- Regular singletons and factories are **not affected**
+- Supports both sync and async dispose functions
+
+---
+
+### Find All Instances by Type: `findAll<T>()`
+
+Find all registered instances that match a given type with powerful filtering and matching options.
+
+```dart
+List<T> findAll<T>({
+  bool includeSubtypes = true,
+  bool inAllScopes = false,
+  String? onlyInScope,
+  bool includeMatchedByRegistrationType = true,
+  bool includeMatchedByInstance = true,
+  bool instantiateLazySingletons = false,
+  bool callFactories = false,
+})
+```
+
+::: warning Performance Note
+Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear search through all registrations. Use sparingly in performance-critical code. Performance can be improved by limiting the search to a single scope using `onlyInScope`.
+:::
+
+**Parameters:**
+
+**Type Matching:**
+- `includeSubtypes` - If true (default), matches T and all subtypes; if false, matches only exact type T
+
+**Scope Control:**
+- `inAllScopes` - If true, searches all scopes (default: false, current scope only)
+- `onlyInScope` - Search only the named scope (takes precedence over `inAllScopes`)
+
+**Matching Strategy:**
+- `includeMatchedByRegistrationType` - Match by registered type (default: true)
+- `includeMatchedByInstance` - Match by actual instance type (default: true)
+
+**Side Effects:**
+- `instantiateLazySingletons` - Instantiate lazy singletons that match (default: false)
+- `callFactories` - Call factories that match to include their instances (default: false)
+
+**Example - Basic type matching:**
+
+```dart
+abstract class IOutput {
+  void write(String message);
+}
+
+class FileOutput implements IOutput {
+  @override
+  void write(String message) => File('log.txt').writeAsStringSync(message);
+}
+
+class ConsoleOutput implements IOutput {
+  @override
+  void write(String message) => print(message);
+}
+
+// Register different implementation types
+getIt.registerSingleton<FileOutput>(FileOutput());
+getIt.registerLazySingleton<ConsoleOutput>(() => ConsoleOutput());
+
+// Find by interface (registration type matching)
+final outputs = getIt.findAll<IOutput>();
+// Returns: [FileOutput] only (ConsoleOutput not instantiated yet)
+```
+
+**Example - Include lazy singletons:**
+
+```dart
+// Instantiate lazy singletons that match
+final all = getIt.findAll<IOutput>(
+  instantiateLazySingletons: true,
+);
+// Returns: [FileOutput, ConsoleOutput]
+// ConsoleOutput is now created and cached
+```
+
+**Example - Include factories:**
+
+```dart
+getIt.registerFactory<IOutput>(() => RemoteOutput());
+
+// Include factories by calling them
+final withFactories = getIt.findAll<IOutput>(
+  instantiateLazySingletons: true,
+  callFactories: true,
+);
+// Returns: [FileOutput, ConsoleOutput, RemoteOutput]
+// Each factory call creates a new instance
+```
+
+**Example - Exact type matching:**
+
+```dart
+class BaseLogger {}
+class FileLogger extends BaseLogger {}
+class ConsoleLogger extends BaseLogger {}
+
+getIt.registerSingleton<BaseLogger>(FileLogger());
+getIt.registerSingleton<BaseLogger>(ConsoleLogger());
+
+// Find subtypes (default)
+final allLoggers = getIt.findAll<BaseLogger>();
+// Returns: [FileLogger, ConsoleLogger]
+
+// Find exact type only
+final exactBase = getIt.findAll<BaseLogger>(
+  includeSubtypes: false,
+);
+// Returns: [] (no exact BaseLogger instances, only subtypes)
+```
+
+**Example - Instance vs Registration Type:**
+
+```dart
+// Register as FileOutput but it implements IOutput
+getIt.registerSingleton<FileOutput>(FileOutput());
+
+// Match by registration type
+final byRegistration = getIt.findAll<IOutput>(
+  includeMatchedByRegistrationType: true,
+  includeMatchedByInstance: false,
+);
+// Returns: [] (registered as FileOutput, not IOutput)
+
+// Match by instance type
+final byInstance = getIt.findAll<IOutput>(
+  includeMatchedByRegistrationType: false,
+  includeMatchedByInstance: true,
+);
+// Returns: [FileOutput] (instance implements IOutput)
+```
+
+**Example - Scope control:**
+
+```dart
+// Base scope
+getIt.registerSingleton<IOutput>(FileOutput());
+
+// Push scope
+getIt.pushNewScope(scopeName: 'session');
+getIt.registerSingleton<IOutput>(ConsoleOutput());
+
+// Current scope only (default)
+final current = getIt.findAll<IOutput>();
+// Returns: [ConsoleOutput]
+
+// All scopes
+final all = getIt.findAll<IOutput>(inAllScopes: true);
+// Returns: [ConsoleOutput, FileOutput]
+
+// Specific scope
+final base = getIt.findAll<IOutput>(onlyInScope: 'baseScope');
+// Returns: [FileOutput]
+```
+
+**Use cases:**
+- Find all implementations of a plugin interface
+- Collect all registered validators/processors
+- Runtime dependency graph visualization
+- Testing: verify all expected types are registered
+- Migration tools: find instances of deprecated types
+
+**Validation rules:**
+- `includeSubtypes=false` requires `includeMatchedByInstance=false`
+- `instantiateLazySingletons=true` requires `includeMatchedByRegistrationType=true`
+- `callFactories=true` requires `includeMatchedByRegistrationType=true`
+
+**Throws:**
+- `StateError` if `onlyInScope` doesn't exist
+- `ArgumentError` if validation rules are violated
 
 ---
 
