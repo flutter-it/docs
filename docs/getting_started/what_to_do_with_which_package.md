@@ -4,54 +4,196 @@ title: What to do with which package?
 
 # What to do with which package?
 
-The current packages of Flutter_it are designed to make it eassier to structure your Flutter applications. Most of them fall into the category that is often called "state management" or "dependency injection". We will have a closer look at the different packages and what they are good for.
+**flutter_it is a construction set** - each package solves a specific problem. Use one, combine several, or use them all together. This guide helps you choose the right tools for your needs.
 
-# Principles of good architecture 
+## Why these packages?
 
-This won't be a comprehensive guide on how to structure your Flutter application. But I will give you some principles that I think are important to keep in mind when developing Flutter applications. For a detailed discussion see my article https://blog.burkharts.net/practical-flutter-architecture
+Good Flutter architecture follows key principles: **separation of concerns**, **single source of truth**, and **testability**. The flutter_it packages help you implement these principles without the complexity of traditional frameworks.
 
-Here are some key principles that I think are important to keep in mind when developing Flutter applications:
+> 💡 **New to Flutter architecture?** [Jump to detailed architecture principles](#architecture-principles) to understand the foundation.
 
-## Separation of concerns
-Different parts of the application should be responsible for different things. 
-* For example, the UI should be responsible for displaying data, and the business logic should be responsible for handling the data. 
-* So its not a good idea to store your data inside your widgets. Especially not if that data is used in multiple places.
-* The same applies to the business logic. For example, if you have a function that is used in multiple places, you should not have multiple functions that do the same thing.
+![flutter_it Architecture](/images/architecture-diagram.svg?v=26)
 
-An approach that has been proven to work well is to split your application into multiple layers. 
+### Package Relationships
 
-* The UI layer is responsible for displaying the data.
-* The business logic layer is responsible for handling the data.
-* Servics layer is responsible to communicate with everything outside of your application. That can be a database, a web service, or device of the phone.
+![Package Relationships](/images/package-relationships.svg)
 
-When doing this you want to avoid that the different have strong dependencies on each other. It should be possible to change one part of the application without having to change the other parts. And to test each your business logic without the UI.
+---
 
-## Single source of truth
-There should be a single source of truth for the data that the application needs. For example, if you have a list of items, you should have a single list that contains all the items, and not have multiple lists that contain the same items.
+## Quick Decision Guide
 
-## Testability
-The application should be designed in a way that allows for easy testing. For example, if you have a list of items, you should be able to test the list component in isolation.
+| You need to... | Use this package |
+|----------------|------------------|
+| Access services/dependencies anywhere in your app | **get_it** |
+| Update UI automatically when data changes | **watch_it** (requires get_it) |
+| Handle async actions with loading/error states | **command_it** |
+| Transform, combine reactive data or use observable collections | **listen_it** |
 
+---
 
-# Problems that need to be solved
+## The Problems Each Package Solves
 
-If we want to follow the principles of good architecture, we need to solve some problems.
+### 🎯 get_it - Access anything, anywhere
 
-1. If we want to have a single source of truth, and not to store the data inside the UI, we need a way to access the data from the UI or how to access services from the business logic.
-2. If the date lives outside of the UI, how can the UI be updated when the data changes? 
-3. How can we avoid to manually implment common functionality like displaying a loading indicator, or showing an error message?
+**Problem**: How do I access services, business logic, and shared data without passing it through the widget tree?
 
-## get_it
-Will help you with 1. [get_it](/documentation/get_it/getting_started) is a service locator that allows you to register objects and access them from anywhere in your application. Additionally it offers functionality to ensure that all your objects are ready to be used when you need them.
+**Solution**: Service locator pattern - register once, access anywhere without BuildContext.
 
-## watch_it
-Will help you with 2. [watch_it](/documentation/watch_it/watch_it) is a library that allows you to watch a value and automatically rebuild your Widgets when the value changes. It can access data registered inside get_it.
+**Use when**:
+- You need dependency injection without the widget tree
+- You want to share services across your app
+- You need control over object lifecycle (singletons, factories, scopes)
+- You want to test your business logic independently
 
-## command_it
-Will help you with 3. command_it is a library that allows you to implement the command pattern in your application. It encapsulates logic for loading state, enabling/diabling commands, and sophisticated error handling. A command can be observed with watch_it so that your UI can react to state changes of the command.
+**Example use case**: Accessing an API service from anywhere in your app.
 
-## listen_it
-Allows you to logically combine multiple ValueListenables into a single ValueListenable. It also contains a `listen()` extension method to add and remove listeners from a ValueListenable like you would do with a Stream. 
+![get_it Data Flow](/images/get-it-flow.svg?v=2)
+
+[Get started with get_it →](/documentation/get_it/getting_started)
+
+---
+
+### 👁️ watch_it - Reactive UI updates
+
+**Problem**: How do I update my UI when data changes without setState() or complex state management?
+
+**Solution**: Watch ValueListenable/ChangeNotifier and rebuild automatically - you'll almost never need StatefulWidget again.
+
+**Use when**:
+- You want automatic UI updates on data changes
+- You want to eliminate StatefulWidget and setState() boilerplate
+- You need fine-grained rebuilds (only affected widgets)
+- You're tired of manually managing subscriptions
+
+**Example use case**: A counter widget that rebuilds when the count changes.
+
+**Requires**: get_it for service location
+
+![watch_it Data Flow](/images/watch-it-flow.svg)
+
+[Get started with watch_it →](/documentation/watch_it/getting_started)
+
+---
+
+### ✋ command_it - Smart action encapsulation
+
+**Problem**: How do I handle async operations with loading states, errors, and enable/disable logic without repetitive boilerplate?
+
+**Solution**: Command pattern with built-in state management - handle exceptions the smart way.
+
+**Use when**:
+- You have async operations (API calls, database operations)
+- You need loading indicators and error handling
+- You want to enable/disable actions based on conditions
+- You want reusable, testable action logic
+
+**Example use case**: A save button that shows loading state, handles errors, and can be disabled.
+
+![command_it Data Flow](/images/command-it-flow.svg)
+
+[Get started with command_it →](/documentation/command_it/getting_started)
+
+---
+
+### 👂 listen_it - Reactive primitives
+
+**Problem**: How do I transform, combine, filter reactive data? How do I make collections observable?
+
+**Solution**: RxDart-like operators for ValueNotifier that are easy to understand, plus reactive collections (ListNotifier, MapNotifier, SetNotifier).
+
+**Use when**:
+- You need to transform ValueListenable data (map, where, debounce)
+- You need to combine multiple ValueListenables into one
+- You want observable Lists, Maps, or Sets that notify on changes
+- You need reactive data pipelines without RxDart complexity
+
+**Example use case**: Debouncing search input, or a shopping cart that notifies on item changes.
+
+![listen_it Data Flow](/images/listen-it-flow.svg)
+
+[Get started with listen_it →](/documentation/listen_it/listen_it)
+
+---
+
+## Common Package Combinations
+
+### Minimal Setup: get_it + watch_it
+Perfect for apps that need dependency injection and reactive UI. Covers 90% of typical app needs.
+
+**Example**: Most CRUD apps, dashboard apps, form-heavy apps.
+
+### Full Stack: All 4 packages
+Complete reactive architecture with dependency injection, reactive UI, command pattern, and data transformations.
+
+**Example**: Complex apps with API integration, real-time updates, and sophisticated state transformations.
+
+### Standalone Use Cases
+
+Each package works independently:
+
+- **Just get_it**: Simple dependency injection without reactivity
+- **Just listen_it**: Reactive operators/collections without dependency injection
+- **Just command_it**: Command pattern for encapsulating actions
+
+---
+
+## Architecture Principles
+
+### Why separate your code into layers?
+
+flutter_it packages enable clean architecture by solving specific problems that arise when you separate concerns:
+
+**The Goal**: Keep business logic separate from UI, maintain a single source of truth, make everything testable.
+
+**The Challenge**: Once you move data out of widgets, you need:
+1. A way to access that data from anywhere → **get_it** solves this
+2. A way to update UI when data changes → **watch_it** solves this
+3. A way to handle async operations cleanly → **command_it** solves this
+4. A way to transform and combine reactive data → **listen_it** solves this
+
+### Separation of concerns
+
+Different parts of your application should have different responsibilities:
+
+- **UI layer**: Displays data and handles user interactions
+- **Business logic layer**: Processes data and implements app rules
+- **Services layer**: Communicates with external systems (APIs, databases, device features)
+
+By separating these layers, you can:
+- Change one part without affecting others
+- Test business logic without UI
+- Reuse logic across different screens
+
+### Single source of truth
+
+Each piece of data should live in exactly one place. If you have a list of users, there should be one list, not multiple copies across different widgets.
+
+Benefits:
+- Data stays consistent across your app
+- Updates happen in one place
+- Easier to debug and maintain
+
+### Testability
+
+Your app should be designed for easy testing:
+- Business logic can be tested without Flutter widgets
+- Services can be mocked for unit tests
+- UI can be tested independently with test data
+
+**For a comprehensive discussion**, see [Practical Flutter Architecture](https://blog.burkharts.net/practical-flutter-architecture).
+
+---
+
+## Next Steps
+
+**Ready to start?** Pick your first package:
+
+- [Get started with get_it →](/documentation/get_it/getting_started)
+- [Get started with watch_it →](/documentation/watch_it/getting_started)
+- [Get started with command_it →](/documentation/command_it/getting_started)
+- [Get started with listen_it →](/documentation/listen_it/listen_it)
+
+**Not sure yet?** Check out [real-world examples](/examples/overview) to see the packages in action. 
 
 
 

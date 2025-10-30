@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <!-- Title -->
+  <text x="300" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#333">Package Relationships</text>
+
+  <!-- Independent Packages Section -->
+  <text x="300" y="65" text-anchor="middle" font-size="14" fill="#666">Independent Packages</text>
+
+  <!-- get_it box -->
+  <rect x="50" y="80" width="180" height="100" rx="8" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
+  <text x="140" y="115" text-anchor="middle" font-size="16" font-weight="bold" fill="white">🎯 get_it</text>
+  <text x="140" y="140" text-anchor="middle" font-size="13" fill="white">Service Locator</text>
+
+  <!-- listen_it box -->
+  <rect x="370" y="80" width="180" height="100" rx="8" fill="#9C27B0" stroke="#6A1B9A" stroke-width="2"/>
+  <text x="460" y="115" text-anchor="middle" font-size="16" font-weight="bold" fill="white">👂 listen_it</text>
+  <text x="460" y="140" text-anchor="middle" font-size="13" fill="white">Operators &</text>
+  <text x="460" y="160" text-anchor="middle" font-size="13" fill="white">Collections</text>
+
+  <!-- Dependent Packages Section -->
+  <text x="300" y="225" text-anchor="middle" font-size="14" fill="#666">Packages that depend on get_it</text>
+
+  <!-- watch_it box -->
+  <rect x="50" y="240" width="180" height="100" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/>
+  <text x="140" y="275" text-anchor="middle" font-size="16" font-weight="bold" fill="white">👁️ watch_it</text>
+  <text x="140" y="300" text-anchor="middle" font-size="13" fill="white">Reactive UI</text>
+
+  <!-- command_it box -->
+  <rect x="370" y="240" width="180" height="100" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/>
+  <text x="460" y="275" text-anchor="middle" font-size="16" font-weight="bold" fill="white">✋ command_it</text>
+  <text x="460" y="300" text-anchor="middle" font-size="13" fill="white">Commands</text>
+
+  <!-- Arrows -->
+  <!-- get_it to watch_it (solid, required) -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333"/>
+    </marker>
+    <marker id="arrowhead-dashed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666"/>
+    </marker>
+  </defs>
+
+  <line x1="140" y1="180" x2="140" y2="240" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="150" y="210" font-size="12" fill="#333" font-style="italic">required</text>
+
+  <!-- get_it to command_it (dashed, optional) -->
+  <path d="M 230 130 Q 300 180 370 270" stroke="#666" stroke-width="2" stroke-dasharray="5,5" fill="none" marker-end="url(#arrowhead-dashed)"/>
+  <text x="270" y="200" font-size="12" fill="#666" font-style="italic">optional</text>
+</svg>

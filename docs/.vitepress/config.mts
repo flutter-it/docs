@@ -4,10 +4,10 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "flutter_it",
   description: "Build reactive Flutter apps the easy way - no codegen, no boilerplate, just code",
-  
+
   // Ensure proper file handling
   cleanUrls: true,
-  
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
