@@ -102,13 +102,6 @@ tearDown(() async {
 });
 ```
 
-### ❌ When NOT to Use Scopes
-
-- **Widget-specific state** → Use watch_it's `pushScope` instead
-- **Temporary values** → Use function parameters
-- **UI state** → Use StatefulWidget or watch_it
-- **Navigation state** → Use Navigator or router
-
 ---
 
 ## Creating and Managing Scopes
