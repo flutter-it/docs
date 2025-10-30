@@ -59,9 +59,14 @@ class DetailService {
   final String itemId;
   String? data;
 
-  DetailService(this.itemId);
+  DetailService(this.itemId) {
+    // Trigger async loading in constructor (fire and forget)
+    _loadData();
+  }
 
-  Future<void> loadData() async {
+  Future<void> _loadData() async {
+    if (data != null) return; // Already loaded
+
     print('Loading data for $itemId from backend...');
     // Simulate backend call
     await Future.delayed(Duration(seconds: 1));
@@ -83,31 +88,18 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   late DetailService _service;
-  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _initService();
-  }
 
-  void _initService() {
     // Register or get existing - increments reference count
-    // Service created synchronously
+    // Service created synchronously, constructor triggers async loading
     _service = getIt.registerSingletonIfAbsent<DetailService>(
       () => DetailService(widget.itemId),
       instanceName: widget.itemId,
       dispose: (service) => service.dispose(),
     );
-
-    // Trigger async load if not already loaded
-    if (_service.data == null) {
-      _service.loadData().then((_) {
-        setState(() => _isLoading = false);
-      });
-    } else {
-      _isLoading = false;
-    }
   }
 
   @override
@@ -119,27 +111,29 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) return Scaffold(body: CircularProgressIndicator());
-
+    // Note: In production, use watch_it to reactively rebuild when service state changes
+    // For simplicity, this example shows basic pattern
     return Scaffold(
       appBar: AppBar(title: Text('Detail ${widget.itemId}')),
-      body: Column(
-        children: [
-          Text(_service.data ?? 'No data'),
-          ElevatedButton(
-            onPressed: () {
-              // Can push same page recursively
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => DetailPage('related-${widget.itemId}'),
+      body: _service.data == null
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Text(_service.data!),
+                ElevatedButton(
+                  onPressed: () {
+                    // Can push same page recursively
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => DetailPage('related-${widget.itemId}'),
+                      ),
+                    );
+                  },
+                  child: Text('View Related'),
                 ),
-              );
-            },
-            child: Text('View Related'),
-          ),
-        ],
-      ),
+              ],
+            ),
     );
   }
 }
