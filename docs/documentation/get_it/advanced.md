@@ -23,16 +23,16 @@ Reference counting helps manage singleton lifecycle when multiple consumers migh
 
 ### The Problem
 
-Imagine a page that registers a service when pushed, but this page can be pushed recursively (e.g., showing details of related items):
+Imagine a social network app where users can view profiles recursively by navigating through followers and followings:
 
 ```
-Home → DetailPage(item1) → DetailPage(item2) → DetailPage(item3)
+Home → Profile(alice) → Profile(bob) → Profile(charlie) → Profile(alice) again
 ```
 
 Without reference counting:
-- First DetailPage registers `DetailService`
-- Second DetailPage tries to register → Error or overwrite
-- First DetailPage pops, disposes service → Breaks remaining pages
+- Opening Profile(alice) first time: loads from backend, registers User object
+- Opening Profile(alice) second time: either error, overwrite, or reload from backend
+- Closing first Profile(alice): disposes User object → Breaks second Profile(alice) still open
 
 ### The Solution: `registerSingletonIfAbsent` and `releaseInstance`
 
@@ -47,64 +47,90 @@ void releaseInstance(Object instance)
 ```
 
 **How it works:**
-1. First call: Registers singleton and sets reference count to 1
-2. Subsequent calls: Returns existing instance and increments counter
+1. First call: Loads user from backend, registers with username, sets reference count to 1
+2. Subsequent calls for same user: Returns cached instance, increments counter (no backend call!)
 3. `releaseInstance`: Decrements counter
-4. When counter reaches 0: Unregisters and disposes
+4. When counter reaches 0: Unregisters and disposes user object
 
-### Recursive Navigation Example
+### Social Network Profile Example
 
 ```dart
-class DetailPage extends StatefulWidget {
-  final String itemId;
-  DetailPage(this.itemId);
+class UserProfilePage extends StatefulWidget {
+  final String username;
+  const UserProfilePage({required this.username});
 
   @override
-  State<DetailPage> createState() => _DetailPageState();
+  State<UserProfilePage> createState() => _UserProfilePageState();
 }
 
-class _DetailPageState extends State<DetailPage> {
-  late DetailService _service;
+class _UserProfilePageState extends State<UserProfilePage> {
+  late User _user;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _loadUser();
+  }
 
+  Future<void> _loadUser() async {
     // Register or get existing - increments reference count
-    _service = getIt.registerSingletonIfAbsent<DetailService>(
-      () => DetailService(),
-      dispose: (service) => service.cleanup(),
+    _user = getIt.registerSingletonIfAbsent<User>(
+      () {
+        // Only called if user not already cached
+        // Load from backend and return
+        return _loadUserFromBackend(widget.username);
+      },
+      instanceName: widget.username, // Use username as unique identifier
+      dispose: (user) {
+        print('User ${user.username} removed from cache');
+      },
     );
 
-    _service.loadDetails(widget.itemId);
+    // If user was already cached, this returns immediately
+    // If just loaded, _user contains the loaded data
+    setState(() => _isLoading = false);
+  }
+
+  Future<User> _loadUserFromBackend(String username) async {
+    print('Loading $username from backend...');
+    final response = await api.getUser(username);
+    return User.fromJson(response);
   }
 
   @override
   void dispose() {
     // Decrements reference count, disposes only when reaching 0
-    getIt.releaseInstance(_service);
+    getIt.releaseInstance(_user);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) return CircularProgressIndicator();
+
     return Scaffold(
-      appBar: AppBar(title: Text('Detail ${widget.itemId}')),
+      appBar: AppBar(title: Text(_user.username)),
       body: Column(
         children: [
-          Text(_service.data),
-          ElevatedButton(
-            onPressed: () {
-              // Can push same page recursively
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => DetailPage('related-item'),
-                ),
-              );
-            },
-            child: Text('View Related'),
-          ),
+          Text('${_user.name} (@${_user.username})'),
+          Text('${_user.followerCount} followers'),
+
+          // Navigate to follower's profile
+          ...(_user.followers.map((followerUsername) =>
+            ListTile(
+              title: Text(followerUsername),
+              onTap: () {
+                // Can recursively open same user's profile
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => UserProfilePage(username: followerUsername),
+                  ),
+                );
+              },
+            )
+          )),
         ],
       ),
     );
@@ -114,13 +140,19 @@ class _DetailPageState extends State<DetailPage> {
 
 **Flow:**
 ```
-Push DetailPage(1)   → register, refCount = 1
-  Push DetailPage(2) → get existing, refCount = 2
-    Push DetailPage(3) → get existing, refCount = 3
-    Pop DetailPage(3)  → release, refCount = 2 (service stays)
-  Pop DetailPage(2)    → release, refCount = 1 (service stays)
-Pop DetailPage(1)      → release, refCount = 0 (service disposed)
+Open Profile(alice)     → Load from backend, register, refCount = 1
+  Open Profile(bob)     → Load from backend, register, refCount = 1
+    Open Profile(alice) → Get cached (NO backend call!), refCount = 2
+    Close Profile(alice)→ Release, refCount = 1 (alice stays cached)
+  Close Profile(bob)    → Release, refCount = 0 (bob disposed)
+Close Profile(alice)    → Release, refCount = 0 (alice disposed)
 ```
+
+**Benefits:**
+- ✅ No duplicate backend calls for same user
+- ✅ Automatic memory management (users removed when no longer viewed)
+- ✅ Handles circular navigation (alice → bob → alice)
+- ✅ Each username uniquely identified via `instanceName`
 
 ### Nested Scope Example
 
