@@ -81,43 +81,31 @@ class DetailService extends ChangeNotifier {
   }
 }
 
-class DetailPage extends WatchingStatefulWidget {
+class DetailPage extends WatchingWidget {
   final String itemId;
   const DetailPage(this.itemId);
 
   @override
-  State<DetailPage> createState() => _DetailPageState();
-}
-
-class _DetailPageState extends State<DetailPage> {
-  late DetailService _service;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Register or get existing - increments reference count
-    // Service created synchronously, constructor triggers async loading
-    _service = getIt.registerSingletonIfAbsent<DetailService>(
-      () => DetailService(widget.itemId),
-      instanceName: widget.itemId,
-    );
-  }
-
-  @override
-  void dispose() {
-    // Decrements reference count, disposes only when reaching 0
-    getIt.releaseInstance(_service);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Register once when widget is created - increments reference count
+    // Service created synchronously, constructor triggers async loading
+    callOnce(() {
+      getIt.registerSingletonIfAbsent<DetailService>(
+        () => DetailService(itemId),
+        instanceName: itemId,
+      );
+    });
+
+    // Register disposal handler - decrements reference count when widget disposes
+    registerHandler(() {
+      getIt.releaseInstance(getIt<DetailService>(instanceName: itemId));
+    });
+
     // Watch the service - rebuilds when notifyListeners() called
-    final service = watchIt<DetailService>(instanceName: widget.itemId);
+    final service = watchIt<DetailService>(instanceName: itemId);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Detail ${widget.itemId}')),
+      appBar: AppBar(title: Text('Detail $itemId')),
       body: service.isLoading
           ? Center(child: CircularProgressIndicator())
           : Column(
@@ -129,7 +117,7 @@ class _DetailPageState extends State<DetailPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => DetailPage('related-${widget.itemId}'),
+                        builder: (_) => DetailPage('related-$itemId'),
                       ),
                     );
                   },
