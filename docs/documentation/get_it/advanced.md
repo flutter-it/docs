@@ -91,9 +91,9 @@ class _DetailPageState extends State<DetailPage> {
     _initService();
   }
 
-  Future<void> _initService() async {
+  void _initService() {
     // Register or get existing - increments reference count
-    // Service created synchronously, then async loaded
+    // Service created synchronously
     _service = getIt.registerSingletonIfAbsent<DetailService>(
       () => DetailService(widget.itemId),
       instanceName: widget.itemId,
@@ -102,10 +102,12 @@ class _DetailPageState extends State<DetailPage> {
 
     // Trigger async load if not already loaded
     if (_service.data == null) {
-      await _service.loadData();
+      _service.loadData().then((_) {
+        setState(() => _isLoading = false);
+      });
+    } else {
+      _isLoading = false;
     }
-
-    setState(() => _isLoading = false);
   }
 
   @override
