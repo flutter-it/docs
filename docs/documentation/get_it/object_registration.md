@@ -58,6 +58,100 @@ When accessing these factories you pass the parameters a optional arguments to `
 
 These parameters are passed as `dynamics` (otherwise I would have had to add more generic parameters to `get()`), but they are checked at runtime to be the correct types.
 
+### Cached Factories
+
+Cached factories are a **performance optimization** that sits between regular factories and singletons. They create a new instance on first call but cache it with a weak reference, returning the cached instance if it hasn't been garbage collected yet.
+
+```dart
+void registerCachedFactory<T>(FactoryFunc<T> func)
+void registerCachedFactoryParam<T, P1, P2>(FactoryFuncParam<T, P1, P2> func)
+void registerCachedFactoryAsync<T>(FactoryFuncAsync<T> func)
+void registerCachedFactoryParamAsync<T, P1, P2>(FactoryFuncParamAsync<T, P1, P2> func)
+```
+
+**How it works:**
+1. First call: Creates new instance (like factory)
+2. Subsequent calls: Returns cached instance if still in memory (like singleton)
+3. If garbage collected: Creates new instance again (like factory)
+4. For param versions: Also checks if parameters match before reusing
+
+**Example:**
+
+```dart
+// Register a cached factory
+getIt.registerCachedFactory<HeavyParser>(() => HeavyParser());
+
+// First call - creates instance
+final parser1 = getIt<HeavyParser>(); // New instance created
+
+// Second call - reuses if not garbage collected
+final parser2 = getIt<HeavyParser>(); // Same instance (if still in memory)
+
+// After garbage collection (no references held)
+final parser3 = getIt<HeavyParser>(); // New instance created
+```
+
+**With parameters:**
+
+```dart
+getIt.registerCachedFactoryParam<ImageProcessor, int, int>(
+  (width, height) => ImageProcessor(width, height),
+);
+
+// Creates new instance
+final processor1 = getIt<ImageProcessor>(param1: 1920, param2: 1080);
+
+// Reuses same instance (same parameters)
+final processor2 = getIt<ImageProcessor>(param1: 1920, param2: 1080);
+
+// Creates NEW instance (different parameters)
+final processor3 = getIt<ImageProcessor>(param1: 3840, param2: 2160);
+```
+
+**When to use cached factories:**
+
+✅ **Good use cases:**
+- **Heavy objects recreated frequently**: Parsers, formatters, calculators
+- **Memory-sensitive scenarios**: Want automatic cleanup but prefer reuse
+- **Objects with expensive initialization**: Database connections, file readers
+- **Short-to-medium lifetime objects**: Active for a while but not forever
+
+❌ **Don't use when:**
+- Object should always be new (use regular factory)
+- Object should live forever (use singleton/lazy singleton)
+- Object holds critical state that must not be reused
+
+**Performance characteristics:**
+
+| Type | Creation Cost | Memory | Reuse |
+|------|---------------|--------|-------|
+| Factory | Every call | Low (immediate GC) | Never |
+| **Cached Factory** | First call + after GC | Medium (weak ref) | While in memory |
+| Lazy Singleton | First call only | High (permanent) | Always |
+
+**Comparison example:**
+
+```dart
+// Factory - always new, immediate cleanup
+getIt.registerFactory<JsonParser>(() => JsonParser());
+final p1 = getIt<JsonParser>(); // Creates instance 1
+final p2 = getIt<JsonParser>(); // Creates instance 2 (different)
+
+// Cached Factory - reuses if possible
+getIt.registerCachedFactory<JsonParser>(() => JsonParser());
+final p3 = getIt<JsonParser>(); // Creates instance 3
+final p4 = getIt<JsonParser>(); // Returns instance 3 (if not GC'd)
+
+// Lazy Singleton - reuses forever
+getIt.registerLazySingleton<JsonParser>(() => JsonParser());
+final p5 = getIt<JsonParser>(); // Creates instance 4
+final p6 = getIt<JsonParser>(); // Returns instance 4 (always)
+```
+
+::: tip Memory Management
+Cached factories use **weak references**, meaning the cached instance can be garbage collected when no other part of your code holds a reference to it. This provides automatic memory management while still benefiting from reuse.
+:::
+
 #### Singleton & LazySingleton
 
 > Although I always would recommend using an abstract base class as a registration type so that you can vary the implementations you don't have to do this. You can also register concrete types.

@@ -172,6 +172,9 @@ await getIt.pushNewScopeAsync(
 For services with async initialization that **depend on each other**, use `registerSingletonAsync` with the `dependsOn` parameter instead. See [Async Objects documentation](/documentation/get_it/async_objects) for details.
 :::
 
+---
+
+## Advanced Scope Features
 
 ### Final Scopes (Preventing Accidental Registrations)
 
@@ -194,10 +197,6 @@ getIt.pushNewScope(
 **Use when:**
 - Building plugin systems where scope setup must be atomic
 - Preventing accidental registration after scope initialization
-
----
-
-## Advanced Scope Features
 
 ### Cross-Scope Queries
 
