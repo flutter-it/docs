@@ -74,28 +74,36 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Future<void> _loadUser() async {
-    // Register or get existing - increments reference count
+    // Load data only if not already cached
+    Map<String, dynamic>? userData;
+    if (!getIt.isRegistered<User>(instanceName: widget.username)) {
+      userData = await _loadUserFromBackend(widget.username);
+    }
+
+    // registerSingletonIfAbsent handles both cases:
+    // - If not registered: calls factory, registers, sets refCount = 1
+    // - If registered: returns existing, increments refCount, factory not called
     _user = getIt.registerSingletonIfAbsent<User>(
       () {
-        // Only called if user not already cached
-        // Load from backend and return
-        return _loadUserFromBackend(widget.username);
+        // Only called if user not already registered
+        if (userData == null) {
+          throw StateError('userData should be loaded');
+        }
+        return User.fromData(userData);
       },
-      instanceName: widget.username, // Use username as unique identifier
+      instanceName: widget.username,
       dispose: (user) {
         print('User ${user.username} removed from cache');
       },
     );
 
-    // If user was already cached, this returns immediately
-    // If just loaded, _user contains the loaded data
     setState(() => _isLoading = false);
   }
 
-  Future<User> _loadUserFromBackend(String username) async {
+  Future<Map<String, dynamic>> _loadUserFromBackend(String username) async {
     print('Loading $username from backend...');
     final response = await api.getUser(username);
-    return User.fromJson(response);
+    return response;
   }
 
   @override
