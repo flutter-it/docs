@@ -87,19 +87,20 @@ class DetailPage extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Register once when widget is created - increments reference count
-    // Service created synchronously, constructor triggers async loading
-    callOnce(() {
-      getIt.registerSingletonIfAbsent<DetailService>(
-        () => DetailService(itemId),
-        instanceName: itemId,
-      );
-    });
-
-    // Register disposal handler - decrements reference count when widget disposes
-    registerHandler(() {
-      getIt.releaseInstance(getIt<DetailService>(instanceName: itemId));
-    });
+    // Register once when widget is created, dispose when widget is disposed
+    callOnce(
+      () {
+        // Register or get existing - increments reference count
+        getIt.registerSingletonIfAbsent<DetailService>(
+          () => DetailService(itemId),
+          instanceName: itemId,
+        );
+      },
+      dispose: () {
+        // Decrements reference count when widget disposes
+        getIt.releaseInstance(getIt<DetailService>(instanceName: itemId));
+      },
+    );
 
     // Watch the service - rebuilds when notifyListeners() called
     final service = watchIt<DetailService>(instanceName: itemId);
