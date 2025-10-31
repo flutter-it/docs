@@ -4,6 +4,15 @@ analyzer:
   exclude:
     # Signature files - intentionally incomplete API documentation
     - lib/get_it/*_signature.dart
+    # Additional signature files (missing_function_body ignore comment)
+    - lib/get_it/code_sample_12625bd9.dart
+    - lib/get_it/code_sample_30935190.dart
+    - lib/get_it/code_sample_32653109.dart
+    - lib/get_it/code_sample_3c73f756.dart
+    - lib/get_it/code_sample_3ddc0f1f.dart
+    - lib/get_it/code_sample_773e24bb.dart
+    - lib/get_it/code_sample_f4194899.dart
+    - lib/get_it/code_sample_fdab4a35.dart
 
   errors:
     # Be strict about actual errors
