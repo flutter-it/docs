@@ -6,11 +6,12 @@ final getIt = GetIt.instance;
 
 void main() async {
   // #region example
-void configureDependencies() {
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt(), getIt()));
-  // ... 50 more registrations
-}
+  void configureDependencies() {
+    getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+    getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+    getIt.registerLazySingleton<UserRepository>(
+        () => UserRepository(getIt(), getIt()));
+    // ... 50 more registrations
+  }
 // #endregion example
 }

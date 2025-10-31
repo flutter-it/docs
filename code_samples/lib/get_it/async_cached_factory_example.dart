@@ -20,6 +20,7 @@ void main() async {
   // While still in memory - returns cached instance
   final resource2 = await getIt.getAsync<HeavyResource>();
 
-  print('resource1 == resource2: ${identical(resource1, resource2)}'); // true - same instance
+  print(
+      'resource1 == resource2: ${identical(resource1, resource2)}'); // true - same instance
 }
 // #endregion example

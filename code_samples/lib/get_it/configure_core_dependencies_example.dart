@@ -15,7 +15,8 @@ void configureAuthDependencies() {
     scopeName: 'authenticated',
     init: (scope) {
       scope.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-      scope.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
+      scope
+          .registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
     },
   );
 }
@@ -25,7 +26,8 @@ void configureShopDependencies() {
     scopeName: 'shopping',
     init: (scope) {
       scope.registerLazySingleton<CartService>(() => CartService(getIt()));
-      scope.registerLazySingleton<OrderRepository>(() => OrderRepository(getIt()));
+      scope.registerLazySingleton<OrderRepository>(
+          () => OrderRepository(getIt()));
     },
   );
 }

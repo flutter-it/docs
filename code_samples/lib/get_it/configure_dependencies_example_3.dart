@@ -22,7 +22,8 @@ void _registerDataServices() {
 
 void _registerBusinessLogic() {
   getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt(), getIt()));
+  getIt.registerLazySingleton<UserRepository>(
+      () => UserRepository(getIt(), getIt()));
 }
 // #endregion example
 

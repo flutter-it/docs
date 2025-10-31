@@ -189,7 +189,7 @@ abstract class IAuthService {}
 /// Authentication service stub
 class AuthService extends ChangeNotifier implements IAuthService {
   AuthService._();
-  AuthService([dynamic dep]);  // Public unnamed constructor for examples
+  AuthService([dynamic dep]); // Public unnamed constructor for examples
 
   static Future<AuthService> init() async {
     await Future.delayed(const Duration(milliseconds: 10));
@@ -783,7 +783,6 @@ class LoggingPlugin extends AppPlugin {
     return LoggingPlugin();
   }
 }
-
 
 /// Additional missing classes
 class ShoppingCart {

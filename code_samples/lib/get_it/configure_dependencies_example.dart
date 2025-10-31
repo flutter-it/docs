@@ -6,7 +6,6 @@ final getIt = GetIt.instance;
 // #region example
 // lib/service_locator.dart
 
-
 void configureDependencies() {
   // Register your services
   getIt.registerLazySingleton<ApiClient>(() => ApiClient());
