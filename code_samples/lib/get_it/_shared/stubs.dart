@@ -244,6 +244,9 @@ class Logger {
 /// Mock API client stub (for testing/conditional init)
 class MockApiClient extends ApiClient {
   MockApiClient() : super('http://localhost:3000');
+
+  bool isAuthenticated = false;
+  Future<List<String>> fetchData() async => ['mock data'];
 }
 
 /// Application model stub
@@ -565,7 +568,17 @@ void setUpAll(Function() callback) {}
 void test(String description, Function() callback) {}
 void expect(dynamic actual, dynamic matcher) {}
 void verify(dynamic mock) {}
-T when<T>(T methodCall) => methodCall;
+
+/// Mocking framework helper
+class MockWhen<T> {
+  final T value;
+  MockWhen(this.value);
+
+  void thenReturn(dynamic returnValue) {}
+  void thenAnswer(dynamic callback) {}
+}
+
+MockWhen<T> when<T>(T methodCall) => MockWhen<T>(methodCall);
 
 class MockDatabase extends Database {}
 
@@ -755,6 +768,11 @@ class ShoppingCartPlugin extends AppPlugin {
 class PaymentPlugin extends AppPlugin {
   @override
   String get name => 'PaymentPlugin';
+}
+
+class DebugPlugin extends AppPlugin {
+  @override
+  String get name => 'DebugPlugin';
 }
 
 /// ViewModel stubs
@@ -1037,4 +1055,9 @@ class MockAppModel {
 
 class MockDbService {
   Future<void> save(dynamic data) async {}
+}
+
+/// SyncService stub
+class SyncService {
+  SyncService(ApiClient api, Database db, AuthService auth);
 }

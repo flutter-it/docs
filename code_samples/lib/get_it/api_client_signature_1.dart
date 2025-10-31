@@ -5,7 +5,7 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() {
-  test('complex service uses all dependencies correctly', () {
+  test('complex service uses all dependencies correctly', () async {
     getIt.pushNewScope();
 
     // Mock all dependencies
