@@ -4,10 +4,10 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 void main() {
-  // #region example
+// #region example
   // All scopes
   final allPlugins = getIt.getAll<Plugin>(fromAllScopes: true);
-  print('allPlugins: $allPlugins');
   // Returns: [FeatureAPlugin, FeatureBPlugin, CorePlugin, LoggingPlugin]
-  // #endregion example
+// #endregion example
+  print('allPlugins: $allPlugins');
 }

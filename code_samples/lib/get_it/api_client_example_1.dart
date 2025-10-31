@@ -3,9 +3,9 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
-// Register multiple REST services with different configurations
+// #region example
+  // Register multiple REST services with different configurations
   getIt.registerSingleton<ApiClient>(
     ApiClient('https://api.example.com'),
     instanceName: 'mainApi',
@@ -16,10 +16,10 @@ void main() async {
     instanceName: 'analyticsApi',
   );
 
-// Access individually by name
+  // Access individually by name
   final mainApi = getIt<ApiClient>(instanceName: 'mainApi');
-  print('mainApi: $mainApi');
   final analyticsApi = getIt<ApiClient>(instanceName: 'analyticsApi');
+// #endregion example
+  print('mainApi: $mainApi');
   print('analyticsApi: $analyticsApi');
 }
-// #endregion example

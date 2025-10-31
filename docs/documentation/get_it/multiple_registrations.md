@@ -61,14 +61,6 @@ Named registration works with <strong>every</strong> registration method:
 
 ### Named Registration Use Cases
 
-<strong>Environment-specific configurations:</strong>
-
-<<< @/../code_samples/lib/get_it/setup_for_environment_example.dart#example
-
-<strong>Feature flags:</strong>
-
-<<< @/../code_samples/lib/get_it/setup_payment_processor_example.dart#example
-
 <strong>Multiple database connections:</strong>
 
 <<< @/../code_samples/lib/get_it/code_sample_41a16b51.dart#example
@@ -152,19 +144,19 @@ By default, searches only the <strong>current scope</strong>:
 
 <<< @/../code_samples/lib/get_it/plugin_3.dart#example
 
-### All Scopes
+::: details All Scopes
 
 To retrieve from <strong>all scopes</strong>, use `fromAllScopes: true`:
 
-
 <<< @/../code_samples/lib/get_it/code_sample_07af7c81.dart#example
+:::
 
-### Specific Named Scope
+::: details Specific Named Scope
 
 To search only a <strong>specific named scope</strong>, use `onlyInScope`:
 
-
 <<< @/../code_samples/lib/get_it/code_sample_e4fa6049.dart#example
+:::
 
 ::: tip Parameter Precedence
 If both `onlyInScope` and `fromAllScopes` are provided, `onlyInScope` takes precedence.
@@ -181,12 +173,12 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 
 <<< @/../code_samples/lib/get_it/code_sample_49d4b664.dart#example
 
-<strong>With scope control:</strong>
+::: details With scope control
 
 `getAllAsync()` supports the same scope parameters as `getAll()`:
 
-
 <<< @/../code_samples/lib/get_it/code_sample_2cd2b1b0.dart#example
+:::
 
 ---
 
@@ -197,20 +189,20 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 
 <<< @/../code_samples/lib/get_it/configure_dependencies_example_7.dart#example
 
-### Event Handlers / Observers
-
+::: details Event Handlers / Observers
 
 <<< @/../code_samples/lib/get_it/on_app_started_example.dart#example
+:::
 
-### Middleware / Validator Chains
-
+::: details Middleware / Validator Chains
 
 <<< @/../code_samples/lib/get_it/setup_middleware_example.dart#example
+:::
 
-### Combining Unnamed and Named Registrations
-
+::: details Combining Unnamed and Named Registrations
 
 <<< @/../code_samples/lib/get_it/setup_themes_example.dart#example
+:::
 
 ---
 
@@ -269,14 +261,13 @@ Named and unnamed registrations work together seamlessly:
 
 ---
 
-## How It Works
+::: details How It Works
 
 This section explains the internal implementation details. Understanding this is optional for using the feature.
 
-### Data Structure
+**Data Structure**
 
 get_it maintains two separate lists for each type:
-
 
 <<< @/../code_samples/lib/get_it/__type_registration_example.dart#example
 
@@ -284,31 +275,30 @@ When you call:
 - `getIt.registerSingleton<T>(instance)` → adds to `registrations` list
 - `getIt.registerSingleton<T>(instance, instanceName: 'name')` → adds to `namedRegistrations` map
 
-### Why `get<T>()` Returns First Only
+**Why `get<T>()` Returns First Only**
 
 The `get<T>()` method retrieves instances using this logic:
-
 
 <<< @/../code_samples/lib/get_it/code_sample_ba79068a.dart#example
 
 This is why `get<T>()` only returns the first unnamed registration, not all of them.
 
-### Why `getAll<T>()` Returns All
+**Why `getAll<T>()` Returns All**
 
 The `getAll<T>()` method combines both lists:
-
 
 <<< @/../code_samples/lib/get_it/code_sample_b1321fa0.dart#example
 
 This returns every registered instance, regardless of whether it has a name or not.
 
-### Order Preservation
+**Order Preservation**
 
 - <strong>Unnamed registrations</strong>: Preserved in registration order (`List`)
 - <strong>Named registrations</strong>: Preserved in registration order (`LinkedHashMap`)
 - <strong>`getAll()` order</strong>: Unnamed first (in order), then named (in order)
 
 This is important for middleware/observer patterns where execution order matters.
+:::
 
 ---
 

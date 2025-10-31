@@ -5,19 +5,21 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
-  void setupPaymentProcessor(bool useNewVersion) {
-    if (useNewVersion) {
-      getIt.registerSingleton<PaymentProcessor>(
-        StripePaymentProcessor(),
-        instanceName: 'payment',
-      );
-    } else {
-      getIt.registerSingleton<PaymentProcessor>(
-        LegacyPaymentProcessor(),
-        instanceName: 'payment',
-      );
-    }
+void setupPaymentProcessor(bool useNewVersion) {
+  if (useNewVersion) {
+    getIt.registerSingleton<PaymentProcessor>(
+      StripePaymentProcessor(),
+      instanceName: 'payment',
+    );
+  } else {
+    getIt.registerSingleton<PaymentProcessor>(
+      LegacyPaymentProcessor(),
+      instanceName: 'payment',
+    );
   }
 }
 // #endregion example
+
+void main() async {
+  setupPaymentProcessor(true);
+}

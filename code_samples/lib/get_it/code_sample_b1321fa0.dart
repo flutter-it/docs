@@ -3,12 +3,12 @@ import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
 void main() async {
-  // #region example
+// #region example
   final typeRegistration = TypeRegistration();
   final registrations = [
     ...typeRegistration.registrations, // ALL unnamed
     ...typeRegistration.namedRegistrations.values, // ALL named
   ];
+// #endregion example
   print('registrations: $registrations');
-  // #endregion example
 }

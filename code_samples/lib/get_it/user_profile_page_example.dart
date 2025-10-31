@@ -14,7 +14,7 @@ class UserProfilePage extends WatchingWidget {
   Widget build(BuildContext context) {
     // Automatically pushes scope when widget mounts
     // Automatically pops scope when widget disposes
-    pushScope(init: (_) {
+    pushScope(init: (getIt) {
       getIt.registerSingleton<ProfileController>(
         ProfileController(userId: userId),
       );

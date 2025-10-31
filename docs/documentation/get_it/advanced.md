@@ -3,13 +3,6 @@ title: Advanced
 ---
 
 # Advanced
-
-::: tip Named Registration
-Documentation for registering multiple instances with instance names has moved to the [Multiple Registrations](/documentation/get_it/multiple_registrations) chapter, which covers both named and unnamed multiple registration approaches.
-:::
-
----
-
 ## Implementing the `Disposable` Interface
 
 Instead of passing a disposing function on registration or when pushing a Scope from V7.0 on your objects `onDispose()` method will be called
@@ -18,7 +11,79 @@ if the object that you register implements the `Disposable` interface:
 
 <<< @/../code_samples/lib/get_it/disposable_example.dart#example
 
----
+## Find All Instances by Type: `findAll<T>()`
+
+Find all registered instances that match a given type with powerful filtering and matching options.
+
+
+<<< @/../code_samples/lib/get_it/code_sample_12625bd9_signature.dart#example
+
+::: warning Performance Note
+Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear search through all registrations. Use sparingly in performance-critical code. Performance can be improved by limiting the search to a single scope using `onlyInScope`.
+:::
+
+<strong>Parameters:</strong>
+
+<strong>Type Matching:</strong>
+- `includeSubtypes` - If true (default), matches T and all subtypes; if false, matches only exact type T
+
+<strong>Scope Control:</strong>
+- `inAllScopes` - If true, searches all scopes (default: false, current scope only)
+- `onlyInScope` - Search only the named scope (takes precedence over `inAllScopes`)
+
+<strong>Matching Strategy:</strong>
+- `includeMatchedByRegistrationType` - Match by registered type (default: true)
+- `includeMatchedByInstance` - Match by actual instance type (default: true)
+
+<strong>Side Effects:</strong>
+- `instantiateLazySingletons` - Instantiate lazy singletons that match (default: false)
+- `callFactories` - Call factories that match to include their instances (default: false)
+
+<strong>Example - Basic type matching:</strong>
+
+
+<<< @/../code_samples/lib/get_it/write_example.dart#example
+
+::: details Example - Include lazy singletons
+
+<<< @/../code_samples/lib/get_it/code_sample_4c9aa485.dart#example
+:::
+
+::: details Example - Include factories
+
+<<< @/../code_samples/lib/get_it/i_output_example.dart#example
+:::
+
+::: details Example - Exact type matching
+
+<<< @/../code_samples/lib/get_it/base_logger_example.dart#example
+:::
+
+::: details Example - Instance vs Registration Type
+
+<<< @/../code_samples/lib/get_it/file_output_example.dart#example
+:::
+
+::: details Example - Scope control
+
+<<< @/../code_samples/lib/get_it/i_output.dart#example
+:::
+
+<strong>Use cases:</strong>
+- Find all implementations of a plugin interface
+- Collect all registered validators/processors
+- Runtime dependency graph visualization
+- Testing: verify all expected types are registered
+- Migration tools: find instances of deprecated types
+
+<strong>Validation rules:</strong>
+- `includeSubtypes=false` requires `includeMatchedByInstance=false`
+- `instantiateLazySingletons=true` requires `includeMatchedByRegistrationType=true`
+- `callFactories=true` requires `includeMatchedByRegistrationType=true`
+
+<strong>Throws:</strong>
+- `StateError` if `onlyInScope` doesn't exist
+- `ArgumentError` if validation rules are violated
 
 ## Reference Counting
 
@@ -118,7 +183,7 @@ Only use `ignoreReferenceCount: true` when you're certain no other code is using
 Returns `null` instead of throwing an exception if the type is not registered. Useful for optional dependencies and feature flags.
 
 
-<<< @/../code_samples/lib/get_it/code_sample_fdab4a35_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_fdab4a35_signature.dart#example
 
 <strong>Example:</strong>
 
@@ -144,7 +209,7 @@ Returns `null` instead of throwing an exception if the type is not registered. U
 Rename a registered instance without unregistering and re-registering (avoids triggering dispose functions).
 
 
-<<< @/../code_samples/lib/get_it/code_sample_32653109_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_32653109_signature.dart#example
 
 <strong>Example:</strong>
 
@@ -168,7 +233,7 @@ Unlike `unregister()` + `register()`, this doesn't trigger dispose functions, pr
 Check if a lazy singleton has been instantiated yet (without triggering its creation).
 
 
-<<< @/../code_samples/lib/get_it/code_sample_3c73f756_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_3c73f756_signature.dart#example
 
 <strong>Example:</strong>
 
@@ -224,88 +289,12 @@ Reset all instantiated lazy singletons at once. This clears their instances so t
 
 ---
 
-### Find All Instances by Type: `findAll<T>()`
-
-Find all registered instances that match a given type with powerful filtering and matching options.
-
-
-<<< @/../code_samples/lib/get_it/code_sample_12625bd9_signature.dart
-
-::: warning Performance Note
-Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear search through all registrations. Use sparingly in performance-critical code. Performance can be improved by limiting the search to a single scope using `onlyInScope`.
-:::
-
-<strong>Parameters:</strong>
-
-<strong>Type Matching:</strong>
-- `includeSubtypes` - If true (default), matches T and all subtypes; if false, matches only exact type T
-
-<strong>Scope Control:</strong>
-- `inAllScopes` - If true, searches all scopes (default: false, current scope only)
-- `onlyInScope` - Search only the named scope (takes precedence over `inAllScopes`)
-
-<strong>Matching Strategy:</strong>
-- `includeMatchedByRegistrationType` - Match by registered type (default: true)
-- `includeMatchedByInstance` - Match by actual instance type (default: true)
-
-<strong>Side Effects:</strong>
-- `instantiateLazySingletons` - Instantiate lazy singletons that match (default: false)
-- `callFactories` - Call factories that match to include their instances (default: false)
-
-<strong>Example - Basic type matching:</strong>
-
-
-<<< @/../code_samples/lib/get_it/write_example.dart#example
-
-<strong>Example - Include lazy singletons:</strong>
-
-
-<<< @/../code_samples/lib/get_it/code_sample_4c9aa485.dart#example
-
-<strong>Example - Include factories:</strong>
-
-
-<<< @/../code_samples/lib/get_it/i_output_example.dart#example
-
-<strong>Example - Exact type matching:</strong>
-
-
-<<< @/../code_samples/lib/get_it/base_logger_example.dart#example
-
-<strong>Example - Instance vs Registration Type:</strong>
-
-
-<<< @/../code_samples/lib/get_it/file_output_example.dart#example
-
-<strong>Example - Scope control:</strong>
-
-
-<<< @/../code_samples/lib/get_it/i_output.dart#example
-
-<strong>Use cases:</strong>
-- Find all implementations of a plugin interface
-- Collect all registered validators/processors
-- Runtime dependency graph visualization
-- Testing: verify all expected types are registered
-- Migration tools: find instances of deprecated types
-
-<strong>Validation rules:</strong>
-- `includeSubtypes=false` requires `includeMatchedByInstance=false`
-- `instantiateLazySingletons=true` requires `includeMatchedByRegistrationType=true`
-- `callFactories=true` requires `includeMatchedByRegistrationType=true`
-
-<strong>Throws:</strong>
-- `StateError` if `onlyInScope` doesn't exist
-- `ArgumentError` if validation rules are violated
-
----
-
 ### Advanced Introspection: `findFirstObjectRegistration<T>()`
 
 Get metadata about a registration without retrieving the instance.
 
 
-<<< @/../code_samples/lib/get_it/code_sample_f4194899_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_f4194899_signature.dart#example
 
 <strong>Example:</strong>
 
@@ -335,6 +324,6 @@ While not recommended, you can create your own independent instance of `GetIt` i
 other package or because the physics of your planet demands it :-)
 
 
-<<< @/../code_samples/lib/get_it/code_sample_e7453700_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_e7453700_signature.dart#example
 
 This new instance does not share any registrations with the singleton instance.

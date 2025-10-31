@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+// #region example
   // Enable multiple unnamed registrations
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
@@ -16,11 +16,12 @@ void main() {
   getIt.registerSingleton<Plugin>(DebugPlugin(), instanceName: 'debug');
 
   // Get all including named
-  final all = getIt.getAll<Plugin>();
-  print('all: $all'); // [CorePlugin, LoggingPlugin, DebugPlugin]
+  final all =
+      getIt.getAll<Plugin>(); // [CorePlugin, LoggingPlugin, DebugPlugin]
 
   // Get specific named one
   final debug = getIt<Plugin>(instanceName: 'debug');
+// #endregion example
+  print('all: $all');
   print('debug: $debug');
 }
-// #endregion example

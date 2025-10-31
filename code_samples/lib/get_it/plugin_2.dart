@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+// #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   getIt.registerSingleton<Plugin>(CorePlugin());
@@ -12,7 +12,7 @@ void main() {
   getIt.registerSingleton<Plugin>(AnalyticsPlugin());
 
   final plugin = getIt<Plugin>();
-  print('plugin: $plugin');
   // Returns: CorePlugin (the first one only!)
-}
 // #endregion example
+  print('plugin: $plugin');
+}

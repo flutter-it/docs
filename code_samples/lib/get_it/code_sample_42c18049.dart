@@ -6,14 +6,16 @@ final getIt = GetIt.instance;
 
 void main() async {
   // #region example
-  const userId = "user123";
-// Register factory accepting two parameters
+  const userId = 'user-123';
+  const age = 25;
+
+  // Register factory accepting two parameters
   getIt.registerFactoryParam<UserViewModel, String, int>(
     (userId, age) => UserViewModel(userId, age: age),
   );
 
-// Access with parameters
-  final vm = getIt<UserViewModel>(param1: 'user-123', param2: 25);
-  print('vm: $vm');
+  // Access with parameters
+  final vm = getIt<UserViewModel>(param1: userId, param2: age);
   // #endregion example
+  print('vm: $vm');
 }

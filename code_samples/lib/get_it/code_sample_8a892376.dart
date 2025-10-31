@@ -5,13 +5,13 @@ final getIt = GetIt.instance;
 
 void main() async {
   // #region example
-// Register with one parameter (second type is void)
+  // Register with one parameter (second type is void)
   getIt.registerFactoryParam<ReportGenerator, String, void>(
     (reportType, _) => ReportGenerator(reportType),
   );
 
-// Access with one parameter
+  // Access with one parameter
   final report = getIt<ReportGenerator>(param1: 'sales');
-  print('report: $report');
   // #endregion example
+  print('report: $report');
 }

@@ -3,30 +3,30 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
-// Singleton
+// #region example
+  // Singleton
   getIt.registerSingleton<Logger>(
     FileLogger(),
     instanceName: 'fileLogger',
   );
 
-// Lazy Singleton
+  // Lazy Singleton
   getIt.registerLazySingleton<Cache>(
     () => MemoryCache(),
     instanceName: 'memory',
   );
 
-// Factory
+  // Factory
   getIt.registerFactory<Report>(
     () => DailyReport(),
     instanceName: 'daily',
   );
 
-// Async Singleton
+  // Async Singleton
   getIt.registerSingletonAsync<Database>(
     () async => Database.connect('prod'),
     instanceName: 'production',
   );
-}
 // #endregion example
+}

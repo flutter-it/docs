@@ -99,7 +99,11 @@ def extract_source_signatures(source_file: Path) -> Dict[str, MethodSignature]:
                 params_text = full_signature[paren_start + 1:k - 1]
 
             # Clean up the signature - remove implementation and keep only declaration
-            clean_sig = re.sub(r'\)\s*\{.*', ');', full_signature, flags=re.DOTALL)
+            # First handle => expression; pattern
+            clean_sig = re.sub(r'\)\s*=>.*?;', ');', full_signature, flags=re.DOTALL)
+            # Then handle { ... } blocks
+            clean_sig = re.sub(r'\)\s*\{.*', ');', clean_sig, flags=re.DOTALL)
+            # Finally handle remaining ; patterns
             clean_sig = re.sub(r'\)\s*;.*', ');', clean_sig, flags=re.DOTALL)
 
             signature = MethodSignature(
@@ -107,7 +111,7 @@ def extract_source_signatures(source_file: Path) -> Dict[str, MethodSignature]:
                 return_type=return_type,
                 generic_params=generic_params,
                 parameters=params_text,
-                full_signature=clean_sig.strip(),
+                full_signature=clean_sig.rstrip(),  # Only strip trailing whitespace
                 comment=doc_comment
             )
 
@@ -148,23 +152,27 @@ def update_signature_file(sig_file: Path, signature: MethodSignature, dry_run: b
 
     lines.append("// #region example")
 
-    # Add doc comment if present
+    # Collect all content (signature only, skip verbose doc comments for signature files)
+    all_content = []
+    # Only include first line of doc comment if it's short and descriptive
     if signature.comment:
-        lines.append(signature.comment)
+        comment_lines = signature.comment.split('\n')
+        # Only include if it's a single-line comment
+        if len(comment_lines) == 1:
+            all_content.extend(comment_lines)
+    all_content.extend(signature.full_signature.split('\n'))
 
-    # Add the signature (remove leading indentation)
-    sig_lines = signature.full_signature.split('\n')
-    # Remove common leading whitespace
+    # Remove common leading whitespace from all lines
     min_indent = float('inf')
-    for line in sig_lines:
+    for line in all_content:
         if line.strip():  # Skip empty lines
             indent = len(line) - len(line.lstrip())
             min_indent = min(min_indent, indent)
 
     if min_indent < float('inf'):
-        sig_lines = [line[min_indent:] if len(line) > min_indent else line for line in sig_lines]
+        all_content = [line[min_indent:] if len(line) > min_indent else line for line in all_content]
 
-    lines.extend(sig_lines)
+    lines.extend(all_content)
 
     lines.append("// #endregion example")
 
@@ -225,6 +233,11 @@ def main():
         'unregister': ['function_example_1_signature.dart'],
         'resetLazySingleton': ['function_example_2_signature.dart'],
         'findFirstObjectRegistration': ['code_sample_f4194899_signature.dart'],
+        'registerSingleton': ['t_example_signature.dart'],
+        'registerSingletonAsync': ['register_singleton_async_signature.dart'],
+        'registerFactoryAsync': ['register_factory_async_signature.dart'],
+        'registerCachedFactoryAsync': ['register_cached_factory_async_signature.dart'],
+        'registerLazySingletonAsync': ['register_lazy_singleton_async_signature.dart'],
         # Add more mappings as needed
     }
 

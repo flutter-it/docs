@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+// #region example
   // First unnamed registration
   getIt.registerSingleton<Plugin>(CorePlugin());
 
@@ -13,5 +13,5 @@ void main() {
 
   // Named registrations (always allowed - even without enabling)
   getIt.registerSingleton<Plugin>(FeaturePlugin(), instanceName: 'feature');
-}
 // #endregion example
+}

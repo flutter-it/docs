@@ -70,9 +70,9 @@ get_it offers three main registration types:
 
 | Registration Type | When Created | Lifetime | Use When |
 |-------------------|--------------|----------|----------|
-| <strong>registerSingleton</strong> | Immediately | Permanent | Service needed at startup, fast to create |
-| <strong>registerLazySingleton</strong> | First access | Permanent | Service not always needed, expensive to create |
-| <strong>registerFactory</strong> | Every `get()` call | Temporary | Need new instance each time (dialogs, temp objects) |
+| [<strong>registerSingleton</strong>](/documentation/get_it/object_registration#singleton) | Immediately | Permanent | Service needed at startup, fast to create |
+| [<strong>registerLazySingleton</strong>](/documentation/get_it/object_registration#lazysingleton) | First access | Permanent | Service not always needed, expensive to create |
+| [<strong>registerFactory</strong>](/documentation/get_it/object_registration#factory) | Every `get()` call | Temporary | Need new instance each time (dialogs, temp objects) |
 
 <strong>Examples:</strong>
 

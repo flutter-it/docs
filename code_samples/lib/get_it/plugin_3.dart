@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+// #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   // Base scope
@@ -18,7 +18,7 @@ void main() {
 
   // Current scope only (default)
   final featurePlugins = getIt.getAll<Plugin>();
-  print('featurePlugins: $featurePlugins');
   // Returns: [FeatureAPlugin, FeatureBPlugin]
-}
 // #endregion example
+  print('featurePlugins: $featurePlugins');
+}

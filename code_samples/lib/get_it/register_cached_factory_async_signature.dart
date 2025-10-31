@@ -1,8 +1,7 @@
 // ignore_for_file: missing_function_body, unused_element
 // #region example
-FutureOr resetLazySingleton<T extends Object>({
-  T? instance,
+void registerCachedFactoryAsync<T extends Object>(
+  FactoryFuncAsync<T> factoryFunc, {
   String? instanceName,
-  FutureOr Function(T)? disposingFunction,
 });
 // #endregion example

@@ -149,20 +149,19 @@ Instead of passing dispose functions, implement `Disposable`:
 
 <<< @/../code_samples/lib/get_it/auth_service_example.dart#example
 
-### Multi-Tenant Applications
-
+::: details Multi-Tenant Applications
 
 <<< @/../code_samples/lib/get_it/tenant_manager_example.dart#example
+:::
 
-### Feature Toggles with Scopes
-
+::: details Feature Toggles with Scopes
 
 <<< @/../code_samples/lib/get_it/enable_feature_example.dart#example
+:::
 
-### Testing with Scopes
+::: details Testing with Scopes
 
 Use scopes to shadow real services with mocks while keeping the rest of your DI setup:
-
 
 <<< @/../code_samples/lib/get_it/api_client.dart#example
 
@@ -171,6 +170,7 @@ Use scopes to shadow real services with mocks while keeping the rest of your DI 
 - Only mock what's necessary (ApiClient, Database)
 - Other services use real implementations
 - Automatic cleanup via popScope()
+:::
 
 ---
 
@@ -181,15 +181,15 @@ Use scopes to shadow real services with mocks while keeping the rest of your DI 
 
 <<< @/../code_samples/lib/get_it/code_sample_e395f3ff.dart#example
 
-### Check Registration Scope
-
+::: details Check Registration Scope
 
 <<< @/../code_samples/lib/get_it/code_sample_661a189f.dart#example
+:::
 
-### Verify Scope Exists
-
+::: details Verify Scope Exists
 
 <<< @/../code_samples/lib/get_it/code_sample_0eb8db1b.dart#example
+:::
 
 ---
 

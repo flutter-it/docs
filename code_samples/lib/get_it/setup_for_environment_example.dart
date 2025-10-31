@@ -5,23 +5,26 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
-  void setupForEnvironment(String env) {
-    if (env == 'production') {
-      getIt.registerSingleton<ApiClient>(
-        ApiClient('https://api.prod.example.com'),
-        instanceName: 'api',
-      );
-    } else {
-      getIt.registerSingleton<ApiClient>(
-        MockApiClient(),
-        instanceName: 'api',
-      );
-    }
+void setupForEnvironment(String env) {
+  if (env == 'production') {
+    getIt.registerSingleton<ApiClient>(
+      ApiClient('https://api.prod.example.com'),
+      instanceName: 'api',
+    );
+  } else {
+    getIt.registerSingleton<ApiClient>(
+      MockApiClient(),
+      instanceName: 'api',
+    );
   }
+}
 
 // Always access with same name
+final api = getIt<ApiClient>(instanceName: 'api');
+// #endregion example
+
+void main() async {
+  setupForEnvironment('production');
   final api = getIt<ApiClient>(instanceName: 'api');
   print('api: $api');
 }
-// #endregion example

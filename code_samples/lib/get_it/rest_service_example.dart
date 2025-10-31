@@ -3,7 +3,6 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 class Http {
   Future<Response> get(String url) async {
     return Response(200, '{"data": "mock"}');
@@ -47,8 +46,9 @@ class UserRepository {
   }
 }
 
-// Register multiple REST services with different base URLs
 void main() {
+// #region example
+  // Register multiple REST services with different base URLs
   getIt.registerSingleton<RestService>(
     RestServiceImpl('https://api.example.com'),
     instanceName: 'mainApi',
@@ -58,5 +58,5 @@ void main() {
     RestServiceImpl('https://analytics.example.com'),
     instanceName: 'analyticsApi',
   );
-}
 // #endregion example
+}

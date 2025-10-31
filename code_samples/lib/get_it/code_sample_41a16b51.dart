@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+// #region example
   getIt.registerSingletonAsync<Database>(
     () async => Database.connect('postgres://main-db'),
     instanceName: 'mainDb',
@@ -19,5 +19,5 @@ void main() async {
     () async => Database.connect('postgres://cache-db'),
     instanceName: 'cacheDb',
   );
-}
 // #endregion example
+}

@@ -3,13 +3,10 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
-const featureFlagEnabled = true;
-
-// #endregion example
-
 void main() async {
   // #region example
+  const featureFlagEnabled = true;
+
   // Setup base scope with original checkout
   final userService = await UserService.load();
   getIt.registerSingleton<CheckoutService>(CheckoutService(userService));
@@ -20,7 +17,7 @@ void main() async {
   } else {
     // Uses base scope's original CheckoutService
   }
+  // #endregion example
 
   print('Checkout service: ${getIt<CheckoutService>()}');
-  // #endregion example
 }

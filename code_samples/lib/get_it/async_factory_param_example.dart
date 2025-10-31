@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   // Register async factory with two parameters
   getIt.registerFactoryParamAsync<UserViewModel, String, int>(
     (userId, age) async {
@@ -19,7 +19,7 @@ void main() async {
     param1: 'user-123',
     param2: 25,
   );
+  // #endregion example
 
   print('Created ViewModel for user: ${vm.userId}');
 }
-// #endregion example
