@@ -549,14 +549,9 @@ T when<T>(T methodCall) => methodCall;
 class MockDatabase extends Database {}
 
 /// Plugin implementations
-class LoggingPlugin implements Plugin {
+class LoggingPlugin extends AppPlugin {
   @override
   String get name => 'LoggingPlugin';
-
-  @override
-  Future<void> initialize() async {
-    await Future.delayed(const Duration(milliseconds: 10));
-  }
 }
 
 /// My Service interface
@@ -604,20 +599,14 @@ class AppPlugin implements Plugin {
   Future<void> initialize() async {}
 }
 
-class CorePlugin implements Plugin {
+class CorePlugin extends AppPlugin {
   @override
   String get name => 'CorePlugin';
-
-  @override
-  Future<void> initialize() async {}
 }
 
-class AnalyticsPlugin implements Plugin {
+class AnalyticsPlugin extends AppPlugin {
   @override
   String get name => 'AnalyticsPlugin';
-
-  @override
-  Future<void> initialize() async {}
 }
 
 class FeatureAPlugin implements Plugin {
@@ -737,20 +726,14 @@ class UserServiceImpl {
 }
 
 /// Plugin implementations
-class ShoppingCartPlugin implements Plugin {
+class ShoppingCartPlugin extends AppPlugin {
   @override
   String get name => 'ShoppingCartPlugin';
-
-  @override
-  Future<void> initialize() async {}
 }
 
-class PaymentPlugin implements Plugin {
+class PaymentPlugin extends AppPlugin {
   @override
   String get name => 'PaymentPlugin';
-
-  @override
-  Future<void> initialize() async {}
 }
 
 /// ViewModel stubs
