@@ -14,7 +14,7 @@ void configureAuthDependencies() {
   getIt.pushNewScope(
     scopeName: 'authenticated',
     init: (scope) {
-      scope.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+      scope.registerLazySingleton<AuthService>(() => AuthServiceImpl());
       scope
           .registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
     },

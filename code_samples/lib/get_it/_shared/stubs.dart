@@ -543,7 +543,7 @@ class PublicApiClient extends ApiClient {
 
 /// Repository stubs
 class CartService {
-  CartService(Database db, ApiClient api);
+  CartService(dynamic param1, [dynamic param2]);
 }
 
 class OrderRepository {
