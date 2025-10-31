@@ -30,21 +30,8 @@ Think of scopes as a **stack of registration layers**. When you register a type 
 
 ### How Shadowing Works
 
-```dart
-// Base scope
-getIt.registerSingleton<User>(GuestUser());
 
-// Push new scope
-getIt.pushNewScope(scopeName: 'logged-in');
-getIt.registerSingleton<User>(LoggedInUser());
-
-getIt<User>(); // Returns LoggedInUser (shadows GuestUser)
-
-// Pop scope
-await getIt.popScope();
-
-getIt<User>(); // Returns GuestUser (automatically restored)
-```
+<<< @/../code_samples/lib/get_it/user_signature_1.dart
 
 The search order is **top to bottom** - get_it always returns the first match starting from the current scope.
 
@@ -55,55 +42,20 @@ The search order is **top to bottom** - get_it always returns the first match st
 ### ✅ Perfect Use Cases
 
 **1. Authentication States**
-```dart
-// App startup - guest mode
-getIt.registerSingleton<User>(GuestUser());
-getIt.registerSingleton<Permissions>(GuestPermissions());
 
-// User logs in
-getIt.pushNewScope(scopeName: 'authenticated');
-getIt.registerSingleton<User>(AuthenticatedUser(token));
-getIt.registerSingleton<Permissions>(UserPermissions(user));
-
-// User logs out - automatic cleanup
-await getIt.popScope(); // GuestUser & GuestPermissions restored
-```
+<<< @/../code_samples/lib/get_it/user_signature_2.dart
 
 **2. Session Management**
-```dart
-// Start new shopping session
-getIt.pushNewScope(scopeName: 'session');
-getIt.registerSingleton<ShoppingCart>(ShoppingCart());
-getIt.registerSingleton<SessionAnalytics>(SessionAnalytics());
 
-// End session - cart discarded, analytics sent
-await getIt.popScope();
-```
+<<< @/../code_samples/lib/get_it/shopping_cart_signature_1.dart
 
 **3. Feature Flags / A-B Testing**
-```dart
-if (featureFlagEnabled) {
-  getIt.pushNewScope(scopeName: 'feature-new-checkout');
-  getIt.registerSingleton<CheckoutService>(NewCheckoutService());
-} else {
-  // Uses base scope's original CheckoutService
-}
-```
+
+<<< @/../code_samples/lib/get_it/checkout_service_example_1.dart#example
 
 **4. Test Isolation**
-```dart
-setUp(() {
-  configureDependencies(); // Call your real DI setup
 
-  getIt.pushNewScope(); // Shadow specific services with mocks
-  getIt.registerSingleton<ApiClient>(MockApiClient());
-  getIt.registerSingleton<Database>(MockDatabase());
-});
-
-tearDown(() async {
-  await getIt.popScope(); // Remove mocks, clean slate for next test
-});
-```
+<<< @/../code_samples/lib/get_it/api_client_example_1.dart#example
 
 ---
 
@@ -111,65 +63,15 @@ tearDown(() async {
 
 ### Basic Scope Operations
 
-```dart
-// Push a new scope
-getIt.pushNewScope(
-  scopeName: 'my-scope',  // Optional: name for later reference
-  init: (getIt) {
-    // Register objects immediately
-    getIt.registerSingleton<Service>(ServiceImpl());
-  },
-  dispose: () {
-    // Cleanup when scope pops (called before object disposal)
-    print('Scope cleanup');
-  },
-);
 
-// Pop the current scope
-await getIt.popScope();
-
-// Pop multiple scopes to a named one
-await getIt.popScopesTill('my-scope', inclusive: true);
-
-// Drop a specific scope by name (without popping above it)
-await getIt.dropScope('my-scope');
-
-// Check if a scope exists
-if (getIt.hasScope('session')) {
-  // ...
-}
-
-// Get current scope name
-print(getIt.currentScopeName); // Returns null for base scope, 'baseScope' for base
-```
+<<< @/../code_samples/lib/get_it/service_example_1.dart#example
 
 ### Async Scope Initialization
 
 When scope setup requires async operations (loading config files, establishing connections):
 
-```dart
-await getIt.pushNewScopeAsync(
-  scopeName: 'tenant-workspace',
-  init: (getIt) async {
-    // Load tenant configuration from file/database
-    final config = await loadTenantConfig(tenantId);
-    getIt.registerSingleton<TenantConfig>(config);
 
-    // Establish database connection
-    final database = await DatabaseConnection.connect(config.dbUrl);
-    getIt.registerSingleton<DatabaseConnection>(database);
-
-    // Load cached data
-    final cache = await CacheManager.initialize(tenantId);
-    getIt.registerSingleton<CacheManager>(cache);
-  },
-  dispose: () async {
-    // Close connections
-    await getIt<DatabaseConnection>().close();
-    await getIt<CacheManager>().flush();
-  },
-);
-```
+<<< @/../code_samples/lib/get_it/tenant_config_example_1.dart#example
 
 ::: tip Async Dependencies Between Services
 For services with async initialization that **depend on each other**, use `registerSingletonAsync` with the `dependsOn` parameter instead. See [Async Objects documentation](/documentation/get_it/async_objects) for details.
@@ -183,19 +85,8 @@ For services with async initialization that **depend on each other**, use `regis
 
 Prevent race conditions by locking a scope after initialization:
 
-```dart
-getIt.pushNewScope(
-  isFinal: true,  // Can't register after init completes
-  init: (getIt) {
-    // MUST register everything here
-    getIt.registerSingleton<ServiceA>(ServiceA());
-    getIt.registerSingleton<ServiceB>(ServiceB());
-  },
-);
 
-// This throws an error - scope is final!
-// getIt.registerSingleton<ServiceC>(ServiceC());
-```
+<<< @/../code_samples/lib/get_it/service_a_example_1.dart#example
 
 **Use when:**
 - Building plugin systems where scope setup must be atomic
@@ -205,29 +96,8 @@ getIt.pushNewScope(
 
 Objects can be notified when they're shadowed or restored:
 
-```dart
-class StreamingService implements ShadowChangeHandlers {
-  StreamSubscription? _subscription;
 
-  void init() {
-    _subscription = dataStream.listen(_handleData);
-  }
-
-  @override
-  void onGetShadowed(Object shadowingObject) {
-    // Another StreamingService is now active - pause our work
-    _subscription?.pause();
-    print('Paused: $shadowingObject is now handling streams');
-  }
-
-  @override
-  void onLeaveShadow(Object shadowingObject) {
-    // We're active again - resume work
-    _subscription?.resume();
-    print('Resumed: $shadowingObject was removed');
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/init_example_1.dart#example
 
 **Use cases:**
 - Resource-heavy services that should pause when inactive
@@ -238,15 +108,8 @@ class StreamingService implements ShadowChangeHandlers {
 
 Get notified when any scope change occurs:
 
-```dart
-getIt.onScopeChanged = (bool pushed) {
-  if (pushed) {
-    print('New scope pushed - UI might need rebuild');
-  } else {
-    print('Scope popped - UI might need rebuild');
-  }
-};
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_062bd775.dart#example
 
 **Note:** watch_it automatically handles UI rebuilds on scope changes via `rebuildOnScopeChanges`.
 
@@ -287,34 +150,13 @@ await getIt.popScope();
 
 Instead of passing dispose functions, implement `Disposable`:
 
-```dart
-class MyService implements Disposable {
-  StreamSubscription? _subscription;
 
-  void init() {
-    _subscription = stream.listen(...);
-  }
-
-  @override
-  Future<void> onDispose() async {
-    await _subscription?.cancel();
-    // Cleanup resources
-  }
-}
-
-// Automatically calls onDispose when scope pops or object is unregistered
-getIt.registerSingleton<MyService>(MyService()..init());
-```
+<<< @/../code_samples/lib/get_it/init_example_2.dart#example
 
 ### Reset vs Pop
 
-```dart
-// resetScope - clears all registrations in current scope but keeps scope
-await getIt.resetScope(dispose: true);
 
-// popScope - removes entire scope and restores previous
-await getIt.popScope();
-```
+<<< @/../code_samples/lib/get_it/code_sample_39fe26fa_signature.dart
 
 ---
 
@@ -322,110 +164,25 @@ await getIt.popScope();
 
 ### Login/Logout Flow
 
-```dart
-class AuthService {
-  Future<void> login(String username, String password) async {
-    final user = await api.login(username, password);
 
-    // Push authenticated scope
-    getIt.pushNewScope(scopeName: 'authenticated');
-    getIt.registerSingleton<User>(user);
-    getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(user.token));
-    getIt.registerSingleton<NotificationService>(NotificationService(user.id));
-  }
-
-  Future<void> logout() async {
-    // Pop scope - automatic cleanup of all authenticated services
-    await getIt.popScope();
-
-    // GuestUser (from base scope) is now active again
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/auth_service_example_1.dart#example
 
 ### Multi-Tenant Applications
 
-```dart
-class TenantManager {
-  Future<void> switchTenant(String tenantId) async {
-    // Pop previous tenant scope if exists
-    if (getIt.hasScope('tenant')) {
-      await getIt.popScope();
-    }
 
-    // Load new tenant
-    await getIt.pushNewScopeAsync(
-      scopeName: 'tenant',
-      init: (getIt) async {
-        final config = await loadTenantConfig(tenantId);
-        getIt.registerSingleton<TenantConfig>(config);
-
-        final database = await openTenantDatabase(tenantId);
-        getIt.registerSingleton<Database>(database);
-
-        getIt.registerSingleton<TenantServices>(
-          TenantServices(config, database),
-        );
-      },
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/tenant_manager_example_1.dart#example
 
 ### Feature Toggles with Scopes
 
-```dart
-class FeatureManager {
-  final Map<String, bool> _activeFeatures = {};
 
-  void enableFeature(String featureName, FeatureImplementation impl) {
-    if (_activeFeatures[featureName] == true) return;
-
-    getIt.pushNewScope(scopeName: 'feature-$featureName');
-    impl.register(getIt);
-    _activeFeatures[featureName] = true;
-  }
-
-  Future<void> disableFeature(String featureName) async {
-    if (_activeFeatures[featureName] != true) return;
-
-    await getIt.dropScope('feature-$featureName');
-    _activeFeatures[featureName] = false;
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/enable_feature_example_1.dart#example
 
 ### Testing with Scopes
 
 Use scopes to shadow real services with mocks while keeping the rest of your DI setup:
 
-```dart
-group('UserService Tests', () {
-  setUp(() {
-    // Call your app's real DI initialization
-    configureDependencies();
 
-    // Push scope to shadow specific services with test doubles
-    getIt.pushNewScope();
-    getIt.registerSingleton<ApiClient>(MockApiClient());
-    getIt.registerSingleton<Database>(MockDatabase());
-
-    // UserService uses real implementation but gets mock dependencies
-  });
-
-  tearDown(() async {
-    // Pop scope - removes mocks, restores real services
-    await getIt.popScope();
-  });
-
-  test('should load user data', () async {
-    // UserService gets MockApiClient and MockDatabase automatically
-    final service = getIt<UserService>();
-    final user = await service.loadUser('123');
-    expect(user.id, '123');
-  });
-});
-```
+<<< @/../code_samples/lib/get_it/api_client_signature_1.dart
 
 **Benefits:**
 - No need to duplicate all registrations in tests
@@ -439,27 +196,18 @@ group('UserService Tests', () {
 
 ### Check Current Scope
 
-```dart
-print('Current scope: ${getIt.currentScopeName}');
-// Output: null (for unnamed scopes), 'session', 'baseScope', etc.
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_e395f3ff.dart#example
 
 ### Check Registration Scope
 
-```dart
-final registration = getIt.findFirstObjectRegistration<MyService>();
-print('Registered in scope: ${registration?.instanceName}');
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_661a189f.dart#example
 
 ### Verify Scope Exists
 
-```dart
-if (getIt.hasScope('authenticated')) {
-  // Scope exists
-} else {
-  // Not logged in
-}
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_0eb8db1b.dart#example
 
 ---
 
@@ -486,26 +234,8 @@ if (getIt.hasScope('authenticated')) {
 
 For scopes tied to widget lifetime, use **watch_it**:
 
-```dart
-class UserProfilePage extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Automatically pushes scope when widget mounts
-    // Automatically pops scope when widget disposes
-    pushScope(init: (getIt) {
-      getIt.registerSingleton<ProfileController>(
-        ProfileController(userId: widget.userId),
-      );
-    });
 
-    final controller = watchIt<ProfileController>();
-
-    return Scaffold(
-      body: Text(controller.userData.name),
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/user_profile_page_example_1.dart#example
 
 See [watch_it documentation](/documentation/watch_it/watch_it) for details.
 

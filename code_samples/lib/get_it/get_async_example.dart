@@ -1,4 +1,3 @@
-
 import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
@@ -21,6 +20,5 @@ void main() async {
     param1: 'user-123',
     param2: DateTime.now(),
   );
-
 }
 // #endregion example

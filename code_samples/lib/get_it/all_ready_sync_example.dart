@@ -4,11 +4,13 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void showUI() {
-  if (getIt.allReadySync()) {
-    // Show main UI
-  } else {
-    // Show loading indicator
+void main() async {
+  void showUI() {
+    if (getIt.allReadySync()) {
+      // Show main UI
+    } else {
+      // Show loading indicator
+    }
   }
 }
 // #endregion example

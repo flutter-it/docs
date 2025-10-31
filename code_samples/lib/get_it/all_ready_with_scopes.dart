@@ -1,4 +1,3 @@
-
 import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
@@ -16,6 +15,5 @@ void main() async {
 
   // Wait for new scope to be ready
   await getIt.allReady();
-
 }
 // #endregion example

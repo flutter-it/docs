@@ -12,22 +12,8 @@ get_it provides two different approaches for registering multiple instances of t
 
 Register multiple instances of the same type by giving each a unique name. This is **always available** without any configuration.
 
-```dart
-// Register multiple REST services with different configurations
-getIt.registerSingleton<ApiClient>(
-  ApiClient('https://api.example.com'),
-  instanceName: 'mainApi',
-);
 
-getIt.registerSingleton<ApiClient>(
-  ApiClient('https://analytics.example.com'),
-  instanceName: 'analyticsApi',
-);
-
-// Access individually by name
-final mainApi = getIt<ApiClient>(instanceName: 'mainApi');
-final analyticsApi = getIt<ApiClient>(instanceName: 'analyticsApi');
-```
+<<< @/../code_samples/lib/get_it/api_client_example_2.dart#example
 
 **Best for:**
 - ✅ Different configurations of the same type (dev/prod endpoints)
@@ -38,18 +24,8 @@ final analyticsApi = getIt<ApiClient>(instanceName: 'analyticsApi');
 
 Register multiple instances without names and retrieve them all at once with `getAll<T>()`. Requires explicit opt-in.
 
-```dart
-// Enable feature first
-getIt.enableRegisteringMultipleInstancesOfOneType();
 
-// Register multiple plugins without names
-getIt.registerSingleton<Plugin>(CorePlugin());
-getIt.registerSingleton<Plugin>(LoggingPlugin());
-getIt.registerSingleton<Plugin>(AnalyticsPlugin());
-
-// Get all at once
-final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
-```
+<<< @/../code_samples/lib/get_it/plugin_signature_1.dart
 
 **Best for:**
 - ✅ Plugin systems (modules can add implementations)
@@ -69,137 +45,29 @@ All registration functions accept an optional `instanceName` parameter. Each nam
 
 ### Basic Usage
 
-```dart
-abstract class RestService {
-  Future<Response> get(String endpoint);
-}
 
-class RestServiceImpl implements RestService {
-  final String baseUrl;
-
-  RestServiceImpl(this.baseUrl);
-
-  @override
-  Future<Response> get(String endpoint) async {
-    return http.get('$baseUrl/$endpoint');
-  }
-}
-
-// Register multiple REST services with different base URLs
-getIt.registerSingleton<RestService>(
-  RestServiceImpl('https://api.example.com'),
-  instanceName: 'mainApi',
-);
-
-getIt.registerSingleton<RestService>(
-  RestServiceImpl('https://analytics.example.com'),
-  instanceName: 'analyticsApi',
-);
-
-// Access them by name
-class UserRepository {
-  UserRepository() {
-    _mainApi = getIt<RestService>(instanceName: 'mainApi');
-    _analyticsApi = getIt<RestService>(instanceName: 'analyticsApi');
-  }
-
-  late final RestService _mainApi;
-  late final RestService _analyticsApi;
-
-  Future<User> getUser(String id) async {
-    final response = await _mainApi.get('users/$id');
-    _analyticsApi.get('track/user_fetch'); // Track analytics
-    return User.fromJson(response.data);
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/rest_service_example_1.dart#example
 
 ### Works with All Registration Types
 
 Named registration works with **every** registration method:
 
-```dart
-// Singleton
-getIt.registerSingleton<Logger>(
-  FileLogger(),
-  instanceName: 'fileLogger',
-);
 
-// Lazy Singleton
-getIt.registerLazySingleton<Cache>(
-  () => MemoryCache(),
-  instanceName: 'memory',
-);
-
-// Factory
-getIt.registerFactory<Report>(
-  () => DailyReport(),
-  instanceName: 'daily',
-);
-
-// Async Singleton
-getIt.registerSingletonAsync<Database>(
-  () async => Database.connect('prod'),
-  instanceName: 'production',
-);
-```
+<<< @/../code_samples/lib/get_it/logger_example_3.dart#example
 
 ### Named Registration Use Cases
 
 **Environment-specific configurations:**
-```dart
-void setupForEnvironment(String env) {
-  if (env == 'production') {
-    getIt.registerSingleton<ApiClient>(
-      ApiClient('https://api.prod.example.com'),
-      instanceName: 'api',
-    );
-  } else {
-    getIt.registerSingleton<ApiClient>(
-      MockApiClient(),
-      instanceName: 'api',
-    );
-  }
-}
 
-// Always access with same name
-final api = getIt<ApiClient>(instanceName: 'api');
-```
+<<< @/../code_samples/lib/get_it/setup_for_environment_example_1.dart#example
 
 **Feature flags:**
-```dart
-void setupPaymentProcessor(bool useNewVersion) {
-  if (useNewVersion) {
-    getIt.registerSingleton<PaymentProcessor>(
-      StripePaymentProcessor(),
-      instanceName: 'payment',
-    );
-  } else {
-    getIt.registerSingleton<PaymentProcessor>(
-      LegacyPaymentProcessor(),
-      instanceName: 'payment',
-    );
-  }
-}
-```
+
+<<< @/../code_samples/lib/get_it/setup_payment_processor_example_1.dart#example
 
 **Multiple database connections:**
-```dart
-getIt.registerSingletonAsync<Database>(
-  () async => Database.connect('postgres://main-db'),
-  instanceName: 'mainDb',
-);
 
-getIt.registerSingletonAsync<Database>(
-  () async => Database.connect('postgres://analytics-db'),
-  instanceName: 'analyticsDb',
-);
-
-getIt.registerSingletonAsync<Database>(
-  () async => Database.connect('postgres://cache-db'),
-  instanceName: 'cacheDb',
-);
-```
+<<< @/../code_samples/lib/get_it/code_sample_41a16b51.dart#example
 
 ---
 
@@ -213,9 +81,8 @@ By default, get_it **prevents** registering the same type multiple times (withou
 
 To enable multiple registrations of the same type, you must explicitly opt-in:
 
-```dart
-getIt.enableRegisteringMultipleInstancesOfOneType();
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_980d7414_signature.dart
 
 **Why explicit opt-in?**
 - **Prevents bugs**: Accidentally registering the same type twice is usually an error
@@ -235,16 +102,8 @@ Once enabled, this setting applies **globally** to the entire get_it instance. Y
 
 After calling `enableRegisteringMultipleInstancesOfOneType()`, you can register the same type multiple times:
 
-```dart
-// First unnamed registration
-getIt.registerSingleton<Plugin>(CorePlugin());
 
-// Second unnamed registration (now allowed!)
-getIt.registerSingleton<Plugin>(LoggingPlugin());
-
-// Named registrations (always allowed - even without enabling)
-getIt.registerSingleton<Plugin>(FeaturePlugin(), instanceName: 'feature');
-```
+<<< @/../code_samples/lib/get_it/plugin_signature_2.dart
 
 ::: tip Unnamed + Named Together
 All registrations coexist - both unnamed and named. `getAll<T>()` returns all of them.
@@ -258,16 +117,8 @@ All registrations coexist - both unnamed and named. `getAll<T>()` returns all of
 
 When multiple unnamed registrations exist, `get<T>()` returns **only the first** registered instance:
 
-```dart
-getIt.enableRegisteringMultipleInstancesOfOneType();
 
-getIt.registerSingleton<Plugin>(CorePlugin());
-getIt.registerSingleton<Plugin>(LoggingPlugin());
-getIt.registerSingleton<Plugin>(AnalyticsPlugin());
-
-final plugin = getIt<Plugin>();
-// Returns: CorePlugin (the first one only!)
-```
+<<< @/../code_samples/lib/get_it/plugin_signature_3.dart
 
 ::: tip When to use get()
 Use `get<T>()` when you want the "default" or "primary" implementation. Register it first!
@@ -277,17 +128,8 @@ Use `get<T>()` when you want the "default" or "primary" implementation. Register
 
 To retrieve **all** registered instances (both unnamed and named), use `getAll<T>()`:
 
-```dart
-getIt.enableRegisteringMultipleInstancesOfOneType();
 
-getIt.registerSingleton<Plugin>(CorePlugin());        // unnamed
-getIt.registerSingleton<Plugin>(LoggingPlugin());     // unnamed
-getIt.registerSingleton<Plugin>(AnalyticsPlugin(), instanceName: 'analytics'); // named
-
-final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
-// Returns: [CorePlugin, LoggingPlugin, AnalyticsPlugin]
-//          ALL unnamed + ALL named registrations
-```
+<<< @/../code_samples/lib/get_it/plugin_example_1.dart#example
 
 ::: tip Alternative: findAll() for Type-Based Discovery
 While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` finds instances by **type matching** - no multiple registration setup needed. See [Related: Finding Instances by Type](#related-finding-instances-by-type) below for when to use each approach.
@@ -303,46 +145,22 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 
 By default, searches only the **current scope**:
 
-```dart
-getIt.enableRegisteringMultipleInstancesOfOneType();
 
-// Base scope
-getIt.registerSingleton<Plugin>(CorePlugin());
-getIt.registerSingleton<Plugin>(LoggingPlugin());
-
-// Push new scope
-getIt.pushNewScope(scopeName: 'feature');
-getIt.registerSingleton<Plugin>(FeatureAPlugin());
-getIt.registerSingleton<Plugin>(FeatureBPlugin());
-
-// Current scope only (default)
-final featurePlugins = getIt.getAll<Plugin>();
-// Returns: [FeatureAPlugin, FeatureBPlugin]
-```
+<<< @/../code_samples/lib/get_it/plugin_signature_4.dart
 
 ### All Scopes
 
 To retrieve from **all scopes**, use `fromAllScopes: true`:
 
-```dart
-// All scopes
-final allPlugins = getIt.getAll<Plugin>(fromAllScopes: true);
-// Returns: [FeatureAPlugin, FeatureBPlugin, CorePlugin, LoggingPlugin]
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_07af7c81_signature.dart
 
 ### Specific Named Scope
 
 To search only a **specific named scope**, use `onlyInScope`:
 
-```dart
-// Only search the base scope
-final basePlugins = getIt.getAll<Plugin>(onlyInScope: 'baseScope');
-// Returns: [CorePlugin, LoggingPlugin]
 
-// Only search the 'feature' scope
-final featurePlugins = getIt.getAll<Plugin>(onlyInScope: 'feature');
-// Returns: [FeatureAPlugin, FeatureBPlugin]
-```
+<<< @/../code_samples/lib/get_it/code_sample_e4fa6049_signature.dart
 
 ::: tip Parameter Precedence
 If both `onlyInScope` and `fromAllScopes` are provided, `onlyInScope` takes precedence.
@@ -356,34 +174,15 @@ See [Scopes documentation](/documentation/get_it/scopes) for more details on sco
 
 If you have async registrations, use `getAllAsync<T>()` which waits for all registrations to complete:
 
-```dart
-getIt.enableRegisteringMultipleInstancesOfOneType();
 
-getIt.registerSingletonAsync<Plugin>(() async => await CorePlugin.create());
-getIt.registerSingletonAsync<Plugin>(() async => await LoggingPlugin.create());
-
-// Wait for all plugins to be ready
-await getIt.allReady();
-
-// Retrieve all async instances
-final Iterable<Plugin> plugins = await getIt.getAllAsync<Plugin>();
-```
+<<< @/../code_samples/lib/get_it/code_sample_49d4b664_signature.dart
 
 **With scope control:**
 
 `getAllAsync()` supports the same scope parameters as `getAll()`:
 
-```dart
-// All scopes
-final Iterable<Plugin> allPlugins = await getIt.getAllAsync<Plugin>(
-  fromAllScopes: true,
-);
 
-// Specific named scope
-final Iterable<Plugin> basePlugins = await getIt.getAllAsync<Plugin>(
-  onlyInScope: 'baseScope',
-);
-```
+<<< @/../code_samples/lib/get_it/code_sample_2cd2b1b0.dart#example
 
 ---
 
@@ -391,148 +190,23 @@ final Iterable<Plugin> basePlugins = await getIt.getAllAsync<Plugin>(
 
 ### Plugin System
 
-```dart
-// Enable multiple registrations at app startup
-void configureDependencies() {
-  getIt.enableRegisteringMultipleInstancesOfOneType();
 
-  // Core plugins (unnamed - always loaded)
-  getIt.registerSingleton<AppPlugin>(CorePlugin());
-  getIt.registerSingleton<AppPlugin>(LoggingPlugin());
-  getIt.registerSingleton<AppPlugin>(AnalyticsPlugin());
-}
-
-// Feature module registers additional plugins
-void enableShoppingFeature() {
-  getIt.pushNewScope(scopeName: 'shopping');
-  getIt.registerSingleton<AppPlugin>(ShoppingCartPlugin());
-  getIt.registerSingleton<AppPlugin>(PaymentPlugin());
-}
-
-// App initialization
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Initialize all plugins
-    final allPlugins = getIt.getAll<AppPlugin>(fromAllScopes: true);
-    for (final plugin in allPlugins) {
-      plugin.initialize();
-    }
-
-    return MaterialApp(...);
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_8.dart#example
 
 ### Event Handlers / Observers
 
-```dart
-abstract class AppLifecycleObserver {
-  void onAppStarted();
-  void onAppPaused();
-  void onAppResumed();
-}
 
-void setupApp() {
-  getIt.enableRegisteringMultipleInstancesOfOneType();
-
-  // Multiple observers can register
-  getIt.registerSingleton<AppLifecycleObserver>(AnalyticsObserver());
-  getIt.registerSingleton<AppLifecycleObserver>(LoggingObserver());
-  getIt.registerSingleton<AppLifecycleObserver>(CacheObserver());
-}
-
-class AppLifecycleManager {
-  void notifyAppStarted() {
-    final observers = getIt.getAll<AppLifecycleObserver>();
-    for (final observer in observers) {
-      observer.onAppStarted();
-    }
-  }
-
-  void notifyAppPaused() {
-    final observers = getIt.getAll<AppLifecycleObserver>();
-    for (final observer in observers) {
-      observer.onAppPaused();
-    }
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/on_app_started_example_1.dart#example
 
 ### Middleware / Validator Chains
 
-```dart
-abstract class RequestMiddleware {
-  Future<bool> handle(Request request);
-}
 
-void setupMiddleware() {
-  getIt.enableRegisteringMultipleInstancesOfOneType();
-
-  // Order matters! First registered = first executed
-  getIt.registerSingleton<RequestMiddleware>(AuthMiddleware());
-  getIt.registerSingleton<RequestMiddleware>(RateLimitMiddleware());
-  getIt.registerSingleton<RequestMiddleware>(LoggingMiddleware());
-}
-
-class ApiClient {
-  Future<Response> send(Request request) async {
-    // Execute all middleware in registration order
-    final middlewares = getIt.getAll<RequestMiddleware>();
-    for (final middleware in middlewares) {
-      final canProceed = await middleware.handle(request);
-      if (!canProceed) {
-        return Response.forbidden();
-      }
-    }
-
-    return _executeRequest(request);
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/setup_middleware_example_1.dart#example
 
 ### Combining Unnamed and Named Registrations
 
-```dart
-abstract class ThemeProvider {
-  ThemeData getTheme();
-}
 
-void setupThemes() {
-  getIt.enableRegisteringMultipleInstancesOfOneType();
-
-  // Unnamed - available to getAll()
-  getIt.registerSingleton<ThemeProvider>(LightThemeProvider());
-  getIt.registerSingleton<ThemeProvider>(DarkThemeProvider());
-
-  // Named - accessible individually or via getAll()
-  getIt.registerSingleton<ThemeProvider>(
-    HighContrastThemeProvider(),
-    instanceName: 'highContrast',
-  );
-}
-
-// Get all themes for theme picker
-class ThemePickerDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final allThemes = getIt.getAll<ThemeProvider>();
-    // Returns: [LightThemeProvider, DarkThemeProvider, HighContrastThemeProvider]
-
-    return ListView(
-      children: allThemes.map((themeProvider) {
-        return ListTile(
-          title: Text(themeProvider.getTheme().name),
-          onTap: () => applyTheme(themeProvider.getTheme()),
-        );
-      }).toList(),
-    );
-  }
-}
-
-// Access high contrast theme directly
-final highContrastTheme = getIt<ThemeProvider>(instanceName: 'highContrast');
-```
+<<< @/../code_samples/lib/get_it/setup_themes_example_1.dart#example
 
 ---
 
@@ -582,23 +256,8 @@ final highContrastTheme = getIt<ThemeProvider>(instanceName: 'highContrast');
 
 Named and unnamed registrations work together seamlessly:
 
-```dart
-// Enable multiple unnamed registrations
-getIt.enableRegisteringMultipleInstancesOfOneType();
 
-// Core plugins (unnamed)
-getIt.registerSingleton<Plugin>(CorePlugin());
-getIt.registerSingleton<Plugin>(LoggingPlugin());
-
-// Special plugins (named for individual access + included in getAll())
-getIt.registerSingleton<Plugin>(DebugPlugin(), instanceName: 'debug');
-
-// Get all including named
-final all = getIt.getAll<Plugin>(); // [CorePlugin, LoggingPlugin, DebugPlugin]
-
-// Get specific named one
-final debug = getIt<Plugin>(instanceName: 'debug');
-```
+<<< @/../code_samples/lib/get_it/plugin_signature_5.dart
 
 ---
 
@@ -610,12 +269,8 @@ This section explains the internal implementation details. Understanding this is
 
 get_it maintains two separate lists for each type:
 
-```dart
-class _TypeRegistration<T> {
-  final registrations = <_ObjectRegistration>[];           // Unnamed registrations
-  final namedRegistrations = LinkedHashMap<String, ...>(); // Named registrations
-}
-```
+
+<<< @/../code_samples/lib/get_it/__type_registration_example_1.dart#example
 
 When you call:
 - `getIt.registerSingleton<T>(instance)` → adds to `registrations` list
@@ -625,13 +280,8 @@ When you call:
 
 The `get<T>()` method retrieves instances using this logic:
 
-```dart
-_ObjectRegistration? getRegistration(String? name) {
-  return name != null
-    ? namedRegistrations[name]           // If name provided, look in map
-    : registrations.firstOrNull;         // Otherwise, return FIRST from list
-}
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_ba79068a.dart#example
 
 This is why `get<T>()` only returns the first unnamed registration, not all of them.
 
@@ -639,12 +289,8 @@ This is why `get<T>()` only returns the first unnamed registration, not all of t
 
 The `getAll<T>()` method combines both lists:
 
-```dart
-final registrations = [
-  ...typeRegistration.registrations,              // ALL unnamed
-  ...typeRegistration.namedRegistrations.values,  // ALL named
-];
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_b1321fa0.dart#example
 
 This returns every registered instance, regardless of whether it has a name or not.
 
@@ -699,26 +345,8 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 
 **Example comparison:**
 
-```dart
-abstract class ILogger {}
-class FileLogger implements ILogger {}
-class ConsoleLogger implements ILogger {}
 
-// Approach 1: Multiple registrations with getAll()
-getIt.enableRegisteringMultipleInstancesOfOneType();
-getIt.registerSingleton<ILogger>(FileLogger());
-getIt.registerSingleton<ILogger>(ConsoleLogger());
-
-final loggers1 = getIt.getAll<ILogger>();
-// Returns: [FileLogger, ConsoleLogger]
-
-// Approach 2: Different registration types with findAll()
-getIt.registerSingleton<FileLogger>(FileLogger());
-getIt.registerSingleton<ConsoleLogger>(ConsoleLogger());
-
-final loggers2 = getIt.findAll<ILogger>();
-// Returns: [FileLogger, ConsoleLogger] (matched by type)
-```
+<<< @/../code_samples/lib/get_it/i_logger_signature_1.dart
 
 ::: tip When to Use Each
 - Use **`getAll()`** when you explicitly want multiple instances of the same type and will retrieve them all together

@@ -41,46 +41,18 @@ dependencies:
 
 **Step 1:** Create a global GetIt instance (typically in a separate file):
 
-```dart
-// lib/service_locator.dart
-import 'package:get_it/get_it.dart';
 
-final getIt = GetIt.instance;
-
-void configureDependencies() {
-  // Register your services
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<Database>(() => Database());
-  getIt.registerLazySingleton<AuthService>(() => AuthService());
-}
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_1.dart#example
 
 **Step 2:** Call your configuration function **before** `runApp()`:
 
-```dart
-// lib/main.dart
-void main() {
-  configureDependencies();  // Register all services FIRST
-  runApp(MyApp());
-}
-```
+
+<<< @/../code_samples/lib/get_it/main_example_1.dart#example
 
 **Step 3:** Access your services from anywhere:
 
-```dart
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        // Access service from anywhere - no BuildContext needed!
-        await getIt<AuthService>().login(username, password);
-      },
-      child: Text('Login'),
-    );
-  }
-}
-```
+
+<<< @/../code_samples/lib/get_it/login_page_example_1.dart#example
 
 **That's it!** No Provider wrappers, no InheritedWidgets, no BuildContext needed.
 
@@ -102,19 +74,8 @@ get_it offers three main registration types:
 
 **Examples:**
 
-```dart
-void configureDependencies() {
-  // Singleton - created immediately, used for entire app lifetime
-  getIt.registerSingleton<Logger>(Logger());
 
-  // LazySingleton - created on first use, used for entire app lifetime
-  getIt.registerLazySingleton<Database>(() => Database());
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-
-  // Factory - new instance every time you call getIt<ShoppingCart>()
-  getIt.registerFactory<ShoppingCart>(() => ShoppingCart());
-}
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_signature_1.dart
 
 **Best practice:** Use `registerSingleton()` if your object will be used anyway and doesn't require significant resources to create - it's the simplest approach. Only use `registerLazySingleton()` when you need to delay expensive initialization or for services not always needed.
 
@@ -124,34 +85,15 @@ void configureDependencies() {
 
 **Most of the time, register your concrete classes directly:**
 
-```dart
-void configureDependencies() {
-  getIt.registerSingleton<ApiClient>(ApiClient());
-  getIt.registerSingleton<UserRepository>(UserRepository());
-}
 
-// Access directly
-final api = getIt<ApiClient>();
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_2.dart#example
 
 This is simpler and makes IDE navigation to implementation easier.
 
 **Only use abstract interfaces when you expect multiple implementations:**
 
-```dart
-// Use interface when you have multiple versions
-abstract class PaymentProcessor {
-  Future<void> processPayment(double amount);
-}
 
-class StripePaymentProcessor implements PaymentProcessor { ... }
-class PayPalPaymentProcessor implements PaymentProcessor { ... }
-
-// Register by interface
-void configureDependencies() {
-  getIt.registerSingleton<PaymentProcessor>(StripePaymentProcessor());
-}
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_3.dart#example
 
 **When to use interfaces:**
 - ✅ Multiple implementations (production vs test, different providers)
@@ -165,17 +107,8 @@ void configureDependencies() {
 
 Get your registered services using `getIt<Type>()`:
 
-```dart
-// Access services
-final api = getIt<ApiClient>();
-final db = getIt<Database>();
-final auth = getIt<AuthService>();
 
-// Use them
-await api.fetchData();
-await db.save(data);
-final user = await auth.login('alice', 'secret');
-```
+<<< @/../code_samples/lib/get_it/code_sample_908a2d50_signature.dart
 
 ::: tip Shorthand Syntax
 `getIt<Type>()` is shorthand for `getIt.get<Type>()`. Both work the same - use whichever you prefer!
@@ -187,28 +120,8 @@ final user = await auth.login('alice', 'secret');
 
 For larger apps, split registration into logical groups:
 
-```dart
-void configureDependencies() {
-  _registerCoreServices();
-  _registerDataServices();
-  _registerBusinessLogic();
-}
 
-void _registerCoreServices() {
-  getIt.registerLazySingleton<Logger>(() => Logger());
-  getIt.registerLazySingleton<Analytics>(() => Analytics());
-}
-
-void _registerDataServices() {
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<Database>(() => Database());
-}
-
-void _registerBusinessLogic() {
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt(), getIt()));
-}
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_4.dart#example
 
 See [Where should I put my get_it setup code?](/documentation/get_it/faq#where-should-i-put-my-get-it-setup-code) for more patterns.
 
@@ -280,9 +193,8 @@ For deeper understanding, read Martin Fowler's classic article: [Inversion of Co
 
 The standard pattern is to create a global variable:
 
-```dart
-final getIt = GetIt.instance;
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_866f5818.dart#example
 
 **Alternative names you might see:**
 - `final sl = GetIt.instance;` (service locator)

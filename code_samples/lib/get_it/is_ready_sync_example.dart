@@ -4,11 +4,13 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void checkStatus() {
-  if (getIt.isReadySync<Database>()) {
-    print('Database is ready');
-  } else {
-    print('Database still initializing...');
+void main() async {
+  void checkStatus() {
+    if (getIt.isReadySync<Database>()) {
+      print('Database is ready');
+    } else {
+      print('Database still initializing...');
+    }
   }
 }
 // #endregion example

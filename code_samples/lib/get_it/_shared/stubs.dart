@@ -233,8 +233,13 @@ class AppModel {
     return AppModel._(userRepository: userRepository);
   }
 
-  factory AppModel.withParams({UserRepository? userRepository, ApiClient? api, Database? db, ConfigService? config}) {
-    return AppModel._(userRepository: userRepository, api: api, db: db, config: config);
+  factory AppModel.withParams(
+      {UserRepository? userRepository,
+      ApiClient? api,
+      Database? db,
+      ConfigService? config}) {
+    return AppModel._(
+        userRepository: userRepository, api: api, db: db, config: config);
   }
 
   final UserRepository? userRepository;
@@ -371,6 +376,93 @@ class Report {
 
 // Note: WillSignalReady is provided by package:get_it/get_it.dart
 // No need to stub it here
+
+/// Generic service interface and implementation stubs
+class Service {}
+
+class ServiceImpl implements Service {}
+
+/// Payment processor stubs
+abstract class PaymentProcessor {
+  Future<void> processPayment(double amount);
+}
+
+class StripePaymentProcessor implements PaymentProcessor {
+  @override
+  Future<void> processPayment(double amount) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+  }
+}
+
+class PayPalPaymentProcessor implements PaymentProcessor {
+  @override
+  Future<void> processPayment(double amount) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+  }
+}
+
+/// Plugin interface stub
+abstract class Plugin {
+  String get name;
+  Future<void> initialize();
+}
+
+/// Output interface stubs
+abstract class IOutput {
+  void write(String message);
+}
+
+class ConsoleOutput implements IOutput {
+  @override
+  void write(String message) => print(message);
+}
+
+class FileOutput implements IOutput {
+  FileOutput(String path);
+
+  @override
+  void write(String message) {
+    // Write to file
+  }
+}
+
+/// Tenant stubs
+class Tenant {
+  final String id;
+  final String name;
+  Tenant(this.id, this.name);
+}
+
+class TenantConfig {
+  final String database;
+  final String apiKey;
+  TenantConfig(this.database, this.apiKey);
+}
+
+/// REST service stub
+class RestService {
+  RestService(ApiClient client);
+  Future<Map<String, dynamic>> get(String endpoint) async => {};
+}
+
+/// Disposable service stubs
+class DisposableService {
+  Future<void> dispose() async {}
+}
+
+/// Checkout service stub
+class CheckoutService {
+  CheckoutService(UserService userService);
+}
+
+/// Middleware/Theme stubs
+class Middleware {
+  String get name => 'middleware';
+}
+
+class Theme {
+  String get name => 'theme';
+}
 
 /// Flutter widget stubs
 class MyApp extends StatelessWidget {

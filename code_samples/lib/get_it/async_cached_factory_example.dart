@@ -4,16 +4,17 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void configureDependencies() {
-  // Cached async factory
-  getIt.registerCachedFactoryAsync<HeavyResource>(
-    () async {
-      final resource = HeavyResource();
-      await resource.initialize();
-      return resource;
-    },
-  );
-}
+void main() async {
+  void configureDependencies() {
+    // Cached async factory
+    getIt.registerCachedFactoryAsync<HeavyResource>(
+      () async {
+        final resource = HeavyResource();
+        await resource.initialize();
+        return resource;
+      },
+    );
+  }
 
 // First access - creates new instance
 
@@ -21,9 +22,10 @@ void configureDependencies() {
 
 // After garbage collection - creates new instance
 
-void main() async {
-  final resource1 = await getIt.getAsync<HeavyResource>();
-  final resource2 = await getIt.getAsync<HeavyResource>(); // Same instance
-  final resource3 = await getIt.getAsync<HeavyResource>(); // New instance
+  void main() async {
+    final resource1 = await getIt.getAsync<HeavyResource>();
+    final resource2 = await getIt.getAsync<HeavyResource>(); // Same instance
+    final resource3 = await getIt.getAsync<HeavyResource>(); // New instance
+  }
 }
 // #endregion example

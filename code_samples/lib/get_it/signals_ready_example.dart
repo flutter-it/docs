@@ -4,6 +4,7 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
+void main() async {
 class ConfigService {
   bool isReady = false;
 
@@ -40,5 +41,6 @@ void configureDependencies() {
 void main() async {
   // Wait for ready signal
   await getIt.isReady<ConfigService>();
+}
 }
 // #endregion example

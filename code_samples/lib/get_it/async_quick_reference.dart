@@ -13,6 +13,5 @@ void main() async {
 
   // Wait for all async singletons to be ready
   await getIt.allReady();
-
 }
 // #endregion example

@@ -4,6 +4,7 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
+void main() async {
 class DatabaseService {
   DatabaseService() {
     _init();
@@ -24,5 +25,6 @@ class DatabaseService {
   Future<void> runMigrations() async {
     await Future.delayed(const Duration(milliseconds: 10));
   }
+}
 }
 // #endregion example

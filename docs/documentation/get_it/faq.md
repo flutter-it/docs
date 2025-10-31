@@ -48,61 +48,36 @@ Together with the [watch_it](/documentation/watch_it/watch_it) however you don't
 This error means you're trying to access a type that hasn't been registered yet. Common causes:
 
 **1. Forgot to register the type**
-```dart
-// ❌ Trying to get without registering first
-final service = getIt<MyService>(); // ERROR!
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_383c0a19.dart#example
 
 **Fix:** Register before accessing:
-```dart
-void main() {
-  getIt.registerLazySingleton<MyService>(() => MyService());
-  runApp(MyApp());
-}
 
-// Now you can use it
-final service = getIt<MyService>(); // ✅ Works!
-```
+<<< @/../code_samples/lib/get_it/main_example_5.dart#example
 
 **2. Wrong order - accessing before registration**
-```dart
-void main() {
-  final service = getIt<MyService>(); // ❌ ERROR! Not registered yet
-  getIt.registerLazySingleton<MyService>(() => MyService());
-  runApp(MyApp());
-}
-```
+
+<<< @/../code_samples/lib/get_it/main_example_6.dart#example
 
 **Fix:** Register first, use later:
-```dart
-void main() {
-  getIt.registerLazySingleton<MyService>(() => MyService());
-  final service = getIt<MyService>(); // ✅ Now it works
-  runApp(MyApp());
-}
-```
+
+<<< @/../code_samples/lib/get_it/main_example_7.dart#example
 
 **3. Using parentheses on GetIt.instance**
-```dart
-final GetIt getIt = GetIt.instance(); // ❌ Wrong! Creates new instance
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_6f9d6d83.dart#example
 
 **Fix:** No parentheses - it's a getter, not a function:
-```dart
-final GetIt getIt = GetIt.instance; // ✅ Correct
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_0da49c29.dart#example
 
 **4. Type mismatch - registered concrete type but accessing interface**
-```dart
-getIt.registerLazySingleton(() => MyServiceImpl()); // Registers as MyServiceImpl
-final service = getIt<MyService>(); // ❌ Looking for MyService
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_6c897c2f.dart#example
 
 **Fix:** Register with the interface type:
-```dart
-getIt.registerLazySingleton<MyService>(() => MyServiceImpl()); // ✅ Register as MyService
-final service = getIt<MyService>(); // ✅ Works!
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_3b6bf5d9.dart#example
 
 **5. Accessing in wrong scope**
 If you registered in a scope that has been popped, the service is no longer available.
@@ -120,43 +95,23 @@ If you registered in a scope that has been popped, the service is no longer avai
 This error means you're trying to register the same type twice. Common causes:
 
 **1. Calling registration function multiple times**
-```dart
-void main() {
-  configureDependencies(); // First call
-  configureDependencies(); // ❌ Second call - ERROR!
-  runApp(MyApp());
-}
-```
+
+<<< @/../code_samples/lib/get_it/main_example_8.dart#example
 
 **Fix:** Only call once:
-```dart
-void main() {
-  configureDependencies(); // Once only!
-  runApp(MyApp());
-}
-```
+
+<<< @/../code_samples/lib/get_it/main_example_9.dart#example
 
 **2. Registering inside build methods (hot reload issue)**
 If you register services inside `build()` or `initState()`, hot reload will call it again.
 
 ❌ **Wrong:**
-```dart
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    getIt.registerSingleton<MyService>(MyService()); // Called on every hot reload!
-    return MaterialApp(...);
-  }
-}
-```
+
+<<< @/../code_samples/lib/get_it/my_app_example_1.dart#example
 
 ✅ **Fix:** Move registration to `main()` before `runApp()`:
-```dart
-void main() {
-  getIt.registerSingleton<MyService>(MyService());
-  runApp(MyApp());
-}
-```
+
+<<< @/../code_samples/lib/get_it/main_example_10.dart#example
 
 **3. Tests re-registering services**
 Each test tries to register, but setup from previous test didn't clean up.
@@ -165,13 +120,8 @@ Each test tries to register, but setup from previous test didn't clean up.
 
 **4. Multiple registrations with different instance names**
 If you want multiple instances of the same type:
-```dart
-// Enable multiple registrations first
-getIt.enableRegisteringMultipleInstancesOfOneType();
 
-getIt.registerSingleton<ApiClient>(ProdApiClient(), instanceName: 'prod');
-getIt.registerSingleton<ApiClient>(DevApiClient(), instanceName: 'dev');
-```
+<<< @/../code_samples/lib/get_it/api_client_signature_3.dart
 
 Or use unnamed multiple registrations (see [Multiple Registrations documentation](/documentation/get_it/multiple_registrations)).
 
@@ -196,13 +146,8 @@ Or use unnamed multiple registrations (see [Multiple Registrations documentation
 - You want faster app startup time
 
 **Example:**
-```dart
-// Created immediately at app startup
-getIt.registerSingleton<Logger>(Logger());
 
-// Only created when first accessed (lazy)
-getIt.registerLazySingleton<HeavyDatabase>(() => HeavyDatabase());
-```
+<<< @/../code_samples/lib/get_it/logger_signature_1.dart
 
 **Best practice:** Start with `registerLazySingleton()` by default. Only use `registerSingleton()` when you specifically need immediate initialization.
 :::
@@ -212,18 +157,12 @@ getIt.registerLazySingleton<HeavyDatabase>(() => HeavyDatabase());
 ::: details Click to see answer
 
 **Factory** (`registerFactory()`) creates a **new instance** every time you call `get<T>()`:
-```dart
-getIt.registerFactory<ShoppingCart>(() => ShoppingCart());
-final cart1 = getIt<ShoppingCart>(); // New instance
-final cart2 = getIt<ShoppingCart>(); // Different instance
-```
+
+<<< @/../code_samples/lib/get_it/shopping_cart_example_1.dart#example
 
 **Singleton** (`registerSingleton()` / `registerLazySingleton()`) returns the **same instance** every time:
-```dart
-getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-final client1 = getIt<ApiClient>(); // Instance created
-final client2 = getIt<ApiClient>(); // Same instance returned
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_c1d7f5e3.dart#example
 
 **When to use Factory:**
 - Short-lived objects (view models for dialogs, temporary calculators)
@@ -245,53 +184,13 @@ final client2 = getIt<ApiClient>(); // Same instance returned
 Circular dependencies indicate a design problem. Here are solutions:
 
 **1. Use an interface/abstraction (Best)**
-```dart
-abstract class IServiceA {
-  void doSomething();
-}
 
-class ServiceB {
-  final IServiceA serviceA;
-  ServiceB(this.serviceA);
-}
-
-class ServiceA implements IServiceA {
-  late final ServiceB serviceB;
-
-  void init() {
-    serviceB = getIt<ServiceB>(); // Get after construction
-  }
-
-  @override
-  void doSomething() { /* ... */ }
-}
-
-// Register
-getIt.registerLazySingleton<ServiceB>(() => ServiceB(getIt<IServiceA>()));
-getIt.registerLazySingleton<IServiceA>(() => ServiceA()..init());
-```
+<<< @/../code_samples/lib/get_it/do_something_example_1.dart#example
 
 **2. Use a mediator/event bus**
 Instead of direct dependencies, communicate through events:
-```dart
-class EventBus {
-  final _controller = StreamController<Event>.broadcast();
-  Stream<Event> get events => _controller.stream;
-  void emit(Event event) => _controller.add(event);
-}
 
-class ServiceA {
-  ServiceA(EventBus bus) {
-    bus.events.where((e) => e is ServiceBEvent).listen(_handle);
-  }
-}
-
-class ServiceB {
-  ServiceB(EventBus bus) {
-    bus.events.where((e) => e is ServiceAEvent).listen(_handle);
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/emit_example_1.dart#example
 
 **3. Rethink your design**
 Circular dependencies often mean:
@@ -322,69 +221,14 @@ See the comprehensive [Testing documentation](/documentation/get_it/testing) for
 **Key principle:** Organize all registrations into **dedicated functions** (not scattered throughout your app). This enables you to reinitialize parts of your app using scopes.
 
 **Simple approach - single function:**
-```dart
-void configureDependencies() {
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
-  getIt.registerFactory<LoginViewModel>(() => LoginViewModel(getIt()));
-}
 
-void main() {
-  configureDependencies();
-  runApp(MyApp());
-}
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_10.dart#example
 
 **Better approach - split by feature/scope:**
 Split registrations into separate functions that encapsulate scope management:
 
-```dart
-void configureCoreDependencies() {
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<Database>(() => Database());
-}
 
-void configureAuthDependencies() {
-  getIt.pushNewScope(
-    scopeName: 'authenticated',
-    init: (scope) {
-      scope.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-      scope.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
-    },
-  );
-}
-
-void configureShopDependencies() {
-  getIt.pushNewScope(
-    scopeName: 'shopping',
-    init: (scope) {
-      scope.registerLazySingleton<CartService>(() => CartService(getIt()));
-      scope.registerLazySingleton<OrderRepository>(() => OrderRepository(getIt()));
-    },
-  );
-}
-
-void main() {
-  configureCoreDependencies();
-  runApp(MyApp());
-}
-
-// Later, when user logs in
-void onLogin() {
-  configureAuthDependencies(); // Pushes scope and registers services
-}
-
-// When user opens shop feature
-void openShop() {
-  configureShopDependencies(); // Pushes scope and registers services
-}
-
-// When user logs out
-void onLogout() async {
-  await getIt.popScope(); // Removes auth scope and disposes services
-}
-```
+<<< @/../code_samples/lib/get_it/configure_core_dependencies_example_1.dart#example
 
 **Why functions matter:**
 - ✅ **Reusable** - Call the same function when pushing scopes to reinitialize features
@@ -408,40 +252,12 @@ See [Scopes documentation](/documentation/get_it/scopes) for more on scope-based
 Use **scopes** - they're designed for this exact use case:
 
 **With Scopes (Recommended ✅):**
-```dart
-// App starts with guest services
-getIt.registerSingleton<User>(GuestUser());
-getIt.registerSingleton<ApiClient>(PublicApiClient());
 
-// User logs in - push new scope
-void onLogin(String token) {
-  getIt.pushNewScope(scopeName: 'authenticated');
-  getIt.registerSingleton<User>(AuthenticatedUser(token));
-  getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(token));
-}
-
-// User logs out - pop scope (automatic cleanup!)
-void onLogout() async {
-  await getIt.popScope(); // All auth services disposed, guest services restored
-}
-```
+<<< @/../code_samples/lib/get_it/on_login_example_1.dart#example
 
 **Without Scopes (Not recommended ❌):**
-```dart
-void onLogin(String token) async {
-  await getIt.unregister<User>();
-  await getIt.unregister<ApiClient>();
-  getIt.registerSingleton<User>(AuthenticatedUser(token));
-  getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(token));
-}
 
-void onLogout() async {
-  await getIt.unregister<User>();
-  await getIt.unregister<ApiClient>();
-  getIt.registerSingleton<User>(GuestUser());
-  getIt.registerSingleton<ApiClient>(PublicApiClient());
-}
-```
+<<< @/../code_samples/lib/get_it/on_login_signature_1.dart
 
 **Why scopes are better:**
 - ✅ Automatic cleanup and restoration
@@ -464,34 +280,12 @@ See [Scopes documentation](/documentation/get_it/scopes) for more patterns.
 **Yes!** The [`injectable`](https://pub.dev/packages/injectable) package provides code generation for get_it registrations using annotations.
 
 **Without injectable (manual):**
-```dart
-void configureDependencies() {
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt(), getIt()));
-  // ... 50 more registrations
-}
-```
+
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_11.dart#example
 
 **With injectable (generated):**
-```dart
-@injectable
-class ApiClient { }
 
-@Injectable(as: IAuthService)
-class AuthService implements IAuthService {
-  AuthService(ApiClient client);
-}
-
-@injectable
-class UserRepository {
-  UserRepository(ApiClient client, AuthService auth);
-}
-
-// Generated code handles all registrations!
-@InjectableInit()
-void configureDependencies() => getIt.init();
-```
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_12.dart#example
 
 **When to use injectable:**
 - ✅ Large apps with many services (50+)
@@ -537,36 +331,12 @@ See the [Object Registration documentation](/documentation/get_it/object_registr
 - Primarily for UI state
 
 **You can use both together!**
-```dart
-// get_it manages your business objects
-getIt.registerLazySingleton<AuthService>(() => AuthService());
-getIt.registerLazySingleton<UserRepository>(() => UserRepository());
 
-// Provider propagates UI state down the tree
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(),
-      child: MaterialApp(...),
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/my_app_example_2.dart#example
 
 **Or use get_it + watch_it instead:**
-```dart
-// get_it + watch_it handles BOTH DI and state management
-getIt.registerSingleton<AuthService>(AuthService());
 
-class LoginPage extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final auth = watchIt<AuthService>(); // Rebuilds when auth changes
-    return /* ... */;
-  }
-}
-```
+<<< @/../code_samples/lib/get_it/login_page_example_2.dart#example
 
 **Choose:**
 - **get_it only**: If you already have state management (BLoC, Riverpod, etc.)
@@ -587,37 +357,21 @@ See [watch_it documentation](/documentation/watch_it/watch_it) for the complete 
 But if you really need to unregister and re-register:
 
 **Problem pattern:**
-```dart
-void onLogout() async {
-  getIt.unregister<AuthService>(); // ❌ Not awaited!
-  getIt.registerSingleton<AuthService>(GuestAuthService());
-  // Error: AuthService already registered (unregister didn't complete!)
-}
-```
+
+<<< @/../code_samples/lib/get_it/on_logout_example_1.dart#example
 
 **Solution 1: Await unregister**
-```dart
-void onLogout() async {
-  await getIt.unregister<AuthService>(); // ✅ Wait for disposal
-  getIt.registerSingleton<AuthService>(GuestAuthService());
-}
-```
+
+<<< @/../code_samples/lib/get_it/on_logout_example_2.dart#example
 
 **Solution 2: Use unregister's disposing function**
-```dart
-await getIt.unregister<AuthService>(
-  disposingFunction: (service) async {
-    await service.cleanup(); // Custom cleanup logic
-  },
-);
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_9b560463.dart#example
 
 **Solution 3: Reset lazy singleton instead**
 If you want to keep the registration but reset the instance:
-```dart
-await getIt.resetLazySingleton<AuthService>();
-// Next call to getIt<AuthService>() creates new instance
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_a449e220_signature.dart
 
 **Why await matters:**
 - If your object implements `Disposable` or has a dispose function, unregister calls it
@@ -626,11 +380,8 @@ await getIt.resetLazySingleton<AuthService>();
 - This causes "already registered" errors
 
 **Again, strongly prefer scopes over unregister/register:**
-```dart
-// Logout - pop scope
-await getIt.popScope(); // All auth services disposed automatically
-// Guest services from base scope automatically restored!
-```
+
+<<< @/../code_samples/lib/get_it/code_sample_657c692e.dart#example
 
 Much cleaner and less error-prone!
 :::
