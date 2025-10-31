@@ -282,6 +282,11 @@ class UserService {
     return UserService._();
   }
 
+  Future<User> loadUser(String userId) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return User(id: userId, name: 'User $userId');
+  }
+
   Future<void> logout() async {}
 }
 

@@ -11,5 +11,6 @@ void main() async {
   );
 // Returns: [FileOutput, ConsoleOutput]
 // ConsoleOutput is now created and cached
+  print('Found: $all');
 }
 // #endregion example
