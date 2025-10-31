@@ -8,6 +8,11 @@ export default defineConfig({
   // Ensure proper file handling
   cleanUrls: true,
 
+  // Ignore dead links for documentation that's still being developed
+  ignoreDeadLinks: [
+    /\/documentation\/(watch_it|command_it)\/getting_started/
+  ],
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
