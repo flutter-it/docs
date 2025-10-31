@@ -1,8 +1,9 @@
 // ignore_for_file: missing_function_body, unused_element
 import 'package:get_it/get_it.dart';
 
-ObjectRegistration? findFirstObjectRegistration<T>({
+// #region example
+ObjectRegistration? findFirstObjectRegistration<T extends Object>({
   Object? instance,
   String? instanceName,
-}) =>
-    null;
+});
+// #endregion example
