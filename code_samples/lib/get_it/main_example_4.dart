@@ -6,7 +6,7 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() {
-  getIt.registerLazySingleton<MyService>(() => MyServiceImpl());
+  getIt.registerLazySingleton<MyService>(() => MyService());
   runApp(MyApp());
 
   // Now you can use it

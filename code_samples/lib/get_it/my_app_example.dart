@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     getIt.registerSingleton<MyService>(
-        MyServiceImpl()); // Called on every hot reload!
+        MyService()); // Called on every hot reload!
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: Text('My App')),

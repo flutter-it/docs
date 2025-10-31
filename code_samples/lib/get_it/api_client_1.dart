@@ -13,6 +13,10 @@ void main() {
     final mockDb = MockDatabase();
     final mockAuth = MockAuthService();
 
+    // Configure mocks directly
+    mockAuth.isAuthenticated = true;
+    mockApi.mockData = {'data': 'value'};
+
     getIt.registerSingleton<ApiClient>(mockApi);
     getIt.registerSingleton<Database>(mockDb);
     getIt.registerSingleton<AuthService>(mockAuth);
@@ -23,9 +27,6 @@ void main() {
           getIt<Database>(),
           getIt<AuthService>(),
         ));
-
-    when(mockAuth.isAuthenticated).thenReturn(true);
-    when(mockApi.fetchData()).thenAnswer((_) async => ['data']);
 
     final sync = getIt<SyncService>();
     print('sync: $sync');

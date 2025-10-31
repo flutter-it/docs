@@ -6,7 +6,7 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() {
-  getIt.registerSingleton<MyService>(MyServiceImpl());
+  getIt.registerSingleton<MyService>(MyService());
   runApp(MyApp());
 }
 // #endregion example

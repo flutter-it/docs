@@ -6,7 +6,7 @@ final getIt = GetIt.instance;
 // #region example
 void main() {
   // Base scope
-  getIt.registerSingleton<IOutput>(FileOutput());
+  getIt.registerSingleton<IOutput>(FileOutput('/tmp/output.txt'));
 
   // Push scope
   getIt.pushNewScope(scopeName: 'session');

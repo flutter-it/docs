@@ -4,7 +4,7 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() {
+void main() async {
   // resetScope - clears all registrations in current scope but keeps scope
   await getIt.resetScope(dispose: true);
 

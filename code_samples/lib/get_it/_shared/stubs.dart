@@ -4,22 +4,52 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+export 'package:flutter/material.dart' show Key, ChangeNotifier;
+import 'package:test/test.dart' hide Matcher, Description;
+export 'package:test/test.dart'
+    show
+        expect,
+        test,
+        setUp,
+        setUpAll,
+        tearDown,
+        tearDownAll,
+        group,
+        isNotNull,
+        throwsStateError;
+import 'package:flutter_test/flutter_test.dart' as flutter_test;
+export 'package:flutter_test/flutter_test.dart'
+    show
+        testWidgets,
+        WidgetTester,
+        find,
+        findsOneWidget,
+        findsWidgets,
+        findsNothing;
 
-/// GetIt typedefs for factory functions
-typedef FactoryFunc<T> = T Function();
-typedef FactoryFuncParam<T, P1, P2> = T Function(P1 param1, P2 param2);
-typedef FactoryFuncAsync<T> = Future<T> Function();
-typedef FactoryFuncParamAsync<T, P1, P2> = Future<T> Function(
-    P1 param1, P2 param2);
-typedef DisposingFunc<T> = FutureOr Function(T instance);
+// Import real get_it classes instead of stubbing
+import 'package:get_it/get_it.dart';
+export 'package:get_it/get_it.dart'
+    show
+        FactoryFunc,
+        FactoryFuncParam,
+        FactoryFuncAsync,
+        FactoryFuncParamAsync,
+        DisposingFunc,
+        ObjectRegistration,
+        WillSignalReady,
+        Disposable;
 
-/// ObjectRegistration for finding registered instances
-class ObjectRegistration {
-  final Type type;
-  final String? instanceName;
-
-  ObjectRegistration(this.type, {this.instanceName});
-}
+// Import real watch_it classes instead of stubbing
+import 'package:watch_it/watch_it.dart';
+export 'package:watch_it/watch_it.dart'
+    show
+        WatchingWidget,
+        WatchingStatefulWidget,
+        callOnce,
+        watchIt,
+        di,
+        pushScope;
 
 /// Annotation stubs for injectable code generation examples
 const injectable = Injectable();
@@ -98,6 +128,14 @@ class Database {
 
   Future<void> close() async {}
   Future<Map<String, dynamic>> query(String sql) async => {};
+  Future<void> save(dynamic data) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+  }
+}
+
+/// Heavy database stub (expensive to create)
+class HeavyDatabase extends Database {
+  HeavyDatabase() : super();
 }
 
 /// Database connection stub (alternative name)
@@ -133,6 +171,11 @@ class ApiClient {
     return {'data': 'mock'};
   }
 
+  Future<Map<String, dynamic>> fetchData() async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return {'data': 'fetched', 'timestamp': DateTime.now().toString()};
+  }
+
   Future<void> authenticate() async {
     await Future.delayed(const Duration(milliseconds: 10));
   }
@@ -144,7 +187,7 @@ class ApiClient {
 abstract class IAuthService {}
 
 /// Authentication service stub
-class AuthService implements IAuthService {
+class AuthService extends ChangeNotifier implements IAuthService {
   AuthService._();
 
   static Future<AuthService> init() async {
@@ -152,7 +195,11 @@ class AuthService implements IAuthService {
     return AuthService._();
   }
 
-  Future<bool> login(String username, String password) async => true;
+  Future<User> login(String username, String password) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return User(id: '123', name: username, token: 'fake-token');
+  }
+
   Future<void> logout() async {}
   Future<void> cleanup() async {}
   bool get isAuthenticated => false;
@@ -227,6 +274,13 @@ class AnalyticsService {
   void trackEvent(String event) {}
 }
 
+/// Session analytics stub
+class SessionAnalytics {
+  SessionAnalytics();
+  void trackEvent(String event) {}
+  void endSession() {}
+}
+
 /// Settings service stub
 class SettingsService {
   SettingsService(this.database);
@@ -244,6 +298,39 @@ class CacheService {
   Future<void> loadFromDisk() async {
     await Future.delayed(const Duration(milliseconds: 10));
   }
+}
+
+/// Global cache (for scope examples)
+class GlobalCache {
+  GlobalCache();
+  Future<String?> get(String key) async => null;
+  Future<void> set(String key, String value) async {}
+}
+
+/// Session cache (for scope examples)
+class SessionCache {
+  SessionCache();
+  Future<String?> get(String key) async => null;
+  Future<void> set(String key, String value) async {}
+}
+
+/// User state (for scope examples)
+class UserState {
+  UserState();
+  String? userId;
+  bool isLoggedIn = false;
+}
+
+/// Core service (for testing examples)
+class CoreService {
+  CoreService();
+  void initialize() {}
+}
+
+/// Feature service (for testing examples)
+class FeatureService {
+  FeatureService(CoreService core);
+  void doSomething() {}
 }
 
 /// Expensive service stub (for cached factory examples)
@@ -288,11 +375,15 @@ class Logger {
 }
 
 /// Mock API client stub (for testing/conditional init)
+/// Directly configurable - set mockData before calling fetchData()
 class MockApiClient extends ApiClient {
   MockApiClient() : super('http://localhost:3000');
 
   bool isAuthenticated = false;
-  Future<List<String>> fetchData() async => ['mock data'];
+  Map<String, dynamic> mockData = {'data': 'mock data'};
+
+  @override
+  Future<Map<String, dynamic>> fetchData() async => mockData;
 }
 
 /// Application model stub
@@ -322,20 +413,54 @@ class AppModel {
   }
 }
 
-/// User service stub (for scopes example)
-class UserService {
-  UserService._();
+/// Theme service stub (for testing examples)
+abstract class ThemeService {
+  String get currentTheme;
+  void setTheme(String theme);
+}
+
+class ThemeServiceImpl implements ThemeService {
+  String _theme = 'light';
+
+  @override
+  String get currentTheme => _theme;
+
+  @override
+  void setTheme(String theme) => _theme = theme;
+}
+
+// Fake mockito functions removed - use direct property access on Mock* classes instead
+
+/// User service stub (for scopes example and testing)
+abstract class UserService {
+  static Future<UserService> load() => _UserServiceImpl.load();
+
+  Future<User> login(String username, String password);
+  Future<User> loadUser(String userId);
+  Future<void> logout();
+}
+
+class _UserServiceImpl extends UserService {
+  _UserServiceImpl();
 
   static Future<UserService> load() async {
     await Future.delayed(const Duration(milliseconds: 10));
-    return UserService._();
+    return _UserServiceImpl();
   }
 
+  @override
+  Future<User> login(String username, String password) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return User(id: username, name: username);
+  }
+
+  @override
   Future<User> loadUser(String userId) async {
     await Future.delayed(const Duration(milliseconds: 10));
     return User(id: userId, name: 'User $userId');
   }
 
+  @override
   Future<void> logout() async {}
 }
 
@@ -392,7 +517,7 @@ class ServiceC {
 
 /// Data sync service stub (for named dependencies example)
 class DataSync {
-  DataSync();
+  DataSync([ApiClient? api]);
 
   static Future<DataSync> initialize() async {
     await Future.delayed(const Duration(milliseconds: 10));
@@ -579,14 +704,6 @@ class ConsoleLogger extends Logger {
 }
 
 /// Service implementations
-class MyServiceImpl implements MyService {
-  @override
-  void doSomething() {}
-
-  @override
-  Future<void> dispose() async {}
-}
-
 class RestServiceImpl extends RestService {
   RestServiceImpl(ApiClient client) : super(client);
 }
@@ -621,18 +738,37 @@ void tearDown(Function() callback) {}
 void setUpAll(Function() callback) {}
 void test(String description, Function() callback) {}
 void expect(dynamic actual, dynamic matcher) {}
-void verify(dynamic mock) {}
+// verify() removed - use direct assertions on Mock* classes instead
 
-/// Mocking framework helper
-class MockWhen<T> {
-  final T value;
-  MockWhen(this.value);
-
-  void thenReturn(dynamic returnValue) {}
-  void thenAnswer(dynamic callback) {}
+/// Test matcher base class
+abstract class Matcher {
+  bool matches(dynamic item, Map matchState);
+  Description describe(Description description);
 }
 
-MockWhen<T> when<T>(T methodCall) => MockWhen<T>(methodCall);
+/// Test description class
+class Description {
+  final StringBuffer _buffer = StringBuffer();
+
+  Description add(String text) {
+    _buffer.write(text);
+    return this;
+  }
+
+  @override
+  String toString() => _buffer.toString();
+}
+
+/// Type matcher for testing
+Matcher isA<T>() => _IsA<T>();
+
+class _IsA<T> extends Matcher {
+  @override
+  bool matches(dynamic item, Map matchState) => item is T;
+
+  @override
+  Description describe(Description description) => description.add('is a $T');
+}
 
 class MockDatabase extends Database {}
 
@@ -640,13 +776,13 @@ class MockDatabase extends Database {}
 class LoggingPlugin extends AppPlugin {
   @override
   String get name => 'LoggingPlugin';
+
+  static Future<LoggingPlugin> create() async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return LoggingPlugin();
+  }
 }
 
-/// My Service interface
-abstract class MyService {
-  void doSomething();
-  Future<void> dispose();
-}
 
 /// Additional missing classes
 class ShoppingCart {
@@ -692,6 +828,11 @@ class AppPlugin implements Plugin {
 class CorePlugin extends AppPlugin {
   @override
   String get name => 'CorePlugin';
+
+  static Future<CorePlugin> create() async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return CorePlugin();
+  }
 }
 
 class AnalyticsPlugin extends AppPlugin {
@@ -720,7 +861,7 @@ class ThemeProvider {
   void setTheme(String theme) {}
 }
 
-class ProfileController {
+class ProfileController extends ChangeNotifier {
   final String userId;
   ProfileController({required this.userId});
 
@@ -774,6 +915,10 @@ class AuthenticatedUser extends User {
   AuthenticatedUser(String token) : super(id: 'auth', name: 'Authenticated');
 }
 
+class LoggedInUser extends User {
+  LoggedInUser() : super(id: 'logged-in', name: 'Logged In User');
+}
+
 /// Helper function
 void notifyListeners() {}
 
@@ -812,8 +957,44 @@ class DatabaseImpl extends Database {
   DatabaseImpl() : super();
 }
 
-class UserServiceImpl {
-  UserServiceImpl(ApiClient api);
+class UserServiceImpl extends UserService {
+  final ApiClient api;
+  UserServiceImpl(this.api);
+
+  @override
+  Future<User> login(String username, String password) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return User(id: username, name: username);
+  }
+
+  @override
+  Future<User> loadUser(String userId) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return User(id: userId, name: 'User $userId');
+  }
+
+  @override
+  Future<void> logout() async {}
+}
+
+/// Mock service for testing
+class MockUserService extends UserService {
+  MockUserService();
+
+  @override
+  Future<User> login(String username, String password) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return User(id: username, name: username);
+  }
+
+  @override
+  Future<User> loadUser(String userId) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return User(id: userId, name: 'User $userId');
+  }
+
+  @override
+  Future<void> logout() async {}
 }
 
 /// Plugin implementations
@@ -907,24 +1088,52 @@ void testWidgets(String description, Function(dynamic tester) body) {}
 
 void tearDownAll(Function() callback) {}
 
-dynamic anyNamed(String name) => null;
+// anyNamed() removed - use direct configuration on Mock* classes instead
 
-/// Mock auth service
+/// Mock auth service with configurable properties
+/// Directly configurable - set isAuthenticated before use
 class MockAuthService extends AuthService {
   MockAuthService() : super._();
 
-  String getToken() => 'mock-token';
+  @override
+  bool get isAuthenticated => _isAuthenticated;
+  bool _isAuthenticated = false;
+  set isAuthenticated(bool value) => _isAuthenticated = value;
 
-  Future<dynamic> thenAnswer(dynamic invocation) async => null;
+  String getToken() => 'mock-token';
 }
 
 /// Additional viewmodels and services
 class UserViewModel {
-  UserViewModel({dynamic userId, dynamic age, UserRepository? repo});
+  UserViewModel(this.userId, {dynamic age, UserRepository? repo});
+  final String userId;
 }
 
 class ReportGenerator {
   ReportGenerator(dynamic param);
+}
+
+class TestClass {
+  TestClass();
+}
+
+class UserPreferences {
+  UserPreferences();
+  String getSetting(String key) => 'value';
+  void setSetting(String key, String value) {}
+}
+
+class ImageProcessor {
+  ImageProcessor(this.width, this.height);
+  final int width;
+  final int height;
+
+  void process() {}
+}
+
+class HeavyService {
+  HeavyService();
+  void doWork() {}
 }
 
 /// Cache interface for example code
@@ -989,14 +1198,7 @@ class BasicUI extends StatelessWidget {
   Widget build(BuildContext context) => const Text('Basic');
 }
 
-/// watch_it widgets
-abstract class WatchingWidget extends StatelessWidget {
-  const WatchingWidget({super.key});
-
-  void pushScope({required void Function(dynamic) init}) {
-    // Stub implementation
-  }
-}
+// WatchingWidget imported from package:watch_it/watch_it.dart above
 
 /// Observers
 class AnalyticsObserver {
@@ -1020,30 +1222,6 @@ class ChangeNotifierProvider extends StatelessWidget {
 
 class ThemeNotifier extends ChangeNotifier {
   String currentTheme = 'light';
-}
-
-/// Flutter widget stubs
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: const Center(child: Text('Home Page')),
-    );
-  }
 }
 
 class SplashScreen extends StatelessWidget {
@@ -1083,17 +1261,8 @@ class ErrorApp extends StatelessWidget {
   }
 }
 
-/// watch_it integration stubs (for examples showing integration)
-void callOnce(Function() callback, {Function()? dispose}) {
-  callback();
-}
-
-dynamic watchIt<T>({String? instanceName}) => null;
-
-/// ChangeNotifier from Flutter for reactive models
-class ChangeNotifier {
-  void notifyListeners() {}
-}
+// callOnce, watchIt imported from package:watch_it/watch_it.dart above
+// ChangeNotifier imported from package:flutter/material.dart above
 
 /// Permissions system stubs
 class Permissions {}
@@ -1155,4 +1324,48 @@ class SyncService {
 class TypeRegistration {
   final registrations = <dynamic>[];
   final namedRegistrations = <String, dynamic>{};
+}
+
+/// runApp stub (Flutter app entry) - commented out to avoid conflict with Flutter's runApp
+// void runApp(Widget app) {}
+
+/// setupDependencies stub
+void setupDependencies() {}
+
+/// HomePage widget stub
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) => Container();
+}
+
+/// MyApp widget stub
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) => MaterialApp();
+}
+
+/// MyService stub with saveState
+class MyService {
+  void saveState() {}
+  void doWork() {}
+  void cleanup() {}
+  void dispose() {}
+}
+
+class MyServiceImpl extends MyService {
+  @override
+  void saveState() {}
+
+  @override
+  void doWork() {}
+
+  @override
+  void cleanup() {}
+
+  @override
+  void dispose() {}
 }

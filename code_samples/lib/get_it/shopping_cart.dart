@@ -4,7 +4,7 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() {
+void main() async {
   // Start new shopping session
   getIt.pushNewScope(scopeName: 'session');
   getIt.registerSingleton<ShoppingCart>(ShoppingCart());

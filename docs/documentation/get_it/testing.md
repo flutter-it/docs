@@ -124,86 +124,42 @@ Factories create new instances on each `get()` call - verify this behavior in te
 ### ✅ Do
 
 1. **Use scopes for test isolation**
-   ```dart
-   setUp(() => getIt.pushNewScope());
-   tearDown(() async => await getIt.popScope());
-   ```
+   <<< ../../../code_samples/lib/get_it/testing_f1b668dd_signature.dart
+
 
 2. **Register real dependencies once in `setUpAll()`**
-   ```dart
-   setUpAll(() {
-     configureDependencies(); // Same as production
-   });
-   ```
+   <<< ../../../code_samples/lib/get_it/testing_c8fe4e9b_signature.dart
+
 
 3. **Shadow only what you need to mock**
-   ```dart
-   setUp(() {
-     getIt.pushNewScope();
-     getIt.registerSingleton<ApiClient>(MockApiClient()); // Only mock this
-     // Everything else uses real registrations from base scope
-   });
-   ```
+   <<< ../../../code_samples/lib/get_it/testing_8dbacaca_signature.dart
+
 
 4. **Await `popScope()` if services have async disposal**
-   ```dart
-   tearDown(() async {
-     await getIt.popScope(); // Ensures cleanup completes
-   });
-   ```
+   <<< ../../../code_samples/lib/get_it/testing_93df6902_signature.dart
+
 
 5. **Use `allReady()` for async registrations**
-   ```dart
-   await getIt.allReady(); // Wait before testing
-   ```
+   <<< ../../../code_samples/lib/get_it/testing_cc70be3d.dart
+
 
 ### ❌ Don't
 
 1. **Don't call `reset()` between tests**
-   ```dart
-   // ❌ Bad - loses all registrations
-   tearDown(() async {
-     await getIt.reset();
-   });
+   <<< ../../../code_samples/lib/get_it/testing_0a7443ea.dart
 
-   // ✅ Good - use scopes instead
-   tearDown(() async {
-     await getIt.popScope();
-   });
-   ```
 
 2. **Don't re-register everything in each test**
-   ```dart
-   // ❌ Bad - duplicates production setup
-   setUp(() {
-     getIt.registerLazySingleton<ApiClient>(...);
-     getIt.registerLazySingleton<Database>(...);
-     // ... 50 more registrations
-   });
+   <<< ../../../code_samples/lib/get_it/testing_138c49df_signature.dart
 
-   // ✅ Good - reuse production setup
-   setUpAll(() {
-     configureDependencies(); // Call once
-   });
-   ```
 
 3. **Don't use `allowReassignment` in tests**
-   ```dart
-   // ❌ Bad - masks bugs
-   getIt.allowReassignment = true;
+   <<< ../../../code_samples/lib/get_it/testing_a862f724_signature.dart
 
-   // ✅ Good - use scopes for isolation
-   ```
 
 4. **Don't forget to pop scopes in tearDown**
-   ```dart
-   // ❌ Bad - scopes leak into next test
-   test('...', () {
-     getIt.pushNewScope();
-     // ... test code
-     // Missing popScope()!
-   });
-   ```
+   <<< ../../../code_samples/lib/get_it/testing_4bac3b7c_signature.dart
+
 
 ---
 
@@ -214,41 +170,24 @@ Factories create new instances on each `get()` call - verify this behavior in te
 **Cause:** Scope wasn't popped in previous test, or `reset()` wasn't awaited.
 
 **Fix:**
-```dart
-tearDown(() async {
-  await getIt.popScope(); // Always await!
-});
-```
+<<< ../../../code_samples/lib/get_it/testing_ac521152_signature.dart
+
 
 ### Mocks not being used
 
 **Cause:** Mock was registered in wrong scope or after service was already created.
 
 **Fix:** Push scope and register mocks **before** accessing services:
-```dart
-setUp(() {
-  getIt.pushNewScope();
-  getIt.registerSingleton<ApiClient>(mockApi); // Register FIRST
-});
+<<< ../../../code_samples/lib/get_it/testing_78522d78_signature.dart
 
-test('test name', () {
-  final service = getIt<UserService>(); // Accesses AFTER mock registered
-  // ...
-});
-```
 
 ### Async service not ready
 
 **Cause:** Trying to access async registration before it completes.
 
 **Fix:**
-```dart
-test('async test', () async {
-  await getIt.allReady(); // Wait for all async registrations
-  final db = getIt<Database>();
-  // ...
-});
-```
+<<< ../../../code_samples/lib/get_it/testing_9153fb06_signature.dart
+
 
 ---
 

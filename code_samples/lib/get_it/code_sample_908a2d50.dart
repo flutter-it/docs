@@ -4,7 +4,7 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() {
+void main() async {
   // Access services
   final api = getIt<ApiClient>();
   print('api: $api');
@@ -14,8 +14,9 @@ void main() {
   print('auth: $auth');
 
   // Use them
-  await api.fetchData();
+  final data = await api.fetchData();
   await db.save(data);
   final user = await auth.login('alice', 'secret');
+  print('user: $user');
 }
 // #endregion example

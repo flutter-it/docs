@@ -4,7 +4,7 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() {
+void main() async {
   // Register lazy singletons
   getIt.registerLazySingleton<CacheService>(() => CacheService());
   getIt.registerLazySingleton<UserPreferences>(() => UserPreferences());

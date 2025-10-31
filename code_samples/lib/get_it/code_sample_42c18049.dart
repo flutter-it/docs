@@ -9,7 +9,7 @@ void main() async {
   const userId = "user123";
 // Register factory accepting two parameters
   getIt.registerFactoryParam<UserViewModel, String, int>(
-    (userId, age) => UserViewModel(userId: userId, age: age),
+    (userId, age) => UserViewModel(userId, age: age),
   );
 
 // Access with parameters

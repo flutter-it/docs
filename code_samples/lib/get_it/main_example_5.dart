@@ -8,7 +8,7 @@ final getIt = GetIt.instance;
 void main() {
   final service = getIt<MyService>();
   print('service: $service'); // ❌ ERROR! Not registered yet
-  getIt.registerLazySingleton<MyService>(() => MyServiceImpl());
+  getIt.registerLazySingleton<MyService>(() => MyService());
   runApp(MyApp());
 }
 // #endregion example

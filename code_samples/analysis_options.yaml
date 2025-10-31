@@ -5,6 +5,11 @@ analyzer:
     # Signature files - intentionally incomplete API documentation
     # All signature files end with _signature.dart
     - lib/get_it/*_signature.dart
+    # Exclude package dependencies from analysis (path dependencies in parent directory)
+    - "../../get_it/**"
+    - "../../watch_it/**"
+    - "../../command_it/**"
+    - "../../listen_it/**"
 
   errors:
     # Be strict about actual errors

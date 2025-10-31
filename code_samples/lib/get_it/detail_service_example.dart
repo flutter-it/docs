@@ -40,7 +40,7 @@ class DetailPage extends WatchingWidget {
   Widget build(BuildContext context) {
     // Register once when widget is created, dispose when widget is disposed
     callOnce(
-      () {
+      (context) {
         // Register or get existing - increments reference count
         getIt.registerSingletonIfAbsent<DetailService>(
           () => DetailService(itemId),

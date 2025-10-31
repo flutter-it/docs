@@ -6,7 +6,7 @@ final getIt = GetIt.instance;
 // #region example
 void main() async {
   getIt.registerLazySingleton<MyService>(
-      () => MyServiceImpl()); // ✅ Register as MyService
+      () => MyService()); // ✅ Register as MyService
   final service = getIt<MyService>();
   print('service: $service'); // ✅ Works!
 }

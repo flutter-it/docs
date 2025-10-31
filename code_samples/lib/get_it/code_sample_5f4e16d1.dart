@@ -5,7 +5,7 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() {
-  test('factory param passes parameters correctly', () {
+  test('factory param passes parameters correctly', () async {
     getIt.pushNewScope();
 
     getIt.registerFactoryParam<UserViewModel, String, void>(

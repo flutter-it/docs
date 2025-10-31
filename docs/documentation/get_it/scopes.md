@@ -125,26 +125,8 @@ When a scope is popped:
 2. **Object dispose functions** are called in reverse registration order
 3. **Scope is removed** from the stack
 
-```dart
-getIt.pushNewScope(
-  dispose: () async {
-    // Called FIRST - objects still accessible
-    final service = getIt<MyService>();
-    await service.saveState();
-  },
-);
+<<< ../../../code_samples/lib/get_it/scopes_4c72f192.dart
 
-getIt.registerSingleton<MyService>(
-  MyService(),
-  dispose: (service) {
-    // Called SECOND - after scope dispose
-    service.cleanup();
-  },
-);
-
-await getIt.popScope();
-// Order: scope dispose → MyService.cleanup → scope removed
-```
 
 ### Implementing Disposable Interface
 
