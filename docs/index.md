@@ -10,12 +10,12 @@ flutter_it is a **modular construction set** of reactive tools for Flutter. Pick
 
 ## Why flutter_it?
 
-✅ **Zero build_runner** - No code generation, no waiting for builds
-✅ **Pure Dart** - Works with standard Flutter, no magic
-✅ **Modular by design** - Use one package or combine several—you choose
-✅ **Built on ChangeNotifier and ValueNotifier** - Seamless Flutter integration with familiar primitives
-✅ **Type-safe** - Full compile-time type checking
-✅ **Battle-tested** - Trusted by thousands of Flutter developers
+- ✅ **Zero build_runner** - No code generation, no waiting for builds
+- ✅ **Pure Dart** - Works with standard Flutter, no magic
+- ✅ **Modular by design** - Use one package or combine several—you choose
+- ✅ **Built on ChangeNotifier and ValueNotifier** - Seamless Flutter integration with familiar primitives
+- ✅ **Type-safe** - Full compile-time type checking
+- ✅ **Battle-tested** - Trusted by thousands of Flutter developers
 
 ## See it in action
 
