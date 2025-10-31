@@ -228,6 +228,7 @@ class InitializationProgress extends ChangeNotifier {
 /// Logger stub
 class Logger {
   Logger._();
+  Logger();  // Public constructor
 
   static Future<Logger> initialize() async {
     await Future.delayed(const Duration(milliseconds: 10));
@@ -516,7 +517,13 @@ class ConsoleLogger extends Logger {
 }
 
 /// Service implementations
-class MyServiceImpl implements Service {}
+class MyServiceImpl implements MyService {
+  @override
+  void doSomething() {}
+
+  @override
+  Future<void> dispose() async {}
+}
 
 class RestServiceImpl extends RestService {
   RestServiceImpl(ApiClient client) : super(client);
