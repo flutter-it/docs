@@ -6,6 +6,29 @@ final getIt = GetIt.instance;
 
 // #region example
 // Feature flag scenario
+class MyWidget extends StatelessWidget {
+  const MyWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final logger = getIt.maybeGet<Logger>();
+    print('logger: $logger');
+    logger?.log('Building MyWidget'); // Safe even if Logger not registered
+
+    return const Text('Hello');
+  }
+}
+
+// Graceful degradation
+Widget getUIForPremiumStatus() {
+  final premiumFeature = getIt.maybeGet<PremiumFeature>();
+  print('premiumFeature: $premiumFeature');
+  if (premiumFeature != null) {
+    return PremiumUI(feature: premiumFeature);
+  } else {
+    return const BasicUI(); // Fallback when premium not available
+  }
+}
 
 void main() {
   final analyticsService = getIt.maybeGet<AnalyticsService>();
@@ -14,25 +37,7 @@ void main() {
     analyticsService.trackEvent('user_action');
   }
 
-  // Optional dependency
-  class MyWidget extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      final logger = getIt.maybeGet<Logger>();
-  print('logger: $logger');
-      logger?.log('Building MyWidget'); // Safe even if Logger not registered
-
-      return Text('Hello');
-    }
-  }
-
-  // Graceful degradation
-  final premiumFeature = getIt.maybeGet<PremiumFeature>();
-  print('premiumFeature: $premiumFeature');
-  if (premiumFeature != null) {
-    return PremiumUI(feature: premiumFeature);
-  } else {
-    return BasicUI(); // Fallback when premium not available
-  }
+  final ui = getUIForPremiumStatus();
+  print('UI: $ui');
 }
 // #endregion example

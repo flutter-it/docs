@@ -5,6 +5,8 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() async {
+  const tenantId = 'tenant-123';
+
   await getIt.pushNewScopeAsync(
     scopeName: 'tenant-workspace',
     init: (getIt) async {
@@ -13,11 +15,13 @@ void main() async {
       getIt.registerSingleton<TenantConfig>(config);
 
       // Establish database connection
-      final database = await DatabaseConnection.connect(config.dbUrl);
-      getIt.registerSingleton<DatabaseConnection>(database);
+      final dbConnection = DatabaseConnection();
+      await dbConnection.connect();
+      getIt.registerSingleton<DatabaseConnection>(dbConnection);
 
       // Load cached data
-      final cache = await CacheManager.initialize(tenantId);
+      final cache = CacheManager();
+      await cache.initialize(tenantId);
       getIt.registerSingleton<CacheManager>(cache);
     },
     dispose: () async {

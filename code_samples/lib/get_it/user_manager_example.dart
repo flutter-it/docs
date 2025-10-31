@@ -33,7 +33,13 @@ test('saveUser updates model and persists to database', () async {
   verify(mockDb.save(any)).called(1);
 });
 
-void main() {
+void main() async {
+  // Setup GetIt
+  getIt.registerSingleton<AppModel>(AppModel());
+  getIt.registerSingleton<DbService>(DbService());
 
+  // Use UserManager with GetIt
+  final manager = UserManager();
+  await manager.saveUser(User(id: '1', name: 'Alice'));
 }
 // #endregion example

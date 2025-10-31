@@ -448,7 +448,9 @@ class TenantConfig {
   final String database;
   final String apiKey;
   final String dbUrl;
-  TenantConfig(this.database, this.apiKey, {this.dbUrl = 'db://localhost'});
+  final String apiUrl;
+  TenantConfig(this.database, this.apiKey,
+      {this.dbUrl = 'db://localhost', this.apiUrl = 'https://api.example.com'});
 }
 
 /// REST service stub
@@ -640,6 +642,10 @@ class ThemeProvider {
 }
 
 class ProfileController {
+  final String userId;
+  ProfileController({required this.userId});
+
+  User get userData => User(id: userId, name: 'Profile User');
   void loadProfile(String userId) {}
 }
 
@@ -846,9 +852,16 @@ class InMemoryStorage extends Database {
   InMemoryStorage() : super(':memory:');
 }
 
+/// Premium feature stub
+class PremiumFeature {
+  final String name;
+  PremiumFeature(this.name);
+}
+
 /// UI widgets
 class PremiumUI extends StatelessWidget {
-  const PremiumUI({super.key});
+  final PremiumFeature? feature;
+  const PremiumUI({super.key, this.feature});
 
   @override
   Widget build(BuildContext context) => const Text('Premium');
@@ -861,6 +874,15 @@ class BasicUI extends StatelessWidget {
   Widget build(BuildContext context) => const Text('Basic');
 }
 
+/// watch_it widgets
+abstract class WatchingWidget extends StatelessWidget {
+  const WatchingWidget({super.key});
+
+  void pushScope({required void Function(dynamic) init}) {
+    // Stub implementation
+  }
+}
+
 /// Observers
 class AnalyticsObserver {
   void observe() {}
@@ -871,8 +893,14 @@ class LoggingObserver {
 }
 
 /// Provider stubs (for examples that use provider pattern)
-class ChangeNotifierProvider {
-  ChangeNotifierProvider({required dynamic create, required Widget? child});
+class ChangeNotifierProvider extends StatelessWidget {
+  final Widget? child;
+
+  const ChangeNotifierProvider(
+      {super.key, required dynamic create, required this.child});
+
+  @override
+  Widget build(BuildContext context) => child ?? const SizedBox();
 }
 
 class ThemeNotifier extends ChangeNotifier {
@@ -940,13 +968,12 @@ class ErrorApp extends StatelessWidget {
   }
 }
 
-
 /// watch_it integration stubs (for examples showing integration)
-void callOnce(Function() callback) {
+void callOnce(Function() callback, {Function()? dispose}) {
   callback();
 }
 
-dynamic watchIt<T>() => null;
+dynamic watchIt<T>({String? instanceName}) => null;
 
 /// ChangeNotifier from Flutter for reactive models
 class ChangeNotifier {
@@ -970,8 +997,17 @@ class TenantManager {
 }
 
 /// File output helper
+class File {
+  final String path;
+  File(this.path);
+
+  void writeAsStringSync(String content) {
+    // Stub implementation
+  }
+}
+
 class FileOutputHelper {
-  static FileOutput File(String path) => FileOutput(path);
+  static FileOutput fileOutput(String path) => FileOutput(path);
 }
 
 /// App model extensions
@@ -986,3 +1022,11 @@ extension DatabaseConnectionExtensions on DatabaseConnection {
   Future<void> close() async {}
 }
 
+/// Mock classes for testing
+class MockAppModel {
+  User? currentUser;
+}
+
+class MockDbService {
+  Future<void> save(dynamic data) async {}
+}

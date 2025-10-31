@@ -41,45 +41,42 @@ class DetailPage extends WatchingWidget {
     callOnce(
       () {
         // Register or get existing - increments reference count
+        getIt.registerSingletonIfAbsent<DetailService>(
+          () => DetailService(itemId),
+          instanceName: itemId,
+        );
+      },
+      dispose: () {
+        // Decrements reference count when widget disposes
+        getIt.releaseInstance(getIt<DetailService>(instanceName: itemId));
+      },
+    );
 
-void main() {
-          getIt.registerSingletonIfAbsent<DetailService>(
-            () => DetailService(itemId),
-            instanceName: itemId,
-          );
-        },
-        dispose: () {
-          // Decrements reference count when widget disposes
-          getIt.releaseInstance(getIt<DetailService>(instanceName: itemId));
-        },
-      );
+    // Watch the service - rebuilds when notifyListeners() called
+    final service = watchIt<DetailService>(instanceName: itemId);
 
-      // Watch the service - rebuilds when notifyListeners() called
-      final service = watchIt<DetailService>(instanceName: itemId);
-
-      return Scaffold(
-        appBar: AppBar(title: Text('Detail $itemId')),
-        body: service.isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Column(
-                children: [
-                  Text(service.data ?? 'No data'),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Can push same page recursively
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DetailPage('related-$itemId'),
-                        ),
-                      );
-                    },
-                    child: Text('View Related'),
-                  ),
-                ],
-              ),
-      );
-    }
+    return Scaffold(
+      appBar: AppBar(title: Text('Detail $itemId')),
+      body: service.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Text(service.data ?? 'No data'),
+                ElevatedButton(
+                  onPressed: () {
+                    // Can push same page recursively
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => DetailPage('related-$itemId'),
+                      ),
+                    );
+                  },
+                  child: const Text('View Related'),
+                ),
+              ],
+            ),
+    );
   }
 }
 // #endregion example

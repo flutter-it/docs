@@ -16,19 +16,17 @@ class TenantManager {
       scopeName: 'tenant',
       init: (getIt) async {
         final config = await loadTenantConfig(tenantId);
+        getIt.registerSingleton<TenantConfig>(config);
 
-void main() {
-          getIt.registerSingleton<TenantConfig>(config);
+        final database = await openTenantDatabase(tenantId);
+        getIt.registerSingleton<Database>(database);
 
-          final database = await openTenantDatabase(tenantId);
-          getIt.registerSingleton<Database>(database);
-
-          getIt.registerSingleton<TenantServices>(
-            TenantServices(config, database),
-          );
-        },
-      );
-    }
+        final api = ApiClient(config.apiUrl);
+        getIt.registerSingleton<TenantServices>(
+          TenantServices(database, api),
+        );
+      },
+    );
   }
 }
 // #endregion example

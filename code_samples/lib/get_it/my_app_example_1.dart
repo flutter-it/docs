@@ -7,19 +7,25 @@ final getIt = GetIt.instance;
 // #region example
 // get_it manages your business objects
 
-void main() {
-  getIt.registerLazySingleton<AuthService>(() => AuthService());
-  getIt.registerLazySingleton<UserRepository>(() => UserRepository());
+// Provider propagates UI state down the tree
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  // Provider propagates UI state down the tree
-  class MyApp extends StatelessWidget {
-    @override
-    Widget build(BuildContext context) {
-      return ChangeNotifierProvider(
-        create: (_) => ThemeNotifier(),
-        child: MaterialApp(...),
-      );
-    }
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: const MaterialApp(
+        home: Scaffold(body: Center(child: Text('Hello'))),
+      ),
+    );
   }
+}
+
+void main() {
+  getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl());
+  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
+
+  runApp(const MyApp());
 }
 // #endregion example
