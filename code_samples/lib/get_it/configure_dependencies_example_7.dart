@@ -41,8 +41,11 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// #endregion example
+
 void main() {
+  // #region example
   configureDependencies();
   runApp(const MyApp());
+  // #endregion example
 }
-// #endregion example

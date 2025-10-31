@@ -3,10 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/material.dart';
 import '_shared/stubs.dart';
 
-// #region example
-// lib/main.dart
 void main() {
+  // #region example
   configureDependencies(); // Register all services FIRST
   runApp(MyApp());
+  // #endregion example
 }
-// #endregion example

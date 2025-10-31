@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   getIt.pushNewScope(
     isFinal: true, // Can't register after init completes
     init: (getIt) {
@@ -16,5 +16,5 @@ void main() async {
 
 // This throws an error - scope is final!
 // getIt.registerSingleton<ServiceC>(ServiceC());
+  // #endregion example
 }
-// #endregion example

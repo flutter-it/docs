@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
 // Push a new scope
   getIt.pushNewScope(
     scopeName: 'my-scope', // Optional: name for later reference
@@ -35,5 +35,5 @@ void main() async {
 // Get current scope name
   print(getIt
       .currentScopeName); // Returns null for base scope, 'baseScope' for base
+  // #endregion example
 }
-// #endregion example

@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   // Enable feature first
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
@@ -15,5 +15,5 @@ void main() {
 
   // Get all at once
   final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
+  // #endregion example
 }
-// #endregion example

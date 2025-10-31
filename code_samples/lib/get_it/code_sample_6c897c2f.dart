@@ -3,11 +3,11 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   getIt.registerLazySingleton(
       () => MyServiceImpl()); // Registers as MyServiceImpl
   final service = getIt<MyService>();
   print('service: $service'); // ❌ Looking for MyService
+  // #endregion example
 }
-// #endregion example

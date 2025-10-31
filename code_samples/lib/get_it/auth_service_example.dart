@@ -5,18 +5,13 @@ final getIt = GetIt.instance;
 
 // #region example
 class AuthService {
-  final ApiClient api;
-
-  AuthService(this.api);
-
   Future<void> login(String username, String password) async {
-    final user = await api.login(username, password);
+    final user = await getIt<ApiClient>().login(username, password);
 
     // Push authenticated scope
     getIt.pushNewScope(scopeName: 'authenticated');
     getIt.registerSingleton<User>(user);
-    getIt
-        .registerSingleton<ApiClient>(AuthenticatedApiClient(user.token ?? ''));
+    getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(user.token));
     getIt.registerSingleton<NotificationService>(NotificationService(user.id));
   }
 
@@ -26,17 +21,5 @@ class AuthService {
 
     // GuestUser (from base scope) is now active again
   }
-}
-
-void main() async {
-  // Setup base scope
-  final api = ApiClient('https://api.example.com');
-  getIt.registerSingleton<AuthService>(AuthService(api));
-
-  // Login example
-  const username = "user@example.com";
-  const password = "password123";
-  await getIt<AuthService>().login(username, password);
-  print('Logged in successfully');
 }
 // #endregion example

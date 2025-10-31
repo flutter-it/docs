@@ -4,11 +4,11 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   void onLogout() async {
     await getIt.unregister<AuthService>(); // ✅ Wait for disposal
     getIt.registerSingleton<AuthService>(GuestAuthService());
   }
+  // #endregion example
 }
-// #endregion example

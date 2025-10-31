@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   // Access services
   final api = getIt<ApiClient>();
   print('api: $api');
@@ -18,5 +18,5 @@ void main() async {
   await db.save(data);
   final user = await auth.login('alice', 'secret');
   print('user: $user');
+  // #endregion example
 }
-// #endregion example

@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
 // Unregister by type with cleanup
   getIt.unregister<Database>(
     disposingFunction: (db) => db.close(),
@@ -20,5 +20,5 @@ void main() async {
     instance: myService,
     disposingFunction: (s) => s.dispose(),
   );
+  // #endregion example
 }
-// #endregion example

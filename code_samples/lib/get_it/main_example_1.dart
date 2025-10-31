@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   setUpAll(() {
     configureDependencies(); // Register real app dependencies ONCE
   });
@@ -23,5 +23,5 @@ void main() {
     print('service: $service');
     // UserService automatically gets MockApiClient!
   });
+  // #endregion example
 }
-// #endregion example

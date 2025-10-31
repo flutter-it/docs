@@ -25,7 +25,10 @@ class UserModel extends ChangeNotifier {
   }
 }
 
+// #endregion example
+
 void main() async {
+  // #region example
   // Register user with username as instance name
   final user = UserModel('alice', 'alice@example.com');
   getIt.registerSingleton<UserModel>(user, instanceName: 'alice');
@@ -38,5 +41,5 @@ void main() async {
   print('renamedUser: $renamedUser'); // Works!
   print('User: ${renamedUser.username}');
   // getIt<UserModel>(instanceName: 'alice'); // Would throw - old name invalid
+  // #endregion example
 }
-// #endregion example

@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   // Factory - always new, immediate cleanup
   getIt.registerFactory<JsonParser>(() => JsonParser());
   final p1 = getIt<JsonParser>();
@@ -25,5 +25,5 @@ void main() {
   print('p5: $p5'); // Creates instance 4
   final p6 = getIt<JsonParser>();
   print('p6: $p6'); // Returns instance 4 (always)
+  // #endregion example
 }
-// #endregion example

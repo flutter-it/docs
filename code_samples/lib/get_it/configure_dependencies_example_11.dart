@@ -21,7 +21,10 @@ class UserRepository {
 @InjectableInit()
 void configureDependencies() => getIt.init();
 
-void main() {
-  configureDependencies();
-}
 // #endregion example
+
+void main() {
+  // #region example
+  configureDependencies();
+  // #endregion example
+}

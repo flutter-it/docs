@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
 // Register with one parameter (second type is void)
   getIt.registerFactoryParam<ReportGenerator, String, void>(
     (reportType, _) => ReportGenerator(reportType),
@@ -13,5 +13,5 @@ void main() async {
 // Access with one parameter
   final report = getIt<ReportGenerator>(param1: 'sales');
   print('report: $report');
+  // #endregion example
 }
-// #endregion example

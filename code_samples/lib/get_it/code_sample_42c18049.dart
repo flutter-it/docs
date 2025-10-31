@@ -4,8 +4,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   const userId = "user123";
 // Register factory accepting two parameters
   getIt.registerFactoryParam<UserViewModel, String, int>(
@@ -15,5 +15,5 @@ void main() async {
 // Access with parameters
   final vm = getIt<UserViewModel>(param1: 'user-123', param2: 25);
   print('vm: $vm');
+  // #endregion example
 }
-// #endregion example

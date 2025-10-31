@@ -103,7 +103,7 @@ Once enabled, this setting applies **globally** to the entire get_it instance. Y
 After calling `enableRegisteringMultipleInstancesOfOneType()`, you can register the same type multiple times:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_1.dart
+<<< @/../code_samples/lib/get_it/plugin_1.dart
 
 ::: tip Unnamed + Named Together
 All registrations coexist - both unnamed and named. `getAll<T>()` returns all of them.
@@ -118,7 +118,7 @@ All registrations coexist - both unnamed and named. `getAll<T>()` returns all of
 When multiple unnamed registrations exist, `get<T>()` returns **only the first** registered instance:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_2.dart
+<<< @/../code_samples/lib/get_it/plugin_2.dart
 
 ::: tip When to use get()
 Use `get<T>()` when you want the "default" or "primary" implementation. Register it first!
@@ -146,7 +146,7 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 By default, searches only the **current scope**:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_3.dart
+<<< @/../code_samples/lib/get_it/plugin_3.dart
 
 ### All Scopes
 
@@ -257,7 +257,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 Named and unnamed registrations work together seamlessly:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_4.dart
+<<< @/../code_samples/lib/get_it/plugin_4.dart
 
 ---
 

@@ -56,12 +56,15 @@ class AppLifecycleManager {
   }
 }
 
+// #endregion example
+
 void main() {
+  // #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   // Multiple observers can register
   getIt.registerSingleton<AppLifecycleObserver>(AnalyticsObserver());
   getIt.registerSingleton<AppLifecycleObserver>(LoggingObserver());
   getIt.registerSingleton<AppLifecycleObserver>(CacheObserver());
+  // #endregion example
 }
-// #endregion example

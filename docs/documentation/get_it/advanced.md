@@ -116,7 +116,7 @@ Only use `ignoreReferenceCount: true` when you're certain no other code is using
 Returns `null` instead of throwing an exception if the type is not registered. Useful for optional dependencies and feature flags.
 
 
-<<< @/../code_samples/lib/get_it/code_sample_fdab4a35.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_fdab4a35_signature.dart#example
 
 **Example:**
 
@@ -140,7 +140,7 @@ Returns `null` instead of throwing an exception if the type is not registered. U
 Rename a registered instance without unregistering and re-registering (avoids triggering dispose functions).
 
 
-<<< @/../code_samples/lib/get_it/code_sample_32653109.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_32653109_signature.dart#example
 
 **Example:**
 
@@ -164,7 +164,7 @@ Unlike `unregister()` + `register()`, this doesn't trigger dispose functions, pr
 Check if a lazy singleton has been instantiated yet (without triggering its creation).
 
 
-<<< @/../code_samples/lib/get_it/code_sample_3c73f756.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_3c73f756_signature.dart#example
 
 **Example:**
 
@@ -225,7 +225,7 @@ Reset all instantiated lazy singletons at once. This clears their instances so t
 Find all registered instances that match a given type with powerful filtering and matching options.
 
 
-<<< @/../code_samples/lib/get_it/code_sample_12625bd9.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_12625bd9_signature.dart#example
 
 ::: warning Performance Note
 Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear search through all registrations. Use sparingly in performance-critical code. Performance can be improved by limiting the search to a single scope using `onlyInScope`.
@@ -301,7 +301,7 @@ Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear sear
 Get metadata about a registration without retrieving the instance.
 
 
-<<< @/../code_samples/lib/get_it/code_sample_f4194899.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_f4194899_signature.dart#example
 
 **Example:**
 

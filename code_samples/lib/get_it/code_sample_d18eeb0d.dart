@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   test('widget works with async services', () async {
     getIt.pushNewScope();
 
@@ -24,5 +24,5 @@ void main() {
 
     await getIt.popScope();
   });
+  // #endregion example
 }
-// #endregion example

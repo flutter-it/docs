@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   const tenantId = 'tenant-123';
 
   await getIt.pushNewScopeAsync(
@@ -30,5 +30,5 @@ void main() async {
       await getIt<CacheManager>().flush();
     },
   );
+  // #endregion example
 }
-// #endregion example

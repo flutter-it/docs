@@ -91,7 +91,7 @@ Use a flag to switch between real and test implementations. Less flexible than s
 Factories create new instances on each `get()` call - verify this behavior in tests.
 
 
-<<< @/../code_samples/lib/get_it/shopping_cart_signature_1.dart
+<<< @/../code_samples/lib/get_it/shopping_cart_1.dart
 
 ### Testing Parameterized Factories
 
@@ -105,7 +105,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 ### Scenario 1: Testing Service with Multiple Dependencies
 
 
-<<< @/../code_samples/lib/get_it/api_client_signature_1.dart
+<<< @/../code_samples/lib/get_it/api_client_1.dart
 
 ### Scenario 2: Testing Scoped Services
 
@@ -124,41 +124,41 @@ Factories create new instances on each `get()` call - verify this behavior in te
 ### ✅ Do
 
 1. **Use scopes for test isolation**
-   <<< ../../../code_samples/lib/get_it/testing_f1b668dd_signature.dart
+   <<< @/../code_samples/lib/get_it/testing_f1b668dd_signature.dart
 
 
 2. **Register real dependencies once in `setUpAll()`**
-   <<< ../../../code_samples/lib/get_it/testing_c8fe4e9b_signature.dart
+   <<< @/../code_samples/lib/get_it/testing_c8fe4e9b_signature.dart
 
 
 3. **Shadow only what you need to mock**
-   <<< ../../../code_samples/lib/get_it/testing_8dbacaca_signature.dart
+   <<< @/../code_samples/lib/get_it/testing_8dbacaca_signature.dart
 
 
 4. **Await `popScope()` if services have async disposal**
-   <<< ../../../code_samples/lib/get_it/testing_93df6902_signature.dart
+   <<< @/../code_samples/lib/get_it/testing_93df6902_signature.dart
 
 
 5. **Use `allReady()` for async registrations**
-   <<< ../../../code_samples/lib/get_it/testing_cc70be3d.dart
+   <<< @/../code_samples/lib/get_it/testing_cc70be3d.dart
 
 
 ### ❌ Don't
 
 1. **Don't call `reset()` between tests**
-   <<< ../../../code_samples/lib/get_it/testing_0a7443ea.dart
+   <<< @/../code_samples/lib/get_it/testing_0a7443ea.dart
 
 
 2. **Don't re-register everything in each test**
-   <<< ../../../code_samples/lib/get_it/testing_138c49df_signature.dart
+   <<< @/../code_samples/lib/get_it/testing_138c49df_signature.dart
 
 
 3. **Don't use `allowReassignment` in tests**
-   <<< ../../../code_samples/lib/get_it/testing_a862f724_signature.dart
+   <<< @/../code_samples/lib/get_it/testing_a862f724_signature.dart
 
 
 4. **Don't forget to pop scopes in tearDown**
-   <<< ../../../code_samples/lib/get_it/testing_4bac3b7c_signature.dart
+   <<< @/../code_samples/lib/get_it/testing_4bac3b7c_signature.dart
 
 
 ---
@@ -170,7 +170,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 **Cause:** Scope wasn't popped in previous test, or `reset()` wasn't awaited.
 
 **Fix:**
-<<< ../../../code_samples/lib/get_it/testing_ac521152_signature.dart
+<<< @/../code_samples/lib/get_it/testing_ac521152_signature.dart
 
 
 ### Mocks not being used
@@ -178,7 +178,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 **Cause:** Mock was registered in wrong scope or after service was already created.
 
 **Fix:** Push scope and register mocks **before** accessing services:
-<<< ../../../code_samples/lib/get_it/testing_78522d78_signature.dart
+<<< @/../code_samples/lib/get_it/testing_78522d78_signature.dart
 
 
 ### Async service not ready
@@ -186,7 +186,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 **Cause:** Trying to access async registration before it completes.
 
 **Fix:**
-<<< ../../../code_samples/lib/get_it/testing_9153fb06_signature.dart
+<<< @/../code_samples/lib/get_it/testing_9153fb06_signature.dart
 
 
 ---

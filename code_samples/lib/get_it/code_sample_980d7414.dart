@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
+  // #endregion example
 }
-// #endregion example

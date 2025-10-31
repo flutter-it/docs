@@ -4,8 +4,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
 // All scopes
   final Iterable<Plugin> allPlugins = await getIt.getAllAsync<Plugin>(
     fromAllScopes: true,
@@ -15,5 +15,5 @@ void main() async {
   final Iterable<Plugin> basePlugins = await getIt.getAllAsync<Plugin>(
     onlyInScope: 'baseScope',
   );
+  // #endregion example
 }
-// #endregion example

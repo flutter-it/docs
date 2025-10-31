@@ -5,16 +5,14 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
-  void configureDependencies() {
-    // Simple registration
-    getIt.registerSingleton<Logger>(Logger());
+void configureDependencies() {
+  // Simple registration
+  getIt.registerSingleton<Logger>(Logger());
 
-    // With disposal
-    getIt.registerSingleton<Database>(
-      Database(),
-      dispose: (db) => db.close(),
-    );
-  }
+  // With disposal
+  getIt.registerSingleton<Database>(
+    Database(),
+    dispose: (db) => db.close(),
+  );
 }
 // #endregion example

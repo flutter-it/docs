@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   setUpAll(() {
     // Register app dependencies
     getIt.registerLazySingleton<ThemeService>(() => ThemeServiceImpl());
@@ -31,5 +31,5 @@ void main() {
     // Cleanup
     await getIt.popScope();
   });
+  // #endregion example
 }
-// #endregion example

@@ -3,10 +3,10 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
 // ❌ Trying to get without registering first
   final service = getIt<MyService>();
   print('service: $service'); // ERROR!
+  // #endregion example
 }
-// #endregion example

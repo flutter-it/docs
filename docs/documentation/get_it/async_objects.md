@@ -35,7 +35,7 @@ GetIt provides comprehensive support for asynchronous object creation and initia
 
 ### Accessing Async Objects
 
-<<< ../../../code_samples/lib/get_it/async_quick_reference.dart
+<<< @/../code_samples/lib/get_it/async_quick_reference.dart
 
 ## Async Factories
 
@@ -45,7 +45,7 @@ Async factories create a **new instance on each call** to `getAsync()` by execut
 
 Creates a new instance every time you call `getAsync<T>()`.
 
-<<< ../../../code_samples/lib/get_it/async_objects.dart#register-factory-async
+<<< @/../code_samples/lib/get_it/async_objects.dart#register-factory-async
 
 **Parameters:**
 - `factoryFunc` - Async function that creates and returns the instance
@@ -53,27 +53,27 @@ Creates a new instance every time you call `getAsync<T>()`.
 
 **Example:**
 
-<<< ../../../code_samples/lib/get_it/async_factory_basic.dart
+<<< @/../code_samples/lib/get_it/async_factory_basic.dart
 
 ### registerCachedFactoryAsync
 
 Like `registerFactoryAsync`, but caches the instance with a weak reference. Returns the cached instance if it's still in memory; otherwise creates a new one.
 
-<<< ../../../code_samples/lib/get_it/async_objects.dart#register-cached-factory-async
+<<< @/../code_samples/lib/get_it/async_objects.dart#register-cached-factory-async
 
 **Example:**
 
-<<< ../../../code_samples/lib/get_it/async_cached_factory_example.dart
+<<< @/../code_samples/lib/get_it/async_cached_factory_example.dart
 
 ### Async Factories with Parameters
 
 Like regular factories, async factories can accept up to two parameters.
 
-<<< ../../../code_samples/lib/get_it/async_factory_param_signatures.dart
+<<< @/../code_samples/lib/get_it/async_factory_param_signatures.dart
 
 **Example:**
 
-<<< ../../../code_samples/lib/get_it/async_factory_param_example.dart
+<<< @/../code_samples/lib/get_it/async_factory_param_example.dart
 
 ## Async Singletons
 
@@ -83,7 +83,7 @@ Async singletons are created once with async initialization and live for the lif
 
 Registers a singleton with an async factory function that's executed **immediately**. The singleton is marked as ready when the factory function completes (unless `signalsReady` is true).
 
-<<< ../../../code_samples/lib/get_it/async_objects.dart#register-singleton-async
+<<< @/../code_samples/lib/get_it/async_objects.dart#register-singleton-async
 
 **Parameters:**
 - `factoryFunc` - Async function that creates the singleton instance
@@ -95,13 +95,13 @@ Registers a singleton with an async factory function that's executed **immediate
 
 **Example:**
 
-<<< ../../../code_samples/lib/get_it/async_singleton_example.dart
+<<< @/../code_samples/lib/get_it/async_singleton_example.dart
 
 ### registerLazySingletonAsync
 
 Registers a singleton with an async factory function that's executed **on first access** (when you call `getAsync<T>()` for the first time).
 
-<<< ../../../code_samples/lib/get_it/async_objects.dart#register-lazy-singleton-async
+<<< @/../code_samples/lib/get_it/async_objects.dart#register-lazy-singleton-async
 
 **Parameters:**
 - `factoryFunc` - Async function that creates the singleton instance
@@ -111,7 +111,7 @@ Registers a singleton with an async factory function that's executed **on first 
 - `useWeakReference` - If true, uses weak reference (allows garbage collection if not used)
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_2642b731.dart
+<<< @/../code_samples/lib/get_it/async_objects_2642b731.dart
 
 
 ::: warning Lazy Async Singletons and allReady()
@@ -122,7 +122,7 @@ Registers a singleton with an async factory function that's executed **on first 
 
 Sometimes you have a regular (sync) singleton that depends on other async singletons being ready first. Use `registerSingletonWithDependencies` for this pattern.
 
-<<< ../../../code_samples/lib/get_it/async_objects_e093effa_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_e093effa_signature.dart
 
 
 **Parameters:**
@@ -133,7 +133,7 @@ Sometimes you have a regular (sync) singleton that depends on other async single
 - `dispose` - Optional cleanup function called when unregistering or resetting
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_fc40829b.dart
+<<< @/../code_samples/lib/get_it/async_objects_fc40829b.dart
 
 
 ## Dependency Management
@@ -143,14 +143,14 @@ Sometimes you have a regular (sync) singleton that depends on other async single
 The `dependsOn` parameter ensures initialization order. When you register a singleton with `dependsOn`, its factory function won't execute until all listed dependencies have signaled ready.
 
 **Example - Sequential initialization:**
-<<< ../../../code_samples/lib/get_it/async_objects_ae083a64.dart
+<<< @/../code_samples/lib/get_it/async_objects_ae083a64.dart
 
 
 ### Named Dependencies with InitDependency
 
 If you have named registrations, use `InitDependency` to specify both type and instance name.
 
-<<< ../../../code_samples/lib/get_it/async_objects_55d54ef7.dart
+<<< @/../code_samples/lib/get_it/async_objects_55d54ef7.dart
 
 
 ## Startup Orchestration
@@ -161,7 +161,7 @@ GetIt provides several functions to coordinate async initialization and wait for
 
 Returns a `Future<void>` that completes when **all** async singletons and singletons with `signalsReady` have completed their initialization.
 
-<<< ../../../code_samples/lib/get_it/async_objects_93c1b617_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_93c1b617_signature.dart
 
 
 **Parameters:**
@@ -169,30 +169,30 @@ Returns a `Future<void>` that completes when **all** async singletons and single
 - `ignorePendingAsyncCreation` - If true, only waits for manual signals, ignores async singletons
 
 **Example with FutureBuilder:**
-<<< ../../../code_samples/lib/get_it/async_objects_bbdb298c.dart
+<<< @/../code_samples/lib/get_it/async_objects_bbdb298c.dart
 
 
 **Example with timeout:**
-<<< ../../../code_samples/lib/get_it/async_objects_864b4c27.dart
+<<< @/../code_samples/lib/get_it/async_objects_864b4c27.dart
 
 
 **Calling allReady() multiple times:**
 
 You can call `allReady()` multiple times. After the first `allReady()` completes, if you register new async singletons, you can await `allReady()` again to wait for the new ones.
 
-<<< ../../../code_samples/lib/get_it/async_objects_28d751fd.dart
+<<< @/../code_samples/lib/get_it/async_objects_28d751fd.dart
 
 
 This pattern is especially useful with scopes where each scope needs its own initialization:
 
-<<< ../../../code_samples/lib/get_it/async_objects_d0a62ccd.dart
+<<< @/../code_samples/lib/get_it/async_objects_d0a62ccd.dart
 
 
 ### isReady()
 
 Returns a `Future<void>` that completes when a **specific** singleton is ready.
 
-<<< ../../../code_samples/lib/get_it/async_objects_c603af1e_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_c603af1e_signature.dart
 
 
 **Parameters:**
@@ -203,29 +203,29 @@ Returns a `Future<void>` that completes when a **specific** singleton is ready.
 - `callee` - Optional parameter for debugging (helps identify who's waiting)
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_21920847.dart
+<<< @/../code_samples/lib/get_it/async_objects_21920847.dart
 
 
 ### isReadySync()
 
 Checks if a singleton is ready **without waiting** (returns immediately).
 
-<<< ../../../code_samples/lib/get_it/async_objects_7d06e64a_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_7d06e64a_signature.dart
 
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_96ff9c4e.dart
+<<< @/../code_samples/lib/get_it/async_objects_96ff9c4e.dart
 
 
 ### allReadySync()
 
 Checks if **all** async singletons are ready without waiting.
 
-<<< ../../../code_samples/lib/get_it/async_objects_90ee78c4_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_90ee78c4_signature.dart
 
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_4ef84c96.dart
+<<< @/../code_samples/lib/get_it/async_objects_4ef84c96.dart
 
 
 ## Manual Ready Signaling
@@ -237,28 +237,28 @@ Sometimes you need more control over when a singleton signals it's ready. This i
 When you set `signalsReady: true` during registration, GetIt won't automatically mark the singleton as ready. You must manually call `signalReady()`.
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_f2965023.dart
+<<< @/../code_samples/lib/get_it/async_objects_f2965023.dart
 
 
 ### Using WillSignalReady Interface
 
 Instead of passing `signalsReady: true`, implement the `WillSignalReady` interface. GetIt automatically detects this and waits for manual signaling.
 
-<<< ../../../code_samples/lib/get_it/async_objects_62e38c5b.dart
+<<< @/../code_samples/lib/get_it/async_objects_62e38c5b.dart
 
 
 ### signalReady()
 
 Manually signals that a singleton is ready.
 
-<<< ../../../code_samples/lib/get_it/async_objects_af1df8a2_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_af1df8a2_signature.dart
 
 
 **Parameters:**
 - `instance` - The instance that's ready (passing `null` is legacy and not recommended)
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_174d24d3.dart
+<<< @/../code_samples/lib/get_it/async_objects_174d24d3.dart
 
 
 ::: tip Legacy Feature
@@ -273,11 +273,11 @@ Manually signals that a singleton is ready.
 
 Retrieves an instance created by an async factory or waits for an async singleton to complete initialization.
 
-<<< ../../../code_samples/lib/get_it/async_objects_4c3dc27e_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_4c3dc27e_signature.dart
 
 
 **Example:**
-<<< ../../../code_samples/lib/get_it/async_objects_5324c9ca_signature.dart
+<<< @/../code_samples/lib/get_it/async_objects_5324c9ca_signature.dart
 
 
 ::: tip Getting Multiple Async Instances
@@ -290,50 +290,50 @@ If you need to retrieve multiple async registrations of the same type, see the [
 
 For services needed at app startup, use `registerSingletonAsync` (not lazy) so they start initializing immediately.
 
-<<< ../../../code_samples/lib/get_it/async_objects_6e8c86b1.dart
+<<< @/../code_samples/lib/get_it/async_objects_6e8c86b1.dart
 
 
 ### 2. Use dependsOn to Express Dependencies
 
 Let GetIt manage initialization order instead of manually orchestrating with `isReady()`.
 
-<<< ../../../code_samples/lib/get_it/async_objects_a3cbd191.dart
+<<< @/../code_samples/lib/get_it/async_objects_a3cbd191.dart
 
 
 ### 3. Use FutureBuilder for Splash Screens
 
 Display a loading screen while services initialize.
 
-<<< ../../../code_samples/lib/get_it/async_objects_d275974b.dart
+<<< @/../code_samples/lib/get_it/async_objects_d275974b.dart
 
 
 ### 4. Always Set Timeouts for allReady()
 
 Prevent your app from hanging indefinitely if initialization fails.
 
-<<< ../../../code_samples/lib/get_it/async_objects_a6be16da.dart
+<<< @/../code_samples/lib/get_it/async_objects_a6be16da.dart
 
 
 ## Common Patterns
 
 ### Pattern 1: Layered Initialization
 
-<<< ../../../code_samples/lib/get_it/async_objects_65faea06.dart
+<<< @/../code_samples/lib/get_it/async_objects_65faea06.dart
 
 
 ### Pattern 2: Conditional Initialization
 
-<<< ../../../code_samples/lib/get_it/async_objects_80efa70c.dart
+<<< @/../code_samples/lib/get_it/async_objects_80efa70c.dart
 
 
 ### Pattern 3: Progress Tracking
 
-<<< ../../../code_samples/lib/get_it/async_objects_3be0569c.dart
+<<< @/../code_samples/lib/get_it/async_objects_3be0569c.dart
 
 
 ### Pattern 4: Retry on Failure
 
-<<< ../../../code_samples/lib/get_it/async_objects_b64e81ba.dart
+<<< @/../code_samples/lib/get_it/async_objects_b64e81ba.dart
 
 
 ## Further Reading

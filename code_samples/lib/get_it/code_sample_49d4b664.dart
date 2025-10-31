@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   getIt.registerSingletonAsync<Plugin>(() async => await CorePlugin.create());
@@ -16,5 +16,5 @@ void main() async {
 
   // Retrieve all async instances
   final Iterable<Plugin> plugins = await getIt.getAllAsync<Plugin>();
+  // #endregion example
 }
-// #endregion example

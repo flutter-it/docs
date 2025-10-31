@@ -5,7 +5,10 @@ import '_shared/stubs.dart';
 // #region example
 class _ObjectRegistration {}
 
+// #endregion example
+
 void main() async {
+  // #region example
   final Map<String, _ObjectRegistration> namedRegistrations = {};
   final List<_ObjectRegistration> registrations = [];
 
@@ -14,5 +17,5 @@ void main() async {
         ? namedRegistrations[name] // If name provided, look in map
         : registrations.firstOrNull; // Otherwise, return FIRST from list
   }
+  // #endregion example
 }
-// #endregion example

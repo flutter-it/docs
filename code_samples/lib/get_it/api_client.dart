@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   group('UserService Tests', () {
     setUp(() {
       // Call your app's real DI initialization
@@ -31,5 +31,5 @@ void main() {
       expect(user.id, '123');
     });
   });
+  // #endregion example
 }
-// #endregion example

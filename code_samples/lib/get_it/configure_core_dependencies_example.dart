@@ -14,9 +14,8 @@ void configureAuthDependencies() {
   getIt.pushNewScope(
     scopeName: 'authenticated',
     init: (scope) {
-      scope.registerLazySingleton<AuthService>(() => AuthServiceImpl());
-      scope
-          .registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
+      scope.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+      scope.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
     },
   );
 }
@@ -26,8 +25,7 @@ void configureShopDependencies() {
     scopeName: 'shopping',
     init: (scope) {
       scope.registerLazySingleton<CartService>(() => CartService(getIt()));
-      scope.registerLazySingleton<OrderRepository>(
-          () => OrderRepository(getIt()));
+      scope.registerLazySingleton<OrderRepository>(() => OrderRepository(getIt()));
     },
   );
 }

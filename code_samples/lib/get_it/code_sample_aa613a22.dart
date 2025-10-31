@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   // Register lazy singleton
   getIt.registerLazySingleton<HeavyService>(() => HeavyService());
 
@@ -21,5 +21,5 @@ void main() {
 
   // Now it exists
   assert(getIt.checkLazySingletonInstanceExists<HeavyService>() == true);
+  // #endregion example
 }
-// #endregion example

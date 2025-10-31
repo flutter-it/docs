@@ -5,12 +5,12 @@ final getIt = GetIt.instance;
 
 // #region example
 class UserManager {
-  final dynamic appModel;
-  final dynamic dbService;
+  final AppModel appModel;
+  final DbService dbService;
 
   UserManager({
-    dynamic appModel,
-    dynamic dbService,
+    AppModel? appModel,
+    DbService? dbService,
   })  : appModel = appModel ?? getIt<AppModel>(),
         dbService = dbService ?? getIt<DbService>();
 
@@ -20,26 +20,16 @@ class UserManager {
   }
 }
 
-void main() async {
-  // Example: In tests - no get_it needed
-  final mockModel = MockAppModel();
-  final mockDb = MockDbService();
-
-  // Create instance directly with mocks
-  final manager = UserManager(appModel: mockModel, dbService: mockDb);
-
-  await manager.saveUser(User(id: '1', name: 'Bob'));
-
-  print('Test passed: User saved to mock database');
-
-  // Example: Using with GetIt
-
-  // Setup GetIt
-  getIt.registerSingleton<AppModel>(AppModel());
-  getIt.registerSingleton<DbService>(DbService());
-
-  // Use UserManager with GetIt
-  final managerWithGetIt = UserManager();
-  await managerWithGetIt.saveUser(User(id: '1', name: 'Alice'));
-}
+// In tests - no get_it needed
+// test('saveUser updates model and persists to database', () async {
+//   final mockModel = MockAppModel();
+//   final mockDb = MockDbService();
+//
+//   // Create instance directly with mocks
+//   final manager = UserManager(appModel: mockModel, dbService: mockDb);
+//
+//   await manager.saveUser(User(id: '1', name: 'Bob'));
+//
+//   verify(mockDb.save(any)).called(1);
+// });
 // #endregion example

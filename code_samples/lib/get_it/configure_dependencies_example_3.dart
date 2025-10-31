@@ -21,11 +21,13 @@ void _registerDataServices() {
 }
 
 void _registerBusinessLogic() {
-  getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl());
-  getIt.registerLazySingleton<UserRepository>(() => UserRepository());
-}
-
-void main() async {
-  configureDependencies();
+  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt(), getIt()));
 }
 // #endregion example
+
+void main() async {
+  // #region example
+  configureDependencies();
+  // #endregion example
+}

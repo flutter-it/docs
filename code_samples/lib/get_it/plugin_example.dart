@@ -4,8 +4,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   getIt.registerSingleton<Plugin>(CorePlugin()); // unnamed
@@ -16,5 +16,5 @@ void main() async {
   final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();
 // Returns: [CorePlugin, LoggingPlugin, AnalyticsPlugin]
 //          ALL unnamed + ALL named registrations
+  // #endregion example
 }
-// #endregion example

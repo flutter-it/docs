@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
 // Register a cached factory
   getIt.registerCachedFactory<HeavyParser>(() => HeavyParser());
 
@@ -19,5 +19,5 @@ void main() async {
 // After garbage collection (no references held)
   final parser3 = getIt<HeavyParser>();
   print('parser3: $parser3'); // New instance created
+  // #endregion example
 }
-// #endregion example

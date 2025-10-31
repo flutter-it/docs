@@ -25,7 +25,10 @@ void configureDependencies() {
   getIt.registerSingleton<PaymentProcessor>(StripePaymentProcessor());
 }
 
-void main() {
-  configureDependencies();
-}
 // #endregion example
+
+void main() {
+  // #region example
+  configureDependencies();
+  // #endregion example
+}

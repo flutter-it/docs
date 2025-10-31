@@ -8,8 +8,8 @@ import '_shared/stubs.dart'
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   group('End-to-end user flow', () {
     setUpAll(() async {
       // Push scope for integration test environment
@@ -41,5 +41,5 @@ void main() {
       expect(find.text('Profile'), findsOneWidget);
     });
   });
+  // #endregion example
 }
-// #endregion example

@@ -27,8 +27,11 @@ class ServiceA implements IServiceA {
 
 // Register
 
+// #endregion example
+
 void main() {
+  // #region example
   getIt.registerLazySingleton<ServiceB>(() => ServiceB(getIt<IServiceA>()));
   getIt.registerLazySingleton<IServiceA>(() => ServiceA()..init());
+  // #endregion example
 }
-// #endregion example

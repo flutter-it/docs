@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   // Base scope
   getIt.registerSingleton<User>(GuestUser());
 
@@ -18,5 +18,5 @@ void main() async {
   await getIt.popScope();
 
   getIt<User>(); // Returns GuestUser (automatically restored)
+  // #endregion example
 }
-// #endregion example

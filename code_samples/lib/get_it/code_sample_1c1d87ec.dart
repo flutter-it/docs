@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
 // Check if type is registered
   if (getIt.isRegistered<ApiClient>()) {
     print('ApiClient is already registered');
@@ -20,5 +20,5 @@ void main() async {
   if (getIt.isRegistered<Logger>(instance: myLogger)) {
     print('This specific logger instance is registered');
   }
+  // #endregion example
 }
-// #endregion example

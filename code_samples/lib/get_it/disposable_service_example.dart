@@ -16,7 +16,10 @@ class DisposableService implements Disposable {
   }
 }
 
+// #endregion example
+
 void main() async {
+  // #region example
   getIt.pushNewScope();
 
   final service = DisposableService();
@@ -27,5 +30,5 @@ void main() async {
   await getIt.popScope();
 
   print('After pop: ${service.disposed}'); // true
+  // #endregion example
 }
-// #endregion example

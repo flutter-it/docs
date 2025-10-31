@@ -4,11 +4,11 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   getIt.skipDoubleRegistration = true;
 
 // If already registered, this does nothing instead of throwing
   getIt.registerSingleton<Logger>(Logger());
+  // #endregion example
 }
-// #endregion example

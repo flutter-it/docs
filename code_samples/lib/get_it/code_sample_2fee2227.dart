@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   test('service lifecycle matches scope lifecycle', () async {
     // Base scope
     getIt.registerLazySingleton<CoreService>(() => CoreService());
@@ -22,5 +22,5 @@ void main() {
     expect(getIt<CoreService>(), isNotNull); // Still available
     expect(() => getIt<FeatureService>(), throwsStateError); // Gone!
   });
+  // #endregion example
 }
-// #endregion example

@@ -5,17 +5,18 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
-  void configureDependencies() {
-    getIt.registerFactory<ShoppingCart>(() => ShoppingCart());
-  }
+void configureDependencies() {
+  getIt.registerFactory<ShoppingCart>(() => ShoppingCart());
+}
 
-// Each call creates a NEW instance
-  final cart1 = getIt<ShoppingCart>();
-  print('cart1: $cart1'); // New ShoppingCart()
-  final cart2 = getIt<ShoppingCart>();
-  print('cart2: $cart2'); // Different ShoppingCart()
+// #endregion example
+
+void main() {
+  // #region example
+  // Each call creates a NEW instance
+  final cart1 = getIt<ShoppingCart>(); // New ShoppingCart()
+  final cart2 = getIt<ShoppingCart>(); // Different ShoppingCart()
 
   print(identical(cart1, cart2)); // false - different objects
+  // #endregion example
 }
-// #endregion example

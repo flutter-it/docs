@@ -43,7 +43,7 @@ The search order is **top to bottom** - get_it always returns the first match st
 
 **1. Authentication States**
 
-<<< @/../code_samples/lib/get_it/user_signature_1.dart
+<<< @/../code_samples/lib/get_it/user_1.dart
 
 **2. Session Management**
 
@@ -125,7 +125,7 @@ When a scope is popped:
 2. **Object dispose functions** are called in reverse registration order
 3. **Scope is removed** from the stack
 
-<<< ../../../code_samples/lib/get_it/scopes_4c72f192.dart
+<<< @/../code_samples/lib/get_it/scopes_4c72f192.dart
 
 
 ### Implementing Disposable Interface

@@ -3,12 +3,12 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   // Created immediately at app startup
   getIt.registerSingleton<Logger>(Logger());
 
   // Only created when first accessed (lazy)
   getIt.registerLazySingleton<HeavyDatabase>(() => HeavyDatabase());
+  // #endregion example
 }
-// #endregion example

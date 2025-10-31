@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   setUp(() {
     configureDependencies(); // Call your real DI setup
 
@@ -16,5 +16,5 @@ void main() async {
   tearDown(() async {
     await getIt.popScope(); // Remove mocks, clean slate for next test
   });
+  // #endregion example
 }
-// #endregion example

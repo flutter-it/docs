@@ -47,7 +47,10 @@ class ThemePickerDialog extends StatelessWidget {
   }
 }
 
+// #endregion example
+
 void main() {
+  // #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   // Unnamed - available to getAll()
@@ -64,5 +67,5 @@ void main() {
   final highContrastTheme = getIt<ThemeProvider>(instanceName: 'highContrast');
   print('highContrastTheme: $highContrastTheme');
   print('High contrast theme: $highContrastTheme');
+  // #endregion example
 }
-// #endregion example

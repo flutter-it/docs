@@ -23,7 +23,10 @@ class MyService implements Disposable {
 
 // Automatically calls onDispose when scope pops or object is unregistered
 
-void main() {
-  getIt.registerSingleton<MyService>(MyService()..init());
-}
 // #endregion example
+
+void main() {
+  // #region example
+  getIt.registerSingleton<MyService>(MyService()..init());
+  // #endregion example
+}

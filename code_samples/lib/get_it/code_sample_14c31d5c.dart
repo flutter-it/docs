@@ -3,12 +3,12 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   // Reset everything and call disposal functions
   await getIt.reset();
 
   // Reset without calling disposals
   await getIt.reset(dispose: false);
+  // #endregion example
 }
-// #endregion example

@@ -19,17 +19,11 @@ void configureDependencies({bool testing = false}) {
 }
 
 // In main.dart
+// #endregion example
+
 void main() {
+  // #region example
   configureDependencies();
   runApp(MyApp());
+  // #endregion example
 }
-
-// In test
-void testMain() {
-  setUpAll(() {
-    configureDependencies(testing: true);
-  });
-
-  // Tests...
-}
-// #endregion example

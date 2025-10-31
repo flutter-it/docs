@@ -3,13 +3,13 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   getIt.registerSingleton(TestClass());
 
   final instance1 = getIt.get(type: TestClass);
   print('instance1: $instance1');
 
   expect(instance1 is TestClass, true);
+  // #endregion example
 }
-// #endregion example

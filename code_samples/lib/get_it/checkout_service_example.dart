@@ -6,7 +6,10 @@ final getIt = GetIt.instance;
 // #region example
 const featureFlagEnabled = true;
 
+// #endregion example
+
 void main() async {
+  // #region example
   // Setup base scope with original checkout
   final userService = await UserService.load();
   getIt.registerSingleton<CheckoutService>(CheckoutService(userService));
@@ -19,5 +22,5 @@ void main() async {
   }
 
   print('Checkout service: ${getIt<CheckoutService>()}');
+  // #endregion example
 }
-// #endregion example

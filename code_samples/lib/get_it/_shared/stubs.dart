@@ -189,6 +189,7 @@ abstract class IAuthService {}
 /// Authentication service stub
 class AuthService extends ChangeNotifier implements IAuthService {
   AuthService._();
+  AuthService([dynamic dep]);  // Public unnamed constructor for examples
 
   static Future<AuthService> init() async {
     await Future.delayed(const Duration(milliseconds: 10));
@@ -677,7 +678,7 @@ class Theme {
 
 /// Authentication stubs
 class AuthenticatedApiClient extends ApiClient {
-  AuthenticatedApiClient(String token) : super();
+  AuthenticatedApiClient(String? token) : super();
 }
 
 class GuestAuthService extends AuthService {
@@ -1106,7 +1107,7 @@ class MockAuthService extends AuthService {
 /// Additional viewmodels and services
 class UserViewModel {
   UserViewModel(this.userId, {dynamic age, UserRepository? repo});
-  final String userId;
+  final String? userId;
 }
 
 class ReportGenerator {

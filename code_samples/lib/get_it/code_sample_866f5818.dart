@@ -4,8 +4,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   final getIt = GetIt.instance;
+  // #endregion example
 }
-// #endregion example

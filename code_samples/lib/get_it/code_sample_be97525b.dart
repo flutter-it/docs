@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   final registration = getIt.findFirstObjectRegistration<MyService>();
   print('registration: $registration');
 
@@ -15,5 +15,5 @@ void main() async {
     print('Is async: ${registration.isAsync}');
     print('Is ready: ${registration.isReady}');
   }
+  // #endregion example
 }
-// #endregion example

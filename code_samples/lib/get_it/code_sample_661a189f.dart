@@ -3,10 +3,10 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() async {
+  // #region example
   final registration = getIt.findFirstObjectRegistration<MyService>();
   print('registration: $registration');
   print('Registered in scope: ${registration?.instanceName}');
+  // #endregion example
 }
-// #endregion example

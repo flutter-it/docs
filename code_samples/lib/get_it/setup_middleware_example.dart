@@ -43,12 +43,15 @@ class ApiClient {
   }
 }
 
+// #endregion example
+
 void main() {
+  // #region example
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   // Order matters! First registered = first executed
   getIt.registerSingleton<RequestMiddleware>(AuthMiddleware());
   getIt.registerSingleton<RequestMiddleware>(RateLimitMiddleware());
   getIt.registerSingleton<RequestMiddleware>(LoggingMiddleware());
+  // #endregion example
 }
-// #endregion example

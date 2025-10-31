@@ -3,8 +3,8 @@ import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
-// #region example
 void main() {
+  // #region example
   getIt.registerCachedFactoryParam<ImageProcessor, int, int>(
     (width, height) => ImageProcessor(width, height),
   );
@@ -20,5 +20,5 @@ void main() {
   // Creates NEW instance (different parameters)
   final processor3 = getIt<ImageProcessor>(param1: 3840, param2: 2160);
   print('processor3: $processor3');
+  // #endregion example
 }
-// #endregion example

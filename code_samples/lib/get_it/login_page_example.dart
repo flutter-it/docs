@@ -19,8 +19,11 @@ class LoginPage extends StatelessWidget {
   }
 }
 
+// #endregion example
+
 void main() {
+  // #region example
   const username = "user@example.com";
   const password = "password123";
+  // #endregion example
 }
-// #endregion example

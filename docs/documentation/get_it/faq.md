@@ -121,7 +121,7 @@ Each test tries to register, but setup from previous test didn't clean up.
 **4. Multiple registrations with different instance names**
 If you want multiple instances of the same type:
 
-<<< @/../code_samples/lib/get_it/api_client_signature_2.dart
+<<< @/../code_samples/lib/get_it/api_client_2.dart
 
 Or use unnamed multiple registrations (see [Multiple Registrations documentation](/documentation/get_it/multiple_registrations)).
 
