@@ -40,7 +40,7 @@ Without reference counting:
 ### The Solution: `registerSingletonIfAbsent` and `releaseInstance`
 
 
-<<< @/../code_samples/lib/get_it/release_instance_example.dart#example
+<<< @/../code_samples/lib/get_it/release_instance_example_signature.dart#example
 
 **How it works:**
 1. First call: Creates instance, registers, sets reference count to 1
@@ -189,7 +189,7 @@ Check if a lazy singleton has been instantiated yet (without triggering its crea
 Reset all instantiated lazy singletons at once. This clears their instances so they'll be recreated on next access.
 
 
-<<< @/../code_samples/lib/get_it/reset_lazy_singletons_example.dart#example
+<<< @/../code_samples/lib/get_it/reset_lazy_singletons_example_signature.dart#example
 
 **Parameters:**
 - `dispose` - If true (default), calls dispose functions before resetting

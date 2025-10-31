@@ -20,7 +20,7 @@ get_it offers different registration types that control when objects are created
 ## Singleton
 
 
-<<< @/../code_samples/lib/get_it/t_example.dart#example
+<<< @/../code_samples/lib/get_it/t_example_signature.dart#example
 
 You pass an instance of `T` that will **always** be returned on calls to `get<T>()`. The instance is created **immediately** when you register it.
 
@@ -45,7 +45,7 @@ You pass an instance of `T` that will **always** be returned on calls to `get<T>
 ## LazySingleton
 
 
-<<< @/../code_samples/lib/get_it/function_example.dart#example
+<<< @/../code_samples/lib/get_it/function_example_signature.dart#example
 
 You pass a factory function that returns an instance of `T`. The function is **only called on first access** to `get<T>()`. After that, the same instance is always returned.
 
@@ -75,7 +75,7 @@ You can register either concrete classes or abstract interfaces. **Register conc
 ## Factory
 
 
-<<< @/../code_samples/lib/get_it/t_example_1.dart#example
+<<< @/../code_samples/lib/get_it/t_example_1_signature.dart#example
 
 You pass a factory function that returns a **NEW instance** of `T` every time you call `get<T>()`. Unlike singletons, you get a different object each time.
 
@@ -215,7 +215,7 @@ You can test if a type or instance is already registered:
 You can remove a registered type from get_it, optionally calling a disposal function:
 
 
-<<< @/../code_samples/lib/get_it/function_example_1.dart#example
+<<< @/../code_samples/lib/get_it/function_example_1_signature.dart#example
 
 **Example:**
 
@@ -231,7 +231,7 @@ The disposing function overrides any disposal function you provided during regis
 Sometimes you want to reset a lazy singleton (force recreation on next access) without unregistering it:
 
 
-<<< @/../code_samples/lib/get_it/function_example_2.dart#example
+<<< @/../code_samples/lib/get_it/function_example_2_signature.dart#example
 
 **Example:**
 
@@ -252,7 +252,7 @@ If you need to reset **all** lazy singletons at once (instead of one at a time),
 Clear all registered types (useful for tests or app shutdown):
 
 
-<<< @/../code_samples/lib/get_it/reset_example.dart#example
+<<< @/../code_samples/lib/get_it/reset_example_signature.dart#example
 
 **Example:**
 
