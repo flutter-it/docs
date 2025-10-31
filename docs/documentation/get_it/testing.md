@@ -8,12 +8,12 @@ Testing code that uses get_it requires different approaches depending on whether
 
 ## Quick Start: The Scope Pattern (Recommended)
 
-**Best practice:** Use **scopes** to shadow real services with test doubles. This is cleaner and more maintainable than resetting get_it or using conditional registration.
+<strong>Best practice:</strong> Use <strong>scopes</strong> to shadow real services with test doubles. This is cleaner and more maintainable than resetting get_it or using conditional registration.
 
 
 <<< @/../code_samples/lib/get_it/main_example_1.dart#example
 
-**Key benefits:**
+<strong>Key benefits:</strong>
 - Only override what you need for each test
 - Automatic cleanup between tests
 - Same `configureDependencies()` as production
@@ -36,7 +36,7 @@ For testing classes in complete isolation (without get_it), use optional constru
 
 <<< @/../code_samples/lib/get_it/user_manager_example.dart#example
 
-**When to use:**
+<strong>When to use:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Testing pure business logic in isolation</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Classes that don't need the full dependency graph</li>
@@ -79,7 +79,7 @@ Use a flag to switch between real and test implementations. Less flexible than s
 
 <<< @/../code_samples/lib/get_it/configure_dependencies_example_8.dart#example
 
-**Limitations:**
+<strong>Limitations:</strong>
 - ❌ Can't switch between test/real per test
 - ❌ No automatic cleanup between tests
 - ❌ Must manually reset if needed
@@ -125,41 +125,41 @@ Factories create new instances on each `get()` call - verify this behavior in te
 
 ### ✅ Do
 
-1. **Use scopes for test isolation**
+1. <strong>Use scopes for test isolation</strong>
    <<< @/../code_samples/lib/get_it/testing_f1b668dd_signature.dart
 
 
-2. **Register real dependencies once in `setUpAll()`**
+2. <strong>Register real dependencies once in `setUpAll()`</strong>
    <<< @/../code_samples/lib/get_it/testing_c8fe4e9b_signature.dart
 
 
-3. **Shadow only what you need to mock**
+3. <strong>Shadow only what you need to mock</strong>
    <<< @/../code_samples/lib/get_it/testing_8dbacaca_signature.dart
 
 
-4. **Await `popScope()` if services have async disposal**
+4. <strong>Await `popScope()` if services have async disposal</strong>
    <<< @/../code_samples/lib/get_it/testing_93df6902_signature.dart
 
 
-5. **Use `allReady()` for async registrations**
+5. <strong>Use `allReady()` for async registrations</strong>
    <<< @/../code_samples/lib/get_it/testing_cc70be3d.dart
 
 
 ### ❌ Don't
 
-1. **Don't call `reset()` between tests**
+1. <strong>Don't call `reset()` between tests</strong>
    <<< @/../code_samples/lib/get_it/testing_0a7443ea.dart
 
 
-2. **Don't re-register everything in each test**
+2. <strong>Don't re-register everything in each test</strong>
    <<< @/../code_samples/lib/get_it/testing_138c49df_signature.dart
 
 
-3. **Don't use `allowReassignment` in tests**
+3. <strong>Don't use `allowReassignment` in tests</strong>
    <<< @/../code_samples/lib/get_it/testing_a862f724_signature.dart
 
 
-4. **Don't forget to pop scopes in tearDown**
+4. <strong>Don't forget to pop scopes in tearDown</strong>
    <<< @/../code_samples/lib/get_it/testing_4bac3b7c_signature.dart
 
 
@@ -169,25 +169,25 @@ Factories create new instances on each `get()` call - verify this behavior in te
 
 ### "Object/factory already registered" in tests
 
-**Cause:** Scope wasn't popped in previous test, or `reset()` wasn't awaited.
+<strong>Cause:</strong> Scope wasn't popped in previous test, or `reset()` wasn't awaited.
 
-**Fix:**
+<strong>Fix:</strong>
 <<< @/../code_samples/lib/get_it/testing_ac521152_signature.dart
 
 
 ### Mocks not being used
 
-**Cause:** Mock was registered in wrong scope or after service was already created.
+<strong>Cause:</strong> Mock was registered in wrong scope or after service was already created.
 
-**Fix:** Push scope and register mocks **before** accessing services:
+<strong>Fix:</strong> Push scope and register mocks <strong>before</strong> accessing services:
 <<< @/../code_samples/lib/get_it/testing_78522d78_signature.dart
 
 
 ### Async service not ready
 
-**Cause:** Trying to access async registration before it completes.
+<strong>Cause:</strong> Trying to access async registration before it completes.
 
-**Fix:**
+<strong>Fix:</strong>
 <<< @/../code_samples/lib/get_it/testing_9153fb06_signature.dart
 
 

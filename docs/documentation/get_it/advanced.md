@@ -42,7 +42,7 @@ Without reference counting:
 
 <<< @/../code_samples/lib/get_it/release_instance_example_signature.dart#example
 
-**How it works:**
+<strong>How it works:</strong>
 1. First call: Creates instance, registers, sets reference count to 1
 2. Subsequent calls: Returns existing instance, increments counter
 3. `releaseInstance`: Decrements counter
@@ -53,7 +53,7 @@ Without reference counting:
 
 <<< @/../code_samples/lib/get_it/detail_service_example.dart#example
 
-**Flow:**
+<strong>Flow:</strong>
 ```
 Push DetailPage(item1)      → Create service, load data, refCount = 1
   Push DetailPage(item2)    → Create service, load data, refCount = 1
@@ -63,7 +63,7 @@ Push DetailPage(item1)      → Create service, load data, refCount = 1
 Pop DetailPage(item1)       → Release, refCount = 0 (service disposed)
 ```
 
-**Benefits:**
+<strong>Benefits:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Service created synchronously (no async factory needed)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Async loading triggered in constructor</li>
@@ -74,8 +74,8 @@ Pop DetailPage(item1)       → Release, refCount = 0 (service disposed)
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Each itemId uniquely identified via `instanceName`</li>
 </ul>
 
-**Key Integration:**
-This example demonstrates how **get_it** (reference counting) and **watch_it** (reactive UI) work together seamlessly for complex navigation patterns.
+<strong>Key Integration:</strong>
+This example demonstrates how <strong>get_it</strong> (reference counting) and <strong>watch_it</strong> (reactive UI) work together seamlessly for complex navigation patterns.
 
 ---
 
@@ -92,22 +92,22 @@ Only use `ignoreReferenceCount: true` when you're certain no other code is using
 
 ### When to Use Reference Counting
 
-✅ **Good use cases:**
+✅ <strong>Good use cases:</strong>
 - Recursive navigation (same page pushed multiple times)
 - Services needed by multiple simultaneously active features
 - Complex hierarchical component structures
 
-❌ **Don't use when:**
+❌ <strong>Don't use when:</strong>
 - Simple singleton that lives for app lifetime (use regular `registerSingleton`)
 - One-to-one widget-service relationship (use scopes)
 - Testing (use scopes to shadow instead)
 
 ### Best Practices
 
-1. **Always pair register with release**: Every `registerSingletonIfAbsent` should have a matching `releaseInstance`
-2. **Store instance reference**: Keep the returned instance so you can release the correct one
-3. **Release in dispose/cleanup**: Tie release to widget/component lifecycle
-4. **Document shared resources**: Make it clear when a service uses reference counting
+1. <strong>Always pair register with release</strong>: Every `registerSingletonIfAbsent` should have a matching `releaseInstance`
+2. <strong>Store instance reference</strong>: Keep the returned instance so you can release the correct one
+3. <strong>Release in dispose/cleanup</strong>: Tie release to widget/component lifecycle
+4. <strong>Document shared resources</strong>: Make it clear when a service uses reference counting
 
 ---
 
@@ -120,12 +120,12 @@ Returns `null` instead of throwing an exception if the type is not registered. U
 
 <<< @/../code_samples/lib/get_it/code_sample_fdab4a35_signature.dart
 
-**Example:**
+<strong>Example:</strong>
 
 
 <<< @/../code_samples/lib/get_it/my_widget_example.dart#example
 
-**When to use:**
+<strong>When to use:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Optional features that may or may not be registered</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags (service registered only when feature enabled)</li>
@@ -133,7 +133,7 @@ Returns `null` instead of throwing an exception if the type is not registered. U
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Graceful degradation scenarios</li>
 </ul>
 
-**Don't use when:**
+<strong>Don't use when:</strong>
 - ❌ The dependency is required - use `get<T>()` to fail fast
 - ❌ Missing registration indicates a bug - exception is helpful
 
@@ -146,12 +146,12 @@ Rename a registered instance without unregistering and re-registering (avoids tr
 
 <<< @/../code_samples/lib/get_it/code_sample_32653109_signature.dart
 
-**Example:**
+<strong>Example:</strong>
 
 
 <<< @/../code_samples/lib/get_it/user_example.dart#example
 
-**Use cases:**
+<strong>Use cases:</strong>
 - User profile updates where username is the instance identifier
 - Dynamic entity names that can change at runtime
 - Avoiding disposal side effects from unregister/register cycle
@@ -170,18 +170,18 @@ Check if a lazy singleton has been instantiated yet (without triggering its crea
 
 <<< @/../code_samples/lib/get_it/code_sample_3c73f756_signature.dart
 
-**Example:**
+<strong>Example:</strong>
 
 
 <<< @/../code_samples/lib/get_it/code_sample_aa613a22.dart
 
-**Use cases:**
+<strong>Use cases:</strong>
 - Performance monitoring (track which services have been initialized)
 - Conditional initialization (pre-warm services if not created)
 - Testing lazy loading behavior
 - Debugging initialization order issues
 
-**Example - Pre-warming:**
+<strong>Example - Pre-warming:</strong>
 
 
 <<< @/../code_samples/lib/get_it/pre_warm_critical_services_example.dart#example
@@ -195,31 +195,31 @@ Reset all instantiated lazy singletons at once. This clears their instances so t
 
 <<< @/../code_samples/lib/get_it/reset_lazy_singletons_example_signature.dart#example
 
-**Parameters:**
+<strong>Parameters:</strong>
 - `dispose` - If true (default), calls dispose functions before resetting
 - `inAllScopes` - If true, resets lazy singletons across all scopes
 - `onlyInScope` - Reset only in the named scope (takes precedence over `inAllScopes`)
 
-**Example - Basic usage:**
+<strong>Example - Basic usage:</strong>
 
 
 <<< @/../code_samples/lib/get_it/code_sample_599505d1.dart
 
-**Example - With scopes:**
+<strong>Example - With scopes:</strong>
 
 
 <<< @/../code_samples/lib/get_it/code_sample_322e6eda.dart
 
-**Use cases:**
+<strong>Use cases:</strong>
 - State reset between tests
 - User logout (clear session-specific lazy singletons)
 - Memory optimization (reset caches that can be recreated)
 - Scope-specific cleanup without popping the scope
 
-**Behavior:**
-- Only resets lazy singletons that have been **instantiated**
-- Uninstantiated lazy singletons are **not affected**
-- Regular singletons and factories are **not affected**
+<strong>Behavior:</strong>
+- Only resets lazy singletons that have been <strong>instantiated</strong>
+- Uninstantiated lazy singletons are <strong>not affected</strong>
+- Regular singletons and factories are <strong>not affected</strong>
 - Supports both sync and async dispose functions
 
 ---
@@ -235,66 +235,66 @@ Find all registered instances that match a given type with powerful filtering an
 Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear search through all registrations. Use sparingly in performance-critical code. Performance can be improved by limiting the search to a single scope using `onlyInScope`.
 :::
 
-**Parameters:**
+<strong>Parameters:</strong>
 
-**Type Matching:**
+<strong>Type Matching:</strong>
 - `includeSubtypes` - If true (default), matches T and all subtypes; if false, matches only exact type T
 
-**Scope Control:**
+<strong>Scope Control:</strong>
 - `inAllScopes` - If true, searches all scopes (default: false, current scope only)
 - `onlyInScope` - Search only the named scope (takes precedence over `inAllScopes`)
 
-**Matching Strategy:**
+<strong>Matching Strategy:</strong>
 - `includeMatchedByRegistrationType` - Match by registered type (default: true)
 - `includeMatchedByInstance` - Match by actual instance type (default: true)
 
-**Side Effects:**
+<strong>Side Effects:</strong>
 - `instantiateLazySingletons` - Instantiate lazy singletons that match (default: false)
 - `callFactories` - Call factories that match to include their instances (default: false)
 
-**Example - Basic type matching:**
+<strong>Example - Basic type matching:</strong>
 
 
 <<< @/../code_samples/lib/get_it/write_example.dart#example
 
-**Example - Include lazy singletons:**
+<strong>Example - Include lazy singletons:</strong>
 
 
 <<< @/../code_samples/lib/get_it/code_sample_4c9aa485.dart#example
 
-**Example - Include factories:**
+<strong>Example - Include factories:</strong>
 
 
 <<< @/../code_samples/lib/get_it/i_output_example.dart#example
 
-**Example - Exact type matching:**
+<strong>Example - Exact type matching:</strong>
 
 
 <<< @/../code_samples/lib/get_it/base_logger_example.dart#example
 
-**Example - Instance vs Registration Type:**
+<strong>Example - Instance vs Registration Type:</strong>
 
 
 <<< @/../code_samples/lib/get_it/file_output_example.dart#example
 
-**Example - Scope control:**
+<strong>Example - Scope control:</strong>
 
 
 <<< @/../code_samples/lib/get_it/i_output.dart
 
-**Use cases:**
+<strong>Use cases:</strong>
 - Find all implementations of a plugin interface
 - Collect all registered validators/processors
 - Runtime dependency graph visualization
 - Testing: verify all expected types are registered
 - Migration tools: find instances of deprecated types
 
-**Validation rules:**
+<strong>Validation rules:</strong>
 - `includeSubtypes=false` requires `includeMatchedByInstance=false`
 - `instantiateLazySingletons=true` requires `includeMatchedByRegistrationType=true`
 - `callFactories=true` requires `includeMatchedByRegistrationType=true`
 
-**Throws:**
+<strong>Throws:</strong>
 - `StateError` if `onlyInScope` doesn't exist
 - `ArgumentError` if validation rules are violated
 
@@ -307,12 +307,12 @@ Get metadata about a registration without retrieving the instance.
 
 <<< @/../code_samples/lib/get_it/code_sample_f4194899_signature.dart
 
-**Example:**
+<strong>Example:</strong>
 
 
 <<< @/../code_samples/lib/get_it/code_sample_be97525b.dart#example
 
-**Use cases:**
+<strong>Use cases:</strong>
 - Building tools/debugging utilities on top of GetIt
 - Runtime dependency graph visualization
 - Advanced lifecycle management

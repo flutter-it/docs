@@ -10,12 +10,12 @@ get_it provides two different approaches for registering multiple instances of t
 
 ### Approach 1: Named Registration (Always Available)
 
-Register multiple instances of the same type by giving each a unique name. This is **always available** without any configuration.
+Register multiple instances of the same type by giving each a unique name. This is <strong>always available</strong> without any configuration.
 
 
 <<< @/../code_samples/lib/get_it/api_client_example_1.dart#example
 
-**Best for:**
+<strong>Best for:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Different configurations of the same type (dev/prod endpoints)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Known set of instances accessed individually</li>
@@ -29,7 +29,7 @@ Register multiple instances without names and retrieve them all at once with `ge
 
 <<< @/../code_samples/lib/get_it/plugin.dart
 
-**Best for:**
+<strong>Best for:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Plugin systems (modules can add implementations)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Observer/event handler patterns</li>
@@ -45,7 +45,7 @@ Named and unnamed registrations can coexist. `getAll<T>()` returns both unnamed 
 
 ## Named Registration
 
-All registration functions accept an optional `instanceName` parameter. Each name must be **unique per type**.
+All registration functions accept an optional `instanceName` parameter. Each name must be <strong>unique per type</strong>.
 
 ### Basic Usage
 
@@ -54,22 +54,22 @@ All registration functions accept an optional `instanceName` parameter. Each nam
 
 ### Works with All Registration Types
 
-Named registration works with **every** registration method:
+Named registration works with <strong>every</strong> registration method:
 
 
 <<< @/../code_samples/lib/get_it/logger_example_2.dart#example
 
 ### Named Registration Use Cases
 
-**Environment-specific configurations:**
+<strong>Environment-specific configurations:</strong>
 
 <<< @/../code_samples/lib/get_it/setup_for_environment_example.dart#example
 
-**Feature flags:**
+<strong>Feature flags:</strong>
 
 <<< @/../code_samples/lib/get_it/setup_payment_processor_example.dart#example
 
-**Multiple database connections:**
+<strong>Multiple database connections:</strong>
 
 <<< @/../code_samples/lib/get_it/code_sample_41a16b51.dart#example
 
@@ -77,27 +77,27 @@ Named registration works with **every** registration method:
 
 ## Multiple Unnamed Registrations
 
-For plugin systems, observers, and middleware where you want to retrieve **all** instances at once without knowing their names.
+For plugin systems, observers, and middleware where you want to retrieve <strong>all</strong> instances at once without knowing their names.
 
 ### Enabling Multiple Registrations
 
-By default, get_it **prevents** registering the same type multiple times (without different instance names) to catch accidental duplicate registrations, which are usually bugs.
+By default, get_it <strong>prevents</strong> registering the same type multiple times (without different instance names) to catch accidental duplicate registrations, which are usually bugs.
 
 To enable multiple registrations of the same type, you must explicitly opt-in:
 
 
 <<< @/../code_samples/lib/get_it/code_sample_980d7414.dart
 
-**Why explicit opt-in?**
-- **Prevents bugs**: Accidentally registering the same type twice is usually an error
-- **Breaking change protection**: Existing code won't break from unintended behavior changes
-- **Clear intent**: Makes it obvious that you're using the multiple registration pattern
-- **Type safety**: Forces you to be aware that `get<T>()` behavior changes
+<strong>Why explicit opt-in?</strong>
+- <strong>Prevents bugs</strong>: Accidentally registering the same type twice is usually an error
+- <strong>Breaking change protection</strong>: Existing code won't break from unintended behavior changes
+- <strong>Clear intent</strong>: Makes it obvious that you're using the multiple registration pattern
+- <strong>Type safety</strong>: Forces you to be aware that `get<T>()` behavior changes
 
 ::: warning Important
-Once enabled, this setting applies **globally** to the entire get_it instance. You cannot enable it for only specific types.
+Once enabled, this setting applies <strong>globally</strong> to the entire get_it instance. You cannot enable it for only specific types.
 
-**This feature cannot be disabled once enabled.** Even calling `getIt.reset()` will clear all registrations but keep this feature enabled. This is intentional to prevent accidental breaking changes in your application.
+<strong>This feature cannot be disabled once enabled.</strong> Even calling `getIt.reset()` will clear all registrations but keep this feature enabled. This is intentional to prevent accidental breaking changes in your application.
 :::
 
 ---
@@ -119,7 +119,7 @@ All registrations coexist - both unnamed and named. `getAll<T>()` returns all of
 
 ### Using `get<T>()` - Returns First Only
 
-When multiple unnamed registrations exist, `get<T>()` returns **only the first** registered instance:
+When multiple unnamed registrations exist, `get<T>()` returns <strong>only the first</strong> registered instance:
 
 
 <<< @/../code_samples/lib/get_it/plugin_2.dart
@@ -130,13 +130,13 @@ Use `get<T>()` when you want the "default" or "primary" implementation. Register
 
 ### Using `getAll<T>()` - Returns All
 
-To retrieve **all** registered instances (both unnamed and named), use `getAll<T>()`:
+To retrieve <strong>all</strong> registered instances (both unnamed and named), use `getAll<T>()`:
 
 
 <<< @/../code_samples/lib/get_it/plugin_example.dart#example
 
 ::: tip Alternative: findAll() for Type-Based Discovery
-While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` finds instances by **type matching** - no multiple registration setup needed. See [Related: Finding Instances by Type](#related-finding-instances-by-type) below for when to use each approach.
+While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` finds instances by <strong>type matching</strong> - no multiple registration setup needed. See [Related: Finding Instances by Type](#related-finding-instances-by-type) below for when to use each approach.
 :::
 
 ---
@@ -147,21 +147,21 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 
 ### Current Scope Only (Default)
 
-By default, searches only the **current scope**:
+By default, searches only the <strong>current scope</strong>:
 
 
 <<< @/../code_samples/lib/get_it/plugin_3.dart
 
 ### All Scopes
 
-To retrieve from **all scopes**, use `fromAllScopes: true`:
+To retrieve from <strong>all scopes</strong>, use `fromAllScopes: true`:
 
 
 <<< @/../code_samples/lib/get_it/code_sample_07af7c81.dart
 
 ### Specific Named Scope
 
-To search only a **specific named scope**, use `onlyInScope`:
+To search only a <strong>specific named scope</strong>, use `onlyInScope`:
 
 
 <<< @/../code_samples/lib/get_it/code_sample_e4fa6049.dart
@@ -181,7 +181,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 
 <<< @/../code_samples/lib/get_it/code_sample_49d4b664.dart
 
-**With scope control:**
+<strong>With scope control:</strong>
 
 `getAllAsync()` supports the same scope parameters as `getAll()`:
 
@@ -218,18 +218,18 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 
 ### ✅ Do
 
-- **Enable at app startup** before any registrations
-- **Register most important/default implementation first** (for `get<T>()`)
-- **Use abstract base classes** as registration types
-- **Document order dependencies** if middleware/observer order matters
-- **Use named registrations** for special-purpose implementations that also need individual access
+- <strong>Enable at app startup</strong> before any registrations
+- <strong>Register most important/default implementation first</strong> (for `get<T>()`)
+- <strong>Use abstract base classes</strong> as registration types
+- <strong>Document order dependencies</strong> if middleware/observer order matters
+- <strong>Use named registrations</strong> for special-purpose implementations that also need individual access
 
 ### ❌ Don't
 
-- **Don't enable mid-application** - do it during initialization
-- **Don't rely on `get<T>()`** to retrieve all implementations - use `getAll<T>()`
-- **Don't assume registration order** unless you control it
-- **Don't mix this pattern with `allowReassignment`** - they serve different purposes
+- <strong>Don't enable mid-application</strong> - do it during initialization
+- <strong>Don't rely on `get<T>()`</strong> to retrieve all implementations - use `getAll<T>()`
+- <strong>Don't assume registration order</strong> unless you control it
+- <strong>Don't mix this pattern with `allowReassignment`</strong> - they serve different purposes
 
 ---
 
@@ -237,14 +237,14 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 
 | Feature | Named Registration | Multiple Unnamed Registration |
 |---------|-------------------|------------------------------|
-| **Enable required** | No | Yes (`enableRegisteringMultipleInstancesOfOneType()`) |
-| **Access pattern** | Individual by name: `get<T>(instanceName: 'name')` | All at once: `getAll<T>()` returns all |
-| **Get one** | `get<T>(instanceName: 'name')` | `get<T>()` returns first |
-| **Use case** | Different configurations, feature flags | Plugin systems, observers, middleware |
-| **Module independence** | Must know names upfront | Modules can add implementations without knowing about others |
-| **Access method** | String-based names | Type-based retrieval |
+| <strong>Enable required</strong> | No | Yes (`enableRegisteringMultipleInstancesOfOneType()`) |
+| <strong>Access pattern</strong> | Individual by name: `get<T>(instanceName: 'name')` | All at once: `getAll<T>()` returns all |
+| <strong>Get one</strong> | `get<T>(instanceName: 'name')` | `get<T>()` returns first |
+| <strong>Use case</strong> | Different configurations, feature flags | Plugin systems, observers, middleware |
+| <strong>Module independence</strong> | Must know names upfront | Modules can add implementations without knowing about others |
+| <strong>Access method</strong> | String-based names | Type-based retrieval |
 
-**When to use named registration:**
+<strong>When to use named registration:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Different configurations (dev/prod API endpoints)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags (old/new implementation)</li>
@@ -252,7 +252,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Multiple database connections</li>
 </ul>
 
-**When to use multiple unnamed registration:**
+<strong>When to use multiple unnamed registration:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Modular plugin architecture</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Observer/event handler pattern</li>
@@ -260,7 +260,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Validators/processors pipeline</li>
 </ul>
 
-**Combining both approaches:**
+<strong>Combining both approaches:</strong>
 
 Named and unnamed registrations work together seamlessly:
 
@@ -304,9 +304,9 @@ This returns every registered instance, regardless of whether it has a name or n
 
 ### Order Preservation
 
-- **Unnamed registrations**: Preserved in registration order (`List`)
-- **Named registrations**: Preserved in registration order (`LinkedHashMap`)
-- **`getAll()` order**: Unnamed first (in order), then named (in order)
+- <strong>Unnamed registrations</strong>: Preserved in registration order (`List`)
+- <strong>Named registrations</strong>: Preserved in registration order (`LinkedHashMap`)
+- <strong>`getAll()` order</strong>: Unnamed first (in order), then named (in order)
 
 This is important for middleware/observer patterns where execution order matters.
 
@@ -324,8 +324,8 @@ This is important for middleware/observer patterns where execution order matters
 
 | Method | Description |
 |--------|-------------|
-| `get<T>()` | Returns **first** unnamed registration |
-| `getAll<T>({fromAllScopes})` | Returns **all** registrations (unnamed + named) |
+| `get<T>()` | Returns <strong>first</strong> unnamed registration |
+| `getAll<T>({fromAllScopes})` | Returns <strong>all</strong> registrations (unnamed + named) |
 | `getAllAsync<T>({fromAllScopes})` | Async version, waits for async registrations |
 
 ### Parameters
@@ -339,26 +339,26 @@ This is important for middleware/observer patterns where execution order matters
 
 ## Related: Finding Instances by Type
 
-While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` offers a different approach: finding instances by **type matching** criteria.
+While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` offers a different approach: finding instances by <strong>type matching</strong> criteria.
 
-**Key differences:**
+<strong>Key differences:</strong>
 
 | Feature | `getAll<T>()` | `findAll<T>()` |
 |---------|---------------|----------------|
-| **Purpose** | Retrieve multiple explicit registrations | Find instances by type matching |
-| **Requires** | `enableRegisteringMultipleInstancesOfOneType()` | No special setup |
-| **Matches** | Exact type T (with optional names) | T and subtypes (configurable) |
-| **Performance** | O(1) map lookup | O(n) linear search |
-| **Use case** | Plugin systems, known multiple registrations | Finding implementations, testing, introspection |
+| <strong>Purpose</strong> | Retrieve multiple explicit registrations | Find instances by type matching |
+| <strong>Requires</strong> | `enableRegisteringMultipleInstancesOfOneType()` | No special setup |
+| <strong>Matches</strong> | Exact type T (with optional names) | T and subtypes (configurable) |
+| <strong>Performance</strong> | O(1) map lookup | O(n) linear search |
+| <strong>Use case</strong> | Plugin systems, known multiple registrations | Finding implementations, testing, introspection |
 
-**Example comparison:**
+<strong>Example comparison:</strong>
 
 
 <<< @/../code_samples/lib/get_it/i_logger.dart
 
 ::: tip When to Use Each
-- Use **`getAll()`** when you explicitly want multiple instances of the same type and will retrieve them all together
-- Use **`findAll()`** when you want to discover instances by type relationship, especially for testing or debugging
+- Use <strong>`getAll()`</strong> when you explicitly want multiple instances of the same type and will retrieve them all together
+- Use <strong>`findAll()`</strong> when you want to discover instances by type relationship, especially for testing or debugging
 :::
 
 See [findAll() documentation](/documentation/get_it/advanced#find-all-instances-by-type-findall-t) for comprehensive details on type matching, scope control, and advanced filtering options.
