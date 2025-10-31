@@ -228,7 +228,7 @@ class InitializationProgress extends ChangeNotifier {
 /// Logger stub
 class Logger {
   Logger._();
-  Logger();  // Public constructor
+  Logger(); // Public constructor
 
   static Future<Logger> initialize() async {
     await Future.delayed(const Duration(milliseconds: 10));
@@ -840,6 +840,10 @@ class ReportGenerator {
 
 class MemoryCache {
   void clear() {}
+}
+
+class UserCache {
+  void clearCache() {}
 }
 
 class DailyReport {
