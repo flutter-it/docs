@@ -101,7 +101,7 @@ You pass a factory function that returns a **NEW instance** of `T` every time yo
 In some cases, you need to pass values to factories when calling `get()`. get_it supports up to two parameters:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_30935190_signature.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_30935190_signature.dart
 
 **Example with two parameters:**
 
@@ -130,7 +130,7 @@ Parameters are passed as `dynamic` but are checked at runtime to match the regis
 Cached factories are a **performance optimization** that sits between regular factories and singletons. They create a new instance on first call but cache it with a weak reference, returning the cached instance as long as it's still in memory (meaning some part of your app still holds a reference to it).
 
 
-<<< @/../code_samples/lib/get_it/code_sample_773e24bb_signature.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_773e24bb_signature.dart
 
 **How it works:**
 1. First call: Creates new instance (like factory)
@@ -203,7 +203,7 @@ See the [Multiple Registrations](/documentation/get_it/multiple_registrations) c
 You can test if a type or instance is already registered:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_3ddc0f1f_signature.dart#example
+<<< @/../code_samples/lib/get_it/code_sample_3ddc0f1f_signature.dart
 
 **Example:**
 
