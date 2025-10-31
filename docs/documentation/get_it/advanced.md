@@ -84,7 +84,7 @@ This example demonstrates how <strong>get_it</strong> (reference counting) and <
 In rare cases, you might need to force unregister regardless of reference count:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_2fd612f7.dart
+<<< @/../code_samples/lib/get_it/code_sample_2fd612f7.dart#example
 
 ::: warning Use with Caution
 Only use `ignoreReferenceCount: true` when you're certain no other code is using the instance. This can cause crashes if other parts of your app still hold references.
@@ -173,7 +173,7 @@ Check if a lazy singleton has been instantiated yet (without triggering its crea
 <strong>Example:</strong>
 
 
-<<< @/../code_samples/lib/get_it/code_sample_aa613a22.dart
+<<< @/../code_samples/lib/get_it/code_sample_aa613a22.dart#example
 
 <strong>Use cases:</strong>
 - Performance monitoring (track which services have been initialized)
@@ -203,12 +203,12 @@ Reset all instantiated lazy singletons at once. This clears their instances so t
 <strong>Example - Basic usage:</strong>
 
 
-<<< @/../code_samples/lib/get_it/code_sample_599505d1.dart
+<<< @/../code_samples/lib/get_it/code_sample_599505d1.dart#example
 
 <strong>Example - With scopes:</strong>
 
 
-<<< @/../code_samples/lib/get_it/code_sample_322e6eda.dart
+<<< @/../code_samples/lib/get_it/code_sample_322e6eda.dart#example
 
 <strong>Use cases:</strong>
 - State reset between tests
@@ -280,7 +280,7 @@ Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear sear
 <strong>Example - Scope control:</strong>
 
 
-<<< @/../code_samples/lib/get_it/i_output.dart
+<<< @/../code_samples/lib/get_it/i_output.dart#example
 
 <strong>Use cases:</strong>
 - Find all implementations of a plugin interface
@@ -325,7 +325,7 @@ Get metadata about a registration without retrieving the instance.
 In rare occasions you might be faced with the problem that you don't know the type that you want to retrieve from GetIt at compile time which means you can't pass it as a generic parameter. For this the `get` functions have an optional `type` parameter
 
 
-<<< @/../code_samples/lib/get_it/code_sample_caa57cf3.dart
+<<< @/../code_samples/lib/get_it/code_sample_caa57cf3.dart#example
 
 Be careful that the receiving variable has the correct type and don't pass `type` and a generic parameter.
 

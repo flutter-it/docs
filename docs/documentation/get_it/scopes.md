@@ -31,7 +31,7 @@ Think of scopes as a **stack of registration layers**. When you register a type 
 ### How Shadowing Works
 
 
-<<< @/../code_samples/lib/get_it/user.dart
+<<< @/../code_samples/lib/get_it/user.dart#example
 
 The search order is **top to bottom** - get_it always returns the first match starting from the current scope.
 
@@ -43,11 +43,11 @@ The search order is **top to bottom** - get_it always returns the first match st
 
 **1. Authentication States**
 
-<<< @/../code_samples/lib/get_it/user_1.dart
+<<< @/../code_samples/lib/get_it/user_1.dart#example
 
 **2. Session Management**
 
-<<< @/../code_samples/lib/get_it/shopping_cart.dart
+<<< @/../code_samples/lib/get_it/shopping_cart.dart#example
 
 **3. Feature Flags / A-B Testing**
 
@@ -125,7 +125,7 @@ When a scope is popped:
 2. **Object dispose functions** are called in reverse registration order
 3. **Scope is removed** from the stack
 
-<<< @/../code_samples/lib/get_it/scopes_4c72f192.dart
+<<< @/../code_samples/lib/get_it/scopes_4c72f192.dart#example
 
 
 ### Implementing Disposable Interface
@@ -138,7 +138,7 @@ Instead of passing dispose functions, implement `Disposable`:
 ### Reset vs Pop
 
 
-<<< @/../code_samples/lib/get_it/code_sample_39fe26fa.dart
+<<< @/../code_samples/lib/get_it/code_sample_39fe26fa.dart#example
 
 ---
 
@@ -164,7 +164,7 @@ Instead of passing dispose functions, implement `Disposable`:
 Use scopes to shadow real services with mocks while keeping the rest of your DI setup:
 
 
-<<< @/../code_samples/lib/get_it/api_client.dart
+<<< @/../code_samples/lib/get_it/api_client.dart#example
 
 **Benefits:**
 - No need to duplicate all registrations in tests

@@ -27,7 +27,7 @@ Register multiple instances of the same type by giving each a unique name. This 
 Register multiple instances without names and retrieve them all at once with `getAll<T>()`. Requires explicit opt-in.
 
 
-<<< @/../code_samples/lib/get_it/plugin.dart
+<<< @/../code_samples/lib/get_it/plugin.dart#example
 
 <strong>Best for:</strong>
 <ul style="list-style: none; padding-left: 0;">
@@ -86,7 +86,7 @@ By default, get_it <strong>prevents</strong> registering the same type multiple 
 To enable multiple registrations of the same type, you must explicitly opt-in:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_980d7414.dart
+<<< @/../code_samples/lib/get_it/code_sample_980d7414.dart#example
 
 <strong>Why explicit opt-in?</strong>
 - <strong>Prevents bugs</strong>: Accidentally registering the same type twice is usually an error
@@ -107,7 +107,7 @@ Once enabled, this setting applies <strong>globally</strong> to the entire get_i
 After calling `enableRegisteringMultipleInstancesOfOneType()`, you can register the same type multiple times:
 
 
-<<< @/../code_samples/lib/get_it/plugin_1.dart
+<<< @/../code_samples/lib/get_it/plugin_1.dart#example
 
 ::: tip Unnamed + Named Together
 All registrations coexist - both unnamed and named. `getAll<T>()` returns all of them.
@@ -122,7 +122,7 @@ All registrations coexist - both unnamed and named. `getAll<T>()` returns all of
 When multiple unnamed registrations exist, `get<T>()` returns <strong>only the first</strong> registered instance:
 
 
-<<< @/../code_samples/lib/get_it/plugin_2.dart
+<<< @/../code_samples/lib/get_it/plugin_2.dart#example
 
 ::: tip When to use get()
 Use `get<T>()` when you want the "default" or "primary" implementation. Register it first!
@@ -150,21 +150,21 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 By default, searches only the <strong>current scope</strong>:
 
 
-<<< @/../code_samples/lib/get_it/plugin_3.dart
+<<< @/../code_samples/lib/get_it/plugin_3.dart#example
 
 ### All Scopes
 
 To retrieve from <strong>all scopes</strong>, use `fromAllScopes: true`:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_07af7c81.dart
+<<< @/../code_samples/lib/get_it/code_sample_07af7c81.dart#example
 
 ### Specific Named Scope
 
 To search only a <strong>specific named scope</strong>, use `onlyInScope`:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_e4fa6049.dart
+<<< @/../code_samples/lib/get_it/code_sample_e4fa6049.dart#example
 
 ::: tip Parameter Precedence
 If both `onlyInScope` and `fromAllScopes` are provided, `onlyInScope` takes precedence.
@@ -179,7 +179,7 @@ See [Scopes documentation](/documentation/get_it/scopes) for more details on sco
 If you have async registrations, use `getAllAsync<T>()` which waits for all registrations to complete:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_49d4b664.dart
+<<< @/../code_samples/lib/get_it/code_sample_49d4b664.dart#example
 
 <strong>With scope control:</strong>
 
@@ -265,7 +265,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 Named and unnamed registrations work together seamlessly:
 
 
-<<< @/../code_samples/lib/get_it/plugin_4.dart
+<<< @/../code_samples/lib/get_it/plugin_4.dart#example
 
 ---
 
@@ -354,7 +354,7 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 <strong>Example comparison:</strong>
 
 
-<<< @/../code_samples/lib/get_it/i_logger.dart
+<<< @/../code_samples/lib/get_it/i_logger.dart#example
 
 ::: tip When to Use Each
 - Use <strong>`getAll()`</strong> when you explicitly want multiple instances of the same type and will retrieve them all together

@@ -121,7 +121,7 @@ Each test tries to register, but setup from previous test didn't clean up.
 <strong>4. Multiple registrations with different instance names</strong>
 If you want multiple instances of the same type:
 
-<<< @/../code_samples/lib/get_it/api_client_2.dart
+<<< @/../code_samples/lib/get_it/api_client_2.dart#example
 
 Or use unnamed multiple registrations (see [Multiple Registrations documentation](/documentation/get_it/multiple_registrations)).
 
@@ -147,7 +147,7 @@ Or use unnamed multiple registrations (see [Multiple Registrations documentation
 
 <strong>Example:</strong>
 
-<<< @/../code_samples/lib/get_it/logger.dart
+<<< @/../code_samples/lib/get_it/logger.dart#example
 
 <strong>Best practice:</strong> Start with `registerLazySingleton()` by default. Only use `registerSingleton()` when you specifically need immediate initialization.
 :::
@@ -298,7 +298,7 @@ Use <strong>scopes</strong> - they're designed for this exact use case:
 
 <strong>Without Scopes (Not recommended ❌):</strong>
 
-<<< @/../code_samples/lib/get_it/on_login.dart
+<<< @/../code_samples/lib/get_it/on_login.dart#example
 
 <strong>Why scopes are better:</strong>
 <ul style="list-style: none; padding-left: 0;">
@@ -418,7 +418,7 @@ But if you really need to unregister and re-register:
 <strong>Solution 3: Reset lazy singleton instead</strong>
 If you want to keep the registration but reset the instance:
 
-<<< @/../code_samples/lib/get_it/code_sample_a449e220.dart
+<<< @/../code_samples/lib/get_it/code_sample_a449e220.dart#example
 
 <strong>Why await matters:</strong>
 - If your object implements `Disposable` or has a dispose function, unregister calls it

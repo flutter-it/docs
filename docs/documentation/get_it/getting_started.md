@@ -112,7 +112,7 @@ This is simpler and makes IDE navigation to implementation easier.
 Get your registered services using `getIt<Type>()`:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_908a2d50.dart
+<<< @/../code_samples/lib/get_it/code_sample_908a2d50.dart#example
 
 ::: tip Shorthand Syntax
 `getIt<Type>()` is shorthand for `getIt.get<Type>()`. Both work the same - use whichever you prefer!
