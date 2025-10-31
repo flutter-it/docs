@@ -36,8 +36,10 @@ You pass an instance of `T` that will **always** be returned on calls to `get<T>
 <<< @/../code_samples/lib/get_it/configure_dependencies_example_4.dart#example
 
 **When to use Singleton:**
-- ✅ Service needed at app startup
-- ✅ Fast to create (no expensive initialization)
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Service needed at app startup</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Fast to create (no expensive initialization)</li>
+</ul>
 - ❌ Avoid for slow initialization (use LazySingleton instead)
 
 ---
@@ -62,9 +64,11 @@ You pass a factory function that returns an instance of `T`. The function is **o
 <<< @/../code_samples/lib/get_it/configure_dependencies_example_5.dart#example
 
 **When to use LazySingleton:**
-- ✅ Expensive-to-create services (database, HTTP client, etc.)
-- ✅ Services not always needed by every user
-- ✅ When you need to delay initialization
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Expensive-to-create services (database, HTTP client, etc.)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Services not always needed by every user</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ When you need to delay initialization</li>
+</ul>
 
 ---
 
@@ -89,9 +93,11 @@ You pass a factory function that returns a **NEW instance** of `T` every time yo
 <<< @/../code_samples/lib/get_it/configure_dependencies_example_6.dart#example
 
 **When to use Factory:**
-- ✅ Temporary objects (dialogs, forms, temporary data holders)
-- ✅ Objects that need fresh state each time
-- ✅ Objects with short lifecycle
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Temporary objects (dialogs, forms, temporary data holders)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Objects that need fresh state each time</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Objects with short lifecycle</li>
+</ul>
 - ❌ Avoid for expensive-to-create objects used frequently (consider Cached Factory)
 
 ---
@@ -239,9 +245,11 @@ Sometimes you want to reset a lazy singleton (force recreation on next access) w
 <<< @/../code_samples/lib/get_it/code_sample_2ba32f12.dart#example
 
 **When to use:**
-- ✅ Refresh cached data (after login/logout)
-- ✅ Testing - reset state between tests
-- ✅ Development - reload configuration
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Refresh cached data (after login/logout)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Testing - reset state between tests</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Development - reload configuration</li>
+</ul>
 
 ::: tip Reset All Lazy Singletons
 If you need to reset **all** lazy singletons at once (instead of one at a time), use `resetLazySingletons()` which supports scope control and batch operations. See [resetLazySingletons() documentation](/documentation/get_it/advanced#reset-all-lazy-singletons-resetlazysingletons) for details.
@@ -288,4 +296,3 @@ In tests, silently ignore double registration instead of throwing an error:
 
 <<< @/../code_samples/lib/get_it/logger_example_1.dart#example
 
-**Only available in tests** - useful when multiple test files might register the same global services.

@@ -13,11 +13,13 @@ next:
 **get_it** is a simple, fast service locator for Dart and Flutter that allows you to access any object that you register from anywhere in your app without needing `BuildContext` or complex widget trees.
 
 **Key benefits:**
-- ✅ **Extremely fast** - O(1) lookup using Dart's Map
-- ✅ **Easy to test** - Switch implementations for mocks in tests
-- ✅ **No BuildContext needed** - Access from anywhere in your app (UI, business logic, anywhere)
-- ✅ **Type safe** - Compile-time type checking
-- ✅ **No code generation** - Works without build_runner
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Extremely fast** - O(1) lookup using Dart's Map</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Easy to test** - Switch implementations for mocks in tests</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **No BuildContext needed** - Access from anywhere in your app (UI, business logic, anywhere)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Type safe** - Compile-time type checking</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **No code generation** - Works without build_runner</li>
+</ul>
 
 **Common use cases:**
 - Access services like API clients, databases, or authentication from anywhere
@@ -96,9 +98,11 @@ This is simpler and makes IDE navigation to implementation easier.
 <<< @/../code_samples/lib/get_it/configure_dependencies_example_2.dart#example
 
 **When to use interfaces:**
-- ✅ Multiple implementations (production vs test, different providers)
-- ✅ Platform-specific implementations (mobile vs web)
-- ✅ Feature flags to switch implementations
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Multiple implementations (production vs test, different providers)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Platform-specific implementations (mobile vs web)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags to switch implementations</li>
+</ul>
 - ❌ Don't use "just because" - creates navigation friction in your IDE
 
 ---
@@ -172,12 +176,14 @@ As your app grows, you need to separate business logic from UI code. This makes 
 - ❌ Most don't work with Flutter (no reflection)
 
 **get_it solves these problems:**
-- ✅ Access from anywhere without BuildContext
-- ✅ Easy to mock for tests (register interface, swap implementation)
-- ✅ Extremely fast (no reflection, just Map lookup)
-- ✅ Clear and explicit (you see exactly what's registered)
-- ✅ Lifecycle management (scopes, disposal)
-- ✅ Works in pure Dart and Flutter
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Access from anywhere without BuildContext</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Easy to mock for tests (register interface, swap implementation)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Extremely fast (no reflection, just Map lookup)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Clear and explicit (you see exactly what's registered)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Lifecycle management (scopes, disposal)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Works in pure Dart and Flutter</li>
+</ul>
 
 **Service Locator pattern:**
 
@@ -210,4 +216,3 @@ If you're using the [watch_it](https://pub.dev/packages/watch_it) package, you a
 
 ::: tip Cross-Package Usage
 `GetIt.instance` returns the same singleton across all packages in your project. Create your global variable once in your main app and import it elsewhere.
-:::

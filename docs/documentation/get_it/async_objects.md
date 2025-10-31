@@ -15,11 +15,13 @@ next:
 GetIt provides comprehensive support for asynchronous object creation and initialization. This is essential for objects that need to perform async operations during creation (database connections, network calls, file I/O) or that depend on other async objects being ready first.
 
 **Key capabilities:**
-- ✅ **Async Factories** - Create new instances asynchronously on each access
-- ✅ **Async Singletons** - Create singletons with async initialization
-- ✅ **Dependency Management** - Automatically wait for dependencies before initialization
-- ✅ **Startup Orchestration** - Coordinate complex initialization sequences
-- ✅ **Manual Signaling** - Fine-grained control over ready state
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Async Factories** - Create new instances asynchronously on each access</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Async Singletons** - Create singletons with async initialization</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Dependency Management** - Automatically wait for dependencies before initialization</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Startup Orchestration** - Coordinate complex initialization sequences</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Manual Signaling** - Fine-grained control over ready state</li>
+</ul>
 
 ## Quick Reference
 

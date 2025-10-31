@@ -16,9 +16,11 @@ Register multiple instances of the same type by giving each a unique name. This 
 <<< @/../code_samples/lib/get_it/api_client_example_1.dart#example
 
 **Best for:**
-- ✅ Different configurations of the same type (dev/prod endpoints)
-- ✅ Known set of instances accessed individually
-- ✅ Feature flags (old/new implementation)
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Different configurations of the same type (dev/prod endpoints)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Known set of instances accessed individually</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags (old/new implementation)</li>
+</ul>
 
 ### Approach 2: Multiple Unnamed Registrations (Requires Opt-In)
 
@@ -28,10 +30,12 @@ Register multiple instances without names and retrieve them all at once with `ge
 <<< @/../code_samples/lib/get_it/plugin.dart
 
 **Best for:**
-- ✅ Plugin systems (modules can add implementations)
-- ✅ Observer/event handler patterns
-- ✅ Middleware chains
-- ✅ When you don't need to access instances individually
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Plugin systems (modules can add implementations)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Observer/event handler patterns</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Middleware chains</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ When you don't need to access instances individually</li>
+</ul>
 
 ::: tip You Can Combine Both Approaches
 Named and unnamed registrations can coexist. `getAll<T>()` returns both unnamed and named instances.
@@ -241,16 +245,20 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 | **Access method** | String-based names | Type-based retrieval |
 
 **When to use named registration:**
-- ✅ Different configurations (dev/prod API endpoints)
-- ✅ Feature flags (old/new implementation)
-- ✅ Known set of instances accessed individually
-- ✅ Multiple database connections
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Different configurations (dev/prod API endpoints)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags (old/new implementation)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Known set of instances accessed individually</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Multiple database connections</li>
+</ul>
 
 **When to use multiple unnamed registration:**
-- ✅ Modular plugin architecture
-- ✅ Observer/event handler pattern
-- ✅ Middleware chains
-- ✅ Validators/processors pipeline
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Modular plugin architecture</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Observer/event handler pattern</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Middleware chains</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Validators/processors pipeline</li>
+</ul>
 
 **Combining both approaches:**
 

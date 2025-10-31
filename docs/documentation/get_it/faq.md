@@ -270,10 +270,12 @@ Split registrations into separate functions that encapsulate scope management:
 <<< @/../code_samples/lib/get_it/configure_core_dependencies_example.dart#example
 
 **Why functions matter:**
-- ✅ **Reusable** - Call the same function when pushing scopes to reinitialize features
-- ✅ **Testable** - Call specific registration functions in test setup
-- ✅ **Organized** - Clear separation of concerns by feature/layer
-- ✅ **Centralized** - All registration logic in one place, not scattered
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Reusable** - Call the same function when pushing scopes to reinitialize features</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Testable** - Call specific registration functions in test setup</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Organized** - Clear separation of concerns by feature/layer</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Centralized** - All registration logic in one place, not scattered</li>
+</ul>
 
 **Don't:**
 ❌ Scatter registration calls throughout your app
@@ -299,11 +301,13 @@ Use **scopes** - they're designed for this exact use case:
 <<< @/../code_samples/lib/get_it/on_login.dart
 
 **Why scopes are better:**
-- ✅ Automatic cleanup and restoration
-- ✅ Can't forget to re-register original services
-- ✅ Dispose functions called automatically
-- ✅ Cleaner, less error-prone code
-- ✅ Can push multiple nested scopes
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Automatic cleanup and restoration</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Can't forget to re-register original services</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Dispose functions called automatically</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Cleaner, less error-prone code</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Can push multiple nested scopes</li>
+</ul>
 
 **Use unregister when:**
 - You're truly removing a service permanently (rare)
@@ -327,14 +331,18 @@ See [Scopes documentation](/documentation/get_it/scopes) for more patterns.
 <<< @/../code_samples/lib/get_it/configure_dependencies_example_11.dart#example
 
 **When to use injectable:**
-- ✅ Large apps with many services (50+)
-- ✅ You prefer declarative over imperative code
-- ✅ You want dependency injection to be more automatic
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Large apps with many services (50+)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You prefer declarative over imperative code</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want dependency injection to be more automatic</li>
+</ul>
 
 **When manual registration is fine:**
-- ✅ Small to medium apps (< 50 services)
-- ✅ You prefer explicit, straightforward code
-- ✅ You want to avoid code generation build step
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Small to medium apps (< 50 services)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You prefer explicit, straightforward code</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want to avoid code generation build step</li>
+</ul>
 
 **Important:** injectable is **optional**. get_it works great without it! The documentation here focuses on manual registration, which is simpler to learn and works for most apps.
 
@@ -429,4 +437,3 @@ Much cleaner and less error-prone!
 
 
 
- 

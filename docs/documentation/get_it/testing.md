@@ -37,8 +37,10 @@ For testing classes in complete isolation (without get_it), use optional constru
 <<< @/../code_samples/lib/get_it/user_manager_example.dart#example
 
 **When to use:**
-- ✅ Testing pure business logic in isolation
-- ✅ Classes that don't need the full dependency graph
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Testing pure business logic in isolation</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Classes that don't need the full dependency graph</li>
+</ul>
 - ❌ Integration-style tests where you want real dependencies
 
 ---
@@ -195,4 +197,3 @@ Factories create new instances on each `get()` call - verify this behavior in te
 
 - [Scopes](/documentation/get_it/scopes) - Detailed scope documentation
 - [Object Registration](/documentation/get_it/object_registration) - Registration types
-- [FAQ](/documentation/get_it/faq) - Common questions including testing
