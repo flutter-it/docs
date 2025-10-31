@@ -1,0 +1,568 @@
+{
+  "__type_registration_example.dart": {
+    "example": "class _ObjectRegistration {}\n\nclass _TypeRegistration<T> {\n  final registrations = <_ObjectRegistration>[]; // Unnamed registrations\n  final namedRegistrations =\n      LinkedHashMap<String, _ObjectRegistration>(); // Named registrations\n}"
+  },
+  "api_client.dart": {
+    "example": "group('UserService Tests', () {\n    setUp(() {\n      // Call your app's real DI initialization\n      configureDependencies();\n\n      // Push scope to shadow specific services with test doubles\n      getIt.pushNewScope();\n      getIt.registerSingleton<ApiClient>(MockApiClient());\n      getIt.registerSingleton<Database>(MockDatabase());\n\n      // UserService uses real implementation but gets mock dependencies\n    });\n\n    tearDown(() async {\n      // Pop scope - removes mocks, restores real services\n      await getIt.popScope();\n    });\n\n    test('should load user data', () async {\n      // UserService gets MockApiClient and MockDatabase automatically\n      final service = getIt<UserService>();\n      print('service: $service');\n      final user = await service.loadUser('123');\n      expect(user.id, '123');\n    });\n  });"
+  },
+  "api_client_1.dart": {
+    "example": "void main() {\n  test('complex service uses all dependencies correctly', () async {\n    getIt.pushNewScope();\n\n    // Mock all dependencies\n    final mockApi = MockApiClient();\n    final mockDb = MockDatabase();\n    final mockAuth = MockAuthService();\n\n    // Configure mocks directly\n    mockAuth.isAuthenticated = true;\n    mockApi.mockData = {'data': 'value'};\n\n    getIt.registerSingleton<ApiClient>(mockApi);\n    getIt.registerSingleton<Database>(mockDb);\n    getIt.registerSingleton<AuthService>(mockAuth);\n\n    // Service under test (uses real implementation)\n    getIt.registerLazySingleton<SyncService>(() => SyncService(\n          getIt<ApiClient>(),\n          getIt<Database>(),\n          getIt<AuthService>(),\n        ));\n\n    final sync = getIt<SyncService>();\n    print('sync: $sync');\n    // Test sync behavior...\n\n    await getIt.popScope();\n  });\n}"
+  },
+  "api_client_2.dart": {
+    "example": "void main() {\n  // Enable multiple registrations first\n  getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  getIt.registerSingleton<ApiClient>(ProdApiClient(), instanceName: 'prod');\n  getIt.registerSingleton<ApiClient>(DevApiClient(), instanceName: 'dev');\n}"
+  },
+  "api_client_example.dart": {
+    "example": "setUp(() {\n    configureDependencies(); // Call your real DI setup\n\n    getIt.pushNewScope(); // Shadow specific services with mocks\n    getIt.registerSingleton<ApiClient>(MockApiClient());\n    getIt.registerSingleton<Database>(MockDatabase());\n  });\n\n  tearDown(() async {\n    await getIt.popScope(); // Remove mocks, clean slate for next test\n  });"
+  },
+  "api_client_example_1.dart": {
+    "example": "void main() async {\n// Register multiple REST services with different configurations\n  getIt.registerSingleton<ApiClient>(\n    ApiClient('https://api.example.com'),\n    instanceName: 'mainApi',\n  );\n\n  getIt.registerSingleton<ApiClient>(\n    ApiClient('https://analytics.example.com'),\n    instanceName: 'analyticsApi',\n  );\n\n// Access individually by name\n  final mainApi = getIt<ApiClient>(instanceName: 'mainApi');\n  print('mainApi: $mainApi');\n  final analyticsApi = getIt<ApiClient>(instanceName: 'analyticsApi');\n  print('analyticsApi: $analyticsApi');\n}"
+  },
+  "async_cached_factory_example.dart": {
+    "example": "void main() async {\n  // Cached async factory\n  getIt.registerCachedFactoryAsync<HeavyResource>(\n    () async {\n      final resource = HeavyResource();\n      await resource.initialize();\n      return resource;\n    },\n  );\n\n  // First access - creates new instance\n  final resource1 = await getIt.getAsync<HeavyResource>();\n\n  // While still in memory - returns cached instance\n  final resource2 = await getIt.getAsync<HeavyResource>();\n\n  print(\n      'resource1 == resource2: ${identical(resource1, resource2)}'); // true - same instance\n}"
+  },
+  "async_factory_basic.dart": {
+    "example": "void main() async {\n  // Register async factory\n  getIt.registerFactoryAsync<DatabaseConnection>(\n    () async {\n      final conn = DatabaseConnection();\n      await conn.connect();\n      return conn;\n    },\n  );\n\n  // Usage - creates new instance each time\n  final db1 = await getIt.getAsync<DatabaseConnection>();\n  final db2 = await getIt.getAsync<DatabaseConnection>(); // Different instance\n\n  print('db1 == db2: ${identical(db1, db2)}'); // false - different instances\n}"
+  },
+  "async_factory_param_example.dart": {
+    "example": "void main() async {\n  // Register async factory with two parameters\n  getIt.registerFactoryParamAsync<UserViewModel, String, int>(\n    (userId, age) async {\n      // Simulate async initialization (e.g., fetch from API)\n      await Future.delayed(Duration(milliseconds: 100));\n      return UserViewModel(userId, age: age);\n    },\n  );\n\n  // Access with parameters\n  final vm = await getIt.getAsync<UserViewModel>(\n    param1: 'user-123',\n    param2: 25,\n  );\n\n  print('Created ViewModel for user: ${vm.userId}');\n}"
+  },
+  "async_factory_param_signatures.dart": {
+    "example": "// One parameter\nvoid registerFactoryParamAsync<T, P1>(\n  FactoryFuncParamAsync<T, P1, dynamic> factoryFunc, {\n  String? instanceName,\n}) {}\n\n// Two parameters\nvoid registerFactoryParam2Async<T, P1, P2>(\n  FactoryFuncParamAsync<T, P1, P2> factoryFunc, {\n  String? instanceName,\n}) {}\n\n// Cached with one parameter\nvoid registerCachedFactoryParamAsync<T, P1>(\n  FactoryFuncParamAsync<T, P1, dynamic> factoryFunc, {\n  String? instanceName,\n}) {}\n\n// Cached with two parameters\nvoid registerCachedFactoryParam2Async<T, P1, P2>(\n  FactoryFuncParamAsync<T, P1, P2> factoryFunc, {\n  String? instanceName,\n}) {}"
+  },
+  "async_objects.dart": {
+    "register-factory-async": "void registerFactoryAsyncExample() {\n  // Register async factory\n  getIt.registerFactoryAsync<DatabaseConnection>(\n    () async {\n      final conn = DatabaseConnection();\n      await conn.connect();\n      return conn;\n    },\n  );\n\n  // Register with instance name\n  getIt.registerFactoryAsync<ApiClient>(\n    () async => ApiClient.create('https://api-v2.example.com'),\n    instanceName: 'api-v2',\n  );\n}\n\nFuture<void> useFactoryAsync() async {\n  // Usage - creates new instance each time\n  final db1 = await getIt.getAsync<DatabaseConnection>();\n  final db2 = await getIt.getAsync<DatabaseConnection>(); // New instance\n}",
+    "register-cached-factory-async": "void registerCachedFactoryAsyncExample() {\n  // Cached async factory\n  getIt.registerCachedFactoryAsync<HeavyResource>(\n    () async {\n      final resource = HeavyResource();\n      await resource.initialize();\n      return resource;\n    },\n  );\n}\n\nFuture<void> useCachedFactoryAsync() async {\n  // First access - creates new instance\n  final resource1 = await getIt.getAsync<HeavyResource>();\n\n  // While still in memory - returns cached instance\n  final resource2 = await getIt.getAsync<HeavyResource>(); // Same instance\n}",
+    "register-singleton-async": "void registerSingletonAsyncExample() {\n  // Simple async singleton\n  getIt.registerSingletonAsync<Database>(\n    () async {\n      final db = Database('/data/db');\n      await db.initialize();\n      return db;\n    },\n  );\n\n  // With disposal\n  getIt.registerSingletonAsync<ApiClient>(\n    () async {\n      final client = ApiClient('https://api.example.com');\n      await client.authenticate();\n      return client;\n    },\n    dispose: (client) => client.close(),\n  );\n\n  // With onCreated callback\n  getIt.registerSingletonAsync<Logger>(\n    () async => Logger.initialize(),\n    onCreated: (logger) => print('Logger initialized'),\n  );\n}\n\nFuture<void> useSingletonAsync() async {\n  // Wait for singleton to be ready\n  await getIt.isReady<Database>();\n\n  // Or wait for all async singletons\n  await getIt.allReady();\n\n  // Then access normally\n  final db = getIt<Database>();\n  print('db: $db');\n}",
+    "register-lazy-singleton-async": "void registerLazySingletonAsyncExample() {\n  // Lazy async singleton - created on first access\n  getIt.registerLazySingletonAsync<ConfigService>(\n    () async {\n      final config = ConfigService();\n      await config.loadFromFile();\n      return config;\n    },\n  );\n}\n\nFuture<void> useLazySingletonAsync() async {\n  // First access - triggers creation\n  final config = await getIt.getAsync<ConfigService>();\n\n  // Subsequent access - returns existing instance\n  final config2 = await getIt.getAsync<ConfigService>(); // Same instance\n}",
+    "dependencies": "void dependenciesExample() {\n  // 1. Config loads first (no dependencies)\n  getIt.registerSingletonAsync<ConfigService>(\n    () async {\n      final config = ConfigService();\n      await config.loadFromFile();\n      return config;\n    },\n  );\n\n  // 2. API client waits for config\n  getIt.registerSingletonAsync<ApiClient>(\n    () async {\n      final apiUrl = getIt<ConfigService>().apiUrl;\n      print('apiUrl: $apiUrl');\n      final client = ApiClient(apiUrl);\n      await client.authenticate();\n      return client;\n    },\n    dependsOn: [ConfigService],\n  );\n\n  // 3. Database waits for config\n  getIt.registerSingletonAsync<Database>(\n    () async {\n      final dbPath = getIt<ConfigService>().databasePath;\n      print('dbPath: $dbPath');\n      final db = Database(dbPath);\n      await db.initialize();\n      return db;\n    },\n    dependsOn: [ConfigService],\n  );\n\n  // 4. Repository waits for everything (sync singleton with dependencies)\n  getIt.registerSingletonWithDependencies<UserRepository>(\n    () => UserRepository(\n      api: getIt<ApiClient>(),\n      db: getIt<Database>(),\n      config: getIt<ConfigService>(),\n    ),\n    dependsOn: [ConfigService, ApiClient, Database],\n  );\n}",
+    "all-ready": "Future<void> allReadyExample() async {\n  // Wait for all async singletons\n  await getIt.allReady();\n  print('All services ready');\n\n  // With timeout\n  try {\n    await getIt.allReady(timeout: Duration(seconds: 10));\n  } on WaitingTimeOutException catch (e) {\n    print('Initialization timeout!');\n    print('Not ready: ${e.notReadyYet}');\n  }\n}",
+    "is-ready": "Future<void> isReadyExample() async {\n  // Wait for specific service\n  await getIt.isReady<Database>();\n\n  // Now safe to use\n  final db = getIt<Database>();\n  print('db: $db');\n\n  // Check without waiting\n  if (getIt.isReadySync<Database>()) {\n    print('Database is ready');\n  }\n}",
+    "best-practice-prefer-singleton-async": "void bestPracticePreferSingletonAsync() {\n  // Good - starts initializing immediately\n  getIt.registerSingletonAsync<Database>(() async {\n    final db = Database('/data/db');\n    await db.initialize();\n    return db;\n  });\n\n  // Less ideal - won't initialize until first access\n  getIt.registerLazySingletonAsync<Database>(() async {\n    final db = Database('/data/db');\n    await db.initialize();\n    return db;\n  });\n}",
+    "best-practice-use-depends-on": "void bestPracticeUseDependsOn() {\n  // Good - clear dependency chain\n  getIt.registerSingletonAsync<ConfigService>(() async => ConfigService.load());\n\n  getIt.registerSingletonAsync<ApiClient>(\n    () async => ApiClient(getIt<ConfigService>().apiUrl),\n    dependsOn: [ConfigService],\n  );\n\n  // Less ideal - manual orchestration\n  getIt.registerSingletonAsync<ApiClient>(() async {\n    await getIt.isReady<ConfigService>(); // Manual waiting\n    return ApiClient(getIt<ConfigService>().apiUrl);\n  });\n}"
+  },
+  "async_objects_174d24d3.dart": {
+    "example": "class DatabaseService {\n  DatabaseService() {\n    _init();\n  }\n\n  Future<void> _init() async {\n    await connectToDatabase();\n    await runMigrations();\n\n    // Signal this instance is ready\n    GetIt.instance.signalReady(this);\n  }\n\n  Future<void> connectToDatabase() async {}\n  Future<void> runMigrations() async {}\n}"
+  },
+  "async_objects_21920847.dart": {
+    "example": "Future<void> main() async {\n  // setupDependencies(); // Setup your dependencies first\n\n  // Wait for specific service\n  await getIt.isReady<Database>();\n\n  // Now safe to use\n  final db = getIt<Database>();\n\n  // Wait for named instance\n  await getIt.isReady<ApiClient>(instanceName: 'production');\n}"
+  },
+  "async_objects_2642b731.dart": {
+    "example": "void configureDependencies() {\n  // Lazy async singleton - created on first access\n  getIt.registerLazySingletonAsync<CacheService>(\n    () async {\n      final cache = CacheService();\n      await cache.loadFromDisk();\n      return cache;\n    },\n  );\n\n  // With weak reference - allows GC when not in use\n  getIt.registerLazySingletonAsync<ImageCache>(\n    () async => ImageCache.load(),\n    useWeakReference: true,\n  );\n}\n\nFuture<void> main() async {\n  configureDependencies();\n\n  // First access - triggers creation\n  final cache = await getIt.getAsync<CacheService>();\n\n  // Subsequent access - returns existing instance\n  final cache2 = await getIt.getAsync<CacheService>(); // Same instance\n}"
+  },
+  "async_objects_28d751fd.dart": {
+    "example": "void main() async {\n  Future<void> main() async {\n    // Register first batch of services\n    getIt.registerSingletonAsync<ConfigService>(\n        () async => ConfigService.load());\n    getIt.registerSingletonAsync<Logger>(() async => Logger.initialize());\n\n    // Wait for first batch\n    await getIt.allReady();\n    print('Core services ready');\n\n    // Register second batch based on config\n    final config = getIt<ConfigService>();\n    if (config.enableFeatureX) {\n      getIt.registerSingletonAsync<FeatureX>(() async => FeatureX.initialize());\n    }\n\n    // Wait for second batch\n    await getIt.allReady();\n    print('All services ready');\n\n    runApp(MyApp());\n  }\n}"
+  },
+  "async_objects_3be0569c.dart": {
+    "example": "class InitializationProgress extends ChangeNotifier {\n  final Map<String, bool> _progress = {};\n\n  void markReady(String serviceName) {\n    _progress[serviceName] = true;\n    notifyListeners();\n  }\n\n  double get percentComplete =>\n      _progress.values.where((ready) => ready).length / _progress.length;\n}\n\nvoid configureDependencies(InitializationProgress progress) {\n  getIt.registerSingletonAsync<ConfigService>(\n    () async => ConfigService.load(),\n    onCreated: (_) => progress.markReady('Config'),\n  );\n\n  getIt.registerSingletonAsync<Database>(\n    () async => Database.connect(),\n    dependsOn: [ConfigService],\n    onCreated: (_) => progress.markReady('Database'),\n  );\n\n  getIt.registerSingletonAsync<ApiClient>(\n    () async => ApiClient.create(),\n    dependsOn: [ConfigService],\n    onCreated: (_) => progress.markReady('API'),\n  );\n}"
+  },
+  "async_objects_4c3dc27e_signature.dart": {
+    "example": "Future<T> getAsync<T>({\n  String? instanceName,\n  dynamic param1,\n  dynamic param2,\n  Type? type,\n})"
+  },
+  "async_objects_4ef84c96.dart": {
+    "example": "void showUI() {\n  if (getIt.allReadySync()) {\n    // Show main UI\n  } else {\n    // Show loading indicator\n  }\n}"
+  },
+  "async_objects_5324c9ca_signature.dart": {
+    "example": "// Get async factory instance\nfinal conn = await getIt.getAsync<DatabaseConnection>();\n\n// Get async singleton (waits if still initializing)\nfinal api = await getIt.getAsync<ApiClient>();\n\n// Get named instance\nfinal cache = await getIt.getAsync<CacheService>(instanceName: 'user-cache');\n\n// Get with parameters (async factory param)\nfinal report = await getIt.getAsync<Report>(\n  param1: 'user-123',\n  param2: DateTime.now(),\n);"
+  },
+  "async_objects_55d54ef7.dart": {
+    "example": "void configureDependencies() {\n  // Register multiple API clients\n  getIt.registerSingletonAsync<ApiClient>(\n    () async => ApiClient.create('https://api-v1.example.com'),\n    instanceName: 'api-v1',\n  );\n\n  getIt.registerSingletonAsync<ApiClient>(\n    () async => ApiClient.create('https://api-v2.example.com'),\n    instanceName: 'api-v2',\n  );\n\n  // Depend on specific named instance\n  getIt.registerSingletonWithDependencies<DataSync>(\n    () => DataSync(getIt<ApiClient>(instanceName: 'api-v2')),\n    dependsOn: [InitDependency(ApiClient, instanceName: 'api-v2')],\n  );\n}"
+  },
+  "async_objects_62e38c5b.dart": {
+    "example": "class ConfigService implements WillSignalReady {\n  bool isReady = false;\n\n  ConfigService() {\n    _initialize();\n  }\n\n  Future<void> _initialize() async {\n    await loadConfig();\n    isReady = true;\n    GetIt.instance.signalReady(this);\n  }\n\n  Future<void> loadConfig() async {}\n}\n\nvoid configureDependencies() {\n  // No signalsReady parameter needed - interface handles it\n  getIt.registerSingleton<ConfigService>(ConfigService());\n}"
+  },
+  "async_objects_65faea06.dart": {
+    "example": "void configureDependencies() {\n  // Layer 1: Core infrastructure\n  getIt.registerSingletonAsync<ConfigService>(() async => ConfigService.load());\n  getIt.registerSingletonAsync<Logger>(() async => Logger.initialize());\n\n  // Layer 2: Network and data access\n  getIt.registerSingletonAsync<ApiClient>(\n    () async => ApiClient(getIt<ConfigService>().apiUrl),\n    dependsOn: [ConfigService],\n  );\n\n  getIt.registerSingletonAsync<Database>(\n    () async => Database(getIt<ConfigService>().dbPath),\n    dependsOn: [ConfigService],\n  );\n\n  // Layer 3: Business logic\n  getIt.registerSingletonWithDependencies<UserRepository>(\n    () => UserRepository(getIt<ApiClient>(), getIt<Database>()),\n    dependsOn: [ApiClient, Database],\n  );\n\n  // Layer 4: Application state\n  getIt.registerSingletonWithDependencies<AppModel>(\n    () => AppModel(getIt<UserRepository>()),\n    dependsOn: [UserRepository],\n  );\n}"
+  },
+  "async_objects_6e8c86b1.dart": {
+    "example": "void configureDependencies() {\n  // Good - starts initializing immediately\n  getIt.registerSingletonAsync<Database>(() async => Database.connect());\n\n  // Less ideal - won't initialize until first access\n  getIt.registerLazySingletonAsync<Database>(() async => Database.connect());\n}"
+  },
+  "async_objects_7d06e64a_signature.dart": {
+    "example": "bool isReadySync<T>({\n  Object? instance,\n  String? instanceName,\n})"
+  },
+  "async_objects_80efa70c.dart": {
+    "example": "void configureDependencies({required bool isProduction}) {\n  getIt.registerSingletonAsync<ConfigService>(\n    () async => ConfigService.load(),\n  );\n\n  if (isProduction) {\n    getIt.registerSingletonAsync<ApiClient>(\n      () async => ApiClient(getIt<ConfigService>().prodUrl),\n      dependsOn: [ConfigService],\n    );\n  } else {\n    getIt.registerSingletonAsync<ApiClient>(\n      () async => MockApiClient(),\n      dependsOn: [ConfigService],\n    );\n  }\n}"
+  },
+  "async_objects_864b4c27.dart": {
+    "example": "Future<void> main() async {\n  setupDependencies();\n\n  try {\n    await getIt.allReady(timeout: Duration(seconds: 10));\n    runApp(MyApp());\n  } on WaitingTimeOutException catch (e) {\n    print('Initialization timeout!');\n    print('Not ready: ${e.notReadyYet}');\n    print('Already ready: ${e.areReady}');\n    print('Waiting chain: ${e.areWaitedBy}');\n  }\n}"
+  },
+  "async_objects_90ee78c4_signature.dart": {
+    "example": "bool allReadySync([bool ignorePendingAsyncCreation = false])"
+  },
+  "async_objects_93c1b617_signature.dart": {
+    "example": "Future<void> allReady({\n  Duration? timeout,\n  bool ignorePendingAsyncCreation = false,\n})"
+  },
+  "async_objects_96ff9c4e.dart": {
+    "example": "void checkStatus() {\n  if (getIt.isReadySync<Database>()) {\n    print('Database is ready');\n  } else {\n    print('Database still initializing...');\n  }\n}"
+  },
+  "async_objects_a3cbd191.dart": {
+    "example": "// Good - clear dependency chain\nvoid configureDependencies() {\n  getIt.registerSingletonAsync<ConfigService>(() async => ConfigService.load());\n\n  getIt.registerSingletonAsync<ApiClient>(\n    () async => ApiClient(getIt<ConfigService>().apiUrl),\n    dependsOn: [ConfigService],\n  );\n}\n\n// Less ideal - manual orchestration\nvoid configureDependenciesManual() {\n  getIt.registerSingletonAsync<ConfigService>(() async => ConfigService.load());\n\n  getIt.registerSingletonAsync<ApiClient>(() async {\n    await getIt.isReady<ConfigService>(); // Manual waiting\n    return ApiClient(getIt<ConfigService>().apiUrl);\n  });\n}"
+  },
+  "async_objects_a6be16da.dart": {
+    "example": "Future<void> main() async {\n  try {\n    await getIt.allReady(timeout: Duration(seconds: 30));\n    runApp(MyApp());\n  } on WaitingTimeOutException catch (e) {\n    // Handle timeout - log error, show error screen, etc.\n    runApp(ErrorApp(error: e));\n  }\n}"
+  },
+  "async_objects_ae083a64.dart": {
+    "example": "void configureDependencies() {\n  // 1. Config loads first (no dependencies)\n  getIt.registerSingletonAsync<ConfigService>(\n    () async {\n      final config = ConfigService();\n      await config.loadFromFile();\n      return config;\n    },\n  );\n\n  // 2. API client waits for config\n  getIt.registerSingletonAsync<ApiClient>(\n    () async {\n      final apiUrl = getIt<ConfigService>().apiUrl;\n      final client = ApiClient(apiUrl);\n      await client.authenticate();\n      return client;\n    },\n    dependsOn: [ConfigService],\n  );\n\n  // 3. Database waits for config\n  getIt.registerSingletonAsync<Database>(\n    () async {\n      final dbPath = getIt<ConfigService>().databasePath;\n      final db = Database(dbPath);\n      await db.initialize();\n      return db;\n    },\n    dependsOn: [ConfigService],\n  );\n\n  // 4. App model waits for everything\n  getIt.registerSingletonWithDependencies<AppModel>(\n    () => AppModel.withParams(\n        api: getIt<ApiClient>(),\n        db: getIt<Database>(),\n        config: getIt<ConfigService>()),\n    dependsOn: [ConfigService, ApiClient, Database],\n  );\n}"
+  },
+  "async_objects_af1df8a2_signature.dart": {
+    "example": "void signalReady(Object? instance)"
+  },
+  "async_objects_b64e81ba.dart": {
+    "example": "Future<T> withRetry<T>(\n  Future<T> Function() operation, {\n  int maxAttempts = 3,\n}) async {\n  for (var attempt = 1; attempt <= maxAttempts; attempt++) {\n    try {\n      return await operation();\n    } catch (e) {\n      if (attempt == maxAttempts) rethrow;\n      await Future.delayed(Duration(seconds: attempt));\n    }\n  }\n  throw StateError('Should never reach here');\n}\n\nvoid configureDependencies() {\n  getIt.registerSingletonAsync<ApiClient>(\n    () => withRetry(() async => ApiClient.connect()),\n  );\n}"
+  },
+  "async_objects_bbdb298c.dart": {
+    "example": "class MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return FutureBuilder(\n      future: getIt.allReady(),\n      builder: (context, snapshot) {\n        if (snapshot.hasData) {\n          // All services ready - show main app\n          return HomePage();\n        } else {\n          // Still initializing - show splash screen\n          return SplashScreen();\n        }\n      },\n    );\n  }\n}"
+  },
+  "async_objects_c603af1e_signature.dart": {
+    "example": "Future<void> isReady<T>({\n  Object? instance,\n  String? instanceName,\n  Duration? timeout,\n  Object? callee,\n})"
+  },
+  "async_objects_d0a62ccd.dart": {
+    "example": "Future<void> main() async {\n  // Initialize base scope\n  await getIt.allReady();\n\n  // Push new scope with its own async services\n  getIt.pushNewScope(scopeName: 'user-session');\n  getIt.registerSingletonAsync<UserService>(() async => UserService.load());\n\n  // Wait for new scope to be ready\n  await getIt.allReady();\n}"
+  },
+  "async_objects_d275974b.dart": {
+    "example": "class MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    return MaterialApp(\n      home: FutureBuilder(\n        future: getIt.allReady(),\n        builder: (context, snapshot) {\n          if (snapshot.hasError) {\n            return ErrorScreen(snapshot.error!);\n          }\n\n          if (snapshot.hasData) {\n            return HomePage();\n          }\n\n          return SplashScreen();\n        },\n      ),\n    );\n  }\n}"
+  },
+  "async_objects_e093effa_signature.dart": {
+    "example": "void registerSingletonWithDependencies<T>(\n  FactoryFunc<T> factoryFunc, {\n  String? instanceName,\n  required Iterable<Type>? dependsOn,\n  bool? signalsReady,\n  DisposingFunc<T>? dispose,\n})"
+  },
+  "async_objects_f2965023.dart": {
+    "example": "class ConfigService {\n  bool isReady = false;\n\n  ConfigService() {\n    _initialize();\n  }\n\n  Future<void> _initialize() async {\n    // Complex async initialization\n    await loadRemoteConfig();\n    await validateConfig();\n    await setupConnections();\n\n    isReady = true;\n    // Signal that we're ready\n    GetIt.instance.signalReady(this);\n  }\n\n  Future<void> loadRemoteConfig() async {}\n  Future<void> validateConfig() async {}\n  Future<void> setupConnections() async {}\n}\n\nvoid configureDependencies() {\n  getIt.registerSingleton<ConfigService>(\n    ConfigService(),\n    signalsReady: true, // Must manually signal ready\n  );\n}\n\nFuture<void> main() async {\n  configureDependencies();\n  // Wait for ready signal\n  await getIt.isReady<ConfigService>();\n}"
+  },
+  "async_objects_fc40829b.dart": {
+    "example": "void configureDependencies() {\n  // Async singletons\n  getIt.registerSingletonAsync<ConfigService>(\n    () async => ConfigService.load(),\n  );\n\n  getIt.registerSingletonAsync<ApiClient>(\n    () async => ApiClient.create(),\n  );\n\n  // Sync singleton that depends on async singletons\n  getIt.registerSingletonWithDependencies<UserRepository>(\n    () => UserRepository(getIt<ApiClient>(), getIt<Database>()),\n    dependsOn: [ConfigService, ApiClient],\n  );\n}\n\nFuture<void> main() async {\n  configureDependencies();\n\n  // Wait for all to be ready\n  await getIt.allReady();\n\n  // Now safe to access - dependencies are guaranteed ready\n  final userRepo = getIt<UserRepository>();\n}"
+  },
+  "async_quick_reference.dart": {
+    "example": "// Quick Reference for Async Objects in GetIt\n\nvoid quickReference() async {\n  // Register an async singleton that will be created on first access\n  getIt.registerSingletonAsync<ConfigService>(() async {\n    final config = ConfigService();\n    await config.loadFromFile();\n    return config;\n  });\n\n  // Register with dependency on another async object\n  getIt.registerSingletonAsync<Database>(\n    () async {\n      final db = Database(getIt<ConfigService>().databasePath);\n      await db.initialize();\n      return db;\n    },\n    dependsOn: [ConfigService],\n  );\n\n  // Wait for all async singletons to be ready\n  await getIt.allReady();\n\n  // Wait for specific type to be ready\n  await getIt.isReady<Database>();\n\n  // Check if an async object is ready (non-blocking)\n  if (getIt.isReadySync<ConfigService>()) {\n    // Safe to access\n    final config = getIt<ConfigService>();\n  }\n\n  // Register factory with async initialization\n  getIt.registerFactoryAsync<DatabaseConnection>(() async {\n    final conn = DatabaseConnection();\n    await conn.connect();\n    return conn;\n  });\n\n  // Access will wait for initialization\n  final connection = await getIt.getAsync<DatabaseConnection>();\n\n  // Register with disposer for cleanup\n  getIt.registerSingletonAsync<ApiClient>(\n    () async {\n      final client = ApiClient('https://api.example.com');\n      await client.authenticate();\n      return client;\n    },\n    dispose: (client) => client.close(),\n  );\n\n  // Unregister triggers disposal\n  await getIt.unregister<ApiClient>();\n}"
+  },
+  "async_singleton_example.dart": {
+    "example": "void main() async {\n  // Simple async singleton - starts initialization immediately\n  getIt.registerSingletonAsync<Database>(\n    () async {\n      final db = Database('/data/myapp.db');\n      await db.initialize();\n      return db;\n    },\n  );\n\n  // With disposal function\n  getIt.registerSingletonAsync<ApiClient>(\n    () async {\n      final client = ApiClient('https://api.example.com');\n      await client.authenticate();\n      return client;\n    },\n    dispose: (client) => client.close(),\n  );\n\n  // Wait for all async singletons to be ready\n  await getIt.allReady();\n\n  // Now access them normally\n  final db = getIt<Database>();\n  final api = getIt<ApiClient>();\n\n  print('Database and API client ready!');\n}"
+  },
+  "auth_service_example.dart": {
+    "example": "class AuthService {\n  Future<void> login(String username, String password) async {\n    final user = await getIt<ApiClient>().login(username, password);\n\n    // Push authenticated scope\n    getIt.pushNewScope(scopeName: 'authenticated');\n    getIt.registerSingleton<User>(user);\n    getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(user.token));\n    getIt.registerSingleton<NotificationService>(NotificationService(user.id));\n  }\n\n  Future<void> logout() async {\n    // Pop scope - automatic cleanup of all authenticated services\n    await getIt.popScope();\n\n    // GuestUser (from base scope) is now active again\n  }\n}"
+  },
+  "base_logger_example.dart": {
+    "example": "class BaseLogger {}\n\nclass FileLogger extends BaseLogger {}\n\nclass ConsoleLogger extends BaseLogger {}\n\nvoid main() {\n  getIt.registerSingleton<BaseLogger>(FileLogger());\n  getIt.registerSingleton<BaseLogger>(ConsoleLogger());\n\n  // Find subtypes (default)\n  final allLoggers = getIt.findAll<BaseLogger>();\n  print('allLoggers: $allLoggers');\n  // Returns: [FileLogger, ConsoleLogger]\n\n  // Find exact type only\n  final exactBase = getIt.findAll<BaseLogger>(\n    includeSubtypes: false,\n  );\n  // Returns: [] (no exact BaseLogger instances, only subtypes)\n}"
+  },
+  "checkout_service_example.dart": {
+    "example": "// Setup base scope with original checkout\n  final userService = await UserService.load();\n  getIt.registerSingleton<CheckoutService>(CheckoutService(userService));\n\n  if (featureFlagEnabled) {\n    getIt.pushNewScope(scopeName: 'feature-new-checkout');\n    getIt.registerSingleton<CheckoutService>(NewCheckoutService(userService));\n  } else {\n    // Uses base scope's original CheckoutService\n  }\n\n  print('Checkout service: ${getIt<CheckoutService>()}');"
+  },
+  "code_sample_062bd775.dart": {
+    "example": "getIt.onScopeChanged = (bool pushed) {\n    if (pushed) {\n      print('New scope pushed - UI might need rebuild');\n    } else {\n      print('Scope popped - UI might need rebuild');\n    }\n  };"
+  },
+  "code_sample_07af7c81.dart": {
+    "example": "// All scopes\n  final allPlugins = getIt.getAll<Plugin>(fromAllScopes: true);\n  print('allPlugins: $allPlugins');\n  // Returns: [FeatureAPlugin, FeatureBPlugin, CorePlugin, LoggingPlugin]"
+  },
+  "code_sample_0da49c29.dart": {
+    "example": "final GetIt getIt = GetIt.instance; // ✅ Correct"
+  },
+  "code_sample_0eb8db1b.dart": {
+    "example": "if (getIt.hasScope('authenticated')) {\n    // Scope exists\n  } else {\n    // Not logged in\n  }"
+  },
+  "code_sample_135f1ef6.dart": {
+    "example": "// Register a cached factory\n  getIt.registerCachedFactory<HeavyParser>(() => HeavyParser());\n\n// First call - creates instance\n  final parser1 = getIt<HeavyParser>();\n  print('parser1: $parser1'); // New instance created\n\n// Second call - reuses if not garbage collected\n  final parser2 = getIt<HeavyParser>();\n  print('parser2: $parser2'); // Same instance (if still in memory)\n\n// After garbage collection (no references held)\n  final parser3 = getIt<HeavyParser>();\n  print('parser3: $parser3'); // New instance created"
+  },
+  "code_sample_14c31d5c.dart": {
+    "example": "// Reset everything and call disposal functions\n  await getIt.reset();\n\n  // Reset without calling disposals\n  await getIt.reset(dispose: false);"
+  },
+  "code_sample_1a719c02.dart": {
+    "example": "getIt.registerCachedFactoryParam<ImageProcessor, int, int>(\n    (width, height) => ImageProcessor(width, height),\n  );\n\n  // Creates new instance\n  final processor1 = getIt<ImageProcessor>(param1: 1920, param2: 1080);\n  print('processor1: $processor1');\n\n  // Reuses same instance (same parameters)\n  final processor2 = getIt<ImageProcessor>(param1: 1920, param2: 1080);\n  print('processor2: $processor2');\n\n  // Creates NEW instance (different parameters)\n  final processor3 = getIt<ImageProcessor>(param1: 3840, param2: 2160);\n  print('processor3: $processor3');"
+  },
+  "code_sample_1c1d87ec.dart": {
+    "example": "// Check if type is registered\n  if (getIt.isRegistered<ApiClient>()) {\n    print('ApiClient is already registered');\n  }\n\n// Check by instance name\n  if (getIt.isRegistered<Database>(instanceName: 'test-db')) {\n    print('Test database is registered');\n  }\n\n// Check if specific instance is registered\n  final myLogger = Logger();\n  if (getIt.isRegistered<Logger>(instance: myLogger)) {\n    print('This specific logger instance is registered');\n  }"
+  },
+  "code_sample_2ba32f12.dart": {
+    "example": "// Reset so it recreates on next get()\n  getIt.resetLazySingleton<UserCache>();\n\n// Next access will call the factory function again\n  final cache = getIt<UserCache>();\n  print('cache: $cache'); // New instance created"
+  },
+  "code_sample_2cd2b1b0.dart": {
+    "example": "// All scopes\n  final Iterable<Plugin> allPlugins = await getIt.getAllAsync<Plugin>(\n    fromAllScopes: true,\n  );\n\n// Specific named scope\n  final Iterable<Plugin> basePlugins = await getIt.getAllAsync<Plugin>(\n    onlyInScope: 'baseScope',\n  );"
+  },
+  "code_sample_2fd612f7.dart": {
+    "example": "// Force unregister even if refCount > 0\n  getIt.unregister<MyService>(ignoreReferenceCount: true);"
+  },
+  "code_sample_2fee2227.dart": {
+    "example": "test('service lifecycle matches scope lifecycle', () async {\n    // Base scope\n    getIt.registerLazySingleton<CoreService>(() => CoreService());\n\n    // Feature scope\n    getIt.pushNewScope(scopeName: 'feature');\n    getIt.registerLazySingleton<FeatureService>(() => FeatureService(getIt()));\n\n    expect(getIt<CoreService>(), isNotNull);\n    expect(getIt<FeatureService>(), isNotNull);\n\n    // Pop feature scope\n    await getIt.popScope();\n\n    expect(getIt<CoreService>(), isNotNull); // Still available\n    expect(() => getIt<FeatureService>(), throwsStateError); // Gone!\n  });"
+  },
+  "code_sample_322e6eda.dart": {
+    "example": "void main() async {\n  // Base scope lazy singletons\n  getIt.registerLazySingleton<GlobalCache>(() => GlobalCache());\n\n  // Push scope and register more\n  getIt.pushNewScope(scopeName: 'session');\n  getIt.registerLazySingleton<SessionCache>(() => SessionCache());\n  getIt.registerLazySingleton<UserState>(() => UserState());\n\n  // Access them\n  final globalCache = getIt<GlobalCache>();\n  print('globalCache: $globalCache');\n  final sessionCache = getIt<SessionCache>();\n  print('sessionCache: $sessionCache');\n\n  // Reset only current scope ('session')\n  await getIt.resetLazySingletons();\n  // GlobalCache NOT reset, SessionCache and UserState ARE reset\n\n  // Reset all scopes\n  await getIt.resetLazySingletons(inAllScopes: true);\n  // Both GlobalCache and SessionCache are reset\n\n  // Reset only specific scope\n  await getIt.resetLazySingletons(onlyInScope: 'baseScope');\n  // Only GlobalCache is reset\n}"
+  },
+  "code_sample_383c0a19.dart": {
+    "example": "// ❌ Trying to get without registering first\n  final service = getIt<MyService>();\n  print('service: $service'); // ERROR!"
+  },
+  "code_sample_39fe26fa.dart": {
+    "example": "// resetScope - clears all registrations in current scope but keeps scope\n  await getIt.resetScope(dispose: true);\n\n  // popScope - removes entire scope and restores previous\n  await getIt.popScope();"
+  },
+  "code_sample_3b6bf5d9.dart": {
+    "example": "getIt.registerLazySingleton<MyService>(\n      () => MyService()); // ✅ Register as MyService\n  final service = getIt<MyService>();\n  print('service: $service'); // ✅ Works!"
+  },
+  "code_sample_41a16b51.dart": {
+    "example": "void main() async {\n  getIt.registerSingletonAsync<Database>(\n    () async => Database.connect('postgres://main-db'),\n    instanceName: 'mainDb',\n  );\n\n  getIt.registerSingletonAsync<Database>(\n    () async => Database.connect('postgres://analytics-db'),\n    instanceName: 'analyticsDb',\n  );\n\n  getIt.registerSingletonAsync<Database>(\n    () async => Database.connect('postgres://cache-db'),\n    instanceName: 'cacheDb',\n  );\n}"
+  },
+  "code_sample_42c18049.dart": {
+    "example": "const userId = \"user123\";\n// Register factory accepting two parameters\n  getIt.registerFactoryParam<UserViewModel, String, int>(\n    (userId, age) => UserViewModel(userId, age: age),\n  );\n\n// Access with parameters\n  final vm = getIt<UserViewModel>(param1: 'user-123', param2: 25);\n  print('vm: $vm');"
+  },
+  "code_sample_49d4b664.dart": {
+    "example": "getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  getIt.registerSingletonAsync<Plugin>(() async => await CorePlugin.create());\n  getIt\n      .registerSingletonAsync<Plugin>(() async => await LoggingPlugin.create());\n\n  // Wait for all plugins to be ready\n  await getIt.allReady();\n\n  // Retrieve all async instances\n  final Iterable<Plugin> plugins = await getIt.getAllAsync<Plugin>();"
+  },
+  "code_sample_4c9aa485.dart": {
+    "example": "void main() async {\n// Instantiate lazy singletons that match\n  final all = getIt.findAll<IOutput>(\n    instantiateLazySingletons: true,\n  );\n// Returns: [FileOutput, ConsoleOutput]\n// ConsoleOutput is now created and cached\n  print('Found: $all');\n}"
+  },
+  "code_sample_599505d1.dart": {
+    "example": "void main() async {\n  // Register lazy singletons\n  getIt.registerLazySingleton<CacheService>(() => CacheService());\n  getIt.registerLazySingleton<UserPreferences>(() => UserPreferences());\n\n  // Access them (creates instances)\n  final cache = getIt<CacheService>();\n  print('cache: $cache');\n  final prefs = getIt<UserPreferences>();\n  print('prefs: $prefs');\n\n  // Reset all lazy singletons in current scope\n  await getIt.resetLazySingletons();\n\n  // Next access creates fresh instances\n  final newCache = getIt<CacheService>();\n  print('newCache: $newCache'); // New instance\n}"
+  },
+  "code_sample_5f4e16d1.dart": {
+    "example": "test('factory param passes parameters correctly', () async {\n    getIt.pushNewScope();\n\n    getIt.registerFactoryParam<UserViewModel, String, void>(\n      (userId, _) => UserViewModel(userId),\n    );\n\n    final vm = getIt<UserViewModel>(param1: 'user-123');\n    print('vm: $vm');\n    expect(vm.userId, 'user-123');\n\n    await getIt.popScope();\n  });"
+  },
+  "code_sample_657c692e.dart": {
+    "example": "// Logout - pop scope\n  await getIt.popScope(); // All auth services disposed automatically\n// Guest services from base scope automatically restored!"
+  },
+  "code_sample_661a189f.dart": {
+    "example": "final registration = getIt.findFirstObjectRegistration<MyService>();\n  print('registration: $registration');\n  print('Registered in scope: ${registration?.instanceName}');"
+  },
+  "code_sample_6c897c2f.dart": {
+    "example": "getIt.registerLazySingleton(\n      () => MyServiceImpl()); // Registers as MyServiceImpl\n  final service = getIt<MyService>();\n  print('service: $service'); // ❌ Looking for MyService"
+  },
+  "code_sample_6f9d6d83.dart": {
+    "example": "final GetIt getIt = GetIt.instance(); // ❌ Wrong! Creates new instance"
+  },
+  "code_sample_866f5818.dart": {
+    "example": "final getIt = GetIt.instance;"
+  },
+  "code_sample_8a892376.dart": {
+    "example": "// Register with one parameter (second type is void)\n  getIt.registerFactoryParam<ReportGenerator, String, void>(\n    (reportType, _) => ReportGenerator(reportType),\n  );\n\n// Access with one parameter\n  final report = getIt<ReportGenerator>(param1: 'sales');\n  print('report: $report');"
+  },
+  "code_sample_908a2d50.dart": {
+    "example": "// Access services\n  final api = getIt<ApiClient>();\n  print('api: $api');\n  final db = getIt<Database>();\n  print('db: $db');\n  final auth = getIt<AuthService>();\n  print('auth: $auth');\n\n  // Use them\n  final data = await api.fetchData();\n  await db.save(data);\n  final user = await auth.login('alice', 'secret');\n  print('user: $user');"
+  },
+  "code_sample_91535ee8.dart": {
+    "example": "// Unregister by type with cleanup\n  getIt.unregister<Database>(\n    disposingFunction: (db) => db.close(),\n  );\n\n// Unregister by instance name\n  getIt.unregister<ApiClient>(instanceName: 'legacy-api');\n\n// Unregister specific instance\n  final myService = getIt<MyService>();\n  print('myService: $myService');\n  getIt.unregister<MyService>(\n    instance: myService,\n    disposingFunction: (s) => s.dispose(),\n  );"
+  },
+  "code_sample_980d7414.dart": {
+    "example": "getIt.enableRegisteringMultipleInstancesOfOneType();"
+  },
+  "code_sample_9b560463.dart": {
+    "example": "await getIt.unregister<AuthService>(\n    disposingFunction: (service) async {\n      await service.cleanup(); // Custom cleanup logic\n    },\n  );"
+  },
+  "code_sample_a449e220.dart": {
+    "example": "await getIt.resetLazySingleton<AuthService>();\n  // Next call to getIt<AuthService>() creates new instance"
+  },
+  "code_sample_aa613a22.dart": {
+    "example": "// Register lazy singleton\n  getIt.registerLazySingleton<HeavyService>(() => HeavyService());\n\n  // Check if it's been created yet\n  if (getIt.checkLazySingletonInstanceExists<HeavyService>()) {\n    print('HeavyService already created');\n  } else {\n    print('HeavyService not created yet - will be lazy loaded');\n  }\n\n  // Access triggers creation\n  final service = getIt<HeavyService>();\n  print('service: $service');\n\n  // Now it exists\n  assert(getIt.checkLazySingletonInstanceExists<HeavyService>() == true);"
+  },
+  "code_sample_b1321fa0.dart": {
+    "example": "final typeRegistration = TypeRegistration();\n  final registrations = [\n    ...typeRegistration.registrations, // ALL unnamed\n    ...typeRegistration.namedRegistrations.values, // ALL named\n  ];\n  print('registrations: $registrations');"
+  },
+  "code_sample_ba79068a.dart": {
+    "example": "final Map<String, _ObjectRegistration> namedRegistrations = {};\n  final List<_ObjectRegistration> registrations = [];\n\n  _ObjectRegistration? getRegistration(String? name) {\n    return name != null\n        ? namedRegistrations[name] // If name provided, look in map\n        : registrations.firstOrNull; // Otherwise, return FIRST from list\n  }"
+  },
+  "code_sample_be97525b.dart": {
+    "example": "final registration = getIt.findFirstObjectRegistration<MyService>();\n  print('registration: $registration');\n\n  if (registration != null) {\n    print(\n        'Type: ${registration.registrationType}'); // factory, singleton, lazy, etc.\n    print('Instance name: ${registration.instanceName}');\n    print('Is async: ${registration.isAsync}');\n    print('Is ready: ${registration.isReady}');\n  }"
+  },
+  "code_sample_c1d7f5e3.dart": {
+    "example": "getIt.registerLazySingleton<ApiClient>(() => ApiClient());\n  final client1 = getIt<ApiClient>();\n  print('client1: $client1'); // Instance created\n  final client2 = getIt<ApiClient>();\n  print('client2: $client2'); // Same instance returned"
+  },
+  "code_sample_caa57cf3.dart": {
+    "example": "getIt.registerSingleton(TestClass());\n\n  final instance1 = getIt.get(type: TestClass);\n  print('instance1: $instance1');\n\n  expect(instance1 is TestClass, true);"
+  },
+  "code_sample_d18eeb0d.dart": {
+    "example": "test('widget works with async services', () async {\n    getIt.pushNewScope();\n\n    // Register async mock\n    getIt.registerSingletonAsync<Database>(() async {\n      await Future.delayed(Duration(milliseconds: 100));\n      return MockDatabase();\n    });\n\n    // Wait for all async registrations\n    await getIt.allReady();\n\n    // Now safe to test\n    final db = getIt<Database>();\n    print('db: $db');\n    expect(db, isA<MockDatabase>());\n\n    await getIt.popScope();\n  });"
+  },
+  "code_sample_e395f3ff.dart": {
+    "example": "print('Current scope: ${getIt.currentScopeName}');\n// Output: null (for unnamed scopes), 'session', 'baseScope', etc."
+  },
+  "code_sample_e4fa6049.dart": {
+    "example": "void main() {\n  // Only search the base scope\n  final basePlugins = getIt.getAll<Plugin>(onlyInScope: 'baseScope');\n  print('basePlugins: $basePlugins');\n  // Returns: [CorePlugin, LoggingPlugin]\n\n  // Only search the 'feature' scope\n  final featurePlugins = getIt.getAll<Plugin>(onlyInScope: 'feature');\n  print('featurePlugins: $featurePlugins');\n  // Returns: [FeatureAPlugin, FeatureBPlugin]\n}"
+  },
+  "configure_core_dependencies_example.dart": {
+    "example": "void configureCoreDependencies() {\n  getIt.registerLazySingleton<ApiClient>(() => ApiClient());\n  getIt.registerLazySingleton<Database>(() => Database());\n}\n\nvoid configureAuthDependencies() {\n  getIt.pushNewScope(\n    scopeName: 'authenticated',\n    init: (scope) {\n      scope.registerLazySingleton<AuthService>(() => AuthService(getIt()));\n      scope\n          .registerLazySingleton<UserRepository>(() => UserRepository(getIt()));\n    },\n  );\n}\n\nvoid configureShopDependencies() {\n  getIt.pushNewScope(\n    scopeName: 'shopping',\n    init: (scope) {\n      scope.registerLazySingleton<CartService>(() => CartService(getIt()));\n      scope.registerLazySingleton<OrderRepository>(\n          () => OrderRepository(getIt()));\n    },\n  );\n}\n\nvoid main() {\n  configureCoreDependencies();\n  runApp(MyApp());\n}\n\n// Later, when user logs in\nvoid onLogin() {\n  configureAuthDependencies(); // Pushes scope and registers services\n}\n\n// When user opens shop feature\nvoid openShop() {\n  configureShopDependencies(); // Pushes scope and registers services\n}\n\n// When user logs out\nvoid onLogout() async {\n  await getIt.popScope(); // Removes auth scope and disposes services\n}"
+  },
+  "configure_dependencies.dart": {
+    "example": "void configureDependencies() {\n  // Singleton - created immediately, used for entire app lifetime\n  getIt.registerSingleton<Logger>(Logger());\n\n  // LazySingleton - created on first use, used for entire app lifetime\n  getIt.registerLazySingleton<Database>(() => Database());\n  getIt.registerLazySingleton<ApiClient>(() => ApiClient());\n\n  // Factory - new instance every time you call getIt<ShoppingCart>()\n  getIt.registerFactory<ShoppingCart>(() => ShoppingCart());\n}"
+  },
+  "configure_dependencies_example.dart": {
+    "example": "// lib/service_locator.dart\n\nvoid configureDependencies() {\n  // Register your services\n  getIt.registerLazySingleton<ApiClient>(() => ApiClient());\n  getIt.registerLazySingleton<Database>(() => Database());\n  getIt.registerLazySingleton<AuthService>(() => AuthService());\n}"
+  },
+  "configure_dependencies_example_1.dart": {
+    "example": "void configureDependencies() {\n  getIt.registerSingleton<ApiClient>(ApiClient());\n  getIt.registerSingleton<UserRepository>(UserRepository());\n}\n\n// Access directly\nfinal api = getIt<ApiClient>();"
+  },
+  "configure_dependencies_example_10.dart": {
+    "example": "void configureDependencies() {\n    getIt.registerLazySingleton<ApiClient>(() => ApiClient());\n    getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));\n    getIt.registerLazySingleton<UserRepository>(\n        () => UserRepository(getIt(), getIt()));\n    // ... 50 more registrations\n  }"
+  },
+  "configure_dependencies_example_11.dart": {
+    "example": "configureDependencies();"
+  },
+  "configure_dependencies_example_2.dart": {
+    "example": "configureDependencies();"
+  },
+  "configure_dependencies_example_3.dart": {
+    "example": "configureDependencies();"
+  },
+  "configure_dependencies_example_4.dart": {
+    "example": "void configureDependencies() {\n  // Simple registration\n  getIt.registerSingleton<Logger>(Logger());\n\n  // With disposal\n  getIt.registerSingleton<Database>(\n    Database(),\n    dispose: (db) => db.close(),\n  );\n}"
+  },
+  "configure_dependencies_example_5.dart": {
+    "example": "void configureDependencies() {\n  // Simple registration\n  getIt.registerLazySingleton<ApiClient>(() => ApiClient());\n\n  // With disposal and onCreated callback\n  getIt.registerLazySingleton<Database>(\n    () => Database(),\n    dispose: (db) => db.close(),\n    onCreated: (db) => print('Database initialized'),\n  );\n}\n\n// First access - factory function runs NOW\nfinal api = getIt<ApiClient>(); // ApiClient() constructor called\n\n// Subsequent calls - returns existing instance\nfinal sameApi = getIt<ApiClient>(); // Same instance, no constructor call"
+  },
+  "configure_dependencies_example_6.dart": {
+    "example": "// Each call creates a NEW instance\n  final cart1 = getIt<ShoppingCart>(); // New ShoppingCart()\n  final cart2 = getIt<ShoppingCart>(); // Different ShoppingCart()\n\n  print(identical(cart1, cart2)); // false - different objects"
+  },
+  "configure_dependencies_example_7.dart": {
+    "example": "configureDependencies();\n  runApp(const MyApp());"
+  },
+  "configure_dependencies_example_8.dart": {
+    "example": "configureDependencies();\n  runApp(MyApp());"
+  },
+  "configure_dependencies_example_9.dart": {
+    "example": "void configureDependencies() {\n  getIt.registerLazySingleton<ApiClient>(() => ApiClient());\n  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));\n  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));\n  getIt.registerFactory<LoginViewModel>(() => LoginViewModel(getIt()));\n}\n\nvoid main() {\n  configureDependencies();\n  runApp(MyApp());\n}"
+  },
+  "detail_service_example.dart": {
+    "example": "class DetailService extends ChangeNotifier {\n  final String itemId;\n  String? data;\n  bool isLoading = false;\n\n  DetailService(this.itemId) {\n    // Trigger async loading in constructor (fire and forget)\n    _loadData();\n  }\n\n  Future<void> _loadData() async {\n    if (data != null) return; // Already loaded\n\n    isLoading = true;\n    notifyListeners();\n\n    print('Loading data for $itemId from backend...');\n    // Simulate backend call\n    await Future.delayed(Duration(seconds: 1));\n    data = 'Data for $itemId';\n\n    isLoading = false;\n    notifyListeners();\n  }\n}\n\nclass DetailPage extends WatchingWidget {\n  final String itemId;\n  const DetailPage(this.itemId);\n\n  @override\n  Widget build(BuildContext context) {\n    // Register once when widget is created, dispose when widget is disposed\n    callOnce(\n      (context) {\n        // Register or get existing - increments reference count\n        getIt.registerSingletonIfAbsent<DetailService>(\n          () => DetailService(itemId),\n          instanceName: itemId,\n        );\n      },\n      dispose: () {\n        // Decrements reference count when widget disposes\n        getIt.releaseInstance(getIt<DetailService>(instanceName: itemId));\n      },\n    );\n\n    // Watch the service - rebuilds when notifyListeners() called\n    final service = watchIt<DetailService>(instanceName: itemId);\n\n    return Scaffold(\n      appBar: AppBar(title: Text('Detail $itemId')),\n      body: service.isLoading\n          ? const Center(child: CircularProgressIndicator())\n          : Column(\n              children: [\n                Text(service.data ?? 'No data'),\n                ElevatedButton(\n                  onPressed: () {\n                    // Can push same page recursively\n                    Navigator.push(\n                      context,\n                      MaterialPageRoute(\n                        builder: (_) => DetailPage('related-$itemId'),\n                      ),\n                    );\n                  },\n                  child: const Text('View Related'),\n                ),\n              ],\n            ),\n    );\n  }\n}"
+  },
+  "disposable_example.dart": {
+    "example": "abstract class Disposable {\n  FutureOr onDispose();\n}"
+  },
+  "disposable_service_example.dart": {
+    "example": "getIt.pushNewScope();\n\n  final service = DisposableService();\n  getIt.registerSingleton<DisposableService>(service);\n\n  print('Before pop: ${service.disposed}'); // false\n\n  await getIt.popScope();\n\n  print('After pop: ${service.disposed}'); // true"
+  },
+  "do_something_example.dart": {
+    "example": "getIt.registerLazySingleton<ServiceB>(() => ServiceB(getIt<IServiceA>()));\n  getIt.registerLazySingleton<IServiceA>(() => ServiceA()..init());"
+  },
+  "emit_example.dart": {
+    "example": "class Event {}\n\nclass ServiceAEvent extends Event {}\n\nclass ServiceBEvent extends Event {}\n\nclass EventBus {\n  final _controller = StreamController<Event>.broadcast();\n  Stream<Event> get events => _controller.stream;\n  void emit(Event event) => _controller.add(event);\n}\n\nclass ServiceA {\n  ServiceA(EventBus bus) {\n    bus.events.where((e) => e is ServiceBEvent).listen(_handle);\n  }\n  void _handle(Event event) {}\n}\n\nclass ServiceB {\n  ServiceB(EventBus bus) {\n    bus.events.where((e) => e is ServiceAEvent).listen(_handle);\n  }\n  void _handle(Event event) {}\n}"
+  },
+  "enable_feature_example.dart": {
+    "example": "class FeatureManager {\n  final Map<String, bool> _activeFeatures = {};\n\n  void enableFeature(String featureName, FeatureImplementation impl) {\n    if (_activeFeatures[featureName] == true) return;\n\n    getIt.pushNewScope(scopeName: 'feature-$featureName');\n    impl.register(getIt);\n    _activeFeatures[featureName] = true;\n  }\n\n  Future<void> disableFeature(String featureName) async {\n    if (_activeFeatures[featureName] != true) return;\n\n    await getIt.dropScope('feature-$featureName');\n    _activeFeatures[featureName] = false;\n  }\n}"
+  },
+  "file_output_example.dart": {
+    "example": "void main() async {\n// Register as FileOutput but it implements IOutput\n  getIt.registerSingleton<FileOutput>(FileOutput('/path/to/file.txt'));\n\n// Match by registration type\n  final byRegistration = getIt.findAll<IOutput>(\n    includeMatchedByRegistrationType: true,\n    includeMatchedByInstance: false,\n  );\n// Returns: [] (registered as FileOutput, not IOutput)\n\n// Match by instance type\n  final byInstance = getIt.findAll<IOutput>(\n    includeMatchedByRegistrationType: false,\n    includeMatchedByInstance: true,\n  );\n// Returns: [FileOutput] (instance implements IOutput)\n}"
+  },
+  "function_example_1_signature.dart": {
+    "example": "void unregister<T>({\n  Object? instance,\n  String? instanceName,\n  void Function(T)? disposingFunction,\n}) {}"
+  },
+  "function_example_2_signature.dart": {
+    "example": "void resetLazySingleton<T>({\n  Object? instance,\n  String? instanceName,\n  void Function(T)? disposingFunction,\n}) {}"
+  },
+  "function_example_signature.dart": {
+    "example": "void registerLazySingleton<T>(\n  FactoryFunc<T> factoryFunc, {\n  String? instanceName,\n  DisposingFunc<T>? dispose,\n  void Function(T instance)? onCreated,\n  bool useWeakReference = false,\n}) {}"
+  },
+  "i_logger.dart": {
+    "example": "abstract class ILogger {}\n\nclass FileLogger implements ILogger {}\n\nclass ConsoleLogger implements ILogger {}\n\nvoid main() {\n  // Approach 1: Multiple registrations with getAll()\n  getIt.enableRegisteringMultipleInstancesOfOneType();\n  getIt.registerSingleton<ILogger>(FileLogger());\n  getIt.registerSingleton<ILogger>(ConsoleLogger());\n\n  final loggers1 = getIt.getAll<ILogger>();\n  print('loggers1: $loggers1');\n  // Returns: [FileLogger, ConsoleLogger]\n\n  // Approach 2: Different registration types with findAll()\n  getIt.registerSingleton<FileLogger>(FileLogger());\n  getIt.registerSingleton<ConsoleLogger>(ConsoleLogger());\n\n  final loggers2 = getIt.findAll<ILogger>();\n  print('loggers2: $loggers2');\n  // Returns: [FileLogger, ConsoleLogger] (matched by type)\n}"
+  },
+  "i_output.dart": {
+    "example": "void main() {\n  // Base scope\n  getIt.registerSingleton<IOutput>(FileOutput('/tmp/output.txt'));\n\n  // Push scope\n  getIt.pushNewScope(scopeName: 'session');\n  getIt.registerSingleton<IOutput>(ConsoleOutput());\n\n  // Current scope only (default)\n  final current = getIt.findAll<IOutput>();\n  print('current: $current');\n  // Returns: [ConsoleOutput]\n\n  // All scopes\n  final all = getIt.findAll<IOutput>(inAllScopes: true);\n  print('all: $all');\n  // Returns: [ConsoleOutput, FileOutput]\n\n  // Specific scope\n  final base = getIt.findAll<IOutput>(onlyInScope: 'baseScope');\n  print('base: $base');\n  // Returns: [FileOutput]\n}"
+  },
+  "i_output_example.dart": {
+    "example": "void main() async {\n  getIt.registerFactory<IOutput>(() => RemoteOutput('https://api.example.com'));\n\n// Include factories by calling them\n  final withFactories = getIt.findAll<IOutput>(\n    instantiateLazySingletons: true,\n    callFactories: true,\n  );\n// Returns: [FileOutput, ConsoleOutput, RemoteOutput]\n// Each factory call creates a new instance\n}"
+  },
+  "init_example.dart": {
+    "example": "class StreamingService implements ShadowChangeHandlers {\n  StreamSubscription? _subscription;\n  final Stream<dynamic> dataStream = Stream.empty();\n\n  void init() {\n    _subscription = dataStream.listen(_handleData);\n  }\n\n  void _handleData(dynamic data) {\n    // Handle data\n  }\n\n  @override\n  void onGetShadowed(Object shadowingObject) {\n    // Another StreamingService is now active - pause our work\n    _subscription?.pause();\n    print('Paused: $shadowingObject is now handling streams');\n  }\n\n  @override\n  void onLeaveShadow(Object shadowingObject) {\n    // We're active again - resume work\n    _subscription?.resume();\n    print('Resumed: $shadowingObject was removed');\n  }\n}"
+  },
+  "init_example_1.dart": {
+    "example": "getIt.registerSingleton<MyService>(MyService()..init());"
+  },
+  "json_parser.dart": {
+    "example": "// Factory - always new, immediate cleanup\n  getIt.registerFactory<JsonParser>(() => JsonParser());\n  final p1 = getIt<JsonParser>();\n  print('p1: $p1'); // Creates instance 1\n  final p2 = getIt<JsonParser>();\n  print('p2: $p2'); // Creates instance 2 (different)\n\n  // Cached Factory - reuses if possible\n  getIt.registerCachedFactory<JsonParser>(() => JsonParser());\n  final p3 = getIt<JsonParser>();\n  print('p3: $p3'); // Creates instance 3\n  final p4 = getIt<JsonParser>();\n  print('p4: $p4'); // Returns instance 3 (if not GC'd)\n\n  // Lazy Singleton - reuses forever\n  getIt.registerLazySingleton<JsonParser>(() => JsonParser());\n  final p5 = getIt<JsonParser>();\n  print('p5: $p5'); // Creates instance 4\n  final p6 = getIt<JsonParser>();\n  print('p6: $p6'); // Returns instance 4 (always)"
+  },
+  "logger.dart": {
+    "example": "// Created immediately at app startup\n  getIt.registerSingleton<Logger>(Logger());\n\n  // Only created when first accessed (lazy)\n  getIt.registerLazySingleton<HeavyDatabase>(() => HeavyDatabase());"
+  },
+  "logger_example.dart": {
+    "example": "getIt.allowReassignment = true;\n\n// Now you can re-register\n  getIt.registerSingleton<Logger>(ConsoleLogger());\n  getIt.registerSingleton<Logger>(FileLogger()); // Overwrites previous"
+  },
+  "logger_example_1.dart": {
+    "example": "getIt.skipDoubleRegistration = true;\n\n// If already registered, this does nothing instead of throwing\n  getIt.registerSingleton<Logger>(Logger());"
+  },
+  "logger_example_2.dart": {
+    "example": "void main() async {\n// Singleton\n  getIt.registerSingleton<Logger>(\n    FileLogger(),\n    instanceName: 'fileLogger',\n  );\n\n// Lazy Singleton\n  getIt.registerLazySingleton<Cache>(\n    () => MemoryCache(),\n    instanceName: 'memory',\n  );\n\n// Factory\n  getIt.registerFactory<Report>(\n    () => DailyReport(),\n    instanceName: 'daily',\n  );\n\n// Async Singleton\n  getIt.registerSingletonAsync<Database>(\n    () async => Database.connect('prod'),\n    instanceName: 'production',\n  );\n}"
+  },
+  "login_page_example.dart": {
+    "example": "const username = \"user@example.com\";\n  const password = \"password123\";"
+  },
+  "login_page_example_1.dart": {
+    "example": "// get_it + watch_it handles BOTH DI and state management\n\nclass LoginPage extends WatchingWidget {\n  const LoginPage({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    final auth = watchIt<AuthService>(); // Rebuilds when auth changes\n    return const Scaffold(\n      body: Center(child: Text('Login Page')),\n    );\n  }\n}\n\nvoid main() {\n  getIt.registerSingleton<AuthService>(AuthServiceImpl());\n  runApp(const MaterialApp(home: LoginPage()));\n}"
+  },
+  "main.dart": {
+    "example": "setUpAll(() {\n    // Register app dependencies\n    getIt.registerLazySingleton<ThemeService>(() => ThemeServiceImpl());\n    getIt.registerLazySingleton<UserService>(\n        () => UserServiceImpl(ApiClient('http://localhost')));\n  });\n\n  testWidgets('LoginPage displays user after successful login', (tester) async {\n    // Arrange - push scope with mock\n    getIt.pushNewScope();\n    final mockUser = MockUserService();\n    getIt.registerSingleton<UserService>(mockUser);\n\n    // Act\n    await tester.pumpWidget(const MyApp());\n    await tester.enterText(find.byKey(const Key('username')), 'alice');\n    await tester.enterText(find.byKey(const Key('password')), 'secret');\n    await tester.tap(find.text('Login'));\n    await tester.pumpAndSettle();\n\n    // Assert\n    expect(find.text('Welcome, Alice'), findsOneWidget);\n\n    // Cleanup\n    await getIt.popScope();\n  });"
+  },
+  "main_example.dart": {
+    "example": "configureDependencies(); // Register all services FIRST\n  runApp(MyApp());"
+  },
+  "main_example_1.dart": {
+    "example": "setUpAll(() {\n    configureDependencies(); // Register real app dependencies ONCE\n  });\n\n  setUp(() {\n    getIt.pushNewScope(); // Create test scope\n    getIt.registerSingleton<ApiClient>(MockApiClient()); // Shadow with mock\n  });\n\n  tearDown(() async {\n    await getIt.popScope(); // Restore real services\n  });\n\n  test('test name', () {\n    final service = getIt<UserService>();\n    print('service: $service');\n    // UserService automatically gets MockApiClient!\n  });"
+  },
+  "main_example_2.dart": {
+    "example": "// Note: This example demonstrates testing patterns\n// In actual tests, use flutter_test and mockito packages\n\nclass MockApiClient extends ApiClient {\n  MockApiClient() : super('http://mock');\n\n  String token = 'test-token';\n  @override\n  Future<Map<String, dynamic>> get(String endpoint,\n      {Map<String, String>? headers}) async {\n    return {'id': '123', 'name': 'Alice'};\n  }\n}\n\nclass MockAuthService {\n  String getToken() => 'test-token';\n\n  Future<bool> login(String username, String password) async => true;\n  Future<void> logout() async {}\n  Future<void> cleanup() async {}\n  bool get isAuthenticated => false;\n}\n\nvoid main() {\n  // Simplified test example showing scope-based mocking\n  void setupTests() {\n    // Register all real dependencies once\n    getIt.registerLazySingleton<ApiClient>(() => ApiClientImpl());\n    getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl());\n    getIt.registerLazySingleton<UserRepository>(\n        () => UserRepository(getIt(), getIt()));\n  }\n\n  void runTest() async {\n    // Push scope and shadow only the services we want to mock\n    getIt.pushNewScope();\n\n    final mockApi = MockApiClient();\n    final mockAuth = MockAuthService();\n\n    getIt.registerSingleton<ApiClient>(mockApi);\n    getIt.registerSingleton<MockAuthService>(mockAuth);\n\n    // UserRepository will be created fresh with our mocks\n    final repo = getIt<UserRepository>();\n    print('repo: $repo');\n    final user = await repo.fetchUser('123');\n\n    print('Fetched user: ${user?.name}');\n\n    // Clean up\n    await getIt.popScope();\n  }\n\n  setupTests();\n  runTest();\n}"
+  },
+  "main_example_3.dart": {
+    "example": "group('End-to-end user flow', () {\n    setUpAll(() async {\n      // Push scope for integration test environment\n      getIt.pushNewScope(\n        scopeName: 'integration-test',\n        init: (scope) {\n          // Mock only external dependencies\n          scope.registerSingleton<ApiClient>(FakeApiClient());\n          scope.registerSingleton<SecureStorage>(SecureStorage());\n\n          // Use real implementations for everything else\n          scope.registerLazySingleton<AuthService>(() => AuthServiceImpl());\n          scope.registerLazySingleton<UserRepository>(() => UserRepository());\n        },\n      );\n    });\n\n    tearDownAll(() async {\n      await getIt.popScope();\n    });\n\n    testWidgets('User can login and view profile', (tester) async {\n      await tester.pumpWidget(MyApp());\n\n      // Interact with real UI + real services + fake backend\n      await tester.tap(find.text('Login'));\n      await tester.pumpAndSettle();\n\n      expect(find.text('Profile'), findsOneWidget);\n    });\n  });"
+  },
+  "main_example_4.dart": {
+    "example": "getIt.registerLazySingleton<MyService>(() => MyService());\n  runApp(MyApp());\n\n  // Now you can use it\n  final service = getIt<MyService>();\n  print('service: $service'); // ✅ Works!"
+  },
+  "main_example_5.dart": {
+    "example": "final service = getIt<MyService>();\n  print('service: $service'); // ❌ ERROR! Not registered yet\n  getIt.registerLazySingleton<MyService>(() => MyService());\n  runApp(MyApp());"
+  },
+  "main_example_6.dart": {
+    "example": "getIt.registerLazySingleton<MyService>(() => MyService());\n  final service = getIt<MyService>();\n  print('service: $service'); // ✅ Now it works\n  runApp(MyApp());"
+  },
+  "main_example_7.dart": {
+    "example": "void main() {\n  configureDependencies(); // First call\n  configureDependencies(); // ❌ Second call - ERROR!\n  runApp(MyApp());\n}"
+  },
+  "main_example_8.dart": {
+    "example": "void main() {\n  configureDependencies(); // Once only!\n  runApp(MyApp());\n}"
+  },
+  "main_example_9.dart": {
+    "example": "void main() {\n  getIt.registerSingleton<MyService>(MyService());\n  runApp(MyApp());\n}"
+  },
+  "my_app_example.dart": {
+    "example": "class MyApp extends StatelessWidget {\n  @override\n  Widget build(BuildContext context) {\n    getIt.registerSingleton<MyService>(\n        MyService()); // Called on every hot reload!\n    return MaterialApp(\n      home: Scaffold(\n        appBar: AppBar(title: Text('My App')),\n        body: Container(),\n      ),\n    );\n  }\n}"
+  },
+  "my_app_example_1.dart": {
+    "example": "// get_it manages your business objects\n\n// Provider propagates UI state down the tree\nclass MyApp extends StatelessWidget {\n  const MyApp({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    return ChangeNotifierProvider(\n      create: (_) => ThemeNotifier(),\n      child: const MaterialApp(\n        home: Scaffold(body: Center(child: Text('Hello'))),\n      ),\n    );\n  }\n}\n\nvoid main() {\n  getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl());\n  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));\n\n  runApp(const MyApp());\n}"
+  },
+  "my_widget_example.dart": {
+    "example": "// Feature flag scenario\nclass MyWidget extends StatelessWidget {\n  const MyWidget({super.key});\n\n  @override\n  Widget build(BuildContext context) {\n    final logger = getIt.maybeGet<Logger>();\n    print('logger: $logger');\n    logger?.log('Building MyWidget'); // Safe even if Logger not registered\n\n    return const Text('Hello');\n  }\n}\n\n// Graceful degradation\nWidget getUIForPremiumStatus() {\n  final premiumFeature = getIt.maybeGet<PremiumFeature>();\n  print('premiumFeature: $premiumFeature');\n  if (premiumFeature != null) {\n    return PremiumUI(feature: premiumFeature);\n  } else {\n    return const BasicUI(); // Fallback when premium not available\n  }\n}\n\nvoid main() {\n  final analyticsService = getIt.maybeGet<AnalyticsService>();\n  print('analyticsService: $analyticsService');\n  if (analyticsService != null) {\n    analyticsService.trackEvent('user_action');\n  }\n\n  final ui = getUIForPremiumStatus();\n  print('UI: $ui');\n}"
+  },
+  "on_app_started_example.dart": {
+    "example": "getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  // Multiple observers can register\n  getIt.registerSingleton<AppLifecycleObserver>(AnalyticsObserver());\n  getIt.registerSingleton<AppLifecycleObserver>(LoggingObserver());\n  getIt.registerSingleton<AppLifecycleObserver>(CacheObserver());"
+  },
+  "on_login.dart": {
+    "example": "void onLogin(String token) async {\n  await getIt.unregister<User>();\n  await getIt.unregister<ApiClient>();\n  getIt.registerSingleton<User>(AuthenticatedUser(token));\n  getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(token));\n}\n\nvoid onLogout() async {\n  await getIt.unregister<User>();\n  await getIt.unregister<ApiClient>();\n  getIt.registerSingleton<User>(GuestUser());\n  getIt.registerSingleton<ApiClient>(PublicApiClient());\n}"
+  },
+  "on_login_example.dart": {
+    "example": "// App starts with guest services\n  getIt.registerSingleton<User>(GuestUser());\n  getIt.registerSingleton<ApiClient>(PublicApiClient());"
+  },
+  "on_logout_example.dart": {
+    "example": "void onLogout() async {\n  getIt.unregister<AuthService>(); // ❌ Not awaited!\n  getIt.registerSingleton<AuthService>(GuestAuthService());\n  // Error: AuthService already registered (unregister didn't complete!)\n}"
+  },
+  "on_logout_example_1.dart": {
+    "example": "void onLogout() async {\n    await getIt.unregister<AuthService>(); // ✅ Wait for disposal\n    getIt.registerSingleton<AuthService>(GuestAuthService());\n  }"
+  },
+  "plugin.dart": {
+    "example": "// Enable feature first\n  getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  // Register multiple plugins without names\n  getIt.registerSingleton<Plugin>(CorePlugin());\n  getIt.registerSingleton<Plugin>(LoggingPlugin());\n  getIt.registerSingleton<Plugin>(AnalyticsPlugin());\n\n  // Get all at once\n  final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();"
+  },
+  "plugin_1.dart": {
+    "example": "void main() {\n  // First unnamed registration\n  getIt.registerSingleton<Plugin>(CorePlugin());\n\n  // Second unnamed registration (now allowed!)\n  getIt.registerSingleton<Plugin>(LoggingPlugin());\n\n  // Named registrations (always allowed - even without enabling)\n  getIt.registerSingleton<Plugin>(FeaturePlugin(), instanceName: 'feature');\n}"
+  },
+  "plugin_2.dart": {
+    "example": "void main() {\n  getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  getIt.registerSingleton<Plugin>(CorePlugin());\n  getIt.registerSingleton<Plugin>(LoggingPlugin());\n  getIt.registerSingleton<Plugin>(AnalyticsPlugin());\n\n  final plugin = getIt<Plugin>();\n  print('plugin: $plugin');\n  // Returns: CorePlugin (the first one only!)\n}"
+  },
+  "plugin_3.dart": {
+    "example": "void main() {\n  getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  // Base scope\n  getIt.registerSingleton<Plugin>(CorePlugin());\n  getIt.registerSingleton<Plugin>(LoggingPlugin());\n\n  // Push new scope\n  getIt.pushNewScope(scopeName: 'feature');\n  getIt.registerSingleton<Plugin>(FeatureAPlugin());\n  getIt.registerSingleton<Plugin>(FeatureBPlugin());\n\n  // Current scope only (default)\n  final featurePlugins = getIt.getAll<Plugin>();\n  print('featurePlugins: $featurePlugins');\n  // Returns: [FeatureAPlugin, FeatureBPlugin]\n}"
+  },
+  "plugin_4.dart": {
+    "example": "void main() {\n  // Enable multiple unnamed registrations\n  getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  // Core plugins (unnamed)\n  getIt.registerSingleton<Plugin>(CorePlugin());\n  getIt.registerSingleton<Plugin>(LoggingPlugin());\n\n  // Special plugins (named for individual access + included in getAll())\n  getIt.registerSingleton<Plugin>(DebugPlugin(), instanceName: 'debug');\n\n  // Get all including named\n  final all = getIt.getAll<Plugin>();\n  print('all: $all'); // [CorePlugin, LoggingPlugin, DebugPlugin]\n\n  // Get specific named one\n  final debug = getIt<Plugin>(instanceName: 'debug');\n  print('debug: $debug');\n}"
+  },
+  "plugin_example.dart": {
+    "example": "getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  getIt.registerSingleton<Plugin>(CorePlugin()); // unnamed\n  getIt.registerSingleton<Plugin>(LoggingPlugin()); // unnamed\n  getIt.registerSingleton<Plugin>(AnalyticsPlugin(),\n      instanceName: 'analytics'); // named\n\n  final Iterable<Plugin> allPlugins = getIt.getAll<Plugin>();\n// Returns: [CorePlugin, LoggingPlugin, AnalyticsPlugin]\n//          ALL unnamed + ALL named registrations"
+  },
+  "pre_warm_critical_services_example.dart": {
+    "example": "void preWarmCriticalServices() {\n  // Only initialize if not already created\n  if (!getIt.checkLazySingletonInstanceExists<DatabaseService>()) {\n    getIt<DatabaseService>(); // Trigger creation\n  }\n\n  if (!getIt.checkLazySingletonInstanceExists<CacheService>()) {\n    getIt<CacheService>(); // Trigger creation\n  }\n}"
+  },
+  "release_instance_example_signature.dart": {
+    "example": "T registerSingletonIfAbsent<T>(\n  T Function() factoryFunc, {\n  String? instanceName,\n  DisposingFunc<T>? dispose,\n}) =>\n    factoryFunc();\n\nvoid releaseInstance(Object instance) {}"
+  },
+  "reset_example_signature.dart": {
+    "example": "Future<void> reset({bool dispose = true}) async {}"
+  },
+  "reset_lazy_singletons_example_signature.dart": {
+    "example": "Future<void> resetLazySingletons({\n  bool dispose = true,\n  bool inAllScopes = false,\n  String? onlyInScope,\n}) async {}"
+  },
+  "rest_service_example.dart": {
+    "example": "class Http {\n  Future<Response> get(String url) async {\n    return Response(200, '{\"data\": \"mock\"}');\n  }\n}\n\nfinal http = Http();\n\nextension ResponseX on Response {\n  Map<String, dynamic> get data => {'id': '1', 'name': 'User'};\n}\n\nabstract class RestService {\n  Future<Response> get(String endpoint);\n}\n\nclass RestServiceImpl implements RestService {\n  final String baseUrl;\n\n  RestServiceImpl(this.baseUrl);\n\n  @override\n  Future<Response> get(String endpoint) async {\n    return http.get('$baseUrl/$endpoint');\n  }\n}\n\nclass UserRepository {\n  UserRepository() {\n    _mainApi = getIt<RestService>(instanceName: 'mainApi');\n    _analyticsApi = getIt<RestService>(instanceName: 'analyticsApi');\n  }\n\n  late final RestService _mainApi;\n  late final RestService _analyticsApi;\n\n  Future<User> getUser(String id) async {\n    final response = await _mainApi.get('users/$id');\n    _analyticsApi.get('track/user_fetch'); // Track analytics\n    return User.fromData(response.data);\n  }\n}\n\n// Register multiple REST services with different base URLs\nvoid main() {\n  getIt.registerSingleton<RestService>(\n    RestServiceImpl('https://api.example.com'),\n    instanceName: 'mainApi',\n  );\n\n  getIt.registerSingleton<RestService>(\n    RestServiceImpl('https://analytics.example.com'),\n    instanceName: 'analyticsApi',\n  );\n}"
+  },
+  "scopes_4c72f192.dart": {
+    "example": "void main() async {\n  // Get service from scope\n  final service = getIt<MyServiceImpl>();\n  service.doWork();\n  service.saveState();\n\n  // When exiting scope, call cleanup\n  await getIt.popScope();\n\n  // Scope is now disposed, service is unregistered\n  // Next access will get service from parent scope (if any)\n  final parentScopeService = getIt<MyServiceImpl>();\n}"
+  },
+  "service_a_example.dart": {
+    "example": "getIt.pushNewScope(\n    isFinal: true, // Can't register after init completes\n    init: (getIt) {\n      // MUST register everything here\n      getIt.registerSingleton<ServiceA>(ServiceA());\n      getIt.registerSingleton<ServiceB>(ServiceB());\n    },\n  );\n\n// This throws an error - scope is final!\n// getIt.registerSingleton<ServiceC>(ServiceC());"
+  },
+  "service_example.dart": {
+    "example": "// Push a new scope\n  getIt.pushNewScope(\n    scopeName: 'my-scope', // Optional: name for later reference\n    init: (getIt) {\n      // Register objects immediately\n      getIt.registerSingleton<Service>(ServiceImpl());\n    },\n    dispose: () {\n      // Cleanup when scope pops (called before object disposal)\n      print('Scope cleanup');\n    },\n  );\n\n// Pop the current scope\n  await getIt.popScope();\n\n// Pop multiple scopes to a named one\n  await getIt.popScopesTill('my-scope', inclusive: true);\n\n// Drop a specific scope by name (without popping above it)\n  await getIt.dropScope('my-scope');\n\n// Check if a scope exists\n  if (getIt.hasScope('session')) {\n    // ...\n  }\n\n// Get current scope name\n  print(getIt\n      .currentScopeName); // Returns null for base scope, 'baseScope' for base"
+  },
+  "setup_for_environment_example.dart": {
+    "example": "void main() async {\n  void setupForEnvironment(String env) {\n    if (env == 'production') {\n      getIt.registerSingleton<ApiClient>(\n        ApiClient('https://api.prod.example.com'),\n        instanceName: 'api',\n      );\n    } else {\n      getIt.registerSingleton<ApiClient>(\n        MockApiClient(),\n        instanceName: 'api',\n      );\n    }\n  }\n\n// Always access with same name\n  final api = getIt<ApiClient>(instanceName: 'api');\n  print('api: $api');\n}"
+  },
+  "setup_middleware_example.dart": {
+    "example": "getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  // Order matters! First registered = first executed\n  getIt.registerSingleton<RequestMiddleware>(AuthMiddleware());\n  getIt.registerSingleton<RequestMiddleware>(RateLimitMiddleware());\n  getIt.registerSingleton<RequestMiddleware>(LoggingMiddleware());"
+  },
+  "setup_payment_processor_example.dart": {
+    "example": "void main() async {\n  void setupPaymentProcessor(bool useNewVersion) {\n    if (useNewVersion) {\n      getIt.registerSingleton<PaymentProcessor>(\n        StripePaymentProcessor(),\n        instanceName: 'payment',\n      );\n    } else {\n      getIt.registerSingleton<PaymentProcessor>(\n        LegacyPaymentProcessor(),\n        instanceName: 'payment',\n      );\n    }\n  }\n}"
+  },
+  "setup_themes_example.dart": {
+    "example": "getIt.enableRegisteringMultipleInstancesOfOneType();\n\n  // Unnamed - available to getAll()\n  getIt.registerSingleton<ThemeProvider>(LightThemeProvider());\n  getIt.registerSingleton<ThemeProvider>(DarkThemeProvider());\n\n  // Named - accessible individually or via getAll()\n  getIt.registerSingleton<ThemeProvider>(\n    HighContrastThemeProvider(),\n    instanceName: 'highContrast',\n  );\n\n  // Access high contrast theme directly\n  final highContrastTheme = getIt<ThemeProvider>(instanceName: 'highContrast');\n  print('highContrastTheme: $highContrastTheme');\n  print('High contrast theme: $highContrastTheme');"
+  },
+  "shopping_cart.dart": {
+    "example": "// Start new shopping session\n  getIt.pushNewScope(scopeName: 'session');\n  getIt.registerSingleton<ShoppingCart>(ShoppingCart());\n  getIt.registerSingleton<SessionAnalytics>(SessionAnalytics());\n\n  // End session - cart discarded, analytics sent\n  await getIt.popScope();"
+  },
+  "shopping_cart_1.dart": {
+    "example": "void main() {\n  test('factory creates new instance each time', () async {\n    getIt.pushNewScope();\n\n    getIt.registerFactory<ShoppingCart>(() => ShoppingCart());\n\n    final cart1 = getIt<ShoppingCart>();\n    print('cart1: $cart1');\n    final cart2 = getIt<ShoppingCart>();\n    print('cart2: $cart2');\n\n    expect(identical(cart1, cart2), false); // Different instances\n\n    await getIt.popScope();\n  });\n}"
+  },
+  "shopping_cart_example.dart": {
+    "example": "getIt.registerFactory<ShoppingCart>(() => ShoppingCart());\n  final cart1 = getIt<ShoppingCart>();\n  print('cart1: $cart1'); // New instance\n  final cart2 = getIt<ShoppingCart>();\n  print('cart2: $cart2'); // Different instance"
+  },
+  "t_example_1_signature.dart": {
+    "example": "void registerFactory<T>(\n  FactoryFunc<T> factoryFunc, {\n  String? instanceName,\n}) {}"
+  },
+  "t_example_signature.dart": {
+    "example": "T registerSingleton<T>(\n  T instance, {\n  String? instanceName,\n  bool? signalsReady,\n  DisposingFunc<T>? dispose,\n}) =>\n    instance;"
+  },
+  "tenant_config_example.dart": {
+    "example": "const tenantId = 'tenant-123';\n\n  await getIt.pushNewScopeAsync(\n    scopeName: 'tenant-workspace',\n    init: (getIt) async {\n      // Load tenant configuration from file/database\n      final config = await loadTenantConfig(tenantId);\n      getIt.registerSingleton<TenantConfig>(config);\n\n      // Establish database connection\n      final dbConnection = DatabaseConnection();\n      await dbConnection.connect();\n      getIt.registerSingleton<DatabaseConnection>(dbConnection);\n\n      // Load cached data\n      final cache = CacheManager();\n      await cache.initialize(tenantId);\n      getIt.registerSingleton<CacheManager>(cache);\n    },\n    dispose: () async {\n      // Close connections\n      await getIt<DatabaseConnection>().close();\n      await getIt<CacheManager>().flush();\n    },\n  );"
+  },
+  "tenant_manager_example.dart": {
+    "example": "class TenantManager {\n  Future<void> switchTenant(String tenantId) async {\n    // Pop previous tenant scope if exists\n    if (getIt.hasScope('tenant')) {\n      await getIt.popScope();\n    }\n\n    // Load new tenant\n    await getIt.pushNewScopeAsync(\n      scopeName: 'tenant',\n      init: (getIt) async {\n        final config = await loadTenantConfig(tenantId);\n        getIt.registerSingleton<TenantConfig>(config);\n\n        final database = await openTenantDatabase(tenantId);\n        getIt.registerSingleton<Database>(database);\n\n        final api = ApiClient(config.apiUrl);\n        getIt.registerSingleton<TenantServices>(\n          TenantServices(database, api),\n        );\n      },\n    );\n  }\n\n  Future<TenantConfig> loadTenantConfig(String tenantId) async {\n    await Future.delayed(const Duration(milliseconds: 10));\n    return TenantConfig('tenant_db', 'api_key_123');\n  }\n}\n\nFuture<Database> openTenantDatabase(String tenantId) async {\n  await Future.delayed(const Duration(milliseconds: 10));\n  return Database();\n}"
+  },
+  "testing_0a7443ea.dart": {
+    "example": "Future<void> main() async {\n  // ❌ Bad - loses all registrations\n  tearDown(() async {\n    await getIt.reset();\n  });\n\n  // ✅ Good - use scopes instead\n  tearDown(() async {\n    await getIt.popScope();\n  });\n}"
+  },
+  "testing_138c49df_signature.dart": {
+    "example": "// ❌ Bad - duplicates production setup\n   setUp(() {\n     getIt.registerLazySingleton<ApiClient>(...);\n     getIt.registerLazySingleton<Database>(...);\n     // ... 50 more registrations\n   });\n\n   // ✅ Good - reuse production setup\n   setUpAll(() {\n     configureDependencies(); // Call once\n   });"
+  },
+  "testing_4bac3b7c_signature.dart": {
+    "example": "// ❌ Bad - scopes leak into next test\n   test('...', () {\n     getIt.pushNewScope();\n     // ... test code\n     // Missing popScope()!\n   });"
+  },
+  "testing_78522d78_signature.dart": {
+    "example": "setUp(() {\n  getIt.pushNewScope();\n  getIt.registerSingleton<ApiClient>(mockApi); // Register FIRST\n});\n\ntest('test name', () {\n  final service = getIt<UserService>(); // Accesses AFTER mock registered\n  // ...\n});"
+  },
+  "testing_8dbacaca_signature.dart": {
+    "example": "setUp(() {\n     getIt.pushNewScope();\n     getIt.registerSingleton<ApiClient>(MockApiClient()); // Only mock this\n     // Everything else uses real registrations from base scope\n   });"
+  },
+  "testing_9153fb06_signature.dart": {
+    "example": "test('async test', () async {\n\nFuture<void> main() async {\n  await getIt.allReady(); // Wait for all async registrations\n  final db = getIt<Database>();\n  // ...\n  });\n}"
+  },
+  "testing_93df6902_signature.dart": {
+    "example": "tearDown(() async {\n\nFuture<void> main() async {\n     await getIt.popScope(); // Ensures cleanup completes\n   });\n}"
+  },
+  "testing_a862f724_signature.dart": {
+    "example": "// ❌ Bad - masks bugs\n   getIt.allowReassignment = true;\n\n   // ✅ Good - use scopes for isolation"
+  },
+  "testing_ac521152_signature.dart": {
+    "example": "tearDown(() async {\n\nFuture<void> main() async {\n  await getIt.popScope(); // Always await!\n  });\n}"
+  },
+  "testing_c8fe4e9b_signature.dart": {
+    "example": "setUpAll(() {\n     configureDependencies(); // Same as production\n   });"
+  },
+  "testing_cc70be3d.dart": {
+    "example": "Future<void> main() async {\n  await getIt.allReady(); // Wait before testing\n}"
+  },
+  "testing_f1b668dd_signature.dart": {
+    "example": "setUp(() => getIt.pushNewScope());\n   tearDown(() async => await getIt.popScope());"
+  },
+  "user.dart": {
+    "example": "// Base scope\n  getIt.registerSingleton<User>(GuestUser());\n\n  // Push new scope\n  getIt.pushNewScope(scopeName: 'logged-in');\n  getIt.registerSingleton<User>(LoggedInUser());\n\n  getIt<User>(); // Returns LoggedInUser (shadows GuestUser)\n\n  // Pop scope\n  await getIt.popScope();\n\n  getIt<User>(); // Returns GuestUser (automatically restored)"
+  },
+  "user_1.dart": {
+    "example": "void main() async {\n  final token = 'auth_token_123';\n  final user = GuestUser();\n\n  // App startup - guest mode\n  getIt.registerSingleton<User>(GuestUser());\n  getIt.registerSingleton<Permissions>(GuestPermissions());\n\n  // User logs in\n  getIt.pushNewScope(scopeName: 'authenticated');\n  getIt.registerSingleton<User>(AuthenticatedUser(token));\n  getIt.registerSingleton<Permissions>(UserPermissions(user));\n\n  // User logs out - automatic cleanup\n  await getIt.popScope(); // GuestUser & GuestPermissions restored\n}"
+  },
+  "user_example.dart": {
+    "example": "// Register user with username as instance name\n  final user = UserModel('alice', 'alice@example.com');\n  getIt.registerSingleton<UserModel>(user, instanceName: 'alice');\n\n  // User changes their username\n  await getIt<UserModel>(instanceName: 'alice').updateUsername('alice_jones');\n\n  // Now accessible with new name\n  final renamedUser = getIt<UserModel>(instanceName: 'alice_jones');\n  print('renamedUser: $renamedUser'); // Works!\n  print('User: ${renamedUser.username}');\n  // getIt<UserModel>(instanceName: 'alice'); // Would throw - old name invalid"
+  },
+  "user_manager_example.dart": {
+    "example": "class UserManager {\n  final AppModel appModel;\n  final DbService dbService;\n\n  UserManager({\n    AppModel? appModel,\n    DbService? dbService,\n  })  : appModel = appModel ?? getIt<AppModel>(),\n        dbService = dbService ?? getIt<DbService>();\n\n  Future<void> saveUser(User user) async {\n    appModel.currentUser = user;\n    await dbService.save(user);\n  }\n}\n\n// In tests - no get_it needed\n// test('saveUser updates model and persists to database', () async {\n//   final mockModel = MockAppModel();\n//   final mockDb = MockDbService();\n//\n//   // Create instance directly with mocks\n//   final manager = UserManager(appModel: mockModel, dbService: mockDb);\n//\n//   await manager.saveUser(User(id: '1', name: 'Bob'));\n//\n//   verify(mockDb.save(any)).called(1);\n// });"
+  },
+  "user_profile_page_example.dart": {
+    "example": "class UserProfilePage extends WatchingWidget {\n  final String userId;\n\n  const UserProfilePage({super.key, required this.userId});\n\n  @override\n  Widget build(BuildContext context) {\n    // Automatically pushes scope when widget mounts\n    // Automatically pops scope when widget disposes\n    pushScope(init: (_) {\n      getIt.registerSingleton<ProfileController>(\n        ProfileController(userId: userId),\n      );\n    });\n\n    final controller = watchIt<ProfileController>();\n\n    return Scaffold(\n      body: Text(controller.userData.name),\n    );\n  }\n}"
+  },
+  "write_example.dart": {
+    "example": "abstract class IOutput {\n  void write(String message);\n}\n\nclass FileOutput implements IOutput {\n  @override\n  void write(String message) => File('log.txt').writeAsStringSync(message);\n}\n\nclass ConsoleOutput implements IOutput {\n  @override\n  void write(String message) => print(message);\n}\n\n// Register different implementation types\n\nvoid main() {\n  getIt.registerSingleton<FileOutput>(FileOutput());\n  getIt.registerLazySingleton<ConsoleOutput>(() => ConsoleOutput());\n\n  // Find by interface (registration type matching)\n  final outputs = getIt.findAll<IOutput>();\n  print('outputs: $outputs');\n  // Returns: [FileOutput] only (ConsoleOutput not instantiated yet)\n}"
+  }
+}

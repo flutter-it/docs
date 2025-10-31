@@ -97,6 +97,34 @@ Registers a singleton with an async factory function that's executed **immediate
 
 <<< @/../code_samples/lib/get_it/async_singleton_example.dart
 
+::: warning Common Mistake: Using signalsReady with registerSingletonAsync
+**Most of the time, you DON'T need `signalsReady: true` with `registerSingletonAsync`.**
+
+The async factory completion **automatically signals ready** when it returns. Only use `signalsReady: true` if you need multi-stage initialization where the factory completes but you have additional async work before the instance is truly ready.
+
+**Common error pattern:**
+
+<<< @/../code_samples/lib/get_it/signal_ready_error_example.dart#example
+
+**Why it fails:** You can't call `signalReady(instance)` from inside the factory because the instance isn't registered yet.
+
+**Correct alternatives:**
+
+**Option 1 - Let async factory auto-signal (recommended):**
+
+<<< @/../code_samples/lib/get_it/signal_ready_correct_option1.dart#example
+
+**Option 2 - Use registerSingleton for post-registration signaling:**
+
+<<< @/../code_samples/lib/get_it/signal_ready_correct_option2.dart#example
+
+**Option 3 - Implement WillSignalReady interface:**
+
+<<< @/../code_samples/lib/get_it/signal_ready_correct_option3.dart#example
+
+See [Manual Ready Signaling](#manual-ready-signaling) for more details.
+:::
+
 ### registerLazySingletonAsync
 
 Registers a singleton with an async factory function that's executed **on first access** (when you call `getAsync<T>()` for the first time).

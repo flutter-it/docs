@@ -204,6 +204,45 @@ Circular dependencies often mean:
 ❌ Passing getIt instance around
 :::
 
+## Why do I get "This instance is not available in GetIt" when calling signalReady?
+
+::: details Click to see answer
+
+This error typically occurs when you try to call `signalReady(instance)` **before** the instance is actually registered in GetIt. This commonly happens when using `signalsReady: true` with `registerSingletonAsync`.
+
+**Common mistake:**
+
+<<< @/../code_samples/lib/get_it/signal_ready_error_example.dart#example
+
+**Why it fails:** Inside the async factory, the instance hasn't been registered yet. GetIt only adds it to the registry after the factory completes. Therefore, `signalReady(service)` fails because GetIt doesn't know about `service` yet.
+
+**Solution 1 - Don't use signalsReady with registerSingletonAsync (recommended):**
+
+The async factory automatically signals ready when it completes. You don't need manual signaling:
+
+<<< @/../code_samples/lib/get_it/signal_ready_correct_option1.dart#example
+
+**Solution 2 - Use registerSingleton with signalsReady:**
+
+If you need manual signaling, register the instance synchronously and signal after it's in GetIt:
+
+<<< @/../code_samples/lib/get_it/signal_ready_correct_option2.dart#example
+
+**Solution 3 - Implement WillSignalReady interface:**
+
+GetIt automatically detects this interface and waits for manual signaling:
+
+<<< @/../code_samples/lib/get_it/signal_ready_correct_option3.dart#example
+
+**When to use each approach:**
+
+- **registerSingletonAsync** - Factory handles ALL initialization, returns ready instance
+- **registerSingleton + signalsReady** - Instance needs async initialization AFTER registration
+- **WillSignalReady interface** - Cleaner alternative to `signalsReady` parameter
+
+See [Async Objects documentation](/documentation/get_it/async_objects#manual-ready-signaling) for complete details.
+:::
+
 ## How do I test code that uses get_it?
 
 ::: details Click to see answer
