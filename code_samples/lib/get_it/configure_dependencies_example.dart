@@ -1,10 +1,10 @@
 import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
-final getIt = GetIt.instance;
-
 // #region example
 // lib/service_locator.dart
+
+final getIt = GetIt.instance;
 
 void configureDependencies() {
   // Register your services
