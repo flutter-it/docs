@@ -854,7 +854,7 @@ class MockAuthService extends AuthService {
 
 /// Additional viewmodels and services
 class UserViewModel {
-  UserViewModel(UserRepository repo);
+  UserViewModel({dynamic userId, dynamic age, UserRepository? repo});
 }
 
 class ReportGenerator {
