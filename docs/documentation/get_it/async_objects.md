@@ -45,7 +45,7 @@ Async factories create a **new instance on each call** to `getAsync()` by execut
 
 Creates a new instance every time you call `getAsync<T>()`.
 
-<<< ../../../code_samples/lib/get_it/async_factory_signature.dart
+<<< ../../../code_samples/lib/get_it/async_objects.dart#register-factory-async
 
 **Parameters:**
 - `factoryFunc` - Async function that creates and returns the instance
@@ -59,7 +59,7 @@ Creates a new instance every time you call `getAsync<T>()`.
 
 Like `registerFactoryAsync`, but caches the instance with a weak reference. Returns the cached instance if it's still in memory; otherwise creates a new one.
 
-<<< ../../../code_samples/lib/get_it/async_cached_factory_signature.dart
+<<< ../../../code_samples/lib/get_it/async_objects.dart#register-cached-factory-async
 
 **Example:**
 
@@ -83,7 +83,7 @@ Async singletons are created once with async initialization and live for the lif
 
 Registers a singleton with an async factory function that's executed **immediately**. The singleton is marked as ready when the factory function completes (unless `signalsReady` is true).
 
-<<< ../../../code_samples/lib/get_it/async_singleton_signature.dart
+<<< ../../../code_samples/lib/get_it/async_objects.dart#register-singleton-async
 
 **Parameters:**
 - `factoryFunc` - Async function that creates the singleton instance
@@ -101,7 +101,7 @@ Registers a singleton with an async factory function that's executed **immediate
 
 Registers a singleton with an async factory function that's executed **on first access** (when you call `getAsync<T>()` for the first time).
 
-<<< ../../../code_samples/lib/get_it/async_lazy_singleton_signature.dart
+<<< ../../../code_samples/lib/get_it/async_objects.dart#register-lazy-singleton-async
 
 **Parameters:**
 - `factoryFunc` - Async function that creates the singleton instance

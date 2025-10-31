@@ -147,7 +147,7 @@ Or use unnamed multiple registrations (see [Multiple Registrations documentation
 
 **Example:**
 
-<<< @/../code_samples/lib/get_it/logger_signature.dart
+<<< @/../code_samples/lib/get_it/logger.dart
 
 **Best practice:** Start with `registerLazySingleton()` by default. Only use `registerSingleton()` when you specifically need immediate initialization.
 :::
@@ -257,7 +257,7 @@ Use **scopes** - they're designed for this exact use case:
 
 **Without Scopes (Not recommended ❌):**
 
-<<< @/../code_samples/lib/get_it/on_login_signature.dart
+<<< @/../code_samples/lib/get_it/on_login.dart
 
 **Why scopes are better:**
 - ✅ Automatic cleanup and restoration
@@ -371,7 +371,7 @@ But if you really need to unregister and re-register:
 **Solution 3: Reset lazy singleton instead**
 If you want to keep the registration but reset the instance:
 
-<<< @/../code_samples/lib/get_it/code_sample_a449e220_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_a449e220.dart
 
 **Why await matters:**
 - If your object implements `Disposable` or has a dispose function, unregister calls it

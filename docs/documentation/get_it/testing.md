@@ -50,14 +50,14 @@ For testing classes in complete isolation (without get_it), use optional constru
 Widgets often retrieve services from get_it. Use scopes to provide test-specific implementations.
 
 
-<<< @/../code_samples/lib/get_it/main_signature.dart
+<<< @/../code_samples/lib/get_it/main.dart
 
 ### Testing with Async Registrations
 
 If your app uses `registerSingletonAsync`, ensure async services are ready before testing.
 
 
-<<< @/../code_samples/lib/get_it/code_sample_d18eeb0d_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_d18eeb0d.dart
 
 ---
 
@@ -96,7 +96,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 ### Testing Parameterized Factories
 
 
-<<< @/../code_samples/lib/get_it/code_sample_5f4e16d1_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_5f4e16d1.dart
 
 ---
 
@@ -110,7 +110,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 ### Scenario 2: Testing Scoped Services
 
 
-<<< @/../code_samples/lib/get_it/code_sample_2fee2227_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_2fee2227.dart
 
 ### Scenario 3: Testing Disposal
 

@@ -146,7 +146,7 @@ Cached factories are a **performance optimization** that sits between regular fa
 **With parameters:**
 
 
-<<< @/../code_samples/lib/get_it/code_sample_1a719c02_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_1a719c02.dart
 
 **When to use cached factories:**
 
@@ -172,7 +172,7 @@ Cached factories are a **performance optimization** that sits between regular fa
 **Comparison example:**
 
 
-<<< @/../code_samples/lib/get_it/json_parser_signature.dart
+<<< @/../code_samples/lib/get_it/json_parser.dart
 
 ::: tip Memory Management
 Cached factories use **weak references**, meaning the cached instance can be garbage collected when no other part of your code holds a reference to it. This provides automatic memory management while still benefiting from reuse.
@@ -257,7 +257,7 @@ Clear all registered types (useful for tests or app shutdown):
 **Example:**
 
 
-<<< @/../code_samples/lib/get_it/code_sample_14c31d5c_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_14c31d5c.dart
 
 ::: warning Important
 - Registrations are cleared in **reverse order** (last registered, first disposed)

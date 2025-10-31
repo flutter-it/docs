@@ -25,7 +25,7 @@ Register multiple instances of the same type by giving each a unique name. This 
 Register multiple instances without names and retrieve them all at once with `getAll<T>()`. Requires explicit opt-in.
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature.dart
+<<< @/../code_samples/lib/get_it/plugin.dart
 
 **Best for:**
 - ✅ Plugin systems (modules can add implementations)
@@ -82,7 +82,7 @@ By default, get_it **prevents** registering the same type multiple times (withou
 To enable multiple registrations of the same type, you must explicitly opt-in:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_980d7414_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_980d7414.dart
 
 **Why explicit opt-in?**
 - **Prevents bugs**: Accidentally registering the same type twice is usually an error
@@ -153,14 +153,14 @@ By default, searches only the **current scope**:
 To retrieve from **all scopes**, use `fromAllScopes: true`:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_07af7c81_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_07af7c81.dart
 
 ### Specific Named Scope
 
 To search only a **specific named scope**, use `onlyInScope`:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_e4fa6049_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_e4fa6049.dart
 
 ::: tip Parameter Precedence
 If both `onlyInScope` and `fromAllScopes` are provided, `onlyInScope` takes precedence.
@@ -175,7 +175,7 @@ See [Scopes documentation](/documentation/get_it/scopes) for more details on sco
 If you have async registrations, use `getAllAsync<T>()` which waits for all registrations to complete:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_49d4b664_signature.dart
+<<< @/../code_samples/lib/get_it/code_sample_49d4b664.dart
 
 **With scope control:**
 
@@ -346,7 +346,7 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 **Example comparison:**
 
 
-<<< @/../code_samples/lib/get_it/i_logger_signature.dart
+<<< @/../code_samples/lib/get_it/i_logger.dart
 
 ::: tip When to Use Each
 - Use **`getAll()`** when you explicitly want multiple instances of the same type and will retrieve them all together
