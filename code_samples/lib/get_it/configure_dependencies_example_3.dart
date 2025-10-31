@@ -22,7 +22,7 @@ void main() async {
   }
 
   void _registerBusinessLogic() {
-    getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+    getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl());
     getIt.registerLazySingleton<UserRepository>(
         () => UserRepository(getIt(), getIt()));
   }
