@@ -1,6 +1,14 @@
-// ignore_for_file: missing_function_body, unused_element
-// Created immediately at app startup
-getIt.registerSingleton<Logger>(Logger());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Only created when first accessed (lazy)
-getIt.registerLazySingleton<HeavyDatabase>(() => HeavyDatabase());
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  // Created immediately at app startup
+  getIt.registerSingleton<Logger>(Logger());
+
+  // Only created when first accessed (lazy)
+  getIt.registerLazySingleton<HeavyDatabase>(() => HeavyDatabase());
+}
+// #endregion example

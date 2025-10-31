@@ -1,24 +1,34 @@
-// ignore_for_file: missing_function_body, unused_element
-// Base scope lazy singletons
-getIt.registerLazySingleton<GlobalCache>(() => GlobalCache());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Push scope and register more
-getIt.pushNewScope(scopeName: 'session');
-getIt.registerLazySingleton<SessionCache>(() => SessionCache());
-getIt.registerLazySingleton<UserState>(() => UserState());
+final getIt = GetIt.instance;
 
-// Access them
-final globalCache = getIt<GlobalCache>();
-final sessionCache = getIt<SessionCache>();
+// #region example
+void main() {
+  // Base scope lazy singletons
+  getIt.registerLazySingleton<GlobalCache>(() => GlobalCache());
 
-// Reset only current scope ('session')
-await getIt.resetLazySingletons();
-// GlobalCache NOT reset, SessionCache and UserState ARE reset
+  // Push scope and register more
+  getIt.pushNewScope(scopeName: 'session');
+  getIt.registerLazySingleton<SessionCache>(() => SessionCache());
+  getIt.registerLazySingleton<UserState>(() => UserState());
 
-// Reset all scopes
-await getIt.resetLazySingletons(inAllScopes: true);
-// Both GlobalCache and SessionCache are reset
+  // Access them
+  final globalCache = getIt<GlobalCache>();
+  print('globalCache: $globalCache');
+  final sessionCache = getIt<SessionCache>();
+  print('sessionCache: $sessionCache');
 
-// Reset only specific scope
-await getIt.resetLazySingletons(onlyInScope: 'baseScope');
-// Only GlobalCache is reset
+  // Reset only current scope ('session')
+  await getIt.resetLazySingletons();
+  // GlobalCache NOT reset, SessionCache and UserState ARE reset
+
+  // Reset all scopes
+  await getIt.resetLazySingletons(inAllScopes: true);
+  // Both GlobalCache and SessionCache are reset
+
+  // Reset only specific scope
+  await getIt.resetLazySingletons(onlyInScope: 'baseScope');
+  // Only GlobalCache is reset
+}
+// #endregion example

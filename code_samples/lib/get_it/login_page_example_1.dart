@@ -5,16 +5,17 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        // Access service from anywhere - no BuildContext needed!
-        await getIt<AuthService>().login(username, password);
-      },
-      child: Text('Login'),
-    );
+// get_it + watch_it handles BOTH DI and state management
+
+void main() {
+  getIt.registerSingleton<AuthService>(AuthService());
+
+  class LoginPage extends WatchingWidget {
+    @override
+    Widget build(BuildContext context) {
+      final auth = watchIt<AuthService>(); // Rebuilds when auth changes
+      return /* ... */;
+    }
   }
 }
 // #endregion example

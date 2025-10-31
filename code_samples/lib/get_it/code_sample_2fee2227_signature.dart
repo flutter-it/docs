@@ -1,18 +1,26 @@
-// ignore_for_file: missing_function_body, unused_element
-test('service lifecycle matches scope lifecycle', () async {
-  // Base scope
-  getIt.registerLazySingleton<CoreService>(() => CoreService());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-  // Feature scope
-  getIt.pushNewScope(scopeName: 'feature');
-  getIt.registerLazySingleton<FeatureService>(() => FeatureService(getIt()));
+final getIt = GetIt.instance;
 
-  expect(getIt<CoreService>(), isNotNull);
-  expect(getIt<FeatureService>(), isNotNull);
+// #region example
+void main() {
+  test('service lifecycle matches scope lifecycle', () async {
+    // Base scope
+    getIt.registerLazySingleton<CoreService>(() => CoreService());
 
-  // Pop feature scope
-  await getIt.popScope();
+    // Feature scope
+    getIt.pushNewScope(scopeName: 'feature');
+    getIt.registerLazySingleton<FeatureService>(() => FeatureService(getIt()));
 
-  expect(getIt<CoreService>(), isNotNull); // Still available
-  expect(() => getIt<FeatureService>(), throwsStateError); // Gone!
-});
+    expect(getIt<CoreService>(), isNotNull);
+    expect(getIt<FeatureService>(), isNotNull);
+
+    // Pop feature scope
+    await getIt.popScope();
+
+    expect(getIt<CoreService>(), isNotNull); // Still available
+    expect(() => getIt<FeatureService>(), throwsStateError); // Gone!
+  });
+}
+// #endregion example

@@ -53,15 +53,15 @@ This error means you're trying to access a type that hasn't been registered yet.
 
 **Fix:** Register before accessing:
 
-<<< @/../code_samples/lib/get_it/main_example_5.dart#example
+<<< @/../code_samples/lib/get_it/main_example_4.dart#example
 
 **2. Wrong order - accessing before registration**
 
-<<< @/../code_samples/lib/get_it/main_example_6.dart#example
+<<< @/../code_samples/lib/get_it/main_example_5.dart#example
 
 **Fix:** Register first, use later:
 
-<<< @/../code_samples/lib/get_it/main_example_7.dart#example
+<<< @/../code_samples/lib/get_it/main_example_6.dart#example
 
 **3. Using parentheses on GetIt.instance**
 
@@ -96,22 +96,22 @@ This error means you're trying to register the same type twice. Common causes:
 
 **1. Calling registration function multiple times**
 
-<<< @/../code_samples/lib/get_it/main_example_8.dart#example
+<<< @/../code_samples/lib/get_it/main_example_7.dart#example
 
 **Fix:** Only call once:
 
-<<< @/../code_samples/lib/get_it/main_example_9.dart#example
+<<< @/../code_samples/lib/get_it/main_example_8.dart#example
 
 **2. Registering inside build methods (hot reload issue)**
 If you register services inside `build()` or `initState()`, hot reload will call it again.
 
 ❌ **Wrong:**
 
-<<< @/../code_samples/lib/get_it/my_app_example_1.dart#example
+<<< @/../code_samples/lib/get_it/my_app_example.dart#example
 
 ✅ **Fix:** Move registration to `main()` before `runApp()`:
 
-<<< @/../code_samples/lib/get_it/main_example_10.dart#example
+<<< @/../code_samples/lib/get_it/main_example_9.dart#example
 
 **3. Tests re-registering services**
 Each test tries to register, but setup from previous test didn't clean up.
@@ -121,7 +121,7 @@ Each test tries to register, but setup from previous test didn't clean up.
 **4. Multiple registrations with different instance names**
 If you want multiple instances of the same type:
 
-<<< @/../code_samples/lib/get_it/api_client_signature_3.dart
+<<< @/../code_samples/lib/get_it/api_client_signature_2.dart
 
 Or use unnamed multiple registrations (see [Multiple Registrations documentation](/documentation/get_it/multiple_registrations)).
 
@@ -147,7 +147,7 @@ Or use unnamed multiple registrations (see [Multiple Registrations documentation
 
 **Example:**
 
-<<< @/../code_samples/lib/get_it/logger_signature_1.dart
+<<< @/../code_samples/lib/get_it/logger_signature.dart
 
 **Best practice:** Start with `registerLazySingleton()` by default. Only use `registerSingleton()` when you specifically need immediate initialization.
 :::
@@ -158,7 +158,7 @@ Or use unnamed multiple registrations (see [Multiple Registrations documentation
 
 **Factory** (`registerFactory()`) creates a **new instance** every time you call `get<T>()`:
 
-<<< @/../code_samples/lib/get_it/shopping_cart_example_1.dart#example
+<<< @/../code_samples/lib/get_it/shopping_cart_example.dart#example
 
 **Singleton** (`registerSingleton()` / `registerLazySingleton()`) returns the **same instance** every time:
 
@@ -185,12 +185,12 @@ Circular dependencies indicate a design problem. Here are solutions:
 
 **1. Use an interface/abstraction (Best)**
 
-<<< @/../code_samples/lib/get_it/do_something_example_1.dart#example
+<<< @/../code_samples/lib/get_it/do_something_example.dart#example
 
 **2. Use a mediator/event bus**
 Instead of direct dependencies, communicate through events:
 
-<<< @/../code_samples/lib/get_it/emit_example_1.dart#example
+<<< @/../code_samples/lib/get_it/emit_example.dart#example
 
 **3. Rethink your design**
 Circular dependencies often mean:
@@ -222,13 +222,13 @@ See the comprehensive [Testing documentation](/documentation/get_it/testing) for
 
 **Simple approach - single function:**
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_10.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_9.dart#example
 
 **Better approach - split by feature/scope:**
 Split registrations into separate functions that encapsulate scope management:
 
 
-<<< @/../code_samples/lib/get_it/configure_core_dependencies_example_1.dart#example
+<<< @/../code_samples/lib/get_it/configure_core_dependencies_example.dart#example
 
 **Why functions matter:**
 - ✅ **Reusable** - Call the same function when pushing scopes to reinitialize features
@@ -253,11 +253,11 @@ Use **scopes** - they're designed for this exact use case:
 
 **With Scopes (Recommended ✅):**
 
-<<< @/../code_samples/lib/get_it/on_login_example_1.dart#example
+<<< @/../code_samples/lib/get_it/on_login_example.dart#example
 
 **Without Scopes (Not recommended ❌):**
 
-<<< @/../code_samples/lib/get_it/on_login_signature_1.dart
+<<< @/../code_samples/lib/get_it/on_login_signature.dart
 
 **Why scopes are better:**
 - ✅ Automatic cleanup and restoration
@@ -281,11 +281,11 @@ See [Scopes documentation](/documentation/get_it/scopes) for more patterns.
 
 **Without injectable (manual):**
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_11.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_10.dart#example
 
 **With injectable (generated):**
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_12.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_11.dart#example
 
 **When to use injectable:**
 - ✅ Large apps with many services (50+)
@@ -332,11 +332,11 @@ See the [Object Registration documentation](/documentation/get_it/object_registr
 
 **You can use both together!**
 
-<<< @/../code_samples/lib/get_it/my_app_example_2.dart#example
+<<< @/../code_samples/lib/get_it/my_app_example_1.dart#example
 
 **Or use get_it + watch_it instead:**
 
-<<< @/../code_samples/lib/get_it/login_page_example_2.dart#example
+<<< @/../code_samples/lib/get_it/login_page_example_1.dart#example
 
 **Choose:**
 - **get_it only**: If you already have state management (BLoC, Riverpod, etc.)
@@ -358,11 +358,11 @@ But if you really need to unregister and re-register:
 
 **Problem pattern:**
 
-<<< @/../code_samples/lib/get_it/on_logout_example_1.dart#example
+<<< @/../code_samples/lib/get_it/on_logout_example.dart#example
 
 **Solution 1: Await unregister**
 
-<<< @/../code_samples/lib/get_it/on_logout_example_2.dart#example
+<<< @/../code_samples/lib/get_it/on_logout_example_1.dart#example
 
 **Solution 2: Use unregister's disposing function**
 

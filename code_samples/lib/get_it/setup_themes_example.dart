@@ -5,12 +5,48 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
 abstract class ThemeProvider {
   ThemeData getTheme();
 }
 
-void setupThemes() {
+class LightThemeProvider implements ThemeProvider {
+  @override
+  ThemeData getTheme() => ThemeData.light();
+}
+
+class DarkThemeProvider implements ThemeProvider {
+  @override
+  ThemeData getTheme() => ThemeData.dark();
+}
+
+class HighContrastThemeProvider implements ThemeProvider {
+  @override
+  ThemeData getTheme() => ThemeData(brightness: Brightness.light);
+}
+
+class ThemePickerDialog extends StatelessWidget {
+  const ThemePickerDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final allThemes = getIt.getAll<ThemeProvider>();
+    print('allThemes: $allThemes');
+    // Returns: [LightThemeProvider, DarkThemeProvider, HighContrastThemeProvider]
+
+    return ListView(
+      children: allThemes.map((themeProvider) {
+        return ListTile(
+          title: Text(themeProvider.getTheme().toString()),
+          onTap: () {
+            // Apply theme
+          },
+        );
+      }).toList(),
+    );
+  }
+}
+
+void main() {
   getIt.enableRegisteringMultipleInstancesOfOneType();
 
   // Unnamed - available to getAll()
@@ -22,27 +58,10 @@ void setupThemes() {
     HighContrastThemeProvider(),
     instanceName: 'highContrast',
   );
-}
 
-// Get all themes for theme picker
-class ThemePickerDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final allThemes = getIt.getAll<ThemeProvider>();
-    // Returns: [LightThemeProvider, DarkThemeProvider, HighContrastThemeProvider]
-
-    return ListView(
-      children: allThemes.map((themeProvider) {
-        return ListTile(
-          title: Text(themeProvider.getTheme().name),
-          onTap: () => applyTheme(themeProvider.getTheme()),
-        );
-      }).toList(),
-    );
-  }
-}
-
-// Access high contrast theme directly
-final highContrastTheme = getIt<ThemeProvider>(instanceName: 'highContrast');
+  // Access high contrast theme directly
+  final highContrastTheme = getIt<ThemeProvider>(instanceName: 'highContrast');
+  print('highContrastTheme: $highContrastTheme');
+  print('High contrast theme: $highContrastTheme');
 }
 // #endregion example

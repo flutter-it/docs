@@ -6,10 +6,9 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() {
+  final service = getIt<MyService>();
+  print('service: $service'); // ❌ ERROR! Not registered yet
   getIt.registerLazySingleton<MyService>(() => MyService());
   runApp(MyApp());
 }
-
-// Now you can use it
-final service = getIt<MyService>(); // ✅ Works!
 // #endregion example

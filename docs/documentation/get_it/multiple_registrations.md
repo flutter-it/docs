@@ -13,7 +13,7 @@ get_it provides two different approaches for registering multiple instances of t
 Register multiple instances of the same type by giving each a unique name. This is **always available** without any configuration.
 
 
-<<< @/../code_samples/lib/get_it/api_client_example_2.dart#example
+<<< @/../code_samples/lib/get_it/api_client_example_1.dart#example
 
 **Best for:**
 - ✅ Different configurations of the same type (dev/prod endpoints)
@@ -25,7 +25,7 @@ Register multiple instances of the same type by giving each a unique name. This 
 Register multiple instances without names and retrieve them all at once with `getAll<T>()`. Requires explicit opt-in.
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_1.dart
+<<< @/../code_samples/lib/get_it/plugin_signature.dart
 
 **Best for:**
 - ✅ Plugin systems (modules can add implementations)
@@ -46,24 +46,24 @@ All registration functions accept an optional `instanceName` parameter. Each nam
 ### Basic Usage
 
 
-<<< @/../code_samples/lib/get_it/rest_service_example_1.dart#example
+<<< @/../code_samples/lib/get_it/rest_service_example.dart#example
 
 ### Works with All Registration Types
 
 Named registration works with **every** registration method:
 
 
-<<< @/../code_samples/lib/get_it/logger_example_3.dart#example
+<<< @/../code_samples/lib/get_it/logger_example_2.dart#example
 
 ### Named Registration Use Cases
 
 **Environment-specific configurations:**
 
-<<< @/../code_samples/lib/get_it/setup_for_environment_example_1.dart#example
+<<< @/../code_samples/lib/get_it/setup_for_environment_example.dart#example
 
 **Feature flags:**
 
-<<< @/../code_samples/lib/get_it/setup_payment_processor_example_1.dart#example
+<<< @/../code_samples/lib/get_it/setup_payment_processor_example.dart#example
 
 **Multiple database connections:**
 
@@ -103,7 +103,7 @@ Once enabled, this setting applies **globally** to the entire get_it instance. Y
 After calling `enableRegisteringMultipleInstancesOfOneType()`, you can register the same type multiple times:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_2.dart
+<<< @/../code_samples/lib/get_it/plugin_signature_1.dart
 
 ::: tip Unnamed + Named Together
 All registrations coexist - both unnamed and named. `getAll<T>()` returns all of them.
@@ -118,7 +118,7 @@ All registrations coexist - both unnamed and named. `getAll<T>()` returns all of
 When multiple unnamed registrations exist, `get<T>()` returns **only the first** registered instance:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_3.dart
+<<< @/../code_samples/lib/get_it/plugin_signature_2.dart
 
 ::: tip When to use get()
 Use `get<T>()` when you want the "default" or "primary" implementation. Register it first!
@@ -129,7 +129,7 @@ Use `get<T>()` when you want the "default" or "primary" implementation. Register
 To retrieve **all** registered instances (both unnamed and named), use `getAll<T>()`:
 
 
-<<< @/../code_samples/lib/get_it/plugin_example_1.dart#example
+<<< @/../code_samples/lib/get_it/plugin_example.dart#example
 
 ::: tip Alternative: findAll() for Type-Based Discovery
 While `getAll<T>()` retrieves instances you've explicitly registered multiple times, `findAll<T>()` finds instances by **type matching** - no multiple registration setup needed. See [Related: Finding Instances by Type](#related-finding-instances-by-type) below for when to use each approach.
@@ -146,7 +146,7 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 By default, searches only the **current scope**:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_4.dart
+<<< @/../code_samples/lib/get_it/plugin_signature_3.dart
 
 ### All Scopes
 
@@ -191,22 +191,22 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 ### Plugin System
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_8.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_7.dart#example
 
 ### Event Handlers / Observers
 
 
-<<< @/../code_samples/lib/get_it/on_app_started_example_1.dart#example
+<<< @/../code_samples/lib/get_it/on_app_started_example.dart#example
 
 ### Middleware / Validator Chains
 
 
-<<< @/../code_samples/lib/get_it/setup_middleware_example_1.dart#example
+<<< @/../code_samples/lib/get_it/setup_middleware_example.dart#example
 
 ### Combining Unnamed and Named Registrations
 
 
-<<< @/../code_samples/lib/get_it/setup_themes_example_1.dart#example
+<<< @/../code_samples/lib/get_it/setup_themes_example.dart#example
 
 ---
 
@@ -257,7 +257,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 Named and unnamed registrations work together seamlessly:
 
 
-<<< @/../code_samples/lib/get_it/plugin_signature_5.dart
+<<< @/../code_samples/lib/get_it/plugin_signature_4.dart
 
 ---
 
@@ -270,7 +270,7 @@ This section explains the internal implementation details. Understanding this is
 get_it maintains two separate lists for each type:
 
 
-<<< @/../code_samples/lib/get_it/__type_registration_example_1.dart#example
+<<< @/../code_samples/lib/get_it/__type_registration_example.dart#example
 
 When you call:
 - `getIt.registerSingleton<T>(instance)` → adds to `registrations` list
@@ -346,7 +346,7 @@ While `getAll<T>()` retrieves instances you've explicitly registered multiple ti
 **Example comparison:**
 
 
-<<< @/../code_samples/lib/get_it/i_logger_signature_1.dart
+<<< @/../code_samples/lib/get_it/i_logger_signature.dart
 
 ::: tip When to Use Each
 - Use **`getAll()`** when you explicitly want multiple instances of the same type and will retrieve them all together

@@ -164,11 +164,23 @@ class MarkdownProcessor:
         if all(re.match(r'^(class|abstract\s+class|void|Future|enum|typedef)\s+', l) for l in lines if l):
             return False
 
-        # Wrap if it has await or executable statements
-        has_await = 'await ' in code
-        has_executable = any(code.startswith(stmt) for stmt in ['getIt.', 'if ', 'for ', 'print('])
+        # Check for executable statements (ignore comments and blank lines)
+        non_comment_lines = [l.strip() for l in code.split('\n') if l.strip() and not l.strip().startswith('//')]
 
-        return has_await or has_executable
+        # Wrap if it has await
+        if 'await ' in code:
+            return True
+
+        # Wrap if there are executable statements
+        for line in non_comment_lines:
+            # Check for common executable patterns
+            if any(line.startswith(pattern) for pattern in [
+                'getIt.', 'getIt<', 'if ', 'for ', 'while ', 'print(',
+                'final ', 'var ', 'return ', 'throw '
+            ]):
+                return True
+
+        return False
 
     def create_dart_file(self, block: CodeBlock, index: int) -> Path:
         """Create a compilable .dart file from a code block"""

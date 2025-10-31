@@ -1,6 +1,15 @@
-// ignore_for_file: missing_function_body, unused_element
-getIt.registerSingleton(TestClass());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-    final instance1 = getIt.get(type: TestClass);
+final getIt = GetIt.instance;
 
-    expect(instance1 is TestClass, true);
+// #region example
+void main() {
+  getIt.registerSingleton(TestClass());
+
+  final instance1 = getIt.get(type: TestClass);
+  print('instance1: $instance1');
+
+  expect(instance1 is TestClass, true);
+}
+// #endregion example

@@ -16,7 +16,7 @@ Instead of passing a disposing function on registration or when pushing a Scope 
 if the object that you register implements the `Disposable` interface:
 
 
-<<< @/../code_samples/lib/get_it/disposable_example_1.dart#example
+<<< @/../code_samples/lib/get_it/disposable_example.dart#example
 
 ---
 
@@ -40,7 +40,7 @@ Without reference counting:
 ### The Solution: `registerSingletonIfAbsent` and `releaseInstance`
 
 
-<<< @/../code_samples/lib/get_it/release_instance_example_1.dart#example
+<<< @/../code_samples/lib/get_it/release_instance_example.dart#example
 
 **How it works:**
 1. First call: Creates instance, registers, sets reference count to 1
@@ -51,7 +51,7 @@ Without reference counting:
 ### Recursive Navigation Example
 
 
-<<< @/../code_samples/lib/get_it/detail_service_example_1.dart#example
+<<< @/../code_samples/lib/get_it/detail_service_example.dart#example
 
 **Flow:**
 ```
@@ -121,7 +121,7 @@ Returns `null` instead of throwing an exception if the type is not registered. U
 **Example:**
 
 
-<<< @/../code_samples/lib/get_it/my_widget_example_1.dart#example
+<<< @/../code_samples/lib/get_it/my_widget_example.dart#example
 
 **When to use:**
 - ✅ Optional features that may or may not be registered
@@ -145,7 +145,7 @@ Rename a registered instance without unregistering and re-registering (avoids tr
 **Example:**
 
 
-<<< @/../code_samples/lib/get_it/user_example_1.dart#example
+<<< @/../code_samples/lib/get_it/user_example.dart#example
 
 **Use cases:**
 - User profile updates where username is the instance identifier
@@ -180,7 +180,7 @@ Check if a lazy singleton has been instantiated yet (without triggering its crea
 **Example - Pre-warming:**
 
 
-<<< @/../code_samples/lib/get_it/pre_warm_critical_services_example_1.dart#example
+<<< @/../code_samples/lib/get_it/pre_warm_critical_services_example.dart#example
 
 ---
 
@@ -189,7 +189,7 @@ Check if a lazy singleton has been instantiated yet (without triggering its crea
 Reset all instantiated lazy singletons at once. This clears their instances so they'll be recreated on next access.
 
 
-<<< @/../code_samples/lib/get_it/reset_lazy_singletons_example_1.dart#example
+<<< @/../code_samples/lib/get_it/reset_lazy_singletons_example.dart#example
 
 **Parameters:**
 - `dispose` - If true (default), calls dispose functions before resetting
@@ -251,7 +251,7 @@ Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear sear
 **Example - Basic type matching:**
 
 
-<<< @/../code_samples/lib/get_it/write_example_1.dart#example
+<<< @/../code_samples/lib/get_it/write_example.dart#example
 
 **Example - Include lazy singletons:**
 
@@ -261,22 +261,22 @@ Unlike get_it's O(1) Map-based lookups, `findAll()` performs an O(n) linear sear
 **Example - Include factories:**
 
 
-<<< @/../code_samples/lib/get_it/i_output_example_1.dart#example
+<<< @/../code_samples/lib/get_it/i_output_example.dart#example
 
 **Example - Exact type matching:**
 
 
-<<< @/../code_samples/lib/get_it/base_logger_example_1.dart#example
+<<< @/../code_samples/lib/get_it/base_logger_example.dart#example
 
 **Example - Instance vs Registration Type:**
 
 
-<<< @/../code_samples/lib/get_it/file_output_example_1.dart#example
+<<< @/../code_samples/lib/get_it/file_output_example.dart#example
 
 **Example - Scope control:**
 
 
-<<< @/../code_samples/lib/get_it/i_output_signature_1.dart
+<<< @/../code_samples/lib/get_it/i_output_signature.dart
 
 **Use cases:**
 - Find all implementations of a plugin interface

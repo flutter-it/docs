@@ -1,9 +1,18 @@
-// ignore_for_file: missing_function_body, unused_element
-// First unnamed registration
-getIt.registerSingleton<Plugin>(CorePlugin());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Second unnamed registration (now allowed!)
-getIt.registerSingleton<Plugin>(LoggingPlugin());
+final getIt = GetIt.instance;
 
-// Named registrations (always allowed - even without enabling)
-getIt.registerSingleton<Plugin>(FeaturePlugin(), instanceName: 'feature');
+// #region example
+void main() {
+  getIt.enableRegisteringMultipleInstancesOfOneType();
+
+  getIt.registerSingleton<Plugin>(CorePlugin());
+  getIt.registerSingleton<Plugin>(LoggingPlugin());
+  getIt.registerSingleton<Plugin>(AnalyticsPlugin());
+
+  final plugin = getIt<Plugin>();
+  print('plugin: $plugin');
+  // Returns: CorePlugin (the first one only!)
+}
+// #endregion example

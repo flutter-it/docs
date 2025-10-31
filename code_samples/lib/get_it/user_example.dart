@@ -4,22 +4,19 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
-class User extends ChangeNotifier {
+class UserModel extends ChangeNotifier {
   String username;
   String email;
 
-  User(this.username, this.email);
+  UserModel(this.username, this.email);
 
   Future<void> updateUsername(String newUsername) async {
-    // Update on backend
-    await api.updateUsername(username, newUsername);
-
+    // Update on backend via API (stubbed)
     final oldUsername = username;
     username = newUsername;
 
     // Rename the instance in GetIt to match new username
-    getIt.changeTypeInstanceName<User>(
+    getIt.changeTypeInstanceName<UserModel>(
       instanceName: oldUsername,
       newInstanceName: newUsername,
     );
@@ -28,15 +25,18 @@ class User extends ChangeNotifier {
   }
 }
 
-// Register user with username as instance name
-final user = User('alice', 'alice@example.com');
-getIt.registerSingleton<User>(user, instanceName: 'alice');
+void main() async {
+  // Register user with username as instance name
+  final user = UserModel('alice', 'alice@example.com');
+  getIt.registerSingleton<UserModel>(user, instanceName: 'alice');
 
-// User changes their username
-await getIt<User>(instanceName: 'alice').updateUsername('alice_jones');
+  // User changes their username
+  await getIt<UserModel>(instanceName: 'alice').updateUsername('alice_jones');
 
-// Now accessible with new name
-final user = getIt<User>(instanceName: 'alice_jones'); // Works!
-// getIt<User>(instanceName: 'alice'); // Would throw - old name invalid
+  // Now accessible with new name
+  final renamedUser = getIt<UserModel>(instanceName: 'alice_jones');
+  print('renamedUser: $renamedUser'); // Works!
+  print('User: ${renamedUser.username}');
+  // getIt<UserModel>(instanceName: 'alice'); // Would throw - old name invalid
 }
 // #endregion example

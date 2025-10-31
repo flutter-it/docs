@@ -1,14 +1,22 @@
-// ignore_for_file: missing_function_body, unused_element
-// Base scope
-getIt.registerSingleton<User>(GuestUser());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Push new scope
-getIt.pushNewScope(scopeName: 'logged-in');
-getIt.registerSingleton<User>(LoggedInUser());
+final getIt = GetIt.instance;
 
-getIt<User>(); // Returns LoggedInUser (shadows GuestUser)
+// #region example
+void main() {
+  // Base scope
+  getIt.registerSingleton<User>(GuestUser());
 
-// Pop scope
-await getIt.popScope();
+  // Push new scope
+  getIt.pushNewScope(scopeName: 'logged-in');
+  getIt.registerSingleton<User>(LoggedInUser());
 
-getIt<User>(); // Returns GuestUser (automatically restored)
+  getIt<User>(); // Returns LoggedInUser (shadows GuestUser)
+
+  // Pop scope
+  await getIt.popScope();
+
+  getIt<User>(); // Returns GuestUser (automatically restored)
+}
+// #endregion example

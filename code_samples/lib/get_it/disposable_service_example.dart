@@ -4,7 +4,6 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
 class DisposableService implements Disposable {
   bool disposed = false;
 
@@ -15,16 +14,18 @@ class DisposableService implements Disposable {
 }
 
 test('services are disposed when scope is popped', () async {
-  getIt.pushNewScope();
 
-  final service = DisposableService();
-  getIt.registerSingleton<DisposableService>(service);
+void main() {
+    getIt.pushNewScope();
 
-  expect(service.disposed, false);
+    final service = DisposableService();
+    getIt.registerSingleton<DisposableService>(service);
 
-  await getIt.popScope();
+    expect(service.disposed, false);
 
-  expect(service.disposed, true);
-});
+    await getIt.popScope();
+
+    expect(service.disposed, true);
+  });
 }
 // #endregion example

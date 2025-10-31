@@ -1,7 +1,4 @@
-import 'package:get_it/get_it.dart';
-import '_shared/stubs.dart';
-
-// #region example
+// ignore_for_file: missing_function_body, unused_element
 List<T> findAll<T>({
   bool includeSubtypes = true,
   bool inAllScopes = false,
@@ -10,5 +7,4 @@ List<T> findAll<T>({
   bool includeMatchedByInstance = true,
   bool instantiateLazySingletons = false,
   bool callFactories = false,
-})
-// #endregion example
+});

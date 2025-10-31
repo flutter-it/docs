@@ -4,7 +4,6 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
 class UserManager {
   final AppModel appModel;
   final DbService dbService;
@@ -33,5 +32,8 @@ test('saveUser updates model and persists to database', () async {
 
   verify(mockDb.save(any)).called(1);
 });
+
+void main() {
+
 }
 // #endregion example

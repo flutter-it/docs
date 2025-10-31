@@ -1,11 +1,20 @@
-// ignore_for_file: missing_function_body, unused_element
-getIt.enableRegisteringMultipleInstancesOfOneType();
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-getIt.registerSingletonAsync<Plugin>(() async => await CorePlugin.create());
-getIt.registerSingletonAsync<Plugin>(() async => await LoggingPlugin.create());
+final getIt = GetIt.instance;
 
-// Wait for all plugins to be ready
-await getIt.allReady();
+// #region example
+void main() {
+  getIt.enableRegisteringMultipleInstancesOfOneType();
 
-// Retrieve all async instances
-final Iterable<Plugin> plugins = await getIt.getAllAsync<Plugin>();
+  getIt.registerSingletonAsync<Plugin>(() async => await CorePlugin.create());
+  getIt
+      .registerSingletonAsync<Plugin>(() async => await LoggingPlugin.create());
+
+  // Wait for all plugins to be ready
+  await getIt.allReady();
+
+  // Retrieve all async instances
+  final Iterable<Plugin> plugins = await getIt.getAllAsync<Plugin>();
+}
+// #endregion example

@@ -11,7 +11,7 @@ Testing code that uses get_it requires different approaches depending on whether
 **Best practice:** Use **scopes** to shadow real services with test doubles. This is cleaner and more maintainable than resetting get_it or using conditional registration.
 
 
-<<< @/../code_samples/lib/get_it/main_example_2.dart#example
+<<< @/../code_samples/lib/get_it/main_example_1.dart#example
 
 **Key benefits:**
 - Only override what you need for each test
@@ -27,14 +27,14 @@ Testing code that uses get_it requires different approaches depending on whether
 Use scopes to inject mocks for specific services while keeping the rest of your dependency graph intact.
 
 
-<<< @/../code_samples/lib/get_it/main_example_3.dart#example
+<<< @/../code_samples/lib/get_it/main_example_2.dart#example
 
 ### Pattern 2: Constructor Injection for Pure Unit Tests
 
 For testing classes in complete isolation (without get_it), use optional constructor parameters.
 
 
-<<< @/../code_samples/lib/get_it/user_manager_example_1.dart#example
+<<< @/../code_samples/lib/get_it/user_manager_example.dart#example
 
 **When to use:**
 - ✅ Testing pure business logic in isolation
@@ -50,7 +50,7 @@ For testing classes in complete isolation (without get_it), use optional constru
 Widgets often retrieve services from get_it. Use scopes to provide test-specific implementations.
 
 
-<<< @/../code_samples/lib/get_it/main_signature_1.dart
+<<< @/../code_samples/lib/get_it/main_signature.dart
 
 ### Testing with Async Registrations
 
@@ -68,14 +68,14 @@ If your app uses `registerSingletonAsync`, ensure async services are ready befor
 For integration tests, register mocks at the top level while keeping the rest of the app real.
 
 
-<<< @/../code_samples/lib/get_it/main_example_4.dart#example
+<<< @/../code_samples/lib/get_it/main_example_3.dart#example
 
 ### Environment-Based Registration (Alternative Pattern)
 
 Use a flag to switch between real and test implementations. Less flexible than scopes but simpler for basic cases.
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_9.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_8.dart#example
 
 **Limitations:**
 - ❌ Can't switch between test/real per test
@@ -91,7 +91,7 @@ Use a flag to switch between real and test implementations. Less flexible than s
 Factories create new instances on each `get()` call - verify this behavior in tests.
 
 
-<<< @/../code_samples/lib/get_it/shopping_cart_signature_2.dart
+<<< @/../code_samples/lib/get_it/shopping_cart_signature_1.dart
 
 ### Testing Parameterized Factories
 
@@ -105,7 +105,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 ### Scenario 1: Testing Service with Multiple Dependencies
 
 
-<<< @/../code_samples/lib/get_it/api_client_signature_2.dart
+<<< @/../code_samples/lib/get_it/api_client_signature_1.dart
 
 ### Scenario 2: Testing Scoped Services
 
@@ -115,7 +115,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 ### Scenario 3: Testing Disposal
 
 
-<<< @/../code_samples/lib/get_it/disposable_service_example_1.dart#example
+<<< @/../code_samples/lib/get_it/disposable_service_example.dart#example
 
 ---
 

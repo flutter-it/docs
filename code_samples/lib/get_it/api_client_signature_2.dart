@@ -1,28 +1,14 @@
-// ignore_for_file: missing_function_body, unused_element
-test('complex service uses all dependencies correctly', () {
-  getIt.pushNewScope();
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-  // Mock all dependencies
-  final mockApi = MockApiClient();
-  final mockDb = MockDatabase();
-  final mockAuth = MockAuthService();
+final getIt = GetIt.instance;
 
-  getIt.registerSingleton<ApiClient>(mockApi);
-  getIt.registerSingleton<Database>(mockDb);
-  getIt.registerSingleton<AuthService>(mockAuth);
+// #region example
+void main() {
+  // Enable multiple registrations first
+  getIt.enableRegisteringMultipleInstancesOfOneType();
 
-  // Service under test (uses real implementation)
-  getIt.registerLazySingleton<SyncService>(() => SyncService(
-    getIt<ApiClient>(),
-    getIt<Database>(),
-    getIt<AuthService>(),
-  ));
-
-  when(mockAuth.isAuthenticated).thenReturn(true);
-  when(mockApi.fetchData()).thenAnswer((_) async => ['data']);
-
-  final sync = getIt<SyncService>();
-  // Test sync behavior...
-
-  await getIt.popScope();
-});
+  getIt.registerSingleton<ApiClient>(ProdApiClient(), instanceName: 'prod');
+  getIt.registerSingleton<ApiClient>(DevApiClient(), instanceName: 'dev');
+}
+// #endregion example

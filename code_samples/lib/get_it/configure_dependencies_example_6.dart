@@ -4,21 +4,17 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void configureDependencies() {
-  // Simple registration
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+void main() async {
+  void configureDependencies() {
+    getIt.registerFactory<ShoppingCart>(() => ShoppingCart());
+  }
 
-  // With disposal and onCreated callback
-  getIt.registerLazySingleton<Database>(
-    () => Database(),
-    dispose: (db) => db.close(),
-    onCreated: (db) => print('Database initialized'),
-  );
+// Each call creates a NEW instance
+  final cart1 = getIt<ShoppingCart>();
+  print('cart1: $cart1'); // New ShoppingCart()
+  final cart2 = getIt<ShoppingCart>();
+  print('cart2: $cart2'); // Different ShoppingCart()
+
+  print(identical(cart1, cart2)); // false - different objects
 }
-
-// First access - factory function runs NOW
-final api = getIt<ApiClient>(); // ApiClient() constructor called
-
-// Subsequent calls - returns existing instance
-final sameApi = getIt<ApiClient>(); // Same instance, no constructor call
 // #endregion example

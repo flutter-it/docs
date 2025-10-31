@@ -4,15 +4,14 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-// lib/service_locator.dart
-import 'package:get_it/get_it.dart';
+void main() async {
+  void configureDependencies() {
+    getIt.registerSingleton<ApiClient>(ApiClient());
+    getIt.registerSingleton<UserRepository>(UserRepository());
+  }
 
-final getIt = GetIt.instance;
-
-void configureDependencies() {
-  // Register your services
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<Database>(() => Database());
-  getIt.registerLazySingleton<AuthService>(() => AuthService());
+// Access directly
+  final api = getIt<ApiClient>();
+  print('api: $api');
 }
 // #endregion example

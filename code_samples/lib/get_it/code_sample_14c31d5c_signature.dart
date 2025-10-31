@@ -1,6 +1,14 @@
-// ignore_for_file: missing_function_body, unused_element
-// Reset everything and call disposal functions
-await getIt.reset();
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Reset without calling disposals
-await getIt.reset(dispose: false);
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  // Reset everything and call disposal functions
+  await getIt.reset();
+
+  // Reset without calling disposals
+  await getIt.reset(dispose: false);
+}
+// #endregion example

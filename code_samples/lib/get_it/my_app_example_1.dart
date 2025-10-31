@@ -5,11 +5,21 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    getIt.registerSingleton<MyService>(MyService()); // Called on every hot reload!
-    return MaterialApp(...);
+// get_it manages your business objects
+
+void main() {
+  getIt.registerLazySingleton<AuthService>(() => AuthService());
+  getIt.registerLazySingleton<UserRepository>(() => UserRepository());
+
+  // Provider propagates UI state down the tree
+  class MyApp extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      return ChangeNotifierProvider(
+        create: (_) => ThemeNotifier(),
+        child: MaterialApp(...),
+      );
+    }
   }
 }
 // #endregion example

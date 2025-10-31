@@ -31,7 +31,7 @@ Think of scopes as a **stack of registration layers**. When you register a type 
 ### How Shadowing Works
 
 
-<<< @/../code_samples/lib/get_it/user_signature_1.dart
+<<< @/../code_samples/lib/get_it/user_signature.dart
 
 The search order is **top to bottom** - get_it always returns the first match starting from the current scope.
 
@@ -43,19 +43,19 @@ The search order is **top to bottom** - get_it always returns the first match st
 
 **1. Authentication States**
 
-<<< @/../code_samples/lib/get_it/user_signature_2.dart
+<<< @/../code_samples/lib/get_it/user_signature_1.dart
 
 **2. Session Management**
 
-<<< @/../code_samples/lib/get_it/shopping_cart_signature_1.dart
+<<< @/../code_samples/lib/get_it/shopping_cart_signature.dart
 
 **3. Feature Flags / A-B Testing**
 
-<<< @/../code_samples/lib/get_it/checkout_service_example_1.dart#example
+<<< @/../code_samples/lib/get_it/checkout_service_example.dart#example
 
 **4. Test Isolation**
 
-<<< @/../code_samples/lib/get_it/api_client_example_1.dart#example
+<<< @/../code_samples/lib/get_it/api_client_example.dart#example
 
 ---
 
@@ -64,14 +64,14 @@ The search order is **top to bottom** - get_it always returns the first match st
 ### Basic Scope Operations
 
 
-<<< @/../code_samples/lib/get_it/service_example_1.dart#example
+<<< @/../code_samples/lib/get_it/service_example.dart#example
 
 ### Async Scope Initialization
 
 When scope setup requires async operations (loading config files, establishing connections):
 
 
-<<< @/../code_samples/lib/get_it/tenant_config_example_1.dart#example
+<<< @/../code_samples/lib/get_it/tenant_config_example.dart#example
 
 ::: tip Async Dependencies Between Services
 For services with async initialization that **depend on each other**, use `registerSingletonAsync` with the `dependsOn` parameter instead. See [Async Objects documentation](/documentation/get_it/async_objects) for details.
@@ -86,7 +86,7 @@ For services with async initialization that **depend on each other**, use `regis
 Prevent race conditions by locking a scope after initialization:
 
 
-<<< @/../code_samples/lib/get_it/service_a_example_1.dart#example
+<<< @/../code_samples/lib/get_it/service_a_example.dart#example
 
 **Use when:**
 - Building plugin systems where scope setup must be atomic
@@ -97,7 +97,7 @@ Prevent race conditions by locking a scope after initialization:
 Objects can be notified when they're shadowed or restored:
 
 
-<<< @/../code_samples/lib/get_it/init_example_1.dart#example
+<<< @/../code_samples/lib/get_it/init_example.dart#example
 
 **Use cases:**
 - Resource-heavy services that should pause when inactive
@@ -151,7 +151,7 @@ await getIt.popScope();
 Instead of passing dispose functions, implement `Disposable`:
 
 
-<<< @/../code_samples/lib/get_it/init_example_2.dart#example
+<<< @/../code_samples/lib/get_it/init_example_1.dart#example
 
 ### Reset vs Pop
 
@@ -165,24 +165,24 @@ Instead of passing dispose functions, implement `Disposable`:
 ### Login/Logout Flow
 
 
-<<< @/../code_samples/lib/get_it/auth_service_example_1.dart#example
+<<< @/../code_samples/lib/get_it/auth_service_example.dart#example
 
 ### Multi-Tenant Applications
 
 
-<<< @/../code_samples/lib/get_it/tenant_manager_example_1.dart#example
+<<< @/../code_samples/lib/get_it/tenant_manager_example.dart#example
 
 ### Feature Toggles with Scopes
 
 
-<<< @/../code_samples/lib/get_it/enable_feature_example_1.dart#example
+<<< @/../code_samples/lib/get_it/enable_feature_example.dart#example
 
 ### Testing with Scopes
 
 Use scopes to shadow real services with mocks while keeping the rest of your DI setup:
 
 
-<<< @/../code_samples/lib/get_it/api_client_signature_1.dart
+<<< @/../code_samples/lib/get_it/api_client_signature.dart
 
 **Benefits:**
 - No need to duplicate all registrations in tests
@@ -235,7 +235,7 @@ Use scopes to shadow real services with mocks while keeping the rest of your DI 
 For scopes tied to widget lifetime, use **watch_it**:
 
 
-<<< @/../code_samples/lib/get_it/user_profile_page_example_1.dart#example
+<<< @/../code_samples/lib/get_it/user_profile_page_example.dart#example
 
 See [watch_it documentation](/documentation/watch_it/watch_it) for details.
 

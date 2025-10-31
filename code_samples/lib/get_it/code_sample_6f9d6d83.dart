@@ -4,5 +4,7 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-final GetIt getIt = GetIt.instance(); // ❌ Wrong! Creates new instance
+void main() async {
+  final GetIt getIt = GetIt.instance(); // ❌ Wrong! Creates new instance
+}
 // #endregion example

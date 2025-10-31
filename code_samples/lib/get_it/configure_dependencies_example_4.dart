@@ -4,25 +4,16 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void configureDependencies() {
-  _registerCoreServices();
-  _registerDataServices();
-  _registerBusinessLogic();
-}
+void main() async {
+  void configureDependencies() {
+    // Simple registration
+    getIt.registerSingleton<Logger>(Logger());
 
-void _registerCoreServices() {
-  getIt.registerLazySingleton<Logger>(() => Logger());
-  getIt.registerLazySingleton<Analytics>(() => Analytics());
-}
-
-void _registerDataServices() {
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<Database>(() => Database());
-}
-
-void _registerBusinessLogic() {
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-  getIt.registerLazySingleton<UserRepository>(
-      () => UserRepository(getIt(), getIt()));
+    // With disposal
+    getIt.registerSingleton<Database>(
+      Database(),
+      dispose: (db) => db.close(),
+    );
+  }
 }
 // #endregion example

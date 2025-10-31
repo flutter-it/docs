@@ -4,7 +4,6 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
 abstract class IServiceA {
   void doSomething();
 }
@@ -22,11 +21,13 @@ class ServiceA implements IServiceA {
   }
 
   @override
-  void doSomething() { /* ... */ }
+  void doSomething() {/* ... */}
 }
 
 // Register
-getIt.registerLazySingleton<ServiceB>(() => ServiceB(getIt<IServiceA>()));
-getIt.registerLazySingleton<IServiceA>(() => ServiceA()..init());
+
+void main() {
+  getIt.registerLazySingleton<ServiceB>(() => ServiceB(getIt<IServiceA>()));
+  getIt.registerLazySingleton<IServiceA>(() => ServiceA()..init());
 }
 // #endregion example

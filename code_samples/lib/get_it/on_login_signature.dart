@@ -1,14 +1,22 @@
-// ignore_for_file: missing_function_body, unused_element
-void onLogin(String token) async {
-  await getIt.unregister<User>();
-  await getIt.unregister<ApiClient>();
-  getIt.registerSingleton<User>(AuthenticatedUser(token));
-  getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(token));
-}
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-void onLogout() async {
-  await getIt.unregister<User>();
-  await getIt.unregister<ApiClient>();
-  getIt.registerSingleton<User>(GuestUser());
-  getIt.registerSingleton<ApiClient>(PublicApiClient());
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  void onLogin(String token) async {
+    await getIt.unregister<User>();
+    await getIt.unregister<ApiClient>();
+    getIt.registerSingleton<User>(AuthenticatedUser(token));
+    getIt.registerSingleton<ApiClient>(AuthenticatedApiClient(token));
+  }
+
+  void onLogout() async {
+    await getIt.unregister<User>();
+    await getIt.unregister<ApiClient>();
+    getIt.registerSingleton<User>(GuestUser());
+    getIt.registerSingleton<ApiClient>(PublicApiClient());
+  }
 }
+// #endregion example

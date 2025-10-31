@@ -5,15 +5,16 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() async {
-  void configureDependencies() {
-    // Simple registration
-    getIt.registerSingleton<Logger>(Logger());
+// lib/service_locator.dart
+import 'package:get_it/get_it.dart';
 
-    // With disposal
-    getIt.registerSingleton<Database>(
-      Database(),
-      dispose: (db) => db.close(),
-    );
-  }
+final getIt = GetIt.instance;
+
+void configureDependencies() {
+  // Register your services
+  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+  getIt.registerLazySingleton<Database>(() => Database());
+  getIt.registerLazySingleton<AuthService>(() => AuthService());
+}
 }
 // #endregion example

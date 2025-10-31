@@ -5,13 +5,14 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    getIt.registerSingleton<MyService>(MyService()); // Called on every hot reload!
-    return MaterialApp(...);
+
+void main() {
+      getIt.registerSingleton<MyService>(MyService()); // Called on every hot reload!
+      return MaterialApp(...);
+    }
   }
-}
 }
 // #endregion example

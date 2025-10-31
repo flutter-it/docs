@@ -5,10 +5,9 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() async {
-  getIt.allowReassignment = true;
+  getIt.skipDoubleRegistration = true;
 
-// Now you can re-register
-  getIt.registerSingleton<Logger>(ConsoleLogger());
-  getIt.registerSingleton<Logger>(FileLogger()); // Overwrites previous
+// If already registered, this does nothing instead of throwing
+  getIt.registerSingleton<Logger>(Logger());
 }
 // #endregion example

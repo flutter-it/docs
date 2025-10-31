@@ -5,16 +5,21 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() async {
-  setUp(() {
-    configureDependencies(); // Call your real DI setup
+// Register multiple REST services with different configurations
+  getIt.registerSingleton<ApiClient>(
+    ApiClient('https://api.example.com'),
+    instanceName: 'mainApi',
+  );
 
-    getIt.pushNewScope(); // Shadow specific services with mocks
-    getIt.registerSingleton<ApiClient>(MockApiClient());
-    getIt.registerSingleton<Database>(MockDatabase());
-  });
+  getIt.registerSingleton<ApiClient>(
+    ApiClient('https://analytics.example.com'),
+    instanceName: 'analyticsApi',
+  );
 
-  tearDown(() async {
-    await getIt.popScope(); // Remove mocks, clean slate for next test
-  });
+// Access individually by name
+  final mainApi = getIt<ApiClient>(instanceName: 'mainApi');
+  print('mainApi: $mainApi');
+  final analyticsApi = getIt<ApiClient>(instanceName: 'analyticsApi');
+  print('analyticsApi: $analyticsApi');
 }
 // #endregion example

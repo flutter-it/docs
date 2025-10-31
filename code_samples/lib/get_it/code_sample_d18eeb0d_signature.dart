@@ -1,19 +1,28 @@
-// ignore_for_file: missing_function_body, unused_element
-test('widget works with async services', () async {
-  getIt.pushNewScope();
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-  // Register async mock
-  getIt.registerSingletonAsync<Database>(() async {
-    await Future.delayed(Duration(milliseconds: 100));
-    return MockDatabase();
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  test('widget works with async services', () async {
+    getIt.pushNewScope();
+
+    // Register async mock
+    getIt.registerSingletonAsync<Database>(() async {
+      await Future.delayed(Duration(milliseconds: 100));
+      return MockDatabase();
+    });
+
+    // Wait for all async registrations
+    await getIt.allReady();
+
+    // Now safe to test
+    final db = getIt<Database>();
+    print('db: $db');
+    expect(db, isA<MockDatabase>());
+
+    await getIt.popScope();
   });
-
-  // Wait for all async registrations
-  await getIt.allReady();
-
-  // Now safe to test
-  final db = getIt<Database>();
-  expect(db, isA<MockDatabase>());
-
-  await getIt.popScope();
-});
+}
+// #endregion example

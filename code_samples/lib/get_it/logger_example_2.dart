@@ -5,9 +5,28 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() async {
-  getIt.skipDoubleRegistration = true;
+// Singleton
+  getIt.registerSingleton<Logger>(
+    FileLogger(),
+    instanceName: 'fileLogger',
+  );
 
-// If already registered, this does nothing instead of throwing
-  getIt.registerSingleton<Logger>(Logger());
+// Lazy Singleton
+  getIt.registerLazySingleton<Cache>(
+    () => MemoryCache(),
+    instanceName: 'memory',
+  );
+
+// Factory
+  getIt.registerFactory<Report>(
+    () => DailyReport(),
+    instanceName: 'daily',
+  );
+
+// Async Singleton
+  getIt.registerSingletonAsync<Database>(
+    () async => Database.connect('prod'),
+    instanceName: 'production',
+  );
 }
 // #endregion example

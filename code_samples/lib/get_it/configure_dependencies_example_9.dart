@@ -5,31 +5,15 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void configureDependencies({bool testing = false}) {
-  if (testing) {
-    getIt.registerSingleton<ApiClient>(FakeApiClient());
-    getIt.registerSingleton<Database>(InMemoryDatabase());
-  } else {
-    getIt.registerSingleton<ApiClient>(ApiClientImpl());
-    getIt.registerSingleton<Database>(DatabaseImpl());
-  }
-
-  // Shared registrations
-  getIt.registerLazySingleton<UserService>(() => UserServiceImpl(getIt()));
+void configureDependencies() {
+  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+  getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
+  getIt.registerFactory<LoginViewModel>(() => LoginViewModel(getIt()));
 }
 
-// In main.dart
 void main() {
   configureDependencies();
   runApp(MyApp());
-}
-
-// In test
-void main() {
-  setUpAll(() {
-    configureDependencies(testing: true);
-  });
-
-  // Tests...
 }
 // #endregion example

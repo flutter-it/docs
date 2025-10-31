@@ -20,7 +20,7 @@ get_it offers different registration types that control when objects are created
 ## Singleton
 
 
-<<< @/../code_samples/lib/get_it/t_example_1.dart#example
+<<< @/../code_samples/lib/get_it/t_example.dart#example
 
 You pass an instance of `T` that will **always** be returned on calls to `get<T>()`. The instance is created **immediately** when you register it.
 
@@ -33,7 +33,7 @@ You pass an instance of `T` that will **always** be returned on calls to `get<T>
 **Example:**
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_5.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_4.dart#example
 
 **When to use Singleton:**
 - ✅ Service needed at app startup
@@ -45,7 +45,7 @@ You pass an instance of `T` that will **always** be returned on calls to `get<T>
 ## LazySingleton
 
 
-<<< @/../code_samples/lib/get_it/function_example_1.dart#example
+<<< @/../code_samples/lib/get_it/function_example.dart#example
 
 You pass a factory function that returns an instance of `T`. The function is **only called on first access** to `get<T>()`. After that, the same instance is always returned.
 
@@ -59,7 +59,7 @@ You pass a factory function that returns an instance of `T`. The function is **o
 **Example:**
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_6.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_5.dart#example
 
 **When to use LazySingleton:**
 - ✅ Expensive-to-create services (database, HTTP client, etc.)
@@ -75,7 +75,7 @@ You can register either concrete classes or abstract interfaces. **Register conc
 ## Factory
 
 
-<<< @/../code_samples/lib/get_it/t_example_2.dart#example
+<<< @/../code_samples/lib/get_it/t_example_1.dart#example
 
 You pass a factory function that returns a **NEW instance** of `T` every time you call `get<T>()`. Unlike singletons, you get a different object each time.
 
@@ -86,7 +86,7 @@ You pass a factory function that returns a **NEW instance** of `T` every time yo
 **Example:**
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_7.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_6.dart#example
 
 **When to use Factory:**
 - ✅ Temporary objects (dialogs, forms, temporary data holders)
@@ -172,7 +172,7 @@ Cached factories are a **performance optimization** that sits between regular fa
 **Comparison example:**
 
 
-<<< @/../code_samples/lib/get_it/json_parser_signature_1.dart
+<<< @/../code_samples/lib/get_it/json_parser_signature.dart
 
 ::: tip Memory Management
 Cached factories use **weak references**, meaning the cached instance can be garbage collected when no other part of your code holds a reference to it. This provides automatic memory management while still benefiting from reuse.
@@ -215,7 +215,7 @@ You can test if a type or instance is already registered:
 You can remove a registered type from get_it, optionally calling a disposal function:
 
 
-<<< @/../code_samples/lib/get_it/function_example_2.dart#example
+<<< @/../code_samples/lib/get_it/function_example_1.dart#example
 
 **Example:**
 
@@ -231,7 +231,7 @@ The disposing function overrides any disposal function you provided during regis
 Sometimes you want to reset a lazy singleton (force recreation on next access) without unregistering it:
 
 
-<<< @/../code_samples/lib/get_it/function_example_3.dart#example
+<<< @/../code_samples/lib/get_it/function_example_2.dart#example
 
 **Example:**
 
@@ -252,7 +252,7 @@ If you need to reset **all** lazy singletons at once (instead of one at a time),
 Clear all registered types (useful for tests or app shutdown):
 
 
-<<< @/../code_samples/lib/get_it/reset_example_1.dart#example
+<<< @/../code_samples/lib/get_it/reset_example.dart#example
 
 **Example:**
 
@@ -275,7 +275,7 @@ Clear all registered types (useful for tests or app shutdown):
 By default, get_it prevents registering the same type twice (catches bugs). To allow overwriting:
 
 
-<<< @/../code_samples/lib/get_it/logger_example_1.dart#example
+<<< @/../code_samples/lib/get_it/logger_example.dart#example
 
 ::: warning Use Sparingly
 Allowing reassignment makes bugs harder to catch. Prefer using [scopes](/documentation/get_it/scopes) instead for temporary overrides (especially in tests).
@@ -286,6 +286,6 @@ Allowing reassignment makes bugs harder to catch. Prefer using [scopes](/documen
 In tests, silently ignore double registration instead of throwing an error:
 
 
-<<< @/../code_samples/lib/get_it/logger_example_2.dart#example
+<<< @/../code_samples/lib/get_it/logger_example_1.dart#example
 
 **Only available in tests** - useful when multiple test files might register the same global services.

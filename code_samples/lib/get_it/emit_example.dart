@@ -2,7 +2,6 @@ import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
 // #region example
-void main() async {
 class EventBus {
   final _controller = StreamController<Event>.broadcast();
   Stream<Event> get events => _controller.stream;
@@ -19,6 +18,5 @@ class ServiceB {
   ServiceB(EventBus bus) {
     bus.events.where((e) => e is ServiceAEvent).listen(_handle);
   }
-}
 }
 // #endregion example

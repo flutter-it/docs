@@ -161,6 +161,7 @@ Future<void> useSingletonAsync() async {
 
   // Then access normally
   final db = getIt<Database>();
+  print('db: $db');
 }
 // #endregion
 
@@ -200,6 +201,7 @@ void dependenciesExample() {
   getIt.registerSingletonAsync<ApiClient>(
     () async {
       final apiUrl = getIt<ConfigService>().apiUrl;
+      print('apiUrl: $apiUrl');
       final client = ApiClient(apiUrl);
       await client.authenticate();
       return client;
@@ -211,6 +213,7 @@ void dependenciesExample() {
   getIt.registerSingletonAsync<Database>(
     () async {
       final dbPath = getIt<ConfigService>().databasePath;
+      print('dbPath: $dbPath');
       final db = Database(dbPath);
       await db.initialize();
       return db;
@@ -253,6 +256,7 @@ Future<void> isReadyExample() async {
 
   // Now safe to use
   final db = getIt<Database>();
+  print('db: $db');
 
   // Check without waiting
   if (getIt.isReadySync<Database>()) {

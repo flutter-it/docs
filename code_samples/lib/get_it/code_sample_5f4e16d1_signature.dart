@@ -1,13 +1,22 @@
-// ignore_for_file: missing_function_body, unused_element
-test('factory param passes parameters correctly', () {
-  getIt.pushNewScope();
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-  getIt.registerFactoryParam<UserViewModel, String, void>(
-    (userId, _) => UserViewModel(userId),
-  );
+final getIt = GetIt.instance;
 
-  final vm = getIt<UserViewModel>(param1: 'user-123');
-  expect(vm.userId, 'user-123');
+// #region example
+void main() {
+  test('factory param passes parameters correctly', () {
+    getIt.pushNewScope();
 
-  await getIt.popScope();
-});
+    getIt.registerFactoryParam<UserViewModel, String, void>(
+      (userId, _) => UserViewModel(userId),
+    );
+
+    final vm = getIt<UserViewModel>(param1: 'user-123');
+    print('vm: $vm');
+    expect(vm.userId, 'user-123');
+
+    await getIt.popScope();
+  });
+}
+// #endregion example

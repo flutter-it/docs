@@ -4,8 +4,7 @@ import '_shared/stubs.dart';
 
 // #region example
 void main() {
-  configureDependencies(); // First call
-  configureDependencies(); // ❌ Second call - ERROR!
+  configureDependencies(); // Once only!
   runApp(MyApp());
 }
 // #endregion example

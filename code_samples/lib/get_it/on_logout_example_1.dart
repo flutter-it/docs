@@ -4,9 +4,10 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void onLogout() async {
-  getIt.unregister<AuthService>(); // ❌ Not awaited!
-  getIt.registerSingleton<AuthService>(GuestAuthService());
-  // Error: AuthService already registered (unregister didn't complete!)
+void main() async {
+  void onLogout() async {
+    await getIt.unregister<AuthService>(); // ✅ Wait for disposal
+    getIt.registerSingleton<AuthService>(GuestAuthService());
+  }
 }
 // #endregion example

@@ -2,11 +2,9 @@ import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
 // #region example
-void registerLazySingleton<T>(
-  FactoryFunc<T> factoryFunc, {
+void unregister<T>({
+  Object? instance,
   String? instanceName,
-  DisposingFunc<T>? dispose,
-  void Function(T instance)? onCreated,
-  bool useWeakReference = false,
-})
+  void Function(T)? disposingFunction,
+});
 // #endregion example

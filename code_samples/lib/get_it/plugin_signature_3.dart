@@ -1,9 +1,24 @@
-// ignore_for_file: missing_function_body, unused_element
-getIt.enableRegisteringMultipleInstancesOfOneType();
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-getIt.registerSingleton<Plugin>(CorePlugin());
-getIt.registerSingleton<Plugin>(LoggingPlugin());
-getIt.registerSingleton<Plugin>(AnalyticsPlugin());
+final getIt = GetIt.instance;
 
-final plugin = getIt<Plugin>();
-// Returns: CorePlugin (the first one only!)
+// #region example
+void main() {
+  getIt.enableRegisteringMultipleInstancesOfOneType();
+
+  // Base scope
+  getIt.registerSingleton<Plugin>(CorePlugin());
+  getIt.registerSingleton<Plugin>(LoggingPlugin());
+
+  // Push new scope
+  getIt.pushNewScope(scopeName: 'feature');
+  getIt.registerSingleton<Plugin>(FeatureAPlugin());
+  getIt.registerSingleton<Plugin>(FeatureBPlugin());
+
+  // Current scope only (default)
+  final featurePlugins = getIt.getAll<Plugin>();
+  print('featurePlugins: $featurePlugins');
+  // Returns: [FeatureAPlugin, FeatureBPlugin]
+}
+// #endregion example

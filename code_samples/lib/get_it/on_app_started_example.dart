@@ -4,7 +4,6 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
 abstract class AppLifecycleObserver {
   void onAppStarted();
   void onAppPaused();
@@ -12,28 +11,32 @@ abstract class AppLifecycleObserver {
 }
 
 void setupApp() {
-  getIt.enableRegisteringMultipleInstancesOfOneType();
 
-  // Multiple observers can register
-  getIt.registerSingleton<AppLifecycleObserver>(AnalyticsObserver());
-  getIt.registerSingleton<AppLifecycleObserver>(LoggingObserver());
-  getIt.registerSingleton<AppLifecycleObserver>(CacheObserver());
-}
+void main() {
+    getIt.enableRegisteringMultipleInstancesOfOneType();
 
-class AppLifecycleManager {
-  void notifyAppStarted() {
-    final observers = getIt.getAll<AppLifecycleObserver>();
-    for (final observer in observers) {
-      observer.onAppStarted();
-    }
+    // Multiple observers can register
+    getIt.registerSingleton<AppLifecycleObserver>(AnalyticsObserver());
+    getIt.registerSingleton<AppLifecycleObserver>(LoggingObserver());
+    getIt.registerSingleton<AppLifecycleObserver>(CacheObserver());
   }
 
-  void notifyAppPaused() {
-    final observers = getIt.getAll<AppLifecycleObserver>();
-    for (final observer in observers) {
-      observer.onAppPaused();
+  class AppLifecycleManager {
+    void notifyAppStarted() {
+      final observers = getIt.getAll<AppLifecycleObserver>();
+  print('observers: $observers');
+      for (final observer in observers) {
+        observer.onAppStarted();
+      }
+    }
+
+    void notifyAppPaused() {
+      final observers = getIt.getAll<AppLifecycleObserver>();
+  print('observers: $observers');
+      for (final observer in observers) {
+        observer.onAppPaused();
+      }
     }
   }
-}
 }
 // #endregion example

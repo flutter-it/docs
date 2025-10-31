@@ -5,34 +5,31 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-// Enable multiple registrations at app startup
-void configureDependencies() {
-  getIt.enableRegisteringMultipleInstancesOfOneType();
-
-  // Core plugins (unnamed - always loaded)
-  getIt.registerSingleton<AppPlugin>(CorePlugin());
-  getIt.registerSingleton<AppPlugin>(LoggingPlugin());
-  getIt.registerSingleton<AppPlugin>(AnalyticsPlugin());
-}
-
-// Feature module registers additional plugins
-void enableShoppingFeature() {
-  getIt.pushNewScope(scopeName: 'shopping');
-  getIt.registerSingleton<AppPlugin>(ShoppingCartPlugin());
-  getIt.registerSingleton<AppPlugin>(PaymentPlugin());
-}
-
-// App initialization
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // Initialize all plugins
-    final allPlugins = getIt.getAll<AppPlugin>(fromAllScopes: true);
-    for (final plugin in allPlugins) {
-      plugin.initialize();
-    }
-
-    return MaterialApp(...);
+void configureDependencies({bool testing = false}) {
+  if (testing) {
+    getIt.registerSingleton<ApiClient>(FakeApiClient());
+    getIt.registerSingleton<Database>(InMemoryDatabase());
+  } else {
+    getIt.registerSingleton<ApiClient>(ApiClientImpl());
+    getIt.registerSingleton<Database>(DatabaseImpl());
   }
+
+  // Shared registrations
+  getIt.registerLazySingleton<UserService>(() => UserServiceImpl(getIt()));
+}
+
+// In main.dart
+void main() {
+  configureDependencies();
+  runApp(MyApp());
+}
+
+// In test
+void main() {
+  setUpAll(() {
+    configureDependencies(testing: true);
+  });
+
+  // Tests...
 }
 // #endregion example

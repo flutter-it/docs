@@ -4,16 +4,27 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-// Use interface when you have multiple versions
-abstract class PaymentProcessor {
-  Future<void> processPayment(double amount);
-}
+void main() async {
+  void configureDependencies() {
+    _registerCoreServices();
+    _registerDataServices();
+    _registerBusinessLogic();
+  }
 
-class StripePaymentProcessor implements PaymentProcessor { ... }
-class PayPalPaymentProcessor implements PaymentProcessor { ... }
+  void _registerCoreServices() {
+    getIt.registerLazySingleton<Logger>(() => Logger());
+    getIt.registerLazySingleton<Analytics>(() => Analytics());
+  }
 
-// Register by interface
-void configureDependencies() {
-  getIt.registerSingleton<PaymentProcessor>(StripePaymentProcessor());
+  void _registerDataServices() {
+    getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+    getIt.registerLazySingleton<Database>(() => Database());
+  }
+
+  void _registerBusinessLogic() {
+    getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+    getIt.registerLazySingleton<UserRepository>(
+        () => UserRepository(getIt(), getIt()));
+  }
 }
 // #endregion example

@@ -1,16 +1,25 @@
-// ignore_for_file: missing_function_body, unused_element
-// Register lazy singleton
-getIt.registerLazySingleton<HeavyService>(() => HeavyService());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Check if it's been created yet
-if (getIt.checkLazySingletonInstanceExists<HeavyService>()) {
-  print('HeavyService already created');
-} else {
-  print('HeavyService not created yet - will be lazy loaded');
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  // Register lazy singleton
+  getIt.registerLazySingleton<HeavyService>(() => HeavyService());
+
+  // Check if it's been created yet
+  if (getIt.checkLazySingletonInstanceExists<HeavyService>()) {
+    print('HeavyService already created');
+  } else {
+    print('HeavyService not created yet - will be lazy loaded');
+  }
+
+  // Access triggers creation
+  final service = getIt<HeavyService>();
+  print('service: $service');
+
+  // Now it exists
+  assert(getIt.checkLazySingletonInstanceExists<HeavyService>() == true);
 }
-
-// Access triggers creation
-final service = getIt<HeavyService>();
-
-// Now it exists
-assert(getIt.checkLazySingletonInstanceExists<HeavyService>() == true);
+// #endregion example

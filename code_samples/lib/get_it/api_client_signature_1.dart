@@ -1,26 +1,37 @@
-// ignore_for_file: missing_function_body, unused_element
-group('UserService Tests', () {
-  setUp(() {
-    // Call your app's real DI initialization
-    configureDependencies();
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-    // Push scope to shadow specific services with test doubles
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  test('complex service uses all dependencies correctly', () {
     getIt.pushNewScope();
-    getIt.registerSingleton<ApiClient>(MockApiClient());
-    getIt.registerSingleton<Database>(MockDatabase());
 
-    // UserService uses real implementation but gets mock dependencies
-  });
+    // Mock all dependencies
+    final mockApi = MockApiClient();
+    final mockDb = MockDatabase();
+    final mockAuth = MockAuthService();
 
-  tearDown(() async {
-    // Pop scope - removes mocks, restores real services
+    getIt.registerSingleton<ApiClient>(mockApi);
+    getIt.registerSingleton<Database>(mockDb);
+    getIt.registerSingleton<AuthService>(mockAuth);
+
+    // Service under test (uses real implementation)
+    getIt.registerLazySingleton<SyncService>(() => SyncService(
+          getIt<ApiClient>(),
+          getIt<Database>(),
+          getIt<AuthService>(),
+        ));
+
+    when(mockAuth.isAuthenticated).thenReturn(true);
+    when(mockApi.fetchData()).thenAnswer((_) async => ['data']);
+
+    final sync = getIt<SyncService>();
+    print('sync: $sync');
+    // Test sync behavior...
+
     await getIt.popScope();
   });
-
-  test('should load user data', () async {
-    // UserService gets MockApiClient and MockDatabase automatically
-    final service = getIt<UserService>();
-    final user = await service.loadUser('123');
-    expect(user.id, '123');
-  });
-});
+}
+// #endregion example

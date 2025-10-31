@@ -21,5 +21,6 @@ void main() async {
 
 // Always access with same name
   final api = getIt<ApiClient>(instanceName: 'api');
+  print('api: $api');
 }
 // #endregion example

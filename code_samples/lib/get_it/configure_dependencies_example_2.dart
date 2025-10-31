@@ -4,11 +4,19 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void configureDependencies() {
-  getIt.registerSingleton<ApiClient>(ApiClient());
-  getIt.registerSingleton<UserRepository>(UserRepository());
+// Use interface when you have multiple versions
+abstract class PaymentProcessor {
+  Future<void> processPayment(double amount);
 }
 
-// Access directly
-final api = getIt<ApiClient>();
+class StripePaymentProcessor implements PaymentProcessor { ... }
+class PayPalPaymentProcessor implements PaymentProcessor { ... }
+
+// Register by interface
+void configureDependencies() {
+
+void main() {
+    getIt.registerSingleton<PaymentProcessor>(StripePaymentProcessor());
+  }
+}
 // #endregion example

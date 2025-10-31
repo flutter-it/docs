@@ -4,11 +4,20 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void configureDependencies() {
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
-  getIt.registerLazySingleton<UserRepository>(
-      () => UserRepository(getIt(), getIt()));
-  // ... 50 more registrations
+@injectable
+class ApiClient {}
+
+@Injectable(as: IAuthService)
+class AuthService implements IAuthService {
+  AuthService(ApiClient client);
 }
+
+@injectable
+class UserRepository {
+  UserRepository(ApiClient client, AuthService auth);
+}
+
+// Generated code handles all registrations!
+@InjectableInit()
+void configureDependencies() => getIt.init();
 // #endregion example

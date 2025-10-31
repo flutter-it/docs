@@ -1,6 +1,14 @@
-// ignore_for_file: missing_function_body, unused_element
-// resetScope - clears all registrations in current scope but keeps scope
-await getIt.resetScope(dispose: true);
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// popScope - removes entire scope and restores previous
-await getIt.popScope();
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  // resetScope - clears all registrations in current scope but keeps scope
+  await getIt.resetScope(dispose: true);
+
+  // popScope - removes entire scope and restores previous
+  await getIt.popScope();
+}
+// #endregion example

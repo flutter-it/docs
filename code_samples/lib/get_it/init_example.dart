@@ -2,7 +2,6 @@ import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
 // #region example
-void main() async {
 class StreamingService implements ShadowChangeHandlers {
   StreamSubscription? _subscription;
 
@@ -23,6 +22,5 @@ class StreamingService implements ShadowChangeHandlers {
     _subscription?.resume();
     print('Resumed: $shadowingObject was removed');
   }
-}
 }
 // #endregion example

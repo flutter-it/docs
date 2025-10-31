@@ -1,19 +1,30 @@
-// ignore_for_file: missing_function_body, unused_element
-// Base scope
-getIt.registerSingleton<IOutput>(FileOutput());
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Push scope
-getIt.pushNewScope(scopeName: 'session');
-getIt.registerSingleton<IOutput>(ConsoleOutput());
+final getIt = GetIt.instance;
 
-// Current scope only (default)
-final current = getIt.findAll<IOutput>();
-// Returns: [ConsoleOutput]
+// #region example
+void main() {
+  // Base scope
+  getIt.registerSingleton<IOutput>(FileOutput());
 
-// All scopes
-final all = getIt.findAll<IOutput>(inAllScopes: true);
-// Returns: [ConsoleOutput, FileOutput]
+  // Push scope
+  getIt.pushNewScope(scopeName: 'session');
+  getIt.registerSingleton<IOutput>(ConsoleOutput());
 
-// Specific scope
-final base = getIt.findAll<IOutput>(onlyInScope: 'baseScope');
-// Returns: [FileOutput]
+  // Current scope only (default)
+  final current = getIt.findAll<IOutput>();
+  print('current: $current');
+  // Returns: [ConsoleOutput]
+
+  // All scopes
+  final all = getIt.findAll<IOutput>(inAllScopes: true);
+  print('all: $all');
+  // Returns: [ConsoleOutput, FileOutput]
+
+  // Specific scope
+  final base = getIt.findAll<IOutput>(onlyInScope: 'baseScope');
+  print('base: $base');
+  // Returns: [FileOutput]
+}
+// #endregion example

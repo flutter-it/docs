@@ -1,8 +1,18 @@
-// ignore_for_file: missing_function_body, unused_element
-// Only search the base scope
-final basePlugins = getIt.getAll<Plugin>(onlyInScope: 'baseScope');
-// Returns: [CorePlugin, LoggingPlugin]
+import 'package:get_it/get_it.dart';
+import '_shared/stubs.dart';
 
-// Only search the 'feature' scope
-final featurePlugins = getIt.getAll<Plugin>(onlyInScope: 'feature');
-// Returns: [FeatureAPlugin, FeatureBPlugin]
+final getIt = GetIt.instance;
+
+// #region example
+void main() {
+  // Only search the base scope
+  final basePlugins = getIt.getAll<Plugin>(onlyInScope: 'baseScope');
+  print('basePlugins: $basePlugins');
+  // Returns: [CorePlugin, LoggingPlugin]
+
+  // Only search the 'feature' scope
+  final featurePlugins = getIt.getAll<Plugin>(onlyInScope: 'feature');
+  print('featurePlugins: $featurePlugins');
+  // Returns: [FeatureAPlugin, FeatureBPlugin]
+}
+// #endregion example

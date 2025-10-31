@@ -42,17 +42,17 @@ dependencies:
 **Step 1:** Create a global GetIt instance (typically in a separate file):
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_1.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example.dart#example
 
 **Step 2:** Call your configuration function **before** `runApp()`:
 
 
-<<< @/../code_samples/lib/get_it/main_example_1.dart#example
+<<< @/../code_samples/lib/get_it/main_example.dart#example
 
 **Step 3:** Access your services from anywhere:
 
 
-<<< @/../code_samples/lib/get_it/login_page_example_1.dart#example
+<<< @/../code_samples/lib/get_it/login_page_example.dart#example
 
 **That's it!** No Provider wrappers, no InheritedWidgets, no BuildContext needed.
 
@@ -75,7 +75,7 @@ get_it offers three main registration types:
 **Examples:**
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_signature_1.dart
+<<< @/../code_samples/lib/get_it/configure_dependencies_signature.dart
 
 **Best practice:** Use `registerSingleton()` if your object will be used anyway and doesn't require significant resources to create - it's the simplest approach. Only use `registerLazySingleton()` when you need to delay expensive initialization or for services not always needed.
 
@@ -86,14 +86,14 @@ get_it offers three main registration types:
 **Most of the time, register your concrete classes directly:**
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_2.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_1.dart#example
 
 This is simpler and makes IDE navigation to implementation easier.
 
 **Only use abstract interfaces when you expect multiple implementations:**
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_3.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_2.dart#example
 
 **When to use interfaces:**
 - ✅ Multiple implementations (production vs test, different providers)
@@ -121,7 +121,7 @@ Get your registered services using `getIt<Type>()`:
 For larger apps, split registration into logical groups:
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies_example_4.dart#example
+<<< @/../code_samples/lib/get_it/configure_dependencies_example_3.dart#example
 
 See [Where should I put my get_it setup code?](/documentation/get_it/faq#where-should-i-put-my-get-it-setup-code) for more patterns.
 

@@ -1,61 +1,44 @@
 import 'package:get_it/get_it.dart';
+import 'package:flutter/material.dart';
 import '_shared/stubs.dart';
 
 final getIt = GetIt.instance;
 
 // #region example
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:get_it/get_it.dart';
-
-class MockApiClient extends Mock implements ApiClient {}
-class MockAuthService extends Mock implements AuthService {}
-
 void main() {
-  final getIt = GetIt.instance;
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  setUpAll(() {
-    // Register all real dependencies once
-    getIt.registerLazySingleton<ApiClient>(() => ApiClientImpl());
-    getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl(getIt()));
-    getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt(), getIt()));
-  });
+  group('End-to-end user flow', () {
+    setUpAll(() async {
+      // Push scope for integration test environment
+      getIt.pushNewScope(
+        scopeName: 'integration-test',
+        init: (scope) {
+          // Mock only external dependencies
+          scope.registerSingleton<ApiClient>(FakeApiClient());
+          scope.registerSingleton<SecureStorage>(InMemoryStorage());
 
-  group('UserRepository tests', () {
-    late MockApiClient mockApi;
-    late MockAuthService mockAuth;
-
-    setUp(() {
-      // Push scope and shadow only the services we want to mock
-      getIt.pushNewScope();
-
-      mockApi = MockApiClient();
-      mockAuth = MockAuthService();
-
-      getIt.registerSingleton<ApiClient>(mockApi);
-      getIt.registerSingleton<AuthService>(mockAuth);
-
-      // UserRepository will be created fresh with our mocks
+          // Use real implementations for everything else
+          scope.registerLazySingleton<AuthService>(
+              () => AuthServiceImpl(getIt()));
+          scope.registerLazySingleton<UserRepository>(
+              () => UserRepository(getIt()));
+        },
+      );
     });
 
-    tearDown(() async {
+    tearDownAll(() async {
       await getIt.popScope();
     });
 
-    test('fetchUser should call API with correct auth token', () async {
-      // Arrange
-      when(mockAuth.getToken()).thenReturn('test-token');
-      when(mockApi.get('/users/123', headers: anyNamed('headers')))
-          .thenAnswer((_) async => Response(data: {'id': '123', 'name': 'Alice'}));
+    testWidgets('User can login and view profile', (tester) async {
+      await tester.pumpWidget(MyApp());
 
-      // Act
-      final repo = getIt<UserRepository>();
-      final user = await repo.fetchUser('123');
+      // Interact with real UI + real services + fake backend
+      await tester.tap(find.text('Login'));
+      await tester.pumpAndSettle();
 
-      // Assert
-      expect(user.name, 'Alice');
-      verify(mockAuth.getToken()).called(1);
-      verify(mockApi.get('/users/123', headers: {'Authorization': 'Bearer test-token'})).called(1);
+      expect(find.text('Profile'), findsOneWidget);
     });
   });
 }

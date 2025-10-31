@@ -4,10 +4,12 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
+void main() async {
 // Instantiate lazy singletons that match
-final all = getIt.findAll<IOutput>(
-  instantiateLazySingletons: true,
-);
+  final all = getIt.findAll<IOutput>(
+    instantiateLazySingletons: true,
+  );
 // Returns: [FileOutput, ConsoleOutput]
 // ConsoleOutput is now created and cached
+}
 // #endregion example

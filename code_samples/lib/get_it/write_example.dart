@@ -4,7 +4,6 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() async {
 abstract class IOutput {
   void write(String message);
 }
@@ -20,11 +19,14 @@ class ConsoleOutput implements IOutput {
 }
 
 // Register different implementation types
-getIt.registerSingleton<FileOutput>(FileOutput());
-getIt.registerLazySingleton<ConsoleOutput>(() => ConsoleOutput());
 
-// Find by interface (registration type matching)
-final outputs = getIt.findAll<IOutput>();
-// Returns: [FileOutput] only (ConsoleOutput not instantiated yet)
+void main() {
+  getIt.registerSingleton<FileOutput>(FileOutput());
+  getIt.registerLazySingleton<ConsoleOutput>(() => ConsoleOutput());
+
+  // Find by interface (registration type matching)
+  final outputs = getIt.findAll<IOutput>();
+  print('outputs: $outputs');
+  // Returns: [FileOutput] only (ConsoleOutput not instantiated yet)
 }
 // #endregion example
