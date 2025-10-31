@@ -4,4 +4,5 @@ T? maybeGet<T>({
   dynamic param1,
   dynamic param2,
   Type? type,
-})
+}) =>
+    null;

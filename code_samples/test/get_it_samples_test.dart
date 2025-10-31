@@ -1,7 +1,7 @@
+import 'package:code_samples/get_it/_shared/stubs.dart' as basic_samples;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import '../lib/get_it/async_objects.dart' as async_samples;
-import '../lib/get_it/basic_usage.dart' as basic_samples;
+import 'package:code_samples/get_it/async_objects.dart' as async_samples;
 
 void main() {
   setUp(() {

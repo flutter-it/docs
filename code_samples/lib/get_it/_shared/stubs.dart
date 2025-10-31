@@ -1,8 +1,44 @@
+// ignore_for_file: unused_element, use_super_parameters
 // Stub classes for get_it code samples
 // These provide minimal implementations to make examples compile
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+
+/// GetIt typedefs for factory functions
+typedef FactoryFunc<T> = T Function();
+typedef FactoryFuncParam<T, P1, P2> = T Function(P1 param1, P2 param2);
+typedef FactoryFuncAsync<T> = Future<T> Function();
+typedef FactoryFuncParamAsync<T, P1, P2> = Future<T> Function(
+    P1 param1, P2 param2);
+typedef DisposingFunc<T> = FutureOr Function(T instance);
+
+/// ObjectRegistration for finding registered instances
+class ObjectRegistration {
+  final Type type;
+  final String? instanceName;
+
+  ObjectRegistration(this.type, {this.instanceName});
+}
+
+/// Annotation stubs for injectable code generation examples
+const injectable = Injectable();
+
+class Injectable {
+  final Type? as;
+  const Injectable({this.as});
+}
+
+class InjectableInit {
+  const InjectableInit();
+}
+
+/// Extension for generated init method
+extension GetItInjectableX on dynamic {
+  void init() {
+    // Stub for generated initialization
+  }
+}
 
 /// Configuration service stub
 class ConfigService {
@@ -104,8 +140,11 @@ class ApiClient {
   Future<void> close() async {}
 }
 
+/// Authentication service interface
+abstract class IAuthService {}
+
 /// Authentication service stub
-class AuthService {
+class AuthService implements IAuthService {
   AuthService._();
 
   static Future<AuthService> init() async {
@@ -129,8 +168,8 @@ class AuthServiceImpl extends AuthService {
 
 /// User repository stub
 class UserRepository {
-  UserRepository(this.apiClient, [this.database]);
-  final ApiClient apiClient;
+  UserRepository([this.apiClient, this.database]);
+  final ApiClient? apiClient;
   final Database? database;
 
   Future<User?> getUser(String id) async => User(id: id, name: 'Test User');
@@ -144,6 +183,13 @@ class User {
   final String id;
   final String name;
   final String? token;
+
+  factory User.fromData(Map<String, dynamic> data) {
+    return User(
+      id: data['id'] as String? ?? '0',
+      name: data['name'] as String? ?? 'Unknown',
+    );
+  }
 }
 
 /// Weather service stub
@@ -322,6 +368,7 @@ class FeatureX {
 
 /// Generic service A for dependency examples
 class ServiceA {
+  ServiceA();
   ServiceA._();
 
   static Future<ServiceA> init() async {
@@ -332,8 +379,8 @@ class ServiceA {
 
 /// Generic service B for dependency examples
 class ServiceB {
-  ServiceB(this.serviceA);
-  final ServiceA serviceA;
+  ServiceB([this.serviceA]);
+  final ServiceA? serviceA;
 }
 
 /// Generic service C for dependency examples
@@ -430,6 +477,13 @@ class PayPalPaymentProcessor implements PaymentProcessor {
   }
 }
 
+class LegacyPaymentProcessor implements PaymentProcessor {
+  @override
+  Future<void> processPayment(double amount) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+  }
+}
+
 /// Plugin interface stub
 abstract class Plugin {
   String get name;
@@ -502,7 +556,7 @@ class AuthenticatedApiClient extends ApiClient {
 }
 
 class GuestAuthService extends AuthService {
-  GuestAuthService._() : super._();
+  GuestAuthService() : super._();
 }
 
 class GuestUser extends User {
@@ -517,11 +571,11 @@ class NotificationService {
 
 /// Logger implementations
 class FileLogger extends Logger {
-  FileLogger._() : super._();
+  FileLogger() : super._();
 }
 
 class ConsoleLogger extends Logger {
-  ConsoleLogger._() : super._();
+  ConsoleLogger() : super._();
 }
 
 /// Service implementations
@@ -605,6 +659,8 @@ class Response {
   final int statusCode;
   final String body;
   Response(this.statusCode, this.body);
+
+  static Response forbidden() => Response(403, 'Forbidden');
 }
 
 class Request {
@@ -736,6 +792,7 @@ class StreamingService {
 /// Feature implementation stub
 class FeatureImplementation {
   void execute() {}
+  void register(dynamic getIt) {}
 }
 
 /// Test implementation stubs
@@ -773,6 +830,11 @@ class PaymentPlugin extends AppPlugin {
 class DebugPlugin extends AppPlugin {
   @override
   String get name => 'DebugPlugin';
+}
+
+class FeaturePlugin extends AppPlugin {
+  @override
+  String get name => 'FeaturePlugin';
 }
 
 /// ViewModel stubs
@@ -832,6 +894,10 @@ void configureDependencies() {
   // Stub for test configuration
 }
 
+void accessServices() {
+  // Stub for accessing services
+}
+
 /// Test framework stubs
 void group(String description, Function() body) {
   body();
@@ -861,21 +927,44 @@ class ReportGenerator {
   ReportGenerator(dynamic param);
 }
 
-class MemoryCache {
-  void clear() {}
+/// Cache interface for example code
+abstract class Cache {
+  dynamic get(String key);
+  void set(String key, dynamic value);
+  void clear();
+}
+
+class MemoryCache implements Cache {
+  final Map<String, dynamic> _data = {};
+
+  @override
+  dynamic get(String key) => _data[key];
+
+  @override
+  void set(String key, dynamic value) => _data[key] = value;
+
+  @override
+  void clear() => _data.clear();
 }
 
 class UserCache {
   void clearCache() {}
 }
 
-class DailyReport {
-  DailyReport(Database db);
+class DailyReport extends Report {
+  DailyReport([String? data]) : super(data ?? 'Daily data');
 }
 
 /// Storage implementation
 class InMemoryStorage extends Database {
   InMemoryStorage() : super(':memory:');
+}
+
+/// Secure storage stub
+class SecureStorage {
+  Future<String?> read(String key) async => 'stored_value';
+  Future<void> write(String key, String value) async {}
+  Future<void> delete(String key) async {}
 }
 
 /// Premium feature stub
@@ -1060,4 +1149,10 @@ class MockDbService {
 /// SyncService stub
 class SyncService {
   SyncService(ApiClient api, Database db, AuthService auth);
+}
+
+/// TypeRegistration stub
+class TypeRegistration {
+  final registrations = <dynamic>[];
+  final namedRegistrations = <String, dynamic>{};
 }

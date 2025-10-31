@@ -1,5 +1,4 @@
 import 'package:get_it/get_it.dart';
-import '_shared/stubs.dart';
 
 // #region example
 T registerSingleton<T>(
@@ -7,5 +6,6 @@ T registerSingleton<T>(
   String? instanceName,
   bool? signalsReady,
   DisposingFunc<T>? dispose,
-})
+}) =>
+    instance;
 // #endregion example

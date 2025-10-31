@@ -4,11 +4,13 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() {
-  abstract class ILogger {}
-  class FileLogger implements ILogger {}
-  class ConsoleLogger implements ILogger {}
+abstract class ILogger {}
 
+class FileLogger implements ILogger {}
+
+class ConsoleLogger implements ILogger {}
+
+void main() {
   // Approach 1: Multiple registrations with getAll()
   getIt.enableRegisteringMultipleInstancesOfOneType();
   getIt.registerSingleton<ILogger>(FileLogger());

@@ -14,10 +14,14 @@ class AuthService implements IAuthService {
 
 @injectable
 class UserRepository {
-  UserRepository(ApiClient client, AuthService auth);
+  UserRepository(ApiClient client, IAuthService auth);
 }
 
 // Generated code handles all registrations!
 @InjectableInit()
 void configureDependencies() => getIt.init();
+
+void main() {
+  configureDependencies();
+}
 // #endregion example

@@ -1,6 +1,3 @@
-import 'package:get_it/get_it.dart';
-import '_shared/stubs.dart';
-
 // #region example
-Future<void> reset({bool dispose = true});
+Future<void> reset({bool dispose = true}) async {}
 // #endregion example

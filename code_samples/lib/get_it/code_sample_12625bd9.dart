@@ -7,4 +7,5 @@ List<T> findAll<T>({
   bool includeMatchedByInstance = true,
   bool instantiateLazySingletons = false,
   bool callFactories = false,
-});
+}) =>
+    [];

@@ -3,4 +3,4 @@ void changeTypeInstanceName<T>({
   String? instanceName,
   required String newInstanceName,
   T? instance,
-})
+}) {}

@@ -28,5 +28,15 @@ class TenantManager {
       },
     );
   }
+
+  Future<TenantConfig> loadTenantConfig(String tenantId) async {
+    await Future.delayed(const Duration(milliseconds: 10));
+    return TenantConfig('tenant_db', 'api_key_123');
+  }
+}
+
+Future<Database> openTenantDatabase(String tenantId) async {
+  await Future.delayed(const Duration(milliseconds: 10));
+  return Database();
 }
 // #endregion example

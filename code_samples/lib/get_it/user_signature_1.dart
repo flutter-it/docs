@@ -4,7 +4,10 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
-void main() {
+void main() async {
+  final token = 'auth_token_123';
+  final user = GuestUser();
+
   // App startup - guest mode
   getIt.registerSingleton<User>(GuestUser());
   getIt.registerSingleton<Permissions>(GuestPermissions());

@@ -13,6 +13,15 @@ analyzer:
     - lib/get_it/code_sample_773e24bb.dart
     - lib/get_it/code_sample_f4194899.dart
     - lib/get_it/code_sample_fdab4a35.dart
+    # Function signature examples (no function body)
+    - lib/get_it/t_example.dart
+    - lib/get_it/t_example_1.dart
+    - lib/get_it/function_example.dart
+    - lib/get_it/function_example_1.dart
+    - lib/get_it/function_example_2.dart
+    - lib/get_it/reset_example.dart
+    - lib/get_it/release_instance_example.dart
+    - lib/get_it/reset_lazy_singletons_example.dart
 
   errors:
     # Be strict about actual errors

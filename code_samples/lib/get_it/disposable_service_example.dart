@@ -1,3 +1,6 @@
+// ignore_for_file: unused_import, unused_local_variable, unused_element, prefer_collection_literals, use_key_in_widget_constructors, use_super_parameters, invalid_use_of_visible_for_testing_member, depend_on_referenced_packages
+import 'dart:async';
+
 import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 
@@ -13,19 +16,16 @@ class DisposableService implements Disposable {
   }
 }
 
-test('services are disposed when scope is popped', () async {
+void main() async {
+  getIt.pushNewScope();
 
-void main() {
-    getIt.pushNewScope();
+  final service = DisposableService();
+  getIt.registerSingleton<DisposableService>(service);
 
-    final service = DisposableService();
-    getIt.registerSingleton<DisposableService>(service);
+  print('Before pop: ${service.disposed}'); // false
 
-    expect(service.disposed, false);
+  await getIt.popScope();
 
-    await getIt.popScope();
-
-    expect(service.disposed, true);
-  });
+  print('After pop: ${service.disposed}'); // true
 }
 // #endregion example

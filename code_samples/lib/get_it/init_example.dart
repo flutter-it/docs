@@ -1,12 +1,17 @@
+import 'dart:async';
 import 'package:get_it/get_it.dart';
-import '_shared/stubs.dart';
 
 // #region example
 class StreamingService implements ShadowChangeHandlers {
   StreamSubscription? _subscription;
+  final Stream<dynamic> dataStream = Stream.empty();
 
   void init() {
     _subscription = dataStream.listen(_handleData);
+  }
+
+  void _handleData(dynamic data) {
+    // Handle data
   }
 
   @override

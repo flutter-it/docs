@@ -5,7 +5,7 @@ final getIt = GetIt.instance;
 
 // #region example
 void main() {
-  test('factory creates new instance each time', () {
+  test('factory creates new instance each time', () async {
     getIt.pushNewScope();
 
     getIt.registerFactory<ShoppingCart>(() => ShoppingCart());

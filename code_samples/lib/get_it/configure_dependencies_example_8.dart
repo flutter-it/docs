@@ -15,7 +15,7 @@ void configureDependencies({bool testing = false}) {
   }
 
   // Shared registrations
-  getIt.registerLazySingleton<UserService>(() => UserServiceImpl(getIt()));
+  getIt.registerLazySingleton<UserServiceImpl>(() => UserServiceImpl(getIt()));
 }
 
 // In main.dart
@@ -25,7 +25,7 @@ void main() {
 }
 
 // In test
-void main() {
+void testMain() {
   setUpAll(() {
     configureDependencies(testing: true);
   });
