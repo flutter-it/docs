@@ -43,9 +43,9 @@ class ConfigService {
 class Database {
   Database([String? path]);
 
-  static Future<Database> connect() async {
+  static Future<Database> connect([String? connectionString]) async {
     await Future.delayed(const Duration(milliseconds: 10));
-    return Database();
+    return Database(connectionString);
   }
 
   Future<void> connectToDatabase() async {
