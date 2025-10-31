@@ -88,11 +88,19 @@ class ApiClient {
     return ApiClient();
   }
 
+  Future<User> login(String username, String password) async {
+    return User(id: '123', name: username, token: 'fake-token');
+  }
+
+  Future<Map<String, dynamic>> get(String endpoint,
+      {Map<String, String>? headers}) async {
+    return {'data': 'mock'};
+  }
+
   Future<void> authenticate() async {
     await Future.delayed(const Duration(milliseconds: 10));
   }
 
-  Future<Map<String, dynamic>> get(String endpoint) async => {};
   Future<void> close() async {}
 }
 
@@ -132,9 +140,10 @@ class UserRepository {
 
 /// User model stub
 class User {
-  User({required this.id, required this.name});
+  User({required this.id, required this.name, this.token});
   final String id;
   final String name;
+  final String? token;
 }
 
 /// Weather service stub
