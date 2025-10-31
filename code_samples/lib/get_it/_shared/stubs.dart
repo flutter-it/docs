@@ -840,7 +840,7 @@ class UserViewModel {
 }
 
 class ReportGenerator {
-  ReportGenerator(Database db);
+  ReportGenerator(dynamic param);
 }
 
 class MemoryCache {
