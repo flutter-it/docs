@@ -7,7 +7,7 @@ final getIt = GetIt.instance;
 // #region example
 void configureDependencies() {
   getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt()));
+  getIt.registerLazySingleton<AuthService>(() => AuthServiceImpl());
   getIt.registerLazySingleton<UserRepository>(() => UserRepository(getIt()));
   getIt.registerFactory<LoginViewModel>(() => LoginViewModel(getIt()));
 }
