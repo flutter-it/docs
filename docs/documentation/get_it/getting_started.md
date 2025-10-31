@@ -77,7 +77,7 @@ get_it offers three main registration types:
 <strong>Examples:</strong>
 
 
-<<< @/../code_samples/lib/get_it/configure_dependencies.dart
+<<< @/../code_samples/lib/get_it/configure_dependencies.dart#example
 
 <strong>Best practice:</strong> Use `registerSingleton()` if your object will be used anyway and doesn't require significant resources to create - it's the simplest approach. Only use `registerLazySingleton()` when you need to delay expensive initialization or for services not always needed.
 
