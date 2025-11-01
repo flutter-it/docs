@@ -1,5 +1,9 @@
 # listen_it
 
+::: info Work In Progress
+This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!
+:::
+
 Extension functions on `ValueListenable` that allows you to work with them almost as if it was a synchronous stream. Each extension function returns a new `ValueNotifier` that updates its value when the value of `this` changes. You can chain these functions to build complex processing pipelines from a simple `ValueListenable`.
 
 Here are some examples how to use it:

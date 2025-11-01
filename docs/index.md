@@ -66,7 +66,7 @@ Simple service locator that works anywhere in your app—no BuildContext, no Inh
 
 React to state changes without setState()—watch values and rebuild only what's needed. You'll almost never need a StatefulWidget anymore. Depends on get_it for service location.
 
-[Get started →](/documentation/watch_it/watch_it) | [Examples →](/examples/watch_it/watch_it)
+[Get started →](/documentation/watch_it/getting_started) | [Examples →](/examples/watch_it/watch_it)
 
 ---
 
@@ -75,7 +75,7 @@ React to state changes without setState()—watch values and rebuild only what's
 
 Commands that track execution, handle errors, and provide loading states automatically. Handle exceptions the smart way. Perfect for async operations.
 
-[Get started →](/documentation/command_it/command_it) | [Examples →](/examples/command_it/command_it)
+[Get started →](/documentation/command_it/getting_started) | [Examples →](/examples/command_it/command_it)
 
 ---
 

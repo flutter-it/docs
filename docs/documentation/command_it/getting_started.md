@@ -1,4 +1,9 @@
-# command_it
+# Getting Started with command_it
+
+::: info Work In Progress
+This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!
+:::
+
 [![codecov](https://codecov.io/gh/escamoteur/command_it/branch/master/graph/badge.svg)](https://codecov.io/gh/escamoteur/command_it)
 
 command_it is a way to manage your state based on `ValueListenable` and the `Command` design pattern. Sounds scary uh? Ok lets try it a different way. A `Command` is an object that wraps a function that can be executed by calling the command, therefore decoupling your UI from the wrapped function.
@@ -23,7 +28,7 @@ Let's start with the (in)famous counter example but by using a `Command`. As sai
 ```dart
 Command<TParam,TResult>
 ```
-at which `TParam` is the type of the parameter which the wrapped function expects as argument and `TResult` is the type of the result of it, which means the `Command` behaves like a `ValueNotifier<TResult>`. 
+at which `TParam` is the type of the parameter which the wrapped function expects as argument and `TResult` is the type of the result of it, which means the `Command` behaves like a `ValueNotifier<TResult>`.
 
 ### A Command always notifies (by default)
 A `Command` by default will always notify changes unlike, `ValueNotifier` which only notifies its listeners when the value it holds changes. This behavior is opted to enable the widgets to always rebuild whenever a command is executed. If you prefer the Command to behave exactly like a `ValueNotifier` then the default behaviour can be turned of by setting the `notifyOnlyWhenValueChanges` parameter to `true`.
@@ -33,7 +38,7 @@ In the included project `counter_example` the command is defined as:
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
   int counter = 0;
-  /// This command does not expect any parameters when called therefore TParam 
+  /// This command does not expect any parameters when called therefore TParam
   /// is void and publishes its results as String
   Command<void, String> _incrementCounterCommand;
 
@@ -45,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 ```
 
-To create a `Command` the `Command` class [offers](#how-to-create-commands) different static functions depending on the signature of the wrapped function. In this case we want to use a synchronous function without any parameters.
+To create a `Command` the `Command` class [offers](command_types.md) different static functions depending on the signature of the wrapped function. In this case we want to use a synchronous function without any parameters.
 
 Our widget tree now looks like this:
 
@@ -84,11 +89,11 @@ As `Command` is a [callable class](https://dart.dev/guides/language/language-tou
 ## Commands in full power mode
 So far the command did not do more than what you could do with BLoC, besides that you could call it like a function and didn't need a Stream. But `Command` can do more than that. It allows us to:
 
-* Update the UI based on if the `Command` is executing 
+* Update the UI based on if the `Command` is executing
 * React on Exceptions in the wrapped functions
 * Control when a `Command` can be executed
 
-Let's explore this features by examining the included `example` app which queries an open weather service and displays a list of cities with the current weather. 
+Let's explore this features by examining the included `example` app which queries an open weather service and displays a list of cities with the current weather.
 
 ![](https://github.com/escamoteur/command_it/blob/master/misc/screen_shot_example.png)
 
@@ -106,7 +111,7 @@ updateWeatherCommand = Command.createAsync<String, List<WeatherEntry>>(
     update, // Wrapped function
     [],     // Initial value
     restriction: setExecutionStateCommand, //please ignore for the moment
-)   
+)
 ```
 
 `update` is the asynchronous function that queries the weather service, therefore we create an async version of `Command` using the `createAsync` constructor.
@@ -129,7 +134,7 @@ class WeatherListView extends StatelessWidget {
 ```
 
 ### Reacting on changes of the function execution state
-`Command` has a property 
+`Command` has a property
 
 ```dart
 ValueListenable<bool> isExecuting;
@@ -173,7 +178,7 @@ Command<String, String> textChangedCommand;
 // Will be called on every change of the searchfield
 textChangedCommand = Command.createSync((s) => s, '');
 
-// 
+//
 // make sure we start processing only if the user make a short pause typing
 textChangedCommand.debounce(Duration(milliseconds: 500)).listen(
     (filterText, _) {
@@ -249,46 +254,6 @@ child: ValueListenableBuilder<bool>(
   },
 ),
 ```
-### Error Handling
-If the wrapped function inside a `Command` throws an `Exception` the `Command` catches it so your App won't crash.
-Instead it will wrap the caught error together with the value that was passed when the command was executed in a `CommandError` object and assign it to the `Command's` `thrownExeceptions` property which is a `ValueListenable<CommandError>`.
-So to react on occurring error you can register your handler with `addListener` or use my `listen` extension function from `listen_it` as it is done in the example:
-
-```dart
-/// in HomePage.dart
-@override
-void didChangeDependencies() {
-  errorSubscription ??= weatherManager
-      .updateWeatherCommand
-      .errors
-      .where((x) => x != null) // filter out the error value reset
-      .listen((error, _) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: const Text('An error has occured!'),
-              content: Text(error.toString()),
-            ));
-  });
-  super.didChangeDependencies();
-}
-```
-Unfortunately its not possible to reset the value of a `ValueNotifier` without triggering its listeners. So if you have registered a listener you will get it called at every start of a `Command` execution with a value of `null` and clear all previous errors. If you use `listen_it` you can do it easily by using the `where` extension.
-
-### Error handling the fine print
-You can tweak the behaviour of the error handling by passing a `catchAlways` parameter to the factory functions. If you pass `false` Exceptions will only be caught if there is a listener on `errors` or on `results` (see next chapter). You can also change the default behaviour of all `Command` in your app by changing the value of the `catchAlwaysDefault` property. During development its a good idea to set it to `false` to find any non handled exception. In production, setting it to `true` might be the better decision to prevent hard crashes. Note that `catchAlwaysDefault` property will be implicitly ignored if the `catchAlways` parameter for a command is set.
-
-`Command` also offers a static global Exception handler:
-
-```dart
-static void Function(String commandName, CommandError<Object> error) globalExceptionHandler;
-```
-If you assign a handler function to it, it will be called for all Exceptions thrown by any `Command` in your app independent of the value of `catchAlways` if the `Command` has no listeners on `errors` or on `results`.
-
-The overall work flow of exception handling in command_it is depicted in the following diagram.
-
- ![](https://github.com/escamoteur/command_it/blob/master/misc/exception_handling.png)
-
 
 ## Getting all data at once
 `isExecuting` and `errors` are great properties but what if you don't want to use separate `ValueListenableBuilders` for each of them plus one for the data?
@@ -309,10 +274,10 @@ class CommandResult<TParam, TResult> {
   final Object error;
   final bool isExecuting;
 
-  bool get isSuccsess => !hasError && !isExecuting; 
+  bool get isSuccsess => !hasError && !isExecuting;
   bool get hasData => data != null;
   bool get hasError => error != null;
-  
+
 
   /// This is a stripped down version of the class. Please see the source
 }
@@ -354,142 +319,6 @@ Even if you use `results` the other properties are updated as before, so you can
 
 If you want to be able to always display data (while loading or in case of an error) you can pass `includeLastResultInCommandResults=true`, the last successful result will be included as `data` unless a new result is available.
 
-### CommandBuilder, reducing boilerplate
-`command_it` includes a `CommandBuilder` widget which makes the code above a bit nicer:
-
-```dart
-child: CommandBuilder<String, List<WeatherEntry>>(
-  command: weatherManager.updateWeatherCommand,
-  whileExecuting: (context, _) => Center(
-    child: SizedBox(
-      width: 50.0,
-      height: 50.0,
-      child: CircularProgressIndicator(),
-    ),
-  ),
-  onData: (context, data, _) => WeatherListView(data),
-  onError: (context, error, param) => Column(
-    children: [
-      Text('An Error has occurred!'),
-      Text(error.toString()),
-      if (error != null) Text('For search term: $param')
-    ],
-  ),
-),
-```
-
-In case your Command does not return a value you can use the `onSuccess` builder.
-
-
-### toWidget() extension method on Command Result
-I you are using a package `get_it_mixin`, `provider` or `flutter_hooks` you probably don't want to use the `CommandBuilder` for you there is an extension method for the `CommandResult` type that you can use like this:
-
-```dart
-return result.toWidget(
-  whileExecuting: (lastValue, _) => Center(
-    child: SizedBox(
-      width: 50.0,
-      height: 50.0,
-      child: CircularProgressIndicator(),
-    ),
-  ),
-  onResult: (data, _) => WeatherListView(data),
-  onError: (error, lastValue, paramData) => Column(
-    children: [
-      Text('An Error has occurred!'),
-      Text(result.error.toString()),
-      if (result.error != null)
-        Text('For search term: ${result.paramData}')
-    ],
-  ),
-);
-```                  
-
-## How to create Commands
-´Command´ offers different static factory functions for the different function types you want to wrap:
-
-```dart
-  /// for syncronous functions with no parameter and no result
-  static Command<void, void> createSyncNoParamNoResult(
-    void Function() action, {
-    ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  }) 
-  /// for syncronous functions with one parameter and no result
-  static Command<TParam, void> createSyncNoResult<TParam>(
-    void Function(TParam x) action, {
-    ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  }) 
-  /// for syncronous functions with no parameter and but a result
-  static Command<void, TResult> createSyncNoParam<TResult>(
-    TResult Function() func,
-    TResult initialValue, {
-    ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
-    bool includeLastResultInCommandResults = false,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  })
-  /// for syncronous functions with one parameter and result
-  static Command<TParam, TResult> createSync<TParam, TResult>(
-    TResult Function(TParam x) func,
-    TResult initialValue, {
-    ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
-    bool includeLastResultInCommandResults = false,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  }) 
-
-  /// and for Async functions:
-  static Command<void, void> createAsyncNoParamNoResult(
-    Future Function() action, {
-    ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  }) 
-  static Command<TParam, void> createAsyncNoResult<TParam>(
-    Future Function(TParam x) action, {
-    ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  }) 
-  static Command<void, TResult> createAsyncNoParam<TResult>(
-    Future<TResult> Function() func,
-    TResult initialValue, {
-    ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
-    bool includeLastResultInCommandResults = false,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  })
-  static Command<TParam, TResult> createAsync<TParam, TResult>(
-    Future<TResult> Function(TParam x) func,
-    TResult initialValue, {
-    ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
-    bool includeLastResultInCommandResults = false,
-    bool? catchAlways,
-    bool notifyOnlyWhenValueChanges = false,
-    String? debugName,
-  })
-  ```
-  For detailed information on the parameters of these functions consult the API docs or the source code documentation.
-
 ## Reacting on Functions with no results
   Even if your wrapped function doesn't return a value, you can react on the end of the function execution by registering a listener to the `Command`. The command Value will be void but your handler is ensured to be called.
 
@@ -498,7 +327,7 @@ As described above you can pass in a `ValueListenable<bool>` named `restriction`
 This can be nicely used to push a login screen in the case described above.
 
 ## Logging
-If you are not sure what's going on in your App you can register an handler function to 
+If you are not sure what's going on in your App you can register an handler function to
 
 ```dart
 static void Function(String commandName, CommandResult result) loggingHandler;
@@ -507,7 +336,7 @@ It will get executed on every `Command` execution in your App. `commandName` is 
 
 ## Awaiting Commands
 In general you shouldn't await a command as it goes against the reactive philosophy. Your UI should react to the result of the command by "listening" to one of its `ValueListenable` interfaces.
-In case you really need to await the completion of a command you can use the `executeWithFuture()` function of the Command. `executeWithFuture` starts the execution of the Command and returns a `Future<T>` that completes when the function that it wraps. 
+In case you really need to await the completion of a command you can use the `executeWithFuture()` function of the Command. `executeWithFuture` starts the execution of the Command and returns a `Future<T>` that completes when the function that it wraps.
 
 The main reason that this function exists is that you can use `RefreshIndicator` directly with a command like:
 

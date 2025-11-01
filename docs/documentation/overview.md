@@ -24,13 +24,13 @@ Simple service locator for dependency injection in Flutter applications.
 Reactive state management with automatic dependency tracking.
 
 **Documentation:**
-- [watch_it](/documentation/watch_it/watch_it.md) - Complete guide to watch_it
+- [Getting Started](/documentation/watch_it/getting_started.md) - Complete guide to watch_it
 
 ### ✋ command_it
 Command pattern implementation for Flutter applications.
 
 **Documentation:**
-- [command_it](/documentation/command_it/command_it.md) - Complete guide to command_it
+- [Getting Started](/documentation/command_it/getting_started.md) - Complete guide to command_it
 
 ### 👂 listen_it
 Event-driven architecture with easy event listening and dispatching.
@@ -44,7 +44,7 @@ If you're new to flutter_it, we recommend starting with:
 
 1. **[What to do with which package?](/getting_started/what_to_do_with_which_package.md)** - Understand which package to use for what
 2. **[get_it Getting Started](/documentation/get_it/getting_started.md)** - Learn the fundamentals of dependency injection
-3. **[watch_it](/documentation/watch_it/watch_it.md)** - Learn reactive state management
+3. **[watch_it Getting Started](/documentation/watch_it/getting_started.md)** - Learn reactive state management
 
 ## Examples
 
