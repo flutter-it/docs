@@ -19,3 +19,18 @@ html:not(.dark) .diagram-dark {
 html:not(.dark) .diagram-light {
   display: block;
 }
+
+/* Full-width diagrams matching content width */
+.diagram-dark,
+.diagram-light {
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.diagram-dark img,
+.diagram-light img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

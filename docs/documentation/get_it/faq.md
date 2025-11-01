@@ -149,7 +149,7 @@ Or use unnamed multiple registrations (see [Multiple Registrations documentation
 
 <<< @/../code_samples/lib/get_it/logger.dart#example
 
-<strong>Best practice:</strong> Start with `registerLazySingleton()` by default. Only use `registerSingleton()` when you specifically need immediate initialization.
+<strong>How to choose:</strong> Use `registerSingleton()` for fast-to-create services needed at startup. Use `registerLazySingleton()` for expensive-to-create services or those not always needed. Most app services fall into one category or the other based on their initialization cost.
 :::
 
 ## What's the difference between Factory and Singleton?

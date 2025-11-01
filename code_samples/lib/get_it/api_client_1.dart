@@ -4,35 +4,31 @@ import '_shared/stubs.dart';
 final getIt = GetIt.instance;
 
 // #region example
+// Service under test - uses get_it directly when accessing dependencies
+class SyncService {
+  Future<void> syncData() async {
+    if (!getIt<AuthService>().isAuthenticated) return;
+    final data = await getIt<ApiClient>().fetchData();
+    await getIt<Database>().save(data);
+  }
+}
+
 void main() {
-  test('complex service uses all dependencies correctly', () async {
+  test('SyncService uses mocked dependencies', () async {
     getIt.pushNewScope();
 
-    // Mock all dependencies
-    final mockApi = MockApiClient();
-    final mockDb = MockDatabase();
-    final mockAuth = MockAuthService();
+    // Register mocks - SyncService will get these via getIt<Type>()
+    getIt.registerSingleton<AuthService>(MockAuthService()..isAuthenticated = true);
+    getIt.registerSingleton<ApiClient>(MockApiClient()..mockData = {'data': 'value'});
+    getIt.registerSingleton<Database>(MockDatabase());
 
-    // Configure mocks directly
-    mockAuth.isAuthenticated = true;
-    mockApi.mockData = {'data': 'value'};
+    // Service under test uses get_it to access mocks
+    final sync = SyncService();
+    await sync.syncData();
 
-    getIt.registerSingleton<ApiClient>(mockApi);
-    getIt.registerSingleton<Database>(mockDb);
-    getIt.registerSingleton<AuthService>(mockAuth);
-
-    // Service under test (uses real implementation)
-    getIt.registerLazySingleton<SyncService>(() => SyncService(
-          getIt<ApiClient>(),
-          getIt<Database>(),
-          getIt<AuthService>(),
-        ));
-
-    final sync = getIt<SyncService>();
-    print('sync: $sync');
-    // Test sync behavior...
+    // Test assertions would go here...
 
     await getIt.popScope();
   });
+  // #endregion example
 }
-// #endregion example
