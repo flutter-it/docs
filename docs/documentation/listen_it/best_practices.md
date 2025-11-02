@@ -24,17 +24,13 @@ Creating chains inline in build methods creates a **new chain on every rebuild**
 
 Never create chains inline in build methods:
 
+#### Build Method Inline
+
+<<< @/../code_samples/lib/listen_it/chain_incorrect_pattern.dart#build_inline
+
 #### ValueListenableBuilder Inline
 
 <<< @/../code_samples/lib/listen_it/chain_incorrect_pattern.dart#valueListenableBuilder_inline
-
-#### Builder Function Inline
-
-<<< @/../code_samples/lib/listen_it/chain_incorrect_pattern.dart#builder_inline
-
-#### StatefulWidget Build
-
-<<< @/../code_samples/lib/listen_it/chain_incorrect_pattern.dart#stateful_build
 
 **Why this is wrong:**
 - New chain created on **every rebuild**
@@ -44,15 +40,20 @@ Never create chains inline in build methods:
 
 ### ✅ CORRECT: Create Chains Once
 
-Create chains outside build methods, ensuring they're created only once:
+Create chains ensuring they're created only once. Here are three safe approaches:
 
 <<< @/../code_samples/lib/listen_it/chain_correct_pattern.dart#example
 
-**Why this works:**
-- Chain created **once** (in constructor or as late final field)
-- Same chain object reused on every rebuild
+**Why these work:**
+- **Option 1**: Chain created once in `initState()` (not in constructor, which runs on every rebuild!)
+- **Option 2**: `createOnce()` ensures chain is only created once even though it's in build
+- **Option 3**: Chain lives in your data layer (recommended for larger apps)
+- All options reuse the same chain object on every rebuild
 - No memory leaks
-- Proper lifecycle management
+
+::: warning Don't Create in Constructor
+Never create chains in a StatelessWidget constructor or as field initializers - the constructor runs on **every rebuild**, causing the same memory leak as creating in build!
+:::
 
 ### ✅ RECOMMENDED: Use watch_it
 
@@ -70,25 +71,97 @@ The safest approach is using watch_it v2.0+, which provides automatic selector c
 
 ## Disposal
 
-### When to Dispose Chains
+### Understanding Chain Garbage Collection
 
-Operator chains implement `ChangeNotifier` and **must be disposed** when no longer needed:
+**Key Finding**: Chains create circular references with their source, but Dart's garbage collector handles this correctly when the entire cycle becomes unreachable from GC roots.
 
-- ✅ **StatefulWidget**: Dispose in `dispose()` method
-- ✅ **Model classes**: Dispose in model's `dispose()` method
-- ✅ **Manual subscriptions**: Cancel subscription and dispose chain
-- ❌ **StatelessWidget**: Can't dispose (use watch_it or move chain outside widget)
-- ❌ **watch_it**: Automatic disposal (don't manually dispose)
+**How it works**:
+- Chains register as listeners on their source (hot subscription model)
+- This creates a circular reference: `source → listener → chain → source`
+- When the containing object (widget state, service, etc.) becomes unreachable, **the entire cycle is automatically garbage collected**
+- No manual chain disposal needed in most cases!
 
-### StatefulWidget Disposal
+### When Chain Disposal is NOT Needed
 
-<<< @/../code_samples/lib/listen_it/chain_disposal.dart#stateful_disposal
+**✅ You DON'T need to dispose chains when:**
 
-### Model Class Disposal
+1. **The source is owned by the same object as the chain**
+   ```dart
+   class CounterService {
+     final source = ValueNotifier<int>(0);
+     late final doubled = source.map((x) => x * 2);
 
-<<< @/../code_samples/lib/listen_it/chain_disposal.dart#model_disposal
+     void dispose() {
+       source.dispose(); // Only dispose source
+       // Chain is GC'd automatically when service becomes unreachable
+     }
+   }
+   ```
+
+2. **Chain and source in different objects that both can be GC'd**
+   ```dart
+   class DataSource {
+     final data = ValueNotifier<int>(0);
+     void dispose() => data.dispose();
+   }
+
+   class DataProcessor {
+     final DataSource source;
+     late final processed = source.data.map((x) => x * 2);
+
+     DataProcessor(this.source);
+
+     // No chain disposal needed - when both DataProcessor AND DataSource
+     // become unreachable, the entire cycle is GC'd automatically
+   }
+   ```
+
+   **⚠️ CAREFUL**: This only works if **both objects** (the one owning the chain AND the one owning the source) can be garbage collected together. If the source is kept alive elsewhere (like in get_it), you must manually dispose the chain!
+
+3. **Using watch_it** - automatic lifecycle management
+
+**Why it's safe**: When the entire object graph (containing object + source + chain) becomes unreachable from GC roots, Dart's garbage collector traces reachability and collects everything in the cycle automatically.
+
+### When You SHOULD Dispose the Source
+
+**✅ Always dispose the source ValueNotifier to:**
+- Stop handlers from being called
+- Free resources held by the source
+- Follow proper resource management
+
+```dart
+class MyService {
+  final counter = ValueNotifier<int>(0);
+  late final doubled = counter.map((x) => x * 2);
+
+  void dispose() {
+    counter.dispose(); // Stops notifications and frees resources
+  }
+}
+```
+
+### Exception: Long-Lived Sources
+
+**⚠️ Only dispose chains manually if:**
+- The source is registered in get_it or another service locator
+- The source is kept alive longer than the chain should be
+- You need to break the listener connection explicitly
+
+```dart
+class TemporaryViewModel {
+  final globalSource = getIt<ValueNotifier<int>>(); // Long-lived source
+  late final chain = globalSource.map((x) => x * 2);
+
+  void dispose() {
+    // Source stays alive in get_it, so manually remove chain listener
+    (chain as ChangeNotifier).dispose();
+  }
+}
+```
 
 ### Subscription Disposal
+
+Always cancel subscriptions created with `.listen()`:
 
 <<< @/../code_samples/lib/listen_it/chain_disposal.dart#subscription_disposal
 

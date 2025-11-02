@@ -6,6 +6,19 @@ The `where()` operator filters values based on a predicate function, only propag
 
 Creates a filtered ValueListenable that only notifies when values pass the predicate test.
 
+### Signature
+
+```dart
+ValueListenable<T> where(
+  bool Function(T) selector, {
+  T? fallbackValue,
+})
+```
+
+**Parameters:**
+- `selector` - Predicate function that determines if a value should propagate
+- `fallbackValue` - Optional fallback value to use as initial value if current value doesn't pass the predicate
+
 ### Basic Usage
 
 <<< @/../code_samples/lib/listen_it/where_filter.dart#example
@@ -106,22 +119,107 @@ onlyEven = false;
 numbers.value = 5; // Passes
 ```
 
-::: warning Caveat
-The initial value always passes through the filter without being checked against the predicate. The filter only applies to subsequent value changes.
+### Initial Value Behavior
+
+By default, if the current source value doesn't pass the predicate, it still becomes the initial value:
 
 ```dart
 final numbers = ValueNotifier<int>(1); // Odd number
 
 final evenNumbers = numbers.where((n) => n.isEven);
 
-print(evenNumbers.value); // 1 (initial value passed through!)
+print(evenNumbers.value); // 1 (initial value, even though it's odd!)
 
 numbers.value = 2; // Passes filter (even)
 numbers.value = 3; // Blocked (odd)
 print(evenNumbers.value); // Still 2
 ```
 
-For this reason, `where()` is not recommended inside widget trees with `setState` that recreate the chain, as the current source value would pass through on each rebuild regardless of the predicate.
+### Using fallbackValue
+
+To handle cases where the initial value doesn't pass the predicate, provide a `fallbackValue`:
+
+```dart
+final numbers = ValueNotifier<int>(1); // Odd number
+
+// Provide fallback for when initial value doesn't pass
+final evenNumbers = numbers.where(
+  (n) => n.isEven,
+  fallbackValue: 0,  // Use 0 if current value is odd
+);
+
+print(evenNumbers.value); // 0 (fallback used!)
+
+numbers.value = 2; // Passes filter (even)
+print(evenNumbers.value); // 2
+
+numbers.value = 3; // Blocked (odd)
+print(evenNumbers.value); // Still 2 (not 0 - fallback only used at creation)
+```
+
+### Practical fallbackValue Examples
+
+::: details Search Input with Minimum Length
+
+```dart
+final searchTerm = ValueNotifier<String>('');
+
+// Use empty string as fallback when search term is too short
+final validSearchTerm = searchTerm.where(
+  (term) => term.length >= 3,
+  fallbackValue: '',
+);
+
+validSearchTerm
+    .debounce(Duration(milliseconds: 300))
+    .listen((term, _) {
+      if (term.isEmpty) {
+        clearSearchResults();
+      } else {
+        performSearch(term);
+      }
+    });
+```
+:::
+
+::: details Age Validation
+
+```dart
+final userAge = ValueNotifier<int>(0);
+
+// Use 0 as fallback for invalid ages
+final adultAge = userAge.where(
+  (age) => age >= 18,
+  fallbackValue: 0,
+);
+
+adultAge.listen((age, _) {
+  if (age == 0) {
+    showMessage('Must be 18 or older');
+  } else {
+    enableFeature();
+  }
+});
+```
+:::
+
+::: details Temperature Alerts
+
+```dart
+final temperature = ValueNotifier<double>(20.0);
+
+// Use safe temp as fallback
+final dangerousTemp = temperature.where(
+  (temp) => temp > 35.0 || temp < 5.0,
+  fallbackValue: 20.0,  // Normal temp
+);
+
+dangerousTemp.listen((temp, _) {
+  if (temp != 20.0) {
+    showTemperatureAlert(temp);
+  }
+});
+```
 :::
 
 ### Chaining with Other Operators
@@ -174,10 +272,26 @@ Search input with minimum length requirement:
 ```dart
 final searchTerm = ValueNotifier<String>('');
 
+// Without fallbackValue (backward compatible)
 searchTerm
     .where((term) => term.length >= 3)     // At least 3 characters
     .debounce(Duration(milliseconds: 300))  // Wait for typing pause
     .listen((term, _) => performSearch(term));
+
+// With fallbackValue (recommended for cleaner logic)
+searchTerm
+    .where(
+      (term) => term.length >= 3,
+      fallbackValue: '',  // Clear indicator when no search
+    )
+    .debounce(Duration(milliseconds: 300))
+    .listen((term, _) {
+      if (term.isEmpty) {
+        clearResults();
+      } else {
+        performSearch(term);
+      }
+    });
 ```
 
 ## Next Steps
