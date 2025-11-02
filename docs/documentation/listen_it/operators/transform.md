@@ -29,9 +29,12 @@ print(stringNotifier.value); // "Value: 42"
 ::: details Format Values for Display
 
 ```dart
+import 'package:intl/intl.dart';
+
 final priceNotifier = ValueNotifier<double>(19.99);
 
-final formattedPrice = priceNotifier.map((price) => '\$$price');
+final formatter = NumberFormat.currency(symbol: '\$');
+final formattedPrice = priceNotifier.map((price) => formatter.format(price));
 
 ValueListenableBuilder<String>(
   valueListenable: formattedPrice,

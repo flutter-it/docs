@@ -3,12 +3,13 @@ import '_shared/stubs.dart';
 
 // #region example
 class TodoListWidget extends StatelessWidget {
-  final todos = ListNotifier<String>(data: []);
+  const TodoListWidget(this.todos, {super.key});
 
-  TodoListWidget({super.key});
+  final ListNotifier<String> todos;
 
   @override
   Widget build(BuildContext context) {
+    // ListNotifier's value type is List<String>, not ListNotifier<String>
     return ValueListenableBuilder<List<String>>(
       valueListenable: todos,
       builder: (context, items, _) {
@@ -16,10 +17,6 @@ class TodoListWidget extends StatelessWidget {
           itemCount: items.length,
           itemBuilder: (context, index) => ListTile(
             title: Text(items[index]),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () => todos.removeAt(index),
-            ),
           ),
         );
       },

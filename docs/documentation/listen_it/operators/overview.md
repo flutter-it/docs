@@ -82,23 +82,23 @@ React to value changes:
 All operators follow a similar pattern:
 
 ```dart
-final source = ValueNotifier<T>(initialValue);
+final source = ValueNotifier<int>(0);
 
 // Create operator chain
 final transformed = source
-    .operator1(args)
-    .operator2(args)
-    .operator3(args);
+    .where((x) => x > 0)
+    .map<String>((x) => x.toString())
+    .debounce(Duration(milliseconds: 300));
 
 // Use with ValueListenableBuilder
-ValueListenableBuilder<T>(
+ValueListenableBuilder<String>(
   valueListenable: transformed,
-  builder: (context, value, _) => Widget(),
+  builder: (context, value, _) => Text(value),
 );
 
 // Or install a listener
 transformed.listen((value, subscription) {
-  // React to value changes
+  print('Value changed to: $value');
 });
 ```
 

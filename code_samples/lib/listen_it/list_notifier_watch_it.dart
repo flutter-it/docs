@@ -10,7 +10,6 @@ class TodoListWidget extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
-    // watch() automatically rebuilds when the list changes
     final items = watch(todos).value;
 
     return ListView.builder(

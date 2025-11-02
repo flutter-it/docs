@@ -33,7 +33,7 @@ dependencies:
 Lets you work with a `ValueListenable` (and `Listenable`) as it should be by installing a handler function that is called on any value change and gets the new value passed as an argument. **This gives you the same pattern as with Streams**, making it natural and consistent.
 
 ```dart
-// For ValueListenable\<T\>
+// For ValueListenable<T>
 ListenableSubscription listen(
   void Function(T value, ListenableSubscription subscription) handler
 )
@@ -63,6 +63,25 @@ For regular `Listenable` (not `ValueListenable`), the handler only receives the 
 - **Multiple handlers** - Install multiple independent handlers on the same Listenable
 :::
 
+### ValueListenable Operators
+
+Chain operators together to transform and react to value changes:
+
+<<< @/../code_samples/lib/listen_it/chain_operators.dart#example
+
+#### Available Operators
+
+| Operator | Category | Description |
+|----------|----------|-------------|
+| [**listen()**](/documentation/listen_it/operators/overview#listening) | Listening | Install handlers that react to changes (Stream-like pattern) |
+| [**map()**](/documentation/listen_it/operators/transform) | Transformation | Transform values to different types |
+| [**select()**](/documentation/listen_it/operators/transform) | Transformation | React only when specific properties change |
+| [**where()**](/documentation/listen_it/operators/filter) | Filtering | Filter which values propagate |
+| [**debounce()**](/documentation/listen_it/operators/time) | Time-Based | Delay notifications until changes stop |
+| [**async()**](/documentation/listen_it/operators/time) | Time-Based | Defer updates to next frame |
+| [**combineLatest()**](/documentation/listen_it/operators/combine) | Combining | Merge 2-6 ValueListenables |
+| [**mergeWith()**](/documentation/listen_it/operators/combine) | Combining | Combine value changes from multiple sources |
+
 ### Reactive Collections
 
 Reactive versions of List, Map, and Set that implement ValueListenable and automatically notify listeners on mutations:
@@ -77,32 +96,15 @@ Or with `watchValue` from [watch_it](/documentation/watch_it/getting_started) fo
 
 <<< @/../code_samples/lib/listen_it/list_notifier_watch_it.dart#example
 
-### ValueListenable Operators
+#### Choosing the Right Collection
 
-Chain operators together to transform and react to value changes:
-
-<<< @/../code_samples/lib/listen_it/chain_operators.dart#example
-
-## Available Operators
-
-| Operator | Category | Description |
-|----------|----------|-------------|
-| [**listen()**](/documentation/listen_it/operators/overview#listening) | Listening | Install handlers that react to changes (Stream-like pattern) |
-| [**map()**](/documentation/listen_it/operators/transform) | Transformation | Transform values to different types |
-| [**select()**](/documentation/listen_it/operators/transform) | Transformation | React only when specific properties change |
-| [**where()**](/documentation/listen_it/operators/filter) | Filtering | Filter which values propagate |
-| [**debounce()**](/documentation/listen_it/operators/time) | Time-Based | Delay notifications until changes stop |
-| [**async()**](/documentation/listen_it/operators/time) | Time-Based | Defer updates to next frame |
-| [**combineLatest()**](/documentation/listen_it/operators/combine) | Combining | Merge 2-6 ValueListenables |
-| [**mergeWith()**](/documentation/listen_it/operators/combine) | Combining | Combine value changes from multiple sources |
+| Collection | Use When | Example Use Cases |
+|------------|----------|-------------------|
+| **ListNotifier\<T\>** | Order matters, duplicates allowed | Todo lists, chat messages, search history |
+| **MapNotifier\<K,V\>** | Need key-value lookups | User preferences, caches, form data |
+| **SetNotifier\<T\>** | Unique items only, fast membership tests | Selected item IDs, active filters, tags |
 
 ## When to Use What
-
-### Use Reactive Collections When:
-- ✅ You need a List, Map, or Set that notifies listeners on mutations
-- ✅ You want automatic UI updates without manual `notifyListeners()` calls
-- ✅ You're building reactive lists, caches, or sets in your UI layer
-- ✅ You want to batch multiple operations into a single notification
 
 ### Use ValueListenable Operators When:
 - ✅ You need to transform values (map, select)
@@ -111,13 +113,11 @@ Chain operators together to transform and react to value changes:
 - ✅ You need to combine multiple ValueListenables
 - ✅ You're building data transformation pipelines
 
-### Choosing the Right Collection
-
-| Collection | Use When | Example Use Cases |
-|------------|----------|-------------------|
-| **ListNotifier\<T\>** | Order matters, duplicates allowed | Todo lists, chat messages, search history |
-| **MapNotifier\<K,V\>** | Need key-value lookups | User preferences, caches, form data |
-| **SetNotifier\<T\>** | Unique items only, fast membership tests | Selected item IDs, active filters, tags |
+### Use Reactive Collections When:
+- ✅ You need a List, Map, or Set that notifies listeners on mutations
+- ✅ You want automatic UI updates without manual `notifyListeners()` calls
+- ✅ You're building reactive lists, caches, or sets in your UI layer
+- ✅ You want to batch multiple operations into a single notification
 
 ## Key Concepts
 
@@ -146,14 +146,54 @@ Operators create transformation chains:
 
 ## CustomValueNotifier
 
-A ValueNotifier with configurable notification behavior:
+A ValueNotifier with configurable notification behavior and modes.
+
+### Constructor
+
+```dart
+CustomValueNotifier<T>(
+  T initialValue, {
+  CustomNotifierMode mode = CustomNotifierMode.normal,
+  bool asyncNotification = false,
+  void Function(Object error, StackTrace stackTrace)? onError,
+})
+```
+
+**Parameters:**
+- `initialValue` - The initial value
+- `mode` - Notification mode (default: `CustomNotifierMode.normal`)
+- `asyncNotification` - If true, notifications are deferred asynchronously to avoid setState-during-build issues
+- `onError` - Optional error handler called when a listener throws an exception. If not provided, exceptions are reported via `FlutterError.reportError()`
+
+### Basic Usage
 
 <<< @/../code_samples/lib/listen_it/custom_value_notifier.dart#example
 
-CustomValueNotifier supports three modes:
-- **normal** (default) - Only notifies when value actually changes
+### Notification Modes
+
+CustomValueNotifier supports three modes via the `CustomNotifierMode` enum:
+
+- **normal** (default for CustomValueNotifier) - Only notifies when value actually changes using `==` comparison
 - **always** - Notifies on every assignment, even if value is the same
 - **manual** - Only notifies when you explicitly call `notifyListeners()`
+
+```dart
+final counter = CustomValueNotifier<int>(
+  0,
+  mode: CustomNotifierMode.normal,  // default
+);
+
+counter.value = 0;  // ❌ No notification (value unchanged)
+counter.value = 1;  // ✅ Notifies (value changed)
+```
+
+::: tip Different Defaults
+**CustomValueNotifier** defaults to `normal` mode to be a **drop-in replacement for ValueNotifier**, which only notifies when the value actually changes using `==` comparison.
+
+**Reactive Collections** (ListNotifier, MapNotifier, SetNotifier) default to `always` mode to ensure UI updates on every operation, even when objects don't override `==`.
+
+[Learn more about notification modes →](/documentation/listen_it/collections/notification_modes)
+:::
 
 ## Real-World Example
 

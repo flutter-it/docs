@@ -1,8 +1,12 @@
 // Stub classes used across listen_it code samples
 
+import 'package:flutter/material.dart';
+
 // Export commonly used packages so examples can just import stubs.dart
 export 'package:flutter/foundation.dart';
+export 'package:flutter/material.dart';
 export 'package:listen_it/listen_it.dart';
+export 'package:watch_it/watch_it.dart';
 
 // User model for select() examples
 class User {
@@ -78,6 +82,33 @@ class StringIntWrapper {
 
   @override
   String toString() => '$s:$i';
+}
+
+// Todo and TodoTile for transaction examples
+class Todo {
+  final String id;
+  final String title;
+  final bool completed;
+
+  Todo({required this.id, required this.title, this.completed = false});
+
+  @override
+  String toString() => 'Todo($title${completed ? " ✓" : ""})';
+}
+
+class TodoTile extends StatelessWidget {
+  final Todo todo;
+
+  const TodoTile(this.todo, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      key: ValueKey(todo.id),
+      title: Text(todo.title),
+      leading: Checkbox(value: todo.completed, onChanged: (_) {}),
+    );
+  }
 }
 
 // Mock API functions
