@@ -27,6 +27,7 @@ export default defineConfig({
     sidebar: [
       {
         text: 'Getting Started',
+        collapsed: false,
         items: [
           { text: 'What to do with which package', link: '/getting_started/what_to_do_with_which_package.md' },
           { text: 'get_it', link: '/documentation/get_it/getting_started.md' },
@@ -37,7 +38,7 @@ export default defineConfig({
       },
       {
         text: 'Documentation',
-        collapsed: true,
+        collapsed: false,
         items: [
           { text: 'Overview', link: '/documentation/overview.md' },
           {
@@ -113,6 +114,7 @@ export default defineConfig({
       },
       {
         text: 'Examples',
+        collapsed: true,
         items: [
           { text: 'Overview', link: '/examples/overview.md' },
           { text: 'get_it', link: '/examples/get_it/get_it.md' },
@@ -124,6 +126,7 @@ export default defineConfig({
       },
       {
         text: 'Misc.',
+        collapsed: false,
         items: [
           { text: 'Articles & Videos', link: '/misc/articles.md' },
           { text: 'How to contribute', link: '/misc/contribute.md' }

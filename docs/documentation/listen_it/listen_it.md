@@ -4,7 +4,7 @@ next:
   link: '/documentation/listen_it/operators/overview'
 ---
 
-# listen_it
+# 👂 listen_it
 
 **Reactive primitives for Flutter** - observable collections and powerful operators for ValueListenable.
 
@@ -17,13 +17,15 @@ next:
 
 These primitives work together to help you build reactive data flows in your Flutter apps without code generation or complex frameworks.
 
+![listen_it Data Flow](/images/listen-it-flow.svg)
+
 ## Installation
 
 Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  listen_it: ^5.1.0
+  listen_it: ^5.2.0
 ```
 
 ## Quick Start
