@@ -20,17 +20,25 @@
       ]
     },
     {
+      "name": "listen_it",
+      "version": "5.1.1",
+      "dependencies": [
+        "collection",
+        "flutter"
+      ]
+    },
+    {
       "name": "watch_it",
       "version": "1.7.0",
       "dependencies": [
         "flutter",
-        "functional_listener",
-        "get_it"
+        "get_it",
+        "listen_it"
       ]
     },
     {
       "name": "get_it",
-      "version": "8.2.0",
+      "version": "8.3.0",
       "dependencies": [
         "async",
         "collection",
@@ -95,13 +103,6 @@
       ]
     },
     {
-      "name": "listen_it",
-      "version": "5.0.0",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
       "name": "command_it",
       "version": "8.0.0",
       "dependencies": [
@@ -124,20 +125,13 @@
       ]
     },
     {
-      "name": "functional_listener",
-      "version": "4.1.0",
-      "dependencies": [
-        "flutter"
-      ]
+      "name": "collection",
+      "version": "1.19.1",
+      "dependencies": []
     },
     {
       "name": "meta",
       "version": "1.16.0",
-      "dependencies": []
-    },
-    {
-      "name": "collection",
-      "version": "1.19.1",
       "dependencies": []
     },
     {

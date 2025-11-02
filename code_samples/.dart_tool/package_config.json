@@ -116,12 +116,6 @@
       "languageVersion": "3.0"
     },
     {
-      "name": "functional_listener",
-      "rootUri": "file:///home/escamoteur/.pub-cache/hosted/pub.dev/functional_listener-4.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "get_it",
       "rootUri": "../../../get_it",
       "packageUri": "lib/",
@@ -183,7 +177,7 @@
     },
     {
       "name": "listen_it",
-      "rootUri": "file:///home/escamoteur/.pub-cache/hosted/pub.dev/listen_it-5.0.0",
+      "rootUri": "../../../listen_it",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },

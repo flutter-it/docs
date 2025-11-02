@@ -16,7 +16,8 @@ dependencies:
   watch_it:
     path: ../../watch_it
   command_it: ^8.0.0
-  listen_it: ^5.0.0
+  listen_it:
+    path: ../../listen_it
 
 # Override to use local versions when needed during development
 dependency_overrides:
@@ -24,11 +25,11 @@ dependency_overrides:
     path: ../../get_it
   watch_it:
     path: ../../watch_it
+  listen_it:
+    path: ../../listen_it
   # Uncomment to test unreleased versions
   # command_it:
   #   path: ../../command_it
-  # listen_it:
-  #   path: ../../listen_it
 
 dev_dependencies:
   flutter_test:

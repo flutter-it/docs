@@ -1,167 +1,213 @@
+---
+next:
+  text: 'Operators'
+  link: '/documentation/listen_it/operators/overview'
+---
+
 # listen_it
 
-::: info Work In Progress
-This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!
+**Reactive primitives for Flutter** - observable collections and powerful operators for ValueListenable.
+
+## Overview
+
+`listen_it` provides two essential reactive primitives for Flutter development:
+
+1. **Reactive Collections** - ListNotifier, MapNotifier, SetNotifier that automatically notify listeners when their contents change
+2. **ValueListenable Operators** - Extension methods that let you transform, filter, combine, and react to value changes
+
+These primitives work together to help you build reactive data flows in your Flutter apps without code generation or complex frameworks.
+
+## Installation
+
+Add to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  listen_it: ^5.1.0
+```
+
+## Quick Start
+
+### listen() - The Foundation
+
+Lets you work with a `ValueListenable` (and `Listenable`) as it should be by installing a handler function that is called on any value change and gets the new value passed as an argument. **This gives you the same pattern as with Streams**, making it natural and consistent.
+
+```dart
+// For ValueListenable\<T\>
+ListenableSubscription listen(
+  void Function(T value, ListenableSubscription subscription) handler
+)
+
+// For Listenable
+ListenableSubscription listen(
+  void Function(ListenableSubscription subscription) handler
+)
+```
+
+<<< @/../code_samples/lib/listen_it/listen_basic.dart#example
+
+The returned `subscription` can be used to deactivate the handler. As you might need to uninstall the handler from inside the handler you get the subscription object passed to the handler function as second parameter.
+
+This is particularly useful when you want a handler to run only once or a certain number of times:
+
+<<< @/../code_samples/lib/listen_it/listen_basic.dart#self_cancel
+
+For regular `Listenable` (not `ValueListenable`), the handler only receives the subscription parameter since there's no value to access:
+
+<<< @/../code_samples/lib/listen_it/listen_basic.dart#listenable
+
+::: tip Why listen()?
+- **Same pattern as Streams** - Familiar API if you've used Stream.listen()
+- **Self-cancellation** - Handlers can unsubscribe themselves from inside the handler
+- **Works outside the widget tree** - For business logic, services, side effects
+- **Multiple handlers** - Install multiple independent handlers on the same Listenable
 :::
 
-Extension functions on `ValueListenable` that allows you to work with them almost as if it was a synchronous stream. Each extension function returns a new `ValueNotifier` that updates its value when the value of `this` changes. You can chain these functions to build complex processing pipelines from a simple `ValueListenable`.
+### Reactive Collections
 
-Here are some examples how to use it:
+Reactive versions of List, Map, and Set that implement ValueListenable and automatically notify listeners on mutations:
 
-## listen()
+<<< @/../code_samples/lib/listen_it/list_notifier_basic.dart#example
 
-Lets you work with a `ValueListenable` as it should be by installing a handler function that is called on any value change of `this` and gets the new value passed as an argument. 
+Use with `ValueListenableBuilder` for reactive UI:
 
-If we want to print every new value of a `ValueListenable<int>` we can do:
+<<< @/../code_samples/lib/listen_it/list_notifier_widget.dart#example
 
-```dart
-final listenable = ValueNotifier<int>(0);
-final subscription = listenable.listen((x, _) => print(x));
-```
-The returned `subscription` can be used to deactivate the passed handler function. As you might need to uninstall the handler function from inside the handler 
-you get the subscription object passed to the handler function as second parameter like:
+Or with `watchValue` from [watch_it](/documentation/watch_it/getting_started) for cleaner code:
 
-```dart
-listenable.listen((x, subscription) {
-  print(x);
-  if (x == 42){
-     subscription.cancel();
-  }
-})
-```
+<<< @/../code_samples/lib/listen_it/list_notifier_watch_it.dart#example
 
-## map()
-Lets you convert the value of one `ValueListenable` to anything you want.
-Imagine we have a `ValueNotifier<String>` in an Model object that we can't change but we need it's value all UPPER CASE in our UI:
+### ValueListenable Operators
 
-```dart
-  ValueNotifier<String> source;  //this is the one from the model object
+Chain operators together to transform and react to value changes:
 
-  final upperCaseSource = source.map( (s)=>s.toUpperCase() );
-``` 
+<<< @/../code_samples/lib/listen_it/chain_operators.dart#example
 
-or you can change the type:
+## Available Operators
 
-```dart
-  ValueNotifier<int> intNotifier;  
+| Operator | Category | Description |
+|----------|----------|-------------|
+| [**listen()**](/documentation/listen_it/operators/overview#listening) | Listening | Install handlers that react to changes (Stream-like pattern) |
+| [**map()**](/documentation/listen_it/operators/transform) | Transformation | Transform values to different types |
+| [**select()**](/documentation/listen_it/operators/transform) | Transformation | React only when specific properties change |
+| [**where()**](/documentation/listen_it/operators/filter) | Filtering | Filter which values propagate |
+| [**debounce()**](/documentation/listen_it/operators/time) | Time-Based | Delay notifications until changes stop |
+| [**async()**](/documentation/listen_it/operators/time) | Time-Based | Defer updates to next frame |
+| [**combineLatest()**](/documentation/listen_it/operators/combine) | Combining | Merge 2-6 ValueListenables |
+| [**mergeWith()**](/documentation/listen_it/operators/combine) | Combining | Combine value changes from multiple sources |
 
-  final stringNotifier = intNotifier.map<String>( (s)=>s.toString() );
-``` 
+## When to Use What
 
-## where()
+### Use Reactive Collections When:
+- ✅ You need a List, Map, or Set that notifies listeners on mutations
+- ✅ You want automatic UI updates without manual `notifyListeners()` calls
+- ✅ You're building reactive lists, caches, or sets in your UI layer
+- ✅ You want to batch multiple operations into a single notification
 
-Lets you filter the values that a ValueListenable can have:
+### Use ValueListenable Operators When:
+- ✅ You need to transform values (map, select)
+- ✅ You need to filter updates (where)
+- ✅ You need to debounce rapid changes (search inputs)
+- ✅ You need to combine multiple ValueListenables
+- ✅ You're building data transformation pipelines
 
+### Choosing the Right Collection
 
-```dart
-  ValueNotifier<int> intNotifier;  
-  bool onlyEven = false; // depending on this variable we want only even values or all
+| Collection | Use When | Example Use Cases |
+|------------|----------|-------------------|
+| **ListNotifier\<T\>** | Order matters, duplicates allowed | Todo lists, chat messages, search history |
+| **MapNotifier\<K,V\>** | Need key-value lookups | User preferences, caches, form data |
+| **SetNotifier\<T\>** | Unique items only, fast membership tests | Selected item IDs, active filters, tags |
 
-  final filteredNotifier = intNotifier.where( (i)=> onlyEven ? i.isEven : i );
-``` 
+## Key Concepts
 
+### Reactive Collections
 
-## select()
+All three collection types (ListNotifier, MapNotifier, SetNotifier) extend their standard Dart collection interfaces and add:
 
-Lets you react only on changes to selected properties of a ValueListenable value.
+- **Automatic Notifications** - Every mutation triggers listeners
+- **Notification Modes** - Control when notifications fire (always, normal, manual)
+- **Transactions** - Batch operations into single notifications
+- **Immutable Values** - `.value` getters return unmodifiable views
+- **ValueListenable Interface** - Works with `ValueListenableBuilder` and watch_it
 
-This is usefully when you have a complex state model, and only want to react when a specific property change.
-```dart
-  ValueNotifier<User> notifier = ValueNotifier(User(age: 18, property2: "John"));
+[Learn more about collections →](/documentation/listen_it/collections/introduction)
 
-  final birthdayNotifier = notifier.select<int>((model)=> model.age); //selectedNotifier will ignore changes that does not affect age
-``` 
-The selector function that you pass to `select` is called on every new value, but only propagate it when the returned value distinct.
+### ValueListenable Operators
 
-### chaining functions
-As all the extension function (with the exception of `listen`) return a new `ValueNotifier` we can chain these extension functions as we need them like: 
+Operators create transformation chains:
 
+- **Chainable** - Each operator returns a new ValueListenable
+- **Lazy Initialization** - Chains subscribe only when listeners are added
+- **Hot Subscription** - Once subscribed, chains stay subscribed
+- **Type Safe** - Full compile-time type checking
 
-```dart
-  ValueNotifier<int> intNotifier;  
-
-  intNotifier.where((x)=>x.isEven).map<String>( (s)=>s.toString() ).listen(print);
-``` 
-
-## debounce()
-If you don't want or can't handle too rapid value changes `debounce` is your friend. It only propagates values if there is a pause after a value changes. Most typical example is you have a search function that polls a REST API and in every change of the search term you execute a http request. To avoid overloading your REST server you probably want to avoid that a new request is made on every keypress. I makes much more sense to wait till the user stops modifying the search term for a moment.
-
-
-```dart
-  ValueNotifier<String> searchTerm;  //this is the one from the model object
-
-  searchTerm.debounce(const Duration(milliseconds: 500)).listen((s)  => callRestApi(s) );
-
-  // We ignore for this example that calling a REST API probably involves some async magic
-``` 
-
-## combineLatest()
-Combines two source `ValueListenables` to one that gets updated with the combined source values when any of the sources values changed.
-This comes in handy if you want to use one `ValueListenableBuilder` with two `ValueNotifiers`.
-
-```dart
-class StringIntWrapper {
-  final String s;
-  final int i;
-
-  StringIntWrapper(this.s, this.i);
-
-  @override
-  String toString() {
-    return '$s:$i';
-  }
-}
-
-
-ValueNotifier<int> intNotifier;  
-ValueNotifier<String> stringNotifier;  
-
-intNotifier.combineLastest<String,StringIntWrapper>(stringNotifier, (i,s)
-   => StringIntWrapper(s,i)).listen(print);
-```
-
-## mergeWith
-Merges value changes of one `ValueListenable` together with value changes of a List of
-`ValueListenables` so that when ever any of them changes the result of
-`mergeWith()` will change too.
-
-```dart
-final listenable1 = ValueNotifier<int>(0);
-final listenable2 = ValueNotifier<int>(0);
-final listenable3 = ValueNotifier<int>(0);
-final listenable4 = ValueNotifier<int>(0);
-
-listenable1.mergeWith([listenable2, listenable3, listenable4]).listen(
-    (x, _) => print(x));
-
-listenable2.value = 42;
-listenable1.value = 43;
-listenable4.value = 44;
-listenable3.value = 45;
-listenable1.value = 46;
-```
-Will print 42,43,44,45,46
-
-
-For details on the functions check the source documentation, the tests and the example.
+[Learn more about operators →](/documentation/listen_it/operators/overview)
 
 ## CustomValueNotifier
 
-```dart
-enum CustomNotifierMode { normal, manual, always }
+A ValueNotifier with configurable notification behavior:
 
-/// Sometimes you want a ValueNotifier where you can control when its
-/// listeners are notified. With the `CustomValueNotifier` you can do this:
-/// If you pass [CustomNotifierMode.always] for the [mode] parameter,
-/// `notifierListeners` will be called everytime you assign a value to the
-/// [value] property independent of if the value is different from the
-/// previous one.
-/// If you pass [CustomNotifierMode.manual] for the [mode] parameter,
-/// `notifierListeners` will not be called when you assign a value to the
-/// [value] property. You have to call it manually to notify the Listeners.
-/// Aditionally it has a [listenerCount] property that tells you how many
-/// listeners are currently listening to the notifier.
-class CustomValueNotifier<T> extends ChangeNotifier
+<<< @/../code_samples/lib/listen_it/custom_value_notifier.dart#example
+
+CustomValueNotifier supports three modes:
+- **normal** (default) - Only notifies when value actually changes
+- **always** - Notifies on every assignment, even if value is the same
+- **manual** - Only notifies when you explicitly call `notifyListeners()`
+
+## Real-World Example
+
+Combining operators and collections for reactive search:
+
+<<< @/../code_samples/lib/listen_it/search_viewmodel.dart#example
+
+## Integration with flutter_it Ecosystem
+
+### With watch_it (Recommended!)
+
+watch_it v2.0+ provides **automatic selector caching**, making inline chain creation completely safe:
+
+<<< @/../code_samples/lib/listen_it/chain_watch_it_safe.dart#watchValue_safe
+
+The default `allowObservableChange: false` caches the selector, so the chain is created only once!
+
+[Learn more about watch_it integration →](/documentation/watch_it/getting_started)
+
+### With get_it
+
+Register your reactive collections and chains in get_it for global access:
+
+```dart
+void configureDependencies() {
+  getIt.registerSingleton<ListNotifier<Todo>>(ListNotifier());
+  getIt.registerLazySingleton(() => ValueNotifier<String>(''));
+}
 ```
 
-If you miss a function, open an issue on GitHub or even better make an PR :-)
+[Learn more about get_it →](/documentation/get_it/getting_started)
+
+### With command_it
+
+command_it uses listen_it operators internally for ValueListenable operations:
+
+```dart
+final command = Command.createAsync<String, void>(
+  (searchTerm) async => performSearch(searchTerm),
+  restriction: searchTerm.where((term) => term.length >= 3),
+);
+```
+
+[Learn more about command_it →](/documentation/command_it/getting_started)
+
+## Next Steps
+
+- [Operators →](/documentation/listen_it/operators/overview)
+- [Collections →](/documentation/listen_it/collections/introduction)
+- [Best Practices →](/documentation/listen_it/best_practices)
+- [Examples →](/examples/listen_it/listen_it)
+
+## Previous Package Names
+
+- Previously published as `functional_listener` (operators only)
+- Reactive collections previously published as `listenable_collections`
+- Both are now unified in `listen_it` v5.0+

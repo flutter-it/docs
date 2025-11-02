@@ -105,7 +105,8 @@ export default defineConfig({
                   { text: 'Notification Modes', link: '/documentation/listen_it/collections/notification_modes.md' },
                   { text: 'Transactions', link: '/documentation/listen_it/collections/transactions.md' }
                 ]
-              }
+              },
+              { text: 'Best Practices', link: '/documentation/listen_it/best_practices.md' }
             ]
           }
         ]
