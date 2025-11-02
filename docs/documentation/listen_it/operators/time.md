@@ -6,7 +6,11 @@ Time-based operators control when values are propagated, helping you handle rapi
 
 Delays propagation of values until a pause occurs. Perfect for handling rapid user input like search fields.
 
-### Basic Usage
+::: tip Available on Both Types
+`debounce()` works on both `ValueListenable<T>` (returns debounced values) and regular `Listenable` (just debounces notifications without values).
+:::
+
+### Basic Usage (ValueListenable)
 
 <<< @/../code_samples/lib/listen_it/debounce_search.dart#example
 
@@ -113,6 +117,29 @@ searchInput
 
 // Only calls once with: 'flutter'
 ```
+
+### Using with Regular Listenable
+
+For regular `Listenable` (not `ValueListenable`), `debounce()` delays notifications without tracking values:
+
+```dart
+final notifier = ChangeNotifier();
+
+final debounced = notifier.debounce(Duration(milliseconds: 500));
+
+debounced.listen((_) {
+  print('Debounced notification!');
+});
+
+// Rapid notifications
+notifier.notifyListeners();
+notifier.notifyListeners();
+notifier.notifyListeners();
+
+// Only one notification after 500ms pause
+```
+
+This is useful when you have a `ChangeNotifier` or custom `Listenable` and want to reduce the frequency of notifications without needing to track specific values.
 
 ### Chaining with Other Operators
 
