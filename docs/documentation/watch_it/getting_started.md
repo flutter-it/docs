@@ -1,6 +1,10 @@
-<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-  <img src="/images/watch_it.svg" alt="watch_it logo" width="100" />
-  <h1 style="margin: 0;">Getting Started with watch_it</h1>
+<div class="header-with-logo">
+  <div class="header-content">
+
+# Getting Started with watch_it
+
+  </div>
+  <img src="/images/watch_it.svg" alt="watch_it logo" width="100" class="header-logo" />
 </div>
 
 ::: info Work In Progress
