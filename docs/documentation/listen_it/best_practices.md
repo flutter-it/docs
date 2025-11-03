@@ -8,13 +8,14 @@ Guidelines for using listen_it effectively and avoiding common pitfalls.
 
 ## Chain Lifecycle
 
-### The Hot Subscription Model
+### Eager Initialization with Persistent Subscriptions (v5.3.0+)
 
-Operator chains use a "hot" subscription model:
+Operator chains use eager initialization by default with persistent subscriptions:
 
-1. Chains don't subscribe to their source until a listener is added (lazy initialization)
-2. **Once subscribed, chains stay subscribed** even when they have zero listeners
-3. Chains maintain their subscription until explicitly disposed
+1. **Chains subscribe to their source immediately** by default (eager initialization in v5.3.0+)
+2. For memory optimization, pass `lazy: true` to delay subscription until first listener is added
+3. **Once subscribed, chains stay subscribed** for efficiency, even when they have zero listeners
+4. Chains maintain their subscription until explicitly disposed
 
 ::: danger Memory Leak Risk
 Creating chains inline in build methods creates a **new chain on every rebuild**, each staying subscribed forever. This causes memory leaks!
@@ -76,7 +77,7 @@ The safest approach is using watch_it v2.0+, which provides automatic selector c
 **Key Finding**: Chains create circular references with their source, but Dart's garbage collector handles this correctly when the entire cycle becomes unreachable from GC roots.
 
 **How it works**:
-- Chains register as listeners on their source (hot subscription model)
+- Chains register as listeners on their source (immediately if eager, or when first listener is added if lazy)
 - This creates a circular reference: `source → listener → chain → source`
 - When the containing object (widget state, service, etc.) becomes unreachable, **the entire cycle is automatically garbage collected**
 - No manual chain disposal needed in most cases!

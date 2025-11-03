@@ -32,12 +32,29 @@ final stringNotifier = intNotifier.map<String>((i) => i.toString());
 // final badNotifier = intNotifier.map<String>((i) => i); // ❌ Error
 ```
 
-### Lazy Initialization
+### Eager Initialization (v5.3.0+)
 
-Operator chains don't subscribe to their source until a listener is added. However, once subscribed, they use a "hot" subscription model (see warning below).
+By default, operator chains use **eager initialization** - they subscribe to their source immediately, ensuring `.value` is always correct even before adding listeners. This fixes stale value issues but uses slightly more memory.
+
+```dart
+final source = ValueNotifier<int>(5);
+final mapped = source.map((x) => x * 2); // Subscribes immediately
+
+print(mapped.value); // Always correct: 10
+
+source.value = 7;
+print(mapped.value); // Immediately updated: 14 ✓
+```
+
+For memory-constrained scenarios, pass `lazy: true` to delay subscription until the first listener is added:
+
+```dart
+final lazy = source.map((x) => x * 2, lazy: true);
+// Doesn't subscribe until addListener() is called
+```
 
 ::: warning Chain Lifecycle
-Once initialized, operator chains maintain their subscription to the source even when they have zero listeners. This "hot" subscription model is by design, but **can cause memory leaks if chains are created inline in build methods**.
+Once initialized (either eagerly or after first listener), operator chains maintain their subscription to the source even when they have zero listeners. This persistent subscription is by design for efficiency, but **can cause memory leaks if chains are created inline in build methods**.
 
 See the [best practices guide](/documentation/listen_it/best_practices) for safe patterns.
 :::
