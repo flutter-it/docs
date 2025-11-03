@@ -21,6 +21,37 @@ Operator chains use eager initialization by default with persistent subscription
 Creating chains inline in build methods creates a **new chain on every rebuild**, each staying subscribed forever. This causes memory leaks!
 :::
 
+### Mixing Lazy and Eager in Chains
+
+Each operator in a chain is independent. You can mix lazy and eager, but this can lead to confusing behavior:
+
+```dart
+final source = ValueNotifier<int>(5);
+final eager = source.map((x) => x * 2);           // Default: eager
+final lazy = eager.map((x) => x + 1, lazy: true); // Explicit: lazy
+
+source.value = 7;
+print(eager.value); // 14 ✓ (eager subscribed, updates immediately)
+print(lazy.value);  // 11 ⚠️ (STALE! lazy not subscribed yet)
+
+lazy.addListener(() {}); // Subscribe lazy to eager
+print(lazy.value);  // 11 ⚠️ (STILL STALE! Doesn't retroactively update)
+
+source.value = 10;
+print(lazy.value);  // 21 ✓ (NOW updates on next change)
+```
+
+**Key behaviors:**
+
+- **Eager → Lazy**: Eager part updates, lazy part can be stale until listener added
+- **Lazy → Eager**: Eager subscribes to lazy immediately, which triggers lazy to initialize the whole chain
+- **All eager (default)**: Entire chain subscribes immediately, `.value` always correct ✓
+- **All lazy**: Chain doesn't subscribe until end gets a listener
+
+::: warning Don't Mix
+**Recommendation**: Don't mix. Use all-eager (default, simple) or all-lazy (memory optimization). Mixing can cause hard-to-debug stale values.
+:::
+
 ### ❌ WRONG: Chains in Build Methods
 
 Never create chains inline in build methods:
