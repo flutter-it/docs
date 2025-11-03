@@ -44,7 +44,7 @@ Explore reactive primitives with listen_it.
 
 **[View listen_it Examples](/examples/listen_it/listen_it.md)**
 
-Comprehensive documentation: **[listen_it docs](/documentation/listen_it/getting_started)**
+Comprehensive documentation: **[listen_it docs](/documentation/listen_it/listen_it)**
 
 ---
 
