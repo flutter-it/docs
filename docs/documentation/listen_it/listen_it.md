@@ -4,7 +4,10 @@ next:
   link: '/documentation/listen_it/operators/overview'
 ---
 
-# 👂 listen_it
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <img src="/images/listen_it.svg" alt="listen_it logo" width="100" />
+  <h1 style="margin: 0;">listen_it</h1>
+</div>
 
 **Reactive primitives for Flutter** - observable collections and powerful operators for ValueListenable.
 

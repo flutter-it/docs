@@ -1,4 +1,7 @@
-# Getting Started with watch_it
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <img src="/images/watch_it.svg" alt="watch_it logo" width="100" />
+  <h1 style="margin: 0;">Getting Started with watch_it</h1>
+</div>
 
 ::: info Work In Progress
 This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!

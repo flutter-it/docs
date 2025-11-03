@@ -8,7 +8,10 @@ next:
   link: '/documentation/get_it/object_registration'
 ---
 
-# Getting Started
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <img src="/images/get_it.svg" alt="get_it logo" width="100" />
+  <h1 style="margin: 0;">Getting Started</h1>
+</div>
 
 <strong>get_it</strong> is a simple, fast service locator for Dart and Flutter that allows you to access any object that you register from anywhere in your app without needing `BuildContext` or complex widget trees.
 

@@ -1,4 +1,7 @@
-# Getting Started with command_it
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <img src="/images/command_it.svg" alt="command_it logo" width="150" />
+  <h1 style="margin: 0;">Getting Started with command_it</h1>
+</div>
 
 ::: info Work In Progress
 This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!

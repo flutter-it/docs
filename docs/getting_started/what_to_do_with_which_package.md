@@ -2,9 +2,16 @@
 title: What to do with which package?
 ---
 
+<div style="display: flex; align-items: flex-start; gap: 2rem; margin: 2rem 0;">
+  <div style="flex: 1; min-width: 0;">
+
 # What to do with which package?
 
 **flutter_it is a construction set** - each package solves a specific problem. Use one, combine several, or use them all together. This guide helps you choose the right tools for your needs.
+
+  </div>
+  <img src="/images/main-logo.png" alt="flutter_it" width="225" style="flex-shrink: 0; padding: 0; margin: 0; display: block;" />
+</div>
 
 ## Quick Decision Guide
 
@@ -39,7 +46,7 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 ## The Problems Each Package Solves
 
-### 🎯 get_it - Access anything, anywhere
+### <img src="/images/get_it.svg" alt="get_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />get_it - Access anything, anywhere
 
 **Problem**: How do I access services, business logic, and shared data without passing it through the widget tree?
 
@@ -59,7 +66,7 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 ---
 
-### 👁️ watch_it - Reactive UI updates
+### <img src="/images/watch_it.svg" alt="watch_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />watch_it - Reactive UI updates
 
 **Problem**: How do I update my UI when data changes without setState() or complex state management?
 
@@ -81,7 +88,7 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 ---
 
-### ✋ command_it - Smart action encapsulation
+### <img src="/images/command_it.svg" alt="command_it" width="67" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />command_it - Smart action encapsulation
 
 **Problem**: How do I handle async operations with loading states, errors, and enable/disable logic without repetitive boilerplate?
 
@@ -101,7 +108,7 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 ---
 
-### 👂 listen_it - Reactive primitives
+### <img src="/images/listen_it.svg" alt="listen_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />listen_it - Reactive primitives
 
 **Problem**: How do I transform, combine, filter reactive data? How do I make collections observable?
 

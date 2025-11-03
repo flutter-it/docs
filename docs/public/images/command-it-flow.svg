@@ -1,47 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 250">
   <defs>
-    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#E65100"/>
+    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#C62828"/>
     </marker>
   </defs>
 
   <!-- Step 1: Execute -->
-  <rect x="20" y="90" width="120" height="70" rx="8" fill="#FF9800" stroke="#E65100" stroke-width="2"/>
+  <rect x="20" y="90" width="120" height="70" rx="8" fill="#ff3f42" stroke="#C62828" stroke-width="2"/>
   <text x="80" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Execute</text>
   <text x="80" y="135" text-anchor="middle" font-size="11" fill="white">Button Click</text>
 
   <!-- Arrow -->
-  <line x1="140" y1="125" x2="170" y2="125" stroke="#E65100" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <line x1="140" y1="125" x2="170" y2="125" stroke="#C62828" stroke-width="2" marker-end="url(#arrow-red)"/>
 
   <!-- Step 2: isExecuting -->
-  <rect x="170" y="90" width="120" height="70" rx="8" fill="#FFB74D" stroke="#E65100" stroke-width="2"/>
-  <text x="230" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">isExecuting</text>
-  <text x="230" y="135" text-anchor="middle" font-size="11" fill="#333">Show Spinner</text>
+  <rect x="170" y="90" width="120" height="70" rx="8" fill="#ff5856" stroke="#C62828" stroke-width="2"/>
+  <text x="230" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="white">isExecuting</text>
+  <text x="230" y="135" text-anchor="middle" font-size="11" fill="white">Show Spinner</text>
 
   <!-- Arrow -->
-  <line x1="290" y1="125" x2="320" y2="125" stroke="#E65100" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <line x1="290" y1="125" x2="320" y2="125" stroke="#C62828" stroke-width="2" marker-end="url(#arrow-red)"/>
 
   <!-- Step 3: Async Op -->
-  <rect x="320" y="90" width="120" height="70" rx="8" fill="#FFCC80" stroke="#E65100" stroke-width="2"/>
-  <text x="380" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Async Op</text>
-  <text x="380" y="135" text-anchor="middle" font-size="11" fill="#333">API Call</text>
+  <rect x="320" y="90" width="120" height="70" rx="8" fill="#ff7d74" stroke="#C62828" stroke-width="2"/>
+  <text x="380" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Async Op</text>
+  <text x="380" y="135" text-anchor="middle" font-size="11" fill="white">API Call</text>
 
   <!-- Arrow to Result Decision -->
-  <line x1="440" y1="125" x2="502" y2="125" stroke="#E65100" stroke-width="2" marker-end="url(#arrow-orange)"/>
+  <line x1="440" y1="125" x2="502" y2="125" stroke="#C62828" stroke-width="2" marker-end="url(#arrow-red)"/>
 
   <!-- Result Decision Diamond -->
-  <polygon points="510,125 540,95 570,125 540,155" fill="#FFE0B2" stroke="#E65100" stroke-width="2"/>
-  <text x="540" y="130" text-anchor="middle" font-size="11" fill="#333" font-weight="bold">Result</text>
+  <polygon points="510,125 540,95 570,125 540,155" fill="#ffebee" stroke="#C62828" stroke-width="2"/>
+  <text x="540" y="130" text-anchor="middle" font-size="11" fill="#B71C1C" font-weight="bold">Result</text>
 
   <!-- Success branch -->
   <line x1="560" y1="105" x2="600" y2="50" stroke="#2E7D32" stroke-width="2"/>
   <rect x="600" y="20" width="90" height="60" rx="6" fill="#C8E6C9" stroke="#2E7D32" stroke-width="2"/>
-  <text x="645" y="42" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">Success</text>
-  <text x="645" y="60" text-anchor="middle" font-size="10" fill="#333">Update UI</text>
+  <text x="645" y="42" text-anchor="middle" font-size="11" font-weight="bold" fill="#1B5E20">Success</text>
+  <text x="645" y="60" text-anchor="middle" font-size="10" fill="#1B5E20">Update UI</text>
 
   <!-- Error branch -->
   <line x1="560" y1="145" x2="600" y2="200" stroke="#C62828" stroke-width="2"/>
   <rect x="600" y="170" width="90" height="60" rx="6" fill="#FFCDD2" stroke="#C62828" stroke-width="2"/>
-  <text x="645" y="192" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">Error</text>
-  <text x="645" y="210" text-anchor="middle" font-size="10" fill="#333">Show Error</text>
+  <text x="645" y="192" text-anchor="middle" font-size="11" font-weight="bold" fill="#B71C1C">Error</text>
+  <text x="645" y="210" text-anchor="middle" font-size="10" fill="#B71C1C">Show Error</text>
 </svg>

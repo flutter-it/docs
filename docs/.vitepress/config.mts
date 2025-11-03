@@ -5,6 +5,11 @@ export default defineConfig({
   title: "flutter_it",
   description: "Build reactive Flutter apps the easy way - no codegen, no boilerplate, just code",
 
+  // Favicon
+  head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]
+  ],
+
   // Ensure proper file handling
   cleanUrls: true,
 

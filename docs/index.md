@@ -2,11 +2,18 @@
 title: Welcome to flutter_it
 ---
 
+<div style="display: flex; align-items: flex-start; gap: 2rem; margin: 2rem 0;">
+  <div style="flex: 1; min-width: 0;">
+
 # Build reactive Flutter apps the easy way
 
 **No codegen, no boilerplate, just code.**
 
 flutter_it is a **modular construction set** of reactive tools for Flutter. Pick what you need, combine as you grow, or use them all together. Each package works independently and integrates seamlessly with the others.
+
+  </div>
+  <img src="/images/main-logo.png" alt="flutter_it" width="225" style="flex-shrink: 0; padding: 0; margin: 0;" />
+</div>
 
 ## Why flutter_it?
 
@@ -52,7 +59,8 @@ No setState(), no Provider boilerplate, no code generation. Just reactive Flutte
 
 > 💡 **Each package works standalone** - start with one, add others as needed.
 
-### 🎯 get_it
+### <img src="/images/get_it.svg" alt="get_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />get_it
+
 **Dependency injection without the framework**
 
 Simple service locator that works anywhere in your app—no BuildContext, no InheritedWidget trees, just clean dependency access.
@@ -61,7 +69,8 @@ Simple service locator that works anywhere in your app—no BuildContext, no Inh
 
 ---
 
-### 👁️ watch_it
+### <img src="/images/watch_it.svg" alt="watch_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />watch_it
+
 **Reactive UI updates, automatically**
 
 React to state changes without setState()—watch values and rebuild only what's needed. You'll almost never need a StatefulWidget anymore. Depends on get_it for service location.
@@ -70,7 +79,8 @@ React to state changes without setState()—watch values and rebuild only what's
 
 ---
 
-### ✋ command_it
+### <img src="/images/command_it.svg" alt="command_it" width="67" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />command_it
+
 **Encapsulate actions with built-in state**
 
 Commands that track execution, handle errors, and provide loading states automatically. Handle exceptions the smart way. Perfect for async operations.
@@ -79,7 +89,8 @@ Commands that track execution, handle errors, and provide loading states automat
 
 ---
 
-### 👂 listen_it
+### <img src="/images/listen_it.svg" alt="listen_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />listen_it
+
 **Combine reactive state in an RxDart-like style that's easy to understand**
 
 Transform, filter, combine, and debounce operators for ValueNotifier—plus reactive collections (ListNotifier, MapNotifier, SetNotifier) that automatically notify on changes.

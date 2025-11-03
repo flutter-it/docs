@@ -1,36 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 150">
   <defs>
-    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-      <polygon points="0 0, 10 3, 0 6" fill="#1565C0"/>
+    <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#1B883D"/>
     </marker>
   </defs>
 
   <!-- Step 1: Data Changes -->
-  <rect x="20" y="40" width="140" height="70" rx="8" fill="#2196F3" stroke="#1565C0" stroke-width="2"/>
+  <rect x="20" y="40" width="140" height="70" rx="8" fill="#259a4e" stroke="#1B883D" stroke-width="2"/>
   <text x="90" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Data Changes</text>
   <text x="90" y="85" text-anchor="middle" font-size="11" fill="white">counter++</text>
 
   <!-- Arrow -->
-  <line x1="160" y1="75" x2="195" y2="75" stroke="#1565C0" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <line x1="160" y1="75" x2="195" y2="75" stroke="#1B883D" stroke-width="2" marker-end="url(#arrow-green)"/>
 
   <!-- Step 2: ValueNotifier -->
-  <rect x="195" y="40" width="140" height="70" rx="8" fill="#42A5F5" stroke="#1565C0" stroke-width="2"/>
+  <rect x="195" y="40" width="140" height="70" rx="8" fill="#35aa58" stroke="#1B883D" stroke-width="2"/>
   <text x="265" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="white">ValueNotifier</text>
   <text x="265" y="85" text-anchor="middle" font-size="11" fill="white">notifies</text>
 
   <!-- Arrow -->
-  <line x1="335" y1="75" x2="370" y2="75" stroke="#1565C0" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <line x1="335" y1="75" x2="370" y2="75" stroke="#1B883D" stroke-width="2" marker-end="url(#arrow-green)"/>
 
   <!-- Step 3: watch_it -->
-  <rect x="370" y="40" width="140" height="70" rx="8" fill="#64B5F6" stroke="#1565C0" stroke-width="2"/>
+  <rect x="370" y="40" width="140" height="70" rx="8" fill="#55bd6d" stroke="#1B883D" stroke-width="2"/>
   <text x="440" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="white">watch_it</text>
   <text x="440" y="85" text-anchor="middle" font-size="11" fill="white">detects change</text>
 
   <!-- Arrow -->
-  <line x1="510" y1="75" x2="545" y2="75" stroke="#1565C0" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <line x1="510" y1="75" x2="545" y2="75" stroke="#1B883D" stroke-width="2" marker-end="url(#arrow-green)"/>
 
   <!-- Step 4: Widget -->
-  <rect x="545" y="40" width="140" height="70" rx="8" fill="#90CAF9" stroke="#1565C0" stroke-width="2"/>
-  <text x="615" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Widget</text>
-  <text x="615" y="85" text-anchor="middle" font-size="11" fill="#333">rebuilds</text>
+  <rect x="545" y="40" width="140" height="70" rx="8" fill="#c8e6c9" stroke="#1B883D" stroke-width="2"/>
+  <text x="615" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="#1B5E20">Widget</text>
+  <text x="615" y="85" text-anchor="middle" font-size="11" fill="#1B5E20">rebuilds</text>
 </svg>
