@@ -8,11 +8,11 @@ Guidelines for using listen_it effectively and avoiding common pitfalls.
 
 ## Chain Lifecycle
 
-### Eager Initialization with Persistent Subscriptions (v5.3.0+)
+### Eager Initialization with Persistent Subscriptions
 
 Operator chains use eager initialization by default with persistent subscriptions:
 
-1. **Chains subscribe to their source immediately** by default (eager initialization in v5.3.0+)
+1. **Chains subscribe to their source immediately** by default (eager initialization)
 2. For memory optimization, pass `lazy: true` to delay subscription until first listener is added
 3. **Once subscribed, chains stay subscribed** for efficiency, even when they have zero listeners
 4. Chains maintain their subscription until explicitly disposed

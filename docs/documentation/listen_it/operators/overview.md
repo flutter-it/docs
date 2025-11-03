@@ -32,7 +32,7 @@ final stringNotifier = intNotifier.map<String>((i) => i.toString());
 // final badNotifier = intNotifier.map<String>((i) => i); // ❌ Error
 ```
 
-### Eager Initialization (v5.3.0+)
+### Eager Initialization
 
 By default, operator chains use **eager initialization** - they subscribe to their source immediately, ensuring `.value` is always correct even before adding listeners. This fixes stale value issues but uses slightly more memory.
 
