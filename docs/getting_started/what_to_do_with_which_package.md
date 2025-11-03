@@ -2,15 +2,15 @@
 title: What to do with which package?
 ---
 
-<div style="display: flex; align-items: flex-start; gap: 2rem; margin: 2rem 0;">
-  <div style="flex: 1; min-width: 0;">
+<div class="header-with-logo">
+  <div class="header-content">
 
 # What to do with which package?
 
 **flutter_it is a construction set** - each package solves a specific problem. Use one, combine several, or use them all together. This guide helps you choose the right tools for your needs.
 
   </div>
-  <img src="/images/main-logo.png" alt="flutter_it" width="225" style="flex-shrink: 0; padding: 0; margin: 0; display: block;" />
+  <img src="/images/main-logo.svg" alt="flutter_it" width="225" class="header-logo" />
 </div>
 
 ## Quick Decision Guide

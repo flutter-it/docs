@@ -2,8 +2,8 @@
 title: Welcome to flutter_it
 ---
 
-<div style="display: flex; align-items: flex-start; gap: 2rem; margin: 2rem 0;">
-  <div style="flex: 1; min-width: 0;">
+<div class="header-with-logo">
+  <div class="header-content">
 
 # Build reactive Flutter apps the easy way
 
@@ -12,7 +12,7 @@ title: Welcome to flutter_it
 flutter_it is a **modular construction set** of reactive tools for Flutter. Pick what you need, combine as you grow, or use them all together. Each package works independently and integrates seamlessly with the others.
 
   </div>
-  <img src="/images/main-logo.png" alt="flutter_it" width="225" style="flex-shrink: 0; padding: 0; margin: 0;" />
+  <img src="/images/main-logo.svg" alt="flutter_it" width="225" class="header-logo" />
 </div>
 
 ## Why flutter_it?

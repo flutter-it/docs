@@ -34,3 +34,35 @@ html:not(.dark) .diagram-light {
   height: auto;
   display: block;
 }
+
+/* Responsive header with logo */
+.header-with-logo {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.header-with-logo .header-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.header-with-logo .header-logo {
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* Stack vertically on mobile/tablet (portrait) */
+@media (max-width: 768px) {
+  .header-with-logo {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .header-with-logo .header-logo {
+    margin-bottom: 0.5rem;
+  }
+}
