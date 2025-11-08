@@ -29,7 +29,6 @@ class TodoList extends WatchingWidget {
 // #endregion example
 
 void main() {
-  di.registerLazySingleton<TodoManagerChangeNotifier>(
-      () => TodoManagerChangeNotifier());
+  di.registerSingleton<TodoManagerChangeNotifier>(TodoManagerChangeNotifier());
   runApp(MaterialApp(home: TodoList()));
 }

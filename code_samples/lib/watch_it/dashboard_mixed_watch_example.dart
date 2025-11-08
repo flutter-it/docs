@@ -36,6 +36,6 @@ class Dashboard extends WatchingWidget {
 
 void main() {
   setupDependencyInjection();
-  di.registerLazySingleton<SettingsModel>(() => SettingsModel());
+  di.registerSingleton<SettingsModel>(SettingsModel());
   runApp(MaterialApp(home: Dashboard()));
 }

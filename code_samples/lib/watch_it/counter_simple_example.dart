@@ -12,7 +12,7 @@ class CounterManager {
 
 // 2. Register it in get_it
 void setupCounter() {
-  di.registerLazySingleton<CounterManager>(() => CounterManager());
+  di.registerSingleton<CounterManager>(CounterManager());
 }
 
 // 3. Watch it in your widget

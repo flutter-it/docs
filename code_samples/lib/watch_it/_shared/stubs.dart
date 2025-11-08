@@ -662,17 +662,17 @@ void setupDependencyInjection() {
     () => WeatherManager(di<DataService>()),
   );
 
-  // Simple managers (for tutorial examples)
-  di.registerLazySingleton<CounterManager>(() => CounterManager());
-  di.registerLazySingleton<DataManager>(() => DataManager());
-  di.registerLazySingleton<SimpleUserManager>(() => SimpleUserManager());
+  // Simple managers (for tutorial examples) - use registerSingleton for simplicity
+  di.registerSingleton<CounterManager>(CounterManager());
+  di.registerSingleton<DataManager>(DataManager());
+  di.registerSingleton<SimpleUserManager>(SimpleUserManager());
 
   // Stream/Future services (for async examples)
-  di.registerLazySingleton<ChatService>(() => ChatService());
-  di.registerLazySingleton<UserService>(() => UserService());
-  di.registerLazySingleton<AppService>(() => AppService());
-  di.registerLazySingleton<MessageService>(() => MessageService());
-  di.registerLazySingleton<NotificationService>(() => NotificationService());
+  di.registerSingleton<ChatService>(ChatService());
+  di.registerSingleton<UserService>(UserService());
+  di.registerSingleton<AppService>(AppService());
+  di.registerSingleton<MessageService>(MessageService());
+  di.registerSingleton<NotificationService>(NotificationService());
 
   // Event bus
   di.registerLazySingleton<EventBus>(() => EventBus());

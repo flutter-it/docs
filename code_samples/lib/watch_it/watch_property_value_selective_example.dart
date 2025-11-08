@@ -18,6 +18,6 @@ class ThemeSwitch extends WatchingWidget {
 // #endregion example
 
 void main() {
-  di.registerLazySingleton<SettingsModel>(() => SettingsModel());
+  di.registerSingleton<SettingsModel>(SettingsModel());
   runApp(MaterialApp(home: ThemeSwitch()));
 }
