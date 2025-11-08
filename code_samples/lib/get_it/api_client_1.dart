@@ -18,8 +18,10 @@ void main() {
     getIt.pushNewScope();
 
     // Register mocks - SyncService will get these via getIt<Type>()
-    getIt.registerSingleton<AuthService>(MockAuthService()..isAuthenticated = true);
-    getIt.registerSingleton<ApiClient>(MockApiClient()..mockData = {'data': 'value'});
+    getIt.registerSingleton<AuthService>(
+        MockAuthService()..isAuthenticated = true);
+    getIt.registerSingleton<ApiClient>(
+        MockApiClient()..mockData = {'data': 'value'});
     getIt.registerSingleton<Database>(MockDatabase());
 
     // Service under test uses get_it to access mocks

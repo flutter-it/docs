@@ -1,6 +1,6 @@
 # Your First Watch Functions
 
-Now that you know [why you need special widgets](/documentation/watch_it/widget_integration.md), let's learn how to actually **watch** data and make your widgets reactive.
+Now that you know [why you need special widgets](/documentation/watch_it/watching_widgets.md), let's learn how to actually **watch** data and make your widgets reactive.
 
 ## The Simplest Watch: watchValue
 
@@ -88,6 +88,6 @@ Add a todo? Widget rebuilds automatically. No `setState`, no `StreamBuilder`.
 
 ## See Also
 
-- [Widget Integration](/documentation/watch_it/widget_integration.md) - Which widget type to use
+- [WatchingWidgets](/documentation/watch_it/watching_widgets.md) - Which widget type to use
 - [More Watch Functions](/documentation/watch_it/more_watch_functions.md) - Other watch functions
 - [Watch Functions Reference](/documentation/watch_it/watch_functions.md) - Complete API reference

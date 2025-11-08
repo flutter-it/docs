@@ -194,4 +194,4 @@ This is similar to React Hooks rules for the same reason.
 - [Getting Started](/documentation/watch_it/getting_started.md) - Basic watch_it usage
 - [Watch Functions](/documentation/watch_it/watch_functions.md) - All watch functions
 - [Best Practices](/documentation/watch_it/best_practices.md) - General patterns
-- [Troubleshooting](/documentation/watch_it/troubleshooting.md) - Common issues
+- [Debugging & Troubleshooting](/documentation/watch_it/debugging_tracing.md) - Common issues

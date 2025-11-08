@@ -101,5 +101,5 @@ Mixing different watch functions:
 ## See Also
 
 - [Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md) - Start here
-- [Async Data](/documentation/watch_it/async_data.md) - Streams and Futures
+- [Watching Streams & Futures](/documentation/watch_it/watching_streams_and_futures.md) - Streams and Futures
 - [Watch Functions Reference](/documentation/watch_it/watch_functions.md) - Complete API
