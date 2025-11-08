@@ -1,0 +1,215 @@
+# Watching Streams & Futures
+
+You've learned to watch synchronous data. Now let's handle async data with Streams and Futures.
+
+## Why Special Functions?
+
+Streams and Futures are different from `Listenable`:
+- **Stream** - Emits multiple values over time
+- **Future** - Completes once with a value
+- Both have loading/error states
+
+watch_it provides `watchStream()` and `watchFuture()` - like `StreamBuilder` and `FutureBuilder`, but in one line.
+
+## watchStream - Reactive Streams
+
+Replace `StreamBuilder` with `watchStream()`:
+
+<<< @/../code_samples/lib/watch_it/chat_watch_stream_example.dart#example
+
+### Handling Stream States
+
+<<< @/../code_samples/lib/watch_it/user_activity_stream_example.dart#example
+
+### Before and After
+
+**Without watch_it:**
+```dart
+class UserActivity extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: di<UserService>().activityStream,
+      initialValue: 'No activity',
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        return Text('Activity: ${snapshot.data}');
+      },
+    );
+  }
+}
+```
+
+**With watch_it:**
+
+<<< @/../code_samples/lib/watch_it/user_activity_stream_example.dart#example
+
+No nesting!
+
+## watchFuture - Reactive Futures
+
+Replace `FutureBuilder` with `watchFuture()`:
+
+<<< @/../code_samples/lib/watch_it/data_watch_future_example.dart#example
+
+### Common Pattern: App Initialization
+
+<<< @/../code_samples/lib/watch_it/splash_screen_initialization_example.dart#example
+
+## Multiple Async Sources
+
+Watch multiple streams or futures:
+
+<<< @/../code_samples/lib/watch_it/dashboard_multiple_async_example.dart#example
+
+## Mix Sync and Async
+
+Combine synchronous and asynchronous data:
+
+<<< @/../code_samples/lib/watch_it/user_profile_sync_async_example.dart#example
+
+## AsyncSnapshot Quick Guide
+
+Both `watchStream()` and `watchFuture()` return `AsyncSnapshot<T>`:
+
+```dart
+// Check connection state
+snapshot.connectionState == ConnectionState.waiting
+snapshot.connectionState == ConnectionState.done
+
+// Check for data/errors
+snapshot.hasData   // true if data available
+snapshot.hasError  // true if error occurred
+
+// Access data/error
+snapshot.data   // The value (T?)
+snapshot.error  // The error if any
+```
+
+## Common Patterns
+
+### Pattern 1: Simple Loading
+
+```dart
+final snapshot = watchFuture(
+  (Service s) => s.fetchData(),
+  initialValue: null,
+);
+
+if (snapshot.connectionState == ConnectionState.waiting) {
+  return CircularProgressIndicator();
+}
+
+return DataDisplay(snapshot.data!);
+```
+
+### Pattern 2: Error Handling
+
+```dart
+final snapshot = watchStream(
+  (Service s) => s.dataStream,
+  initialValue: <Data>[],
+);
+
+if (snapshot.hasError) {
+  return Column(
+    children: [
+      Text('Error: ${snapshot.error}'),
+      ElevatedButton(
+        onPressed: () => di<Service>().retryStream(),
+        child: Text('Retry'),
+      ),
+    ],
+  );
+}
+
+return ListView(children: snapshot.data!.map(...));
+```
+
+### Pattern 3: Keep Old Data While Refreshing
+
+```dart
+final snapshot = watchStream(
+  (Service s) => s.dataStream,
+  initialValue: <Item>[],
+);
+
+return Column(
+  children: [
+    // Show subtle loading indicator
+    if (snapshot.connectionState == ConnectionState.waiting)
+      LinearProgressIndicator(),
+
+    // Keep showing old data while loading new
+    Expanded(
+      child: ListView(
+        children: snapshot.data!.map((item) => ItemCard(item)).toList(),
+      ),
+    ),
+  ],
+);
+```
+
+## No More Nested Builders!
+
+**Before:**
+```dart
+return FutureBuilder(
+  future: initFuture,
+  builder: (context, futureSnapshot) {
+    if (futureSnapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    }
+
+    return StreamBuilder(
+      stream: dataStream,
+      builder: (context, streamSnapshot) {
+        if (streamSnapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
+        return Text(streamSnapshot.data!);
+      },
+    );
+  },
+);
+```
+
+**After:**
+```dart
+final initSnapshot = watchFuture(
+  (Service s) => s.initialize(),
+  initialValue: false,
+);
+
+final dataSnapshot = watchStream(
+  (Service s) => s.dataStream,
+  initialValue: '',
+);
+
+if (initSnapshot.connectionState == ConnectionState.waiting ||
+    dataSnapshot.connectionState == ConnectionState.waiting) {
+  return CircularProgressIndicator();
+}
+
+return Text(dataSnapshot.data!);
+```
+
+Flat, readable code!
+
+## Key Takeaways
+
+✅ `watchStream()` replaces `StreamBuilder` - no nesting
+✅ `watchFuture()` replaces `FutureBuilder` - same benefit
+✅ Both return `AsyncSnapshot<T>` - same API you know
+✅ Automatic subscription and cleanup
+✅ Combine sync and async data easily
+
+**Next:** Learn about [side effects with handlers](/documentation/watch_it/handlers.md).
+
+## See Also
+
+- [Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md) - Sync data
+- [Side Effects with Handlers](/documentation/watch_it/handlers.md) - Navigation, toasts
+- [Watch Functions Reference](/documentation/watch_it/watch_functions.md) - Complete API

@@ -65,13 +65,19 @@ export default defineConfig({
             collapsed: true,
             items: [
               { text: 'Getting started', link: '/documentation/watch_it/getting_started.md' },
-              { text: 'Watch functions', link: '/documentation/watch_it/watch_functions.md' },
-              { text: 'callOnce & createOnce', link: '/documentation/watch_it/call_once_create_once.md' },
-              { text: 'Additional goodies', link: '/documentation/watch_it/additional_goodies.md' },
-              { text: 'Integration with get_it', link: '/documentation/watch_it/integration.md' },
-              { text: 'Debugging and tracing', link: '/documentation/watch_it/debugging_tracing.md' },
-              { text: 'Best practices', link: '/documentation/watch_it/best_practices.md' },
-              { text: 'How does it work?', link: '/documentation/watch_it/how_it_works.md' }
+              { text: 'WatchingWidgets', link: '/documentation/watch_it/watching_widgets.md' },
+              { text: 'Your First Watch Functions', link: '/documentation/watch_it/your_first_watch_functions.md' },
+              { text: 'More Watch Functions', link: '/documentation/watch_it/more_watch_functions.md' },
+              { text: 'Watching Streams & Futures', link: '/documentation/watch_it/watching_streams_and_futures.md' },
+              { text: 'Watch Ordering Rules', link: '/documentation/watch_it/watch_ordering_rules.md' },
+              { text: 'Side Effects with Handlers', link: '/documentation/watch_it/handlers.md' },
+              { text: 'Lifecycle Functions', link: '/documentation/watch_it/lifecycle.md' },
+              { text: 'Observing Commands', link: '/documentation/watch_it/observing_commands.md' },
+              { text: 'Advanced Integration', link: '/documentation/watch_it/advanced_integration.md' },
+              { text: 'Best Practices', link: '/documentation/watch_it/best_practices.md' },
+              { text: 'Debugging & Troubleshooting', link: '/documentation/watch_it/debugging_tracing.md' },
+              { text: 'How watch_it Works', link: '/documentation/watch_it/how_it_works.md' },
+              { text: 'Watch Functions Reference', link: '/documentation/watch_it/watch_functions.md' }
             ]
           },
           {

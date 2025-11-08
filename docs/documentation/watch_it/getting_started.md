@@ -7,74 +7,110 @@
   <img src="/images/watch_it.svg" alt="watch_it logo" width="100" class="header-logo" />
 </div>
 
-::: info Work In Progress
-This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!
+:::warning 🚧 WORK IN PROGRESS
+This documentation is currently being reviewed and updated. Content may change based on feedback.
 :::
 
-A simple state management solution powered by get_it.
+watch_it makes your Flutter widgets automatically rebuild when data changes. No `setState`, no `StreamBuilder`, just simple reactive programming.
 
-> This package is the successor of the get_it_mixin, [here you can find what's new](#whats-different-from-the-get_it_mixin)
+> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
 
-> We now have a support discord server [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
+## Installation
 
-This package offers a set of functions to `watch` data registered with `GetIt`. Widgets that watch data will rebuild automatically whenever that data changes.
+Add to your `pubspec.yaml`:
 
-Supported data types that can be watched are `Listenable / ChangeNotifier`, `ValueListenable / ValueNotifier`, `Stream` and `Future`. On top of that there are several other powerful functions to use in `StatelessWidgets` that normally would require a `StatefulWidget`.
-
-`ChangeNotifier` based example:
-
-```dart
- // Create a ChangeNotifier based model
- class UserModel extends ChangeNotifier {
-   get name => _name;
-   String _name = '';
-   set name(String value){
-     _name = value;
-     notifyListeners();
-   }
-   ...
- }
-
- // Register it
- di.registerSingleton<UserModel>(UserModel());
-
- // Watch it
- class UserNameText extends WatchingWidget {
-   @override
-   Widget build(BuildContext context) {
-     final userName = watchPropertyValue((UserModel m) => m.name);
-     return Text(userName);
-   }
- }
+```yaml
+dependencies:
+  watch_it: ^2.0.0
+  get_it: ^8.0.0  # watch_it builds on get_it
 ```
 
-Whenever the name property changes the `watchPropertyValue` function will trigger a rebuild and return the latest value of `name`.
+Run:
+```bash
+flutter pub get
+```
 
-## Accessing GetIt
+## Your First Reactive Widget
 
-WatchIt exports the default instance of get_it as a global variable `di` (**d**ependency **i**njection) which lets
-you access it from anywhere in your app. To access any get_it registered
-object you only have to type `di<MyType>()` instead of `GetIt.I<MyType>()`.
-If you prefer to use `GetIt.I` or you have your own global variable that's fine too as they all
-will use the same instance of GetIt.
+Here's a simple counter that rebuilds automatically when the count changes:
 
-> Because of criticism that GetIt isn't real dependency injection, therefore `di` wouldn't be correct, you now can also use `sl` for service locator instead.
+```dart
+// 1. Create a manager with reactive state
+class CounterManager {
+  final count = ValueNotifier<int>(0);
 
-If you want to use a different instance of get_it you can pass it to
-the functions of this library as an optional parameter.
+  void increment() => count.value++;
+}
 
-## What's different from the `get_it_mixin`
+// 2. Register it in get_it
+void main() {
+  di.registerLazySingleton<CounterManager>(() => CounterManager());
+  runApp(MyApp());
+}
 
-Two main reasons lead me to replace the `get_it_mixin` package with `watch_it`
+// 3. Watch it in your widget
+class CounterWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    // This one line makes it reactive!
+    final count = watchValue((CounterManager m) => m.count);
 
-* The name `get_it_mixin seemed not to catch with people and only a fraction of my get_it users used it.
-* The API naming wasn't as intuitive as I thought when I first wrote them.
+    return Scaffold(
+      body: Center(
+        child: Text('Count: $count', style: TextStyle(fontSize: 48)),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => di<CounterManager>().increment(),
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
 
-These are the main differences:
+That's it! When you press the button, the widget automatically rebuilds with the new count.
 
-* Widgets now can be `const`!
-* a reduced API with more intuitive naming.The old package had too many functions which were only slight variations of each other. You can easily achieve the same functionality with the functions of this package.
-* no `get/getX` functions anymore because you can just use the included global `get_it` instance `di<T>`.
-* only one mixin for all Widgets. You only need to apply it to the widget and no mixin for `States` as now all `watch*` functions are global functions.
+## How It Works
 
-Please let me know if you miss anything
+1. **`WatchingWidget`** - Like `StatelessWidget`, but with reactive superpowers
+2. **`watchValue()`** - Watches data from get_it and rebuilds when it changes
+3. **Automatic subscriptions** - No manual listeners, no cleanup needed
+
+The widget automatically subscribes to changes when it builds and cleans up when disposed.
+
+## Adding to Your Existing App
+
+Already have an app? Just add a mixin to your existing widgets:
+
+```dart
+class MyWidget extends StatelessWidget with WatchItMixin {
+  const MyWidget({super.key});
+
+  Widget build(BuildContext context) {
+    final data = watchValue((Manager m) => m.data);
+    return Text('$data');
+  }
+}
+```
+
+No need to change your widget hierarchy - just add `with WatchItMixin` and start using watch functions.
+
+## What's Next?
+
+Now that you've seen the basics, there's so much more watch_it can do:
+
+→ **[WatchingWidgets](/documentation/watch_it/watching_widgets.md)** - Learn which widget type to use (stateless vs stateful)
+
+→ **[Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md)** - Deep dive into `watchValue()` and other watch functions
+
+→ **[Watching Streams & Futures](/documentation/watch_it/watching_streams_and_futures.md)** - Replace `StreamBuilder` and `FutureBuilder` with one-line `watchStream()` and `watchFuture()`
+
+→ **[Lifecycle Functions](/documentation/watch_it/lifecycle.md)** - Run code once with `callOnce()`, create local objects with `createOnce()`, and manage disposal
+
+The documentation will guide you step-by-step from there!
+
+## Need Help?
+
+- **Documentation:** [flutter-it.dev](https://flutter-it.dev)
+- **Discord:** [Join our community](https://discord.gg/ZHYHYCM38h)
+- **GitHub:** [Report issues](https://github.com/escamoteur/watch_it/issues)
