@@ -65,8 +65,8 @@ export default defineConfig({
             collapsed: true,
             items: [
               { text: 'Getting started', link: '/documentation/watch_it/getting_started.md' },
-              { text: 'WatchingWidgets', link: '/documentation/watch_it/watching_widgets.md' },
               { text: 'Your First Watch Functions', link: '/documentation/watch_it/your_first_watch_functions.md' },
+              { text: 'WatchingWidgets', link: '/documentation/watch_it/watching_widgets.md' },
               { text: 'More Watch Functions', link: '/documentation/watch_it/more_watch_functions.md' },
               { text: 'Watching Streams & Futures', link: '/documentation/watch_it/watching_streams_and_futures.md' },
               { text: 'Watch Ordering Rules', link: '/documentation/watch_it/watch_ordering_rules.md' },
