@@ -40,8 +40,8 @@ void watchValueUsage(BuildContext context) {
 void watchItUsage(BuildContext context) {
   // #region watchIt_usage
   final manager = watchIt<CounterModel>();
-  // Can call methods on manager
   // #endregion watchIt_usage
+  // Can call methods on manager
 }
 
 void watchUsage(BuildContext context) {
