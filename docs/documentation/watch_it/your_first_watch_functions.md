@@ -16,6 +16,38 @@ The most common way to watch data is with `watchValue()`. It watches a `ValueLis
 - Widget rebuilds automatically when count changes
 - No manual listeners, no cleanup needed
 
+::: tip Type Inference Magic
+Notice how we specify the type of the parent object in the selector function: `(CounterManager m) => m.count`
+
+By declaring the parent object type `CounterManager`, Dart automatically **infers** both generic type parameters:
+
+```dart
+// ✅ Recommended - Dart infers types automatically
+final count = watchValue((CounterManager m) => m.count);
+```
+
+**Method signature:**
+```dart
+R watchValue<T extends Object, R>(
+  ValueListenable<R> Function(T) selectProperty,
+  {String? instanceName, GetIt? getIt}
+)
+```
+
+Dart infers:
+- `T = CounterManager` (from the parent object type)
+- `R = int` (from `m.count` which is `ValueListenable<int>`)
+
+**Without the type annotation**, you'd need to specify both generics manually:
+
+```dart
+// ❌ More verbose - manual type parameters required
+final count = watchValue<CounterManager, int>((m) => m.count);
+```
+
+**Bottom line:** Always specify the parent object type in your selector function for cleaner, more readable code!
+:::
+
 ## Why This Is Better
 
 **Without watch_it:**
