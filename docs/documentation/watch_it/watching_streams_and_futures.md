@@ -23,7 +23,8 @@ Replace `StreamBuilder` with `watchStream()`:
 
 ### Before and After
 
-**Without watch_it:**
+**Compare with StreamBuilder:**
+
 ```dart
 class UserActivity extends StatelessWidget {
   @override
@@ -45,11 +46,7 @@ class UserActivity extends StatelessWidget {
 }
 ```
 
-**With watch_it:**
-
-<<< @/../code_samples/lib/watch_it/user_activity_stream_example.dart#example
-
-No nesting!
+Much more nested and verbose!
 
 ## watchFuture - Reactive Futures
 
