@@ -1,6 +1,6 @@
 # Your First Watch Functions
 
-Now that you know [why you need special widgets](/documentation/watch_it/watching_widgets.md), let's learn how to actually **watch** data and make your widgets reactive.
+Watch functions are the core of watch_it - they make your widgets automatically rebuild when data changes. Let's start with the most common one.
 
 ## The Simplest Watch: watchValue
 
@@ -72,10 +72,10 @@ Add a todo? Widget rebuilds automatically. No `setState`, no `StreamBuilder`.
 ✅ Automatic subscription and cleanup
 ✅ Multiple watch calls = multiple subscriptions
 
-**Next:** Learn about [more watch functions](/documentation/watch_it/more_watch_functions.md) for different scenarios.
+**Next:** Learn which [widget types](/documentation/watch_it/watching_widgets.md) you can use watch functions in.
 
 ## See Also
 
-- [WatchingWidgets](/documentation/watch_it/watching_widgets.md) - Which widget type to use
-- [More Watch Functions](/documentation/watch_it/more_watch_functions.md) - Other watch functions
+- [WatchingWidgets](/documentation/watch_it/watching_widgets.md) - Which widget type to use (WatchingWidget, mixins, StatefulWidget)
+- [More Watch Functions](/documentation/watch_it/more_watch_functions.md) - watchIt, watchPropertyValue, and more
 - [Watch Functions Reference](/documentation/watch_it/watch_functions.md) - Complete API reference
