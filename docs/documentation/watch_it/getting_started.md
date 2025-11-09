@@ -35,39 +35,7 @@ dependencies:
 
 Here's a simple counter that rebuilds automatically when the count changes:
 
-```dart
-// 1. Create a manager with reactive state
-class CounterManager {
-  final count = ValueNotifier<int>(0);
-
-  void increment() => count.value++;
-}
-
-// 2. Register it in get_it
-void main() {
-  di.registerSingleton<CounterManager>(CounterManager());
-  runApp(MyApp());
-}
-
-// 3. Watch it in your widget
-class CounterWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    // This one line makes it reactive!
-    final count = watchValue((CounterManager m) => m.count);
-
-    return Scaffold(
-      body: Center(
-        child: Text('Count: $count', style: TextStyle(fontSize: 48)),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => di<CounterManager>().increment(),
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/counter_simple_example.dart#example
 
 That's it! When you press the button, the widget automatically rebuilds with the new count.
 
@@ -83,16 +51,7 @@ The widget automatically subscribes to changes when it builds and cleans up when
 
 Already have an app? Just add a mixin to your existing widgets:
 
-```dart
-class MyWidget extends StatelessWidget with WatchItMixin {
-  const MyWidget({super.key});
-
-  Widget build(BuildContext context) {
-    final data = watchValue((Manager m) => m.data);
-    return Text('$data');
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/mixin_simple_example.dart#example
 
 No need to change your widget hierarchy - just add `with WatchItMixin` and start using watch functions.
 
