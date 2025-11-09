@@ -32,6 +32,9 @@ class UserActivity extends StatelessWidget {
       stream: di<UserService>().activityStream,
       initialValue: 'No activity',
       builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
