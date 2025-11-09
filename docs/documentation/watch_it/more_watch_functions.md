@@ -116,7 +116,7 @@ Mixing different watch functions:
 ✅ Choose based on property count and update patterns
 ✅ Mix and match based on your needs
 
-**Next:** Learn [how watch_it works](/documentation/watch_it/how_it_works.md) to understand the mechanism.
+**Next:** Learn how to [watch Streams & Futures](/documentation/watch_it/watching_streams_and_futures.md).
 
 ## See Also
 
