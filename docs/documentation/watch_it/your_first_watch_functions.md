@@ -52,7 +52,7 @@ final count = watchValue<CounterManager, int>((m) => m.count);
 
 ## Why This Is Better
 
-**Without watch_it:**
+**Without watch_it (using ValueListenableBuilder):**
 
 <<< @/../code_samples/lib/watch_it/counter_manual_listener_example.dart#example
 
@@ -60,7 +60,7 @@ final count = watchValue<CounterManager, int>((m) => m.count);
 
 <<< @/../code_samples/lib/watch_it/counter_simple_example.dart#example
 
-From 25+ lines to 3 lines!
+Much cleaner! No nested builders, no generic types to specify, just one line: `watchValue((CounterManager m) => m.count)`
 
 ## Watching Multiple Values
 
