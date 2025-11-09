@@ -29,6 +29,8 @@ next:
 - Manage app-wide state (view models, managers, BLoCs)
 - Easily swap implementations for testing
 
+![get_it Data Flow](/images/get-it-flow.svg)
+
 > Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
 
 ---

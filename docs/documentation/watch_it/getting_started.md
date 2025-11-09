@@ -27,6 +27,8 @@ next:
 - Navigate or show dialogs in response to data changes
 - Display command progress (loading spinners, error messages, success states)
 
+![watch_it Data Flow](/images/watch-it-flow.svg)
+
 > Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
 
 ---
