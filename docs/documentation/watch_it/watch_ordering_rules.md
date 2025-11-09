@@ -43,37 +43,15 @@ The most common mistake is putting watch calls inside conditional statements:
 
 ### ❌ Watch Inside Loops
 
-```dart
-// ❌ WRONG - order changes based on list length
-for (final item in items) {
-  final data = watchValue((Manager m) => m.getItem(item.id));
-  // Build UI...
-}
-```
+<<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_inside_loops_wrong
 
 ### ❌ Watch After Early Returns
 
-```dart
-// ❌ WRONG - some watches skipped
-if (isLoading) {
-  return CircularProgressIndicator(); // Returns early!
-}
-
-// This watch only happens sometimes
-final data = watchValue((Manager m) => m.data);
-```
+<<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_after_early_return_wrong
 
 ### ❌ Watch in Callbacks
 
-```dart
-// ❌ WRONG - watch in button callback
-ElevatedButton(
-  onPressed: () {
-    final data = watchValue((Manager m) => m.data); // Error!
-    doSomething(data);
-  },
-)
-```
+<<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_in_callbacks_wrong
 
 ## Safe Conditional Patterns
 
@@ -88,43 +66,9 @@ ElevatedButton(
 
 ### Safe Pattern Examples
 
-```dart
-// ✓ CORRECT - All watches before conditionals
-Widget build(BuildContext context) {
-  // Watch everything first
-  final data = watchValue((Manager m) => m.data);
-  final isLoading = watchValue((Manager m) => m.isLoading);
-  final error = watchValue((Manager m) => m.error);
+<<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#safe_pattern_conditional
 
-  // Then use conditionals
-  if (error != null) {
-    return ErrorWidget(error);
-  }
-
-  if (isLoading) {
-    return LoadingWidget();
-  }
-
-  return DataWidget(data);
-}
-```
-
-```dart
-// ✓ CORRECT - Watch list, then iterate over values
-Widget build(BuildContext context) {
-  // Watch the list once
-  final items = watchValue((Manager m) => m.items);
-
-  // Iterate over values (not watch calls)
-  return ListView.builder(
-    itemCount: items.length,
-    itemBuilder: (context, index) {
-      final item = items[index]; // No watch here!
-      return ItemCard(item: item);
-    },
-  );
-}
-```
+<<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#safe_pattern_list_iteration
 
 ## Troubleshooting
 
