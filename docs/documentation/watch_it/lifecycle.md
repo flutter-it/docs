@@ -10,23 +10,7 @@ To dispose anything when the widget is disposed you can use call `onDispose` any
 
 If you need an object that is created on the first build of your stateless widget that is automatically disposed when the widget is destroyed you can use `createOnce`:
 
-```dart
-  Widget build(BuildContext context) {
-    final controller =
-        createOnce<TextEditingController>(() => TextEditingController());
-    return Row(
-      children: [
-        TextField(
-          controller: controller,
-        ),
-        ElevatedButton(
-          onPressed: () => controller.clear(),
-          child: const Text('Clear'),
-        ),
-      ],
-    );
-  }
-```
+<<< @/../code_samples/lib/watch_it/lifecycle_create_once_example.dart#example
 
 On the first build, the controller gets created. On all following builds the same controller instance is returned. When the widget is disposed the controller gets disposed by either:
 
