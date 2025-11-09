@@ -19,14 +19,14 @@ void quickComparison(BuildContext context) {
   // 1. watchValue - Most common
   final todos = watchValue((TodoManager m) => m.todos);
 
-  // 2. watchIt - When manager IS a Listenable
+  // 2. watchIt - When manager is a Listenable registered in get_it
   final manager = watchIt<CounterModel>();
 
   // 3. watch - Local or direct Listenable
   final counter = createOnce(() => ValueNotifier(0));
   final count = watch(counter).value;
 
-  // 4. watchPropertyValue - Selective updates
+  // 4. watchPropertyValue - Selective updates from Listenable registered in get_it
   final darkMode = watchPropertyValue((SettingsModel m) => m.darkMode);
   // #endregion quick_comparison
 }
