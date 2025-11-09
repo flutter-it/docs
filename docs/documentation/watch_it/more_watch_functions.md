@@ -59,6 +59,14 @@ Sometimes you don't need the return value - you just want to trigger a rebuild w
 
 Only rebuilds when a specific property of a Listenable parent Object changes:
 
+**Method signature:**
+```dart
+R watchPropertyValue<T extends Listenable, R>(
+  R Function(T) selector,
+  {String? instanceName, GetIt? getIt}
+)
+```
+
 <<< @/../code_samples/lib/watch_it/watch_property_value_selective_example.dart#example
 
 **The difference:**
