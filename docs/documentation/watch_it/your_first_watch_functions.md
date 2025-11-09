@@ -17,7 +17,9 @@ The most common way to watch data is with `watchValue()`. It watches a `ValueLis
 - No manual listeners, no cleanup needed
 
 ::: tip Type Inference Magic
-Notice how we specify the type of the parent object in the selector function: `(CounterManager m) => m.count`
+Notice how we specify the type of the parent object in the selector function:
+
+`(CounterManager m) => m.count`
 
 By declaring the parent object type `CounterManager`, Dart automatically **infers** both generic type parameters:
 
