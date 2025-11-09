@@ -57,7 +57,7 @@ Sometimes you don't need the return value - you just want to trigger a rebuild w
 
 ## watchPropertyValue - Selective Updates
 
-Only rebuild when a specific property changes:
+Only rebuilds when a specific property of a Listenable parent Object changes:
 
 <<< @/../code_samples/lib/watch_it/watch_property_value_selective_example.dart#example
 
