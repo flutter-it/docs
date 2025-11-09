@@ -58,6 +58,10 @@ Replace `FutureBuilder` with `watchFuture()`:
 
 <<< @/../code_samples/lib/watch_it/splash_screen_initialization_example.dart#example
 
+::: tip Advanced: Wait for Multiple Dependencies
+If you need to wait for multiple async services to initialize (like database, auth, config), use `allReady()` instead of individual futures. See [Async Initialization with allReady](/documentation/watch_it/advanced_integration.md#async-initialization-with-isready-and-allready) for more details.
+:::
+
 ## Multiple Async Sources
 
 Watch multiple streams or futures:
