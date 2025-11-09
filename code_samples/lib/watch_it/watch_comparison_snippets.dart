@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart' hide di;
 import '_shared/stubs.dart';
 
-// #region property_value_difference
 void propertyValueDifference(BuildContext context) {
+  // #region property_value_difference
   // Rebuilds on EVERY SettingsModel change
   final settings = watchIt<SettingsModel>();
   final darkMode1 = settings.darkMode;
 
   // Rebuilds ONLY when darkMode changes
   final darkMode2 = watchPropertyValue((SettingsModel m) => m.darkMode);
+  // #endregion property_value_difference
 }
-// #endregion property_value_difference
 
-// #region quick_comparison
 void quickComparison(BuildContext context) {
+  // #region quick_comparison
   // 1. watchValue - Most common
   final todos = watchValue((TodoManager m) => m.todos);
 
@@ -28,34 +28,34 @@ void quickComparison(BuildContext context) {
 
   // 4. watchPropertyValue - Selective updates
   final darkMode = watchPropertyValue((SettingsModel m) => m.darkMode);
+  // #endregion quick_comparison
 }
-// #endregion quick_comparison
 
-// #region watchValue_usage
 void watchValueUsage(BuildContext context) {
+  // #region watchValue_usage
   final data = watchValue((DataManager m) => m.data);
+  // #endregion watchValue_usage
 }
-// #endregion watchValue_usage
 
-// #region watchIt_usage
 void watchItUsage(BuildContext context) {
+  // #region watchIt_usage
   final manager = watchIt<CounterModel>();
   // Can call methods on manager
+  // #endregion watchIt_usage
 }
-// #endregion watchIt_usage
 
-// #region watch_usage
 void watchUsage(BuildContext context) {
+  // #region watch_usage
   final controller = createOnce(() => TextEditingController());
   final text = watch(controller).value.text;
+  // #endregion watch_usage
 }
-// #endregion watch_usage
 
-// #region watchPropertyValue_usage
 void watchPropertyValueUsage(BuildContext context) {
+  // #region watchPropertyValue_usage
   // Only rebuild when THIS specific property changes
   final darkMode = watchPropertyValue((SettingsModel m) => m.darkMode);
+  // #endregion watchPropertyValue_usage
 }
-// #endregion watchPropertyValue_usage
 
 void main() {}
