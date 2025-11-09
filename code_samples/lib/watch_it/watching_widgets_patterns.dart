@@ -16,49 +16,49 @@ class TodoList extends WatchingWidget {
 }
 // #endregion watching_widget_basic
 
-// Helper class for settings example
-class SettingsManager {
-  final notificationsEnabled = ValueNotifier<bool>(true);
-  final itemCount = ValueNotifier<int>(0);
-
-  void toggleNotifications(bool enabled) {
-    notificationsEnabled.value = enabled;
-  }
-}
-
 // #region watching_stateful_widget
-class NotificationToggle extends WatchingStatefulWidget {
+class TodoListWithFilter extends WatchingStatefulWidget {
   @override
-  State createState() => _NotificationToggleState();
+  State createState() => _TodoListWithFilterState();
 }
 
-class _NotificationToggleState extends State<NotificationToggle> {
-  bool _isAnimating = false; // Local UI state for animation
+class _TodoListWithFilterState extends State<TodoListWithFilter> {
+  bool _showCompleted = true; // Local UI state
 
   @override
   Widget build(BuildContext context) {
-    // Reactive state - automatically rebuilds when manager changes
-    final enabled = watchValue((SettingsManager m) => m.notificationsEnabled);
+    // Reactive state - rebuilds when todos change
+    final todos = watchValue((TodoManager m) => m.todos);
 
-    return SwitchListTile(
-      title: Text('Notifications'),
-      subtitle: _isAnimating ? Text('Updating...') : null,
-      value: enabled,
-      onChanged: (value) async {
-        // Update local state for immediate UI feedback
-        setState(() => _isAnimating = true);
+    // Filter based on local state
+    final filtered = _showCompleted
+        ? todos
+        : todos.where((todo) => !todo.completed).toList();
 
-        // Update manager (business logic)
-        di<SettingsManager>().toggleNotifications(value);
-
-        // Simulate async operation (API call, etc.)
-        await Future.delayed(Duration(milliseconds: 500));
-
-        // Clear local animation state
-        if (mounted) {
-          setState(() => _isAnimating = false);
-        }
-      },
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text('Show completed'),
+            Switch(
+              value: _showCompleted,
+              onChanged: (value) => setState(() => _showCompleted = value),
+            ),
+          ],
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: filtered.length,
+            itemBuilder: (context, index) => CheckboxListTile(
+              title: Text(filtered[index].title),
+              value: filtered[index].completed,
+              onChanged: (_) => di<TodoManager>().updateTodoCommand.execute(
+                  filtered[index]
+                      .copyWith(completed: !filtered[index].completed)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -80,34 +80,48 @@ class TodoListWithMixin extends StatelessWidget with WatchItMixin {
 // #endregion mixin_stateless
 
 // #region mixin_stateful
-class NotificationToggleWithMixin extends StatefulWidget
+class TodoListWithFilterMixin extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const NotificationToggleWithMixin({super.key});
+  const TodoListWithFilterMixin({super.key});
 
   @override
-  State createState() => _NotificationToggleWithMixinState();
+  State createState() => _TodoListWithFilterMixinState();
 }
 
-class _NotificationToggleWithMixinState
-    extends State<NotificationToggleWithMixin> {
-  bool _isAnimating = false;
+class _TodoListWithFilterMixinState extends State<TodoListWithFilterMixin> {
+  bool _showCompleted = true;
 
   @override
   Widget build(BuildContext context) {
-    final enabled = watchValue((SettingsManager m) => m.notificationsEnabled);
+    final todos = watchValue((TodoManager m) => m.todos);
+    final filtered = _showCompleted
+        ? todos
+        : todos.where((todo) => !todo.completed).toList();
 
-    return SwitchListTile(
-      title: Text('Notifications'),
-      subtitle: _isAnimating ? Text('Updating...') : null,
-      value: enabled,
-      onChanged: (value) async {
-        setState(() => _isAnimating = true);
-        di<SettingsManager>().toggleNotifications(value);
-        await Future.delayed(Duration(milliseconds: 500));
-        if (mounted) {
-          setState(() => _isAnimating = false);
-        }
-      },
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text('Show completed'),
+            Switch(
+              value: _showCompleted,
+              onChanged: (value) => setState(() => _showCompleted = value),
+            ),
+          ],
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: filtered.length,
+            itemBuilder: (context, index) => CheckboxListTile(
+              title: Text(filtered[index].title),
+              value: filtered[index].completed,
+              onChanged: (_) => di<TodoManager>().updateTodoCommand.execute(
+                  filtered[index]
+                      .copyWith(completed: !filtered[index].completed)),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
