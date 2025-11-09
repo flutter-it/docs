@@ -66,12 +66,12 @@ export default defineConfig({
             items: [
               { text: 'Getting started', link: '/documentation/watch_it/getting_started.md' },
               { text: 'Your First Watch Functions', link: '/documentation/watch_it/your_first_watch_functions.md' },
-              { text: 'WatchingWidgets', link: '/documentation/watch_it/watching_widgets.md' },
               { text: 'More Watch Functions', link: '/documentation/watch_it/more_watch_functions.md' },
               { text: 'Watching Streams & Futures', link: '/documentation/watch_it/watching_streams_and_futures.md' },
               { text: 'Watch Ordering Rules', link: '/documentation/watch_it/watch_ordering_rules.md' },
               { text: 'Side Effects with Handlers', link: '/documentation/watch_it/handlers.md' },
               { text: 'Lifecycle Functions', link: '/documentation/watch_it/lifecycle.md' },
+              { text: 'WatchingWidgets', link: '/documentation/watch_it/watching_widgets.md' },
               { text: 'Observing Commands', link: '/documentation/watch_it/observing_commands.md' },
               { text: 'Advanced Integration', link: '/documentation/watch_it/advanced_integration.md' },
               { text: 'Best Practices', link: '/documentation/watch_it/best_practices.md' },

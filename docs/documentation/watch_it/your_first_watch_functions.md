@@ -100,7 +100,7 @@ Add a todo? Widget rebuilds automatically. No `setState`, no `StreamBuilder`.
 ✅ Automatic subscription and cleanup
 ✅ Multiple watch calls = multiple subscriptions
 
-**Next:** Learn which [widget types](/documentation/watch_it/watching_widgets.md) you can use watch functions in.
+**Next:** Learn about [more watch functions](/documentation/watch_it/more_watch_functions.md) for different use cases.
 
 ## See Also
 
