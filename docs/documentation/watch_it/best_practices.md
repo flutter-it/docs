@@ -7,80 +7,26 @@ Production-ready patterns, performance tips, and testing strategies for watch_it
 ### Keep Business Logic Out of Widgets
 
 **❌ Bad - Logic in widget:**
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
 
-    // BAD: Business logic in widget
-    final filteredTodos = todos.where((todo) {
-      if (DateTime.now().hour > 17) {
-        return todo.priority > 2;
-      }
-      return true;
-    }).toList();
-
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#logic_in_widget_bad
 
 **✅ Good - Logic in manager:**
-```dart
-// In TodoManager
-class TodoManager {
-  final todos = ValueNotifier<List<Todo>>([]);
 
-  // Business logic HERE
-  ValueListenable<List<Todo>> get filteredTodos =>
-      todos.map((list) =>
-        list.where((todo) =>
-          DateTime.now().hour > 17
-            ? todo.priority > 2
-            : true
-        ).toList()
-      );
-}
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#logic_in_manager_good_manager
 
-// In widget - just display
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.filteredTodos);
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#logic_in_manager_good_widget
 
 ### Self-Contained Widgets
 
 Widgets should access their dependencies directly from get_it, not via constructor parameters.
 
 **❌ Bad - Passing managers as parameters:**
-```dart
-class TodoList extends WatchingWidget {
-  TodoList({required this.manager});  // DON'T DO THIS
-  final TodoManager manager;
 
-  @override
-  Widget build(BuildContext context) {
-    final todos = watch(manager.todos).value;
-    return ListView(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#passing_managers_bad
 
 **✅ Good - Access directly:**
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
-    return ListView(...);
-  }
-}
-```
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#access_directly_good
 
 **Why?** Self-contained widgets are:
 - Easier to test (mock get_it, not constructor params)
@@ -91,39 +37,12 @@ class TodoList extends WatchingWidget {
 ### Separate UI State from Business State
 
 **Local UI state** (form input, expansion, selection):
-```dart
-class ExpandableCard extends WatchingStatefulWidget {
-  State createState() => _ExpandableCardState();
-}
 
-class _ExpandableCardState extends State<ExpandableCard> {
-  bool _expanded = false;  // Local UI state
-
-  @override
-  Widget build(BuildContext context) {
-    // Business state from watch_it
-    final data = watchValue((Manager m) => m.data);
-
-    return ExpansionTile(
-      initiallyExpanded: _expanded,
-      onExpansionChanged: (expanded) => setState(() => _expanded = expanded),
-      children: [...],
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#local_ui_state
 
 **Business state** (data from API, shared state):
-```dart
-// In manager - registered in get_it
-class DataManager {
-  final data = ValueNotifier<List<Item>>([]);
 
-  void fetchData() async {
-    data.value = await api.getData();
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#business_state
 
 ## Performance Optimization
 
@@ -132,110 +51,48 @@ class DataManager {
 Watch only what you need. Don't watch the whole manager if you only need one property.
 
 **❌ Bad - Watching too much:**
-```dart
-final manager = watchIt<TodoManager>();  // Rebuilds on ANY change
-final todos = manager.todos.value;
-```
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#watching_too_much_bad
 
 **✅ Good - Watch specific property:**
-```dart
-final todos = watchValue((TodoManager m) => m.todos);  // Only rebuilds when todos change
-```
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#watch_specific_good
 
 ### Use watchPropertyValue for Selective Updates
 
 When watching a `Listenable` with many properties, use `watchPropertyValue()` to rebuild only when specific property changes:
 
 **❌ Bad - Rebuilds on every settings change:**
-```dart
-final settings = watchIt<SettingsModel>();
-final darkMode = settings.darkMode;  // Rebuilds even when other settings change
-```
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#rebuilds_on_every_settings_bad
 
 **✅ Good - Rebuilds only when darkMode changes:**
-```dart
-final darkMode = watchPropertyValue((SettingsModel s) => s.darkMode);
-```
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#rebuilds_only_darkmode_good
 
 ### Split Large Widgets
 
 Don't watch everything in one giant widget. Split into smaller widgets that watch only what they need.
 
 **❌ Bad - One widget watches everything:**
-```dart
-class Dashboard extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final user = watchValue((UserModel m) => m.user);
-    final todos = watchValue((TodoManager m) => m.todos);
-    final settings = watchValue((Settings m) => m.darkMode);
 
-    return Column(
-      children: [
-        // When ANYTHING changes, ENTIRE dashboard rebuilds
-        UserHeader(user: user),
-        TodoList(todos: todos),
-        SettingsPanel(darkMode: settings),
-      ],
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#one_widget_watches_everything_bad
 
 **✅ Good - Each widget watches its own data:**
-```dart
-class Dashboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        UserHeader(),      // Only rebuilds when user changes
-        TodoList(),        // Only rebuilds when todos change
-        SettingsPanel(),   // Only rebuilds when settings change
-      ],
-    );
-  }
-}
 
-class UserHeader extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final user = watchValue((UserModel m) => m.user);
-    return Text(user.name);
-  }
-}
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#split_widgets_good_dashboard
 
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#split_widgets_good_user_header
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#split_widgets_good_todo_list
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#split_widgets_good_settings_panel
 
 ### Const Constructors
 
 Use `const` constructors with `WatchItMixin` for better performance:
 
-```dart
-class TodoCard extends StatelessWidget with WatchItMixin {
-  const TodoCard({super.key, required this.todoId});  // const!
-  final String todoId;
-
-  @override
-  Widget build(BuildContext context) {
-    final todo = watchValue((TodoManager m) => m.getTodo(todoId));
-    return Card(...);
-  }
-}
-
-// Usage
-ListView.builder(
-  itemBuilder: (context, index) =>
-    const TodoCard(todoId: ids[index]),  // const!
-);
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#const_constructors
 
 Flutter can optimize const widgets for better rebuild performance.
 
@@ -244,44 +101,14 @@ Flutter can optimize const widgets for better rebuild performance.
 Compute derived data in the manager, not in the widget:
 
 **❌ Bad - Computing in widget:**
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
 
-    // Recomputes on EVERY rebuild
-    final completedCount = todos.where((t) => t.completed).length;
-    final pendingCount = todos.length - completedCount;
-
-    return Text('$completedCount / $pendingCount');
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#computing_in_widget_bad
 
 **✅ Good - Computed in manager:**
-```dart
-class TodoManager {
-  final todos = ValueNotifier<List<Todo>>([]);
 
-  // Cached computation
-  ValueListenable<int> get completedCount =>
-      todos.map((list) => list.where((t) => t.completed).length);
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#computed_in_manager_good_manager
 
-  ValueListenable<int> get pendingCount =>
-      todos.map((list) => list.length - completedCount);
-}
-
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final completed = watchValue((TodoManager m) => m.completedCount);
-    final pending = watchValue((TodoManager m) => m.pendingCount);
-
-    return Text('$completed / $pending');
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#computed_in_manager_good_widget
 
 ## Testing
 
@@ -386,335 +213,67 @@ testWidgets('shows snackbar on success', (tester) async {
 
 ### Manager/Service Structure
 
-```dart
-class TodoManager {
-  // ValueNotifiers for reactive state
-  final todos = ValueNotifier<List<Todo>>([]);
-  final isLoading = ValueNotifier<bool>(false);
-
-  // Commands for async operations
-  late final fetchCommand = Command.createAsyncNoParam(
-    _fetchTodos,
-    initialValue: <Todo>[],
-  );
-
-  late final createCommand = Command.createAsync<Todo, String>(
-    _createTodo,
-    initialValue: null,
-  );
-
-  // Private implementation
-  Future<List<Todo>> _fetchTodos() async {
-    isLoading.value = true;
-    try {
-      final result = await api.getTodos();
-      todos.value = result;
-      return result;
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<Todo> _createTodo(String title) async {
-    final todo = await api.createTodo(title);
-    todos.value = [...todos.value, todo];
-    return todo;
-  }
-
-  // Cleanup
-  void dispose() {
-    todos.dispose();
-    isLoading.dispose();
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#manager_service_structure
 
 ### Widget Structure
 
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    // 1. Watch reactive state
-    final todos = watchValue((TodoManager m) => m.todos);
-    final isLoading = watchValue((TodoManager m) => m.isLoading);
-
-    // 2. Register handlers
-    registerHandler(
-      select: (TodoManager m) => m.createCommand,
-      handler: _onTodoCreated,
-    );
-
-    // 3. One-time initialization
-    callOnce((_) {
-      di<TodoManager>().fetchCommand.execute();
-    });
-
-    // 4. Build UI
-    if (isLoading) return CircularProgressIndicator();
-    return ListView.builder(...);
-  }
-
-  void _onTodoCreated(BuildContext context, Command? command, Function cancel) {
-    if (command?.value != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Todo created!')),
-      );
-    }
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#widget_structure
 
 ## Common Patterns
 
 ### Master-Detail Navigation
 
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
-
-    registerHandler(
-      select: (TodoManager m) => m.selectedTodo,
-      handler: (context, todo, cancel) {
-        if (todo != null) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => TodoDetail(todoId: todo.id),
-            ),
-          );
-        }
-      },
-    );
-
-    return ListView.builder(
-      itemCount: todos.length,
-      itemBuilder: (context, index) {
-        final todo = todos[index];
-        return ListTile(
-          title: Text(todo.title),
-          onTap: () {
-            di<TodoManager>().selectTodo(todo);
-          },
-        );
-      },
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#master_detail_navigation
 
 ### Pull-to-Refresh
 
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
-
-    return RefreshIndicator(
-      onRefresh: () async {
-        final manager = di<TodoManager>();
-        manager.fetchCommand.execute();
-        await manager.fetchCommand.executeWithFuture();
-      },
-      child: ListView.builder(...),
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#pull_to_refresh_pattern
 
 ### Search/Filter
 
-```dart
-class SearchableList extends WatchingStatefulWidget {
-  State createState() => _SearchableListState();
-}
-
-class _SearchableListState extends State<SearchableList> {
-  String _query = '';
-
-  @override
-  Widget build(BuildContext context) {
-    final items = watchValue((Manager m) => m.items);
-
-    final filtered = items
-        .where((item) => item.name.toLowerCase().contains(_query.toLowerCase()))
-        .toList();
-
-    return Column(
-      children: [
-        TextField(
-          onChanged: (value) => setState(() => _query = value),
-          decoration: InputDecoration(hintText: 'Search...'),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: filtered.length,
-            itemBuilder: (context, index) =>
-                ItemCard(item: filtered[index]),
-          ),
-        ),
-      ],
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#search_filter_pattern
 
 ### Pagination
 
-```dart
-class PaginatedList extends WatchingStatefulWidget {
-  State createState() => _PaginatedListState();
-}
-
-class _PaginatedListState extends State<PaginatedList> {
-  final _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels ==
-        _scrollController.position.maxScrollExtent) {
-      di<Manager>().loadMoreCommand.execute();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final items = watchValue((Manager m) => m.items);
-    final isLoadingMore = watchValue((Manager m) => m.loadMoreCommand.isExecuting);
-
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: items.length + (isLoadingMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index == items.length) {
-          return Center(child: CircularProgressIndicator());
-        }
-        return ItemCard(item: items[index]);
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#pagination_pattern
 
 ## Anti-Patterns
 
 ### ❌ Don't Access get_it in Constructors
 
-```dart
-// BAD
-class MyWidget extends WatchingWidget {
-  MyWidget() {
-    final manager = di<Manager>();  // DON'T DO THIS
-    manager.init();
-  }
-}
+**GOOD - Use callOnce:**
 
-// GOOD
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    callOnce((_) {
-      di<Manager>().init();  // Do this instead
-    });
-    return YourUI();
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_access_getit_constructors_good
 
 ### ❌ Don't Violate Watch Ordering Rules
 
-```dart
-// BAD - conditional watch calls
-if (showDetails) {
-  final details = watchValue((M m) => m.details);  // Order changes!
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_violate_ordering_bad
 
 See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for details.
 
 ### ❌ Don't Await execute()
 
-```dart
-// BAD - blocks UI
-ElevatedButton(
-  onPressed: () async {
-    await di<Manager>().command.executeWithFuture();  // Blocks!
-  },
-  child: Text('Submit'),
-)
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_await_execute_bad_anti
 
-// GOOD - non-blocking
-ElevatedButton(
-  onPressed: () => di<Manager>().command.execute(),  // Returns immediately
-  child: Text('Submit'),
-)
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_await_execute_good_anti
 
 ### ❌ Don't Put Watch Calls in Callbacks
 
-```dart
-// BAD
-ElevatedButton(
-  onPressed: () {
-    final data = watchValue((M m) => m.data);  // Wrong context!
-  },
-)
-
-// GOOD
-final data = watchValue((M m) => m.data);  // In build()
-ElevatedButton(
-  onPressed: () {
-    doSomething(data);  // Use the value
-  },
-)
-```
+See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) - watch calls must be in build(), not in callbacks.
 
 ## Debugging Tips
 
 ### Enable watch_it Tracing
 
-```dart
-void main() {
-  GetIt.I.enableWatchItTracing = true;  // See all watch subscriptions
-  runApp(MyApp());
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#enable_tracing
 
 ### Log Watch Calls
 
-```dart
-final todos = watchValue(
-  (TodoManager m) => m.todos,
-  debugLabel: 'TodoList.todos',  // Shows in traces
-);
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#log_watch_calls
 
 ### Check Rebuild Frequency
 
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('TodoList rebuild at ${DateTime.now()}');  // Track rebuilds
-
-    final todos = watchValue((TodoManager m) => m.todos);
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#check_rebuild_frequency
 
 ## See Also
 
