@@ -37,14 +37,10 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
 
     return Column(
       children: [
-        Row(
-          children: [
-            Text('Show completed'),
-            Switch(
-              value: _showCompleted,
-              onChanged: (value) => setState(() => _showCompleted = value),
-            ),
-          ],
+        SwitchListTile(
+          title: Text('Show completed'),
+          value: _showCompleted,
+          onChanged: (value) => setState(() => _showCompleted = value),
         ),
         Expanded(
           child: ListView.builder(
@@ -100,14 +96,10 @@ class _TodoListWithFilterMixinState extends State<TodoListWithFilterMixin> {
 
     return Column(
       children: [
-        Row(
-          children: [
-            Text('Show completed'),
-            Switch(
-              value: _showCompleted,
-              onChanged: (value) => setState(() => _showCompleted = value),
-            ),
-          ],
+        SwitchListTile(
+          title: Text('Show completed'),
+          value: _showCompleted,
+          onChanged: (value) => setState(() => _showCompleted = value),
         ),
         Expanded(
           child: ListView.builder(
