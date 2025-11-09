@@ -1,7 +1,7 @@
 ---
 next:
-  text: 'WatchingWidgets'
-  link: '/documentation/watch_it/watching_widgets'
+  text: 'Your First Watch Functions'
+  link: '/documentation/watch_it/your_first_watch_functions'
 ---
 
 <div class="header-with-logo">
@@ -31,6 +31,19 @@ dependencies:
   get_it: ^8.0.0  # watch_it builds on get_it
 ```
 
+## Why watch_it? (Compared to get_it alone)
+
+get_it gives you dependency injection. watch_it adds **reactive UI** on top:
+
+- ✅ **Automatic rebuilds** - Widgets rebuild when data changes, no `setState` needed → [Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md)
+- ✅ **No manual listeners** - Automatic subscription & cleanup, prevent memory leaks → [How watch_it Works](/documentation/watch_it/how_it_works.md)
+- ✅ **Simpler async** - Replace `StreamBuilder`/`FutureBuilder` with `watchStream()`/`watchFuture()` → [Watching Streams & Futures](/documentation/watch_it/watching_streams_and_futures.md)
+- ✅ **Side effects** - Navigation, dialogs, toasts without rebuilding → [Side Effects with Handlers](/documentation/watch_it/handlers.md)
+- ✅ **Lifecycle helpers** - `callOnce()` for initialization, `createOnce()` for controllers → [Lifecycle Functions](/documentation/watch_it/lifecycle.md)
+- ✅ **Command integration** - Observe `command_it` commands reactively → [Observing Commands](/documentation/watch_it/observing_commands.md)
+
+**Bottom line:** get_it manages dependencies, watch_it makes them **reactive** in your UI.
+
 ## Your First Reactive Widget
 
 Here's a simple counter that rebuilds automatically when the count changes:
@@ -59,9 +72,9 @@ No need to change your widget hierarchy - just add `with WatchItMixin` and start
 
 Now that you've seen the basics, there's so much more watch_it can do:
 
-→ **[WatchingWidgets](/documentation/watch_it/watching_widgets.md)** - Learn which widget type to use (stateless vs stateful)
-
 → **[Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md)** - Deep dive into `watchValue()` and other watch functions
+
+→ **[WatchingWidgets](/documentation/watch_it/watching_widgets.md)** - Learn which widget type to use (WatchingWidget, WatchingStatefulWidget, or mixins)
 
 → **[Watching Streams & Futures](/documentation/watch_it/watching_streams_and_futures.md)** - Replace `StreamBuilder` and `FutureBuilder` with one-line `watchStream()` and `watchFuture()`
 
