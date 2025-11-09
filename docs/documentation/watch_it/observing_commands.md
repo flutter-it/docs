@@ -32,14 +32,8 @@ Watch the command's `value` property to display results:
 <<< @/../code_samples/lib/watch_it/watch_command_value_example.dart#example
 
 **Pattern:**
-```dart
-// Get the command
-final manager = di<WeatherManager>();
 
-// Watch its value
-final weather = watch(manager.fetchWeatherCommand).value;
-final isLoading = watch(manager.fetchWeatherCommand.isExecuting).value;
-```
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#watch_value_pattern
 
 ## Watching Command Errors
 
@@ -132,130 +126,41 @@ Use handlers to chain commands together:
 
 ### 2. Don't Await execute()
 
-```dart
-// ✓ GOOD - Non-blocking, UI stays responsive
-ElevatedButton(
-  onPressed: () => di<Manager>().command.execute(),
-  child: Text('Submit'),
-)
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#dont_await_execute_good
 
-// ❌ BAD - Blocks UI thread
-ElevatedButton(
-  onPressed: () async {
-    await di<Manager>().command.executeWithFuture();
-  },
-  child: Text('Submit'),
-)
-```
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#dont_await_execute_bad
 
 **Why?** Commands handle async internally. Just call `execute()` and let watch_it update the UI reactively.
 
 ### 3. Watch Execution State for Loading
 
-```dart
-// ✓ GOOD - Watch isExecuting
-final isLoading = watch(command.isExecuting).value;
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#watch_execution_state_good
 
-if (isLoading) {
-  return CircularProgressIndicator();
-}
-
-// ❌ BAD - Manual tracking
-bool _isLoading = false;
-
-setState(() => _isLoading = true);
-await command.executeWithFuture();
-setState(() => _isLoading = false);
-```
+**Avoid manual tracking:** Don't use `setState` and boolean flags. Let commands and watch_it handle state reactively.
 
 ### 4. Handle Errors Gracefully
 
-```dart
-// ✓ GOOD - Watch errors and display them
-final error = watch(command.errors).value;
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#handle_errors_good_watch
 
-if (error != null) {
-  return ErrorWidget(error: error);
-}
-
-// ✓ ALSO GOOD - Use handler for error dialog
-registerHandler(
-  select: (Manager m) => m.command.errors,
-  handler: (context, error, _) {
-    if (error != null) {
-      showErrorDialog(context, error);
-    }
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#handle_errors_good_handler
 
 ### 5. Only Show Loading on Initial Load
 
-```dart
-final isLoading = watch(command.isExecuting).value;
-final data = watch(command).value;
-
-// Show spinner only when no data yet
-if (isLoading && data == null) {
-  return CircularProgressIndicator();
-}
-
-// Show data even while refreshing
-return ListView(
-  children: [
-    if (isLoading) LinearProgressIndicator(), // Subtle indicator
-    ...data.map((item) => ListTile(...)),
-  ],
-);
-```
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#initial_load_pattern
 
 ## Common Patterns
 
 ### Form Submission
 
-```dart
-final isSubmitting = watch(manager.submitCommand.isExecuting).value;
-final canSubmit = formKey.currentState?.validate() ?? false;
-
-ElevatedButton(
-  onPressed: canSubmit && !isSubmitting
-      ? () => manager.submitCommand.execute(formData)
-      : null,
-  child: isSubmitting
-      ? CircularProgressIndicator()
-      : Text('Submit'),
-)
-```
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#form_submission_pattern
 
 ### Pull to Refresh
 
-```dart
-RefreshIndicator(
-  onRefresh: () async {
-    manager.refreshCommand.execute();
-    await manager.refreshCommand.executeWithFuture();
-  },
-  child: ListView(...),
-)
-```
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#pull_to_refresh_pattern
 
 ### Retry on Error
 
-```dart
-final error = watch(command.errors).value;
-
-if (error != null) {
-  return Column(
-    children: [
-      Text('Error: $error'),
-      ElevatedButton(
-        onPressed: () => command.execute(),
-        child: Text('Retry'),
-      ),
-    ],
-  );
-}
-```
+<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#retry_on_error_pattern
 
 ## See Also
 
