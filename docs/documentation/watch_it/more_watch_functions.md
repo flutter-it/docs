@@ -34,7 +34,7 @@ final manager = watch(di<CounterManager>());
 
 // These are equivalent:
 final count = watchValue((CounterManager m) => m.count);
-final count = watch(di<CounterManager>().count);
+final count = watch(di<CounterManager>().count).value;
 ```
 
 **Why use the convenience functions?**
