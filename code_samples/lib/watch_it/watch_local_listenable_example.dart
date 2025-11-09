@@ -4,12 +4,13 @@ import '_shared/stubs.dart';
 
 // #region example
 class CounterWidget extends WatchingWidget {
+  const CounterWidget({super.key, required this.counter});
+
+  final ValueNotifier<int> counter;
+
   @override
   Widget build(BuildContext context) {
-    // Create a local notifier
-    final counter = createOnce(() => ValueNotifier<int>(0));
-
-    // Watch it directly (not from get_it)
+    // Watch the counter passed as parameter (not from get_it)
     final count = watch(counter).value;
 
     return Column(
@@ -27,5 +28,6 @@ class CounterWidget extends WatchingWidget {
 
 void main() {
   setupDependencyInjection();
-  runApp(MaterialApp(home: CounterWidget()));
+  final counter = ValueNotifier<int>(0);
+  runApp(MaterialApp(home: CounterWidget(counter: counter)));
 }
