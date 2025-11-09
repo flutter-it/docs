@@ -4,23 +4,28 @@ import '_shared/stubs.dart';
 
 // #region example
 class UserProfile extends WatchingWidget {
+  const UserProfile({super.key});
+
   @override
   Widget build(BuildContext context) {
     // Synchronous data
-    final userName = watchValue((SimpleUserManager m) => m.name);
+    final userId = watchValue((SimpleUserManager m) => m.name);
 
-    // Asynchronous data
-    final avatarSnapshot = watchFuture(
-      (UserService s) => s.fetchAvatar(userName),
+    // Asynchronous data - fetch stats from API based on current userId
+    final statsSnapshot = watchFuture(
+      (ApiClient api) => api.get('/users/$userId/stats'),
       initialValue: null,
     );
 
     return Column(
       children: [
-        Text(userName),
-        avatarSnapshot.hasData
-            ? Image.network(avatarSnapshot.data!)
-            : CircularProgressIndicator(),
+        Text('User: $userId'),
+        if (statsSnapshot.connectionState == ConnectionState.waiting)
+          CircularProgressIndicator()
+        else if (statsSnapshot.hasError)
+          Text('Error loading stats')
+        else if (statsSnapshot.hasData)
+          Text('Stats: ${statsSnapshot.data!['data']}'),
       ],
     );
   }
