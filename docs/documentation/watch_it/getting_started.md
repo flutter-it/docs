@@ -4,37 +4,14 @@ next:
   link: '/documentation/watch_it/your_first_watch_functions'
 ---
 
-<div class="header-with-logo">
-  <div class="header-content">
-
-# Getting Started with watch_it
-
-  </div>
-  <img src="/images/watch_it.svg" alt="watch_it logo" width="100" class="header-logo" />
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <img src="/images/watch_it.svg" alt="watch_it logo" width="100" />
+  <h1 style="margin: 0;">Getting Started</h1>
 </div>
 
-:::warning 🚧 WORK IN PROGRESS
-This documentation is currently being reviewed and updated. Content may change based on feedback.
-:::
+<strong>watch_it</strong> makes your Flutter widgets automatically rebuild when data changes. No <code>setState</code>, no <code>StreamBuilder</code>, just simple reactive programming built on top of get_it.
 
-watch_it makes your Flutter widgets automatically rebuild when data changes. No `setState`, no `StreamBuilder`, just simple reactive programming.
-
-> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
-
-## Installation
-
-Add to your `pubspec.yaml`:
-
-```yaml
-dependencies:
-  watch_it: ^2.0.0
-  get_it: ^8.0.0  # watch_it builds on get_it
-```
-
-## Why watch_it? (Compared to get_it alone)
-
-get_it gives you dependency injection. watch_it adds **reactive UI** on top:
-
+<strong>Key benefits:</strong>
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/your_first_watch_functions.md">Automatic rebuilds</a></strong> - Widgets rebuild when data changes, no <code>setState</code> needed</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/how_it_works.md">No manual listeners</a></strong> - Automatic subscription & cleanup, prevent memory leaks</li>
@@ -44,25 +21,48 @@ get_it gives you dependency injection. watch_it adds **reactive UI** on top:
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/observing_commands.md">Command integration</a></strong> - Observe <code>command_it</code> commands reactively</li>
 </ul>
 
-**Bottom line:** get_it manages dependencies, watch_it makes them **reactive** in your UI.
+<strong>Common use cases:</strong>
+- Build reactive UIs that automatically update when data changes
+- Replace <code>setState</code>, <code>StreamBuilder</code>, and <code>FutureBuilder</code> with simple watch functions
+- Handle side effects (navigation, dialogs) without rebuilding widgets
+- Observe command execution state (loading, errors, results)
 
-## Your First Reactive Widget
+> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
 
-Here's a simple counter that rebuilds automatically when the count changes:
+---
+
+## Installation
+
+Add watch_it to your `pubspec.yaml`:
+
+```yaml
+dependencies:
+  watch_it: ^2.0.0
+  get_it: ^8.0.0  # watch_it builds on get_it
+```
+
+---
+
+## Quick Example
+
+<strong>Step 1:</strong> Register your reactive objects with get_it:
 
 <<< @/../code_samples/lib/watch_it/counter_simple_example.dart#example
 
-That's it! When you press the button, the widget automatically rebuilds with the new count.
+<strong>Step 2:</strong> Use `WatchingWidget` and watch your data:
 
-## How It Works
+The widget automatically rebuilds when the counter value changes - no `setState` needed!
 
+<strong>How it works:</strong>
 1. **`WatchingWidget`** - Like `StatelessWidget`, but with reactive superpowers
 2. **`watchValue()`** - Watches data from get_it and rebuilds when it changes
 3. **Automatic subscriptions** - No manual listeners, no cleanup needed
 
 The widget automatically subscribes to changes when it builds and cleans up when disposed.
 
-## Adding to Your Existing App
+---
+
+## Adding to Existing Apps
 
 Already have an app? Just add a mixin to your existing widgets:
 
