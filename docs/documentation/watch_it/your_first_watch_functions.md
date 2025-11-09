@@ -57,7 +57,7 @@ Add a todo? Widget rebuilds automatically. No `setState`, no `StreamBuilder`.
 
 2. Register it:
    ```dart
-   di.registerLazySingleton<MyManager>(() => MyManager());
+   di.registerSingleton<MyManager>(MyManager());
    ```
 
 3. Watch it:

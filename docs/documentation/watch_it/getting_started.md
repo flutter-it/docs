@@ -39,7 +39,7 @@ class CounterManager {
 
 // 2. Register it in get_it
 void main() {
-  di.registerLazySingleton<CounterManager>(() => CounterManager());
+  di.registerSingleton<CounterManager>(CounterManager());
   runApp(MyApp());
 }
 

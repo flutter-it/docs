@@ -171,7 +171,7 @@ get_it: Object/factory with type TodoManager is not registered inside GetIt
 ```dart
 void main() {
   // Register BEFORE runApp
-  di.registerLazySingleton<TodoManager>(() => TodoManager());
+  di.registerSingleton<TodoManager>(TodoManager());
 
   runApp(MyApp());
 }
@@ -372,7 +372,7 @@ class DebugWidget extends WatchingWidget {
 
 // Test it
 void main() {
-  di.registerLazySingleton<Manager>(() => Manager());
+  di.registerSingleton<Manager>(Manager());
 
   runApp(MaterialApp(
     home: Scaffold(
