@@ -16,7 +16,10 @@ void setupCounter() {
 }
 
 // 3. Watch it in your widget
+// #region widget
 class CounterWidget extends WatchingWidget {
+  const CounterWidget({super.key});
+
   @override
   Widget build(BuildContext context) {
     // This one line makes it reactive!
@@ -33,6 +36,7 @@ class CounterWidget extends WatchingWidget {
     );
   }
 }
+// #endregion widget
 // #endregion example
 
 void main() {

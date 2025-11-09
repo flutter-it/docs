@@ -58,7 +58,7 @@ final count = watchValue<CounterManager, int>((m) => m.count);
 
 **With watch_it:**
 
-<<< @/../code_samples/lib/watch_it/counter_simple_example.dart#example
+<<< @/../code_samples/lib/watch_it/counter_simple_example.dart#widget
 
 Much cleaner! No nested builders, no generic types to specify, just one line: `watchValue((CounterManager m) => m.count)`
 
