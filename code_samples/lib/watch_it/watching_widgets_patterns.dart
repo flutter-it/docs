@@ -16,49 +16,49 @@ class TodoList extends WatchingWidget {
 }
 // #endregion watching_widget_basic
 
-// Helper class for searchable examples
-class Item {
-  final String name;
-  Item(this.name);
-}
+// Helper class for settings example
+class SettingsManager {
+  final notificationsEnabled = ValueNotifier<bool>(true);
+  final itemCount = ValueNotifier<int>(0);
 
-class Manager {
-  final items = ValueNotifier<List<Item>>([
-    Item('Apple'),
-    Item('Banana'),
-    Item('Cherry'),
-  ]);
+  void toggleNotifications(bool enabled) {
+    notificationsEnabled.value = enabled;
+  }
 }
 
 // #region watching_stateful_widget
-class SearchableList extends WatchingStatefulWidget {
+class NotificationToggle extends WatchingStatefulWidget {
   @override
-  State createState() => _SearchableListState();
+  State createState() => _NotificationToggleState();
 }
 
-class _SearchableListState extends State<SearchableList> {
-  String _query = ''; // Local state
+class _NotificationToggleState extends State<NotificationToggle> {
+  bool _isAnimating = false; // Local UI state for animation
 
   @override
   Widget build(BuildContext context) {
-    // Reactive state - automatically rebuilds
-    final items = watchValue((Manager m) => m.items);
+    // Reactive state - automatically rebuilds when manager changes
+    final enabled = watchValue((SettingsManager m) => m.notificationsEnabled);
 
-    // Filter using local state
-    final filtered = items.where((item) => item.name.contains(_query)).toList();
+    return SwitchListTile(
+      title: Text('Notifications'),
+      subtitle: _isAnimating ? Text('Updating...') : null,
+      value: enabled,
+      onChanged: (value) async {
+        // Update local state for immediate UI feedback
+        setState(() => _isAnimating = true);
 
-    return Column(
-      children: [
-        TextField(
-          onChanged: (value) => setState(() => _query = value),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: filtered.length,
-            itemBuilder: (context, index) => Text(filtered[index].name),
-          ),
-        ),
-      ],
+        // Update manager (business logic)
+        di<SettingsManager>().toggleNotifications(value);
+
+        // Simulate async operation (API call, etc.)
+        await Future.delayed(Duration(milliseconds: 500));
+
+        // Clear local animation state
+        if (mounted) {
+          setState(() => _isAnimating = false);
+        }
+      },
     );
   }
 }
@@ -80,34 +80,34 @@ class TodoListWithMixin extends StatelessWidget with WatchItMixin {
 // #endregion mixin_stateless
 
 // #region mixin_stateful
-class SearchableListWithMixin extends StatefulWidget
+class NotificationToggleWithMixin extends StatefulWidget
     with WatchItStatefulWidgetMixin {
-  const SearchableListWithMixin({super.key});
+  const NotificationToggleWithMixin({super.key});
 
   @override
-  State createState() => _SearchableListWithMixinState();
+  State createState() => _NotificationToggleWithMixinState();
 }
 
-class _SearchableListWithMixinState extends State<SearchableListWithMixin> {
-  String _query = '';
+class _NotificationToggleWithMixinState
+    extends State<NotificationToggleWithMixin> {
+  bool _isAnimating = false;
 
   @override
   Widget build(BuildContext context) {
-    final items = watchValue((Manager m) => m.items);
-    final filtered = items.where((item) => item.name.contains(_query)).toList();
+    final enabled = watchValue((SettingsManager m) => m.notificationsEnabled);
 
-    return Column(
-      children: [
-        TextField(
-          onChanged: (value) => setState(() => _query = value),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: filtered.length,
-            itemBuilder: (context, index) => Text(filtered[index].name),
-          ),
-        ),
-      ],
+    return SwitchListTile(
+      title: Text('Notifications'),
+      subtitle: _isAnimating ? Text('Updating...') : null,
+      value: enabled,
+      onChanged: (value) async {
+        setState(() => _isAnimating = true);
+        di<SettingsManager>().toggleNotifications(value);
+        await Future.delayed(Duration(milliseconds: 500));
+        if (mounted) {
+          setState(() => _isAnimating = false);
+        }
+      },
     );
   }
 }
