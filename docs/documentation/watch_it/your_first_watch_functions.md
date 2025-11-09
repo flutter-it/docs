@@ -50,25 +50,19 @@ final count = watchValue<CounterManager, int>((m) => m.count);
 **Bottom line:** Always specify the parent object type in your selector function for cleaner, more readable code!
 :::
 
-## Why This Is Better
+## Watching Multiple Objects
 
-**Without watch_it (using ValueListenableBuilder):**
+Need to watch data from different managers? Just add more watch calls:
 
-<<< @/../code_samples/lib/watch_it/counter_manual_listener_example.dart#example
-
-**With watch_it:**
-
-<<< @/../code_samples/lib/watch_it/counter_simple_example.dart#widget
-
-Much cleaner! No nested builders, no generic types to specify, just one line: `watchValue((CounterManager m) => m.count)`
-
-## Watching Multiple Values
-
-Just add more watch calls:
-
-<<< @/../code_samples/lib/watch_it/user_profile_multiple_values_example.dart#example
+<<< @/../code_samples/lib/watch_it/multiple_objects_example.dart#example
 
 When ANY of them change, the widget rebuilds. That's it!
+
+**Compare with ValueListenableBuilder:**
+
+<<< @/../code_samples/lib/watch_it/multiple_objects_example.dart#builders
+
+Three levels of nesting! With watch_it, it's just three simple lines.
 
 ## Real Example: Todo List
 
