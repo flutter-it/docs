@@ -7,21 +7,12 @@ That's where **handlers** come in.
 ## Watch vs Handler: When to Use Each
 
 **Use `watch()` when you need to REBUILD the widget:**
-```dart
-final todos = watchValue((TodoManager m) => m.todos);
-return ListView.builder(...);  // Rebuild with new todos
-```
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#watch_vs_handler_watch
 
 **Use `registerHandler()` when you need a SIDE EFFECT (no rebuild):**
-```dart
-registerHandler(
-  select: (TodoManager m) => m.createCommand,
-  handler: (context, result, cancel) {
-    // Navigate to detail page (no rebuild needed)
-    Navigator.of(context).push(...);
-  },
-);
-```
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#watch_vs_handler_handler
 
 ## registerHandler - The Basics
 
@@ -50,18 +41,7 @@ registerHandler(
 
 ### 4. Logging / Analytics
 
-```dart
-registerHandler(
-  select: (UserManager m) => m.user,
-  handler: (context, user, cancel) {
-    if (user != null) {
-      analytics.logEvent('user_logged_in', {
-        'userId': user.id,
-      });
-    }
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#logging_analytics
 
 ## Handler Types
 
@@ -69,14 +49,7 @@ watch_it provides specialized handlers for different data types:
 
 ### registerHandler - Generic Handler
 
-```dart
-registerHandler(
-  select: (Manager m) => m.data,
-  handler: (context, value, cancel) {
-    print('Data changed: $value');
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#register_handler_generic
 
 ### registerStreamHandler - For Streams
 
@@ -109,16 +82,7 @@ registerHandler(
 
 All handlers receive a `cancel` function. Call it to stop watching:
 
-```dart
-registerHandler(
-  select: (Service s) => s.data,
-  handler: (context, value, cancel) {
-    if (value == 'STOP') {
-      cancel();  // Stop listening to future changes
-    }
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#cancel_parameter
 
 **Common use case**: One-time actions
 
@@ -134,120 +98,41 @@ You can use both in the same widget:
 
 ### Pattern 1: Conditional Navigation
 
-```dart
-registerHandler(
-  select: (AuthService s) => s.user,
-  handler: (context, user, cancel) {
-    if (user == null) {
-      // User logged out - navigate to login
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern1_conditional_navigation
 
 ### Pattern 2: Show Loading Dialog
 
-```dart
-registerHandler(
-  select: (Manager m) => m.longRunningCommand.isExecuting,
-  handler: (context, isExecuting, cancel) {
-    if (isExecuting) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AlertDialog(
-          content: Row(
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 16),
-              Text('Processing...'),
-            ],
-          ),
-        ),
-      );
-    } else {
-      Navigator.of(context).pop();  // Close dialog
-    }
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern2_loading_dialog
 
 ### Pattern 3: Chain Actions
 
-```dart
-// When create succeeds, refresh the list
-registerHandler(
-  select: (TodoManager m) => m.createTodoCommand,
-  handler: (context, command, cancel) {
-    if (command?.value != null) {
-      // Create succeeded - refresh the list
-      di<TodoManager>().fetchTodosCommand.execute();
-    }
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern3_chain_actions
 
 ### Pattern 4: Debounced Actions
 
-```dart
-Timer? _debounce;
-
-registerHandler(
-  select: (SearchManager m) => m.query,
-  handler: (context, query, cancel) {
-    _debounce?.cancel();
-    _debounce = Timer(Duration(milliseconds: 300), () {
-      // Debounced search
-      di<SearchManager>().searchCommand.execute(query);
-    });
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern4_debounced_actions
 
 ## Handler vs Watch Decision Tree
 
 **Ask yourself: "Does this change need to update the UI?"**
 
 **YES** → Use `watch()`:
-```dart
-final todos = watchValue((Manager m) => m.todos);
-return ListView(...);  // UI shows the todos
-```
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#decision_tree_watch
 
 **NO** → Use `registerHandler()`:
-```dart
-registerHandler(
-  select: (Manager m) => m.createCommand,
-  handler: (context, result, cancel) {
-    Navigator.push(...);  // Navigate, don't rebuild
-  },
-);
-```
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#decision_tree_handler
 
 ## Common Mistakes
 
 ### ❌ Using watch() for navigation
-```dart
-// BAD - rebuilds entire widget just to navigate
-final loginResult = watchValue((Auth m) => m.loginCommand);
-if (loginResult?.value == true) {
-  Navigator.push(...);  // Triggers unnecessary rebuild
-}
-```
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#mistake_bad
 
 ### ✅ Use handler for navigation
-```dart
-// GOOD - navigate without rebuild
-registerHandler(
-  select: (Auth m) => m.loginCommand,
-  handler: (context, command, cancel) {
-    if (command?.value == true) {
-      Navigator.push(...);
-    }
-  },
-);
-```
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#mistake_good
 
 ## What's Next?
 
