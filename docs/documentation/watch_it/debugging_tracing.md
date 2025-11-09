@@ -317,19 +317,7 @@ watch_it: [UserHeader.user] subscribed to UserModel.name
 
 Add print statements to track how often widgets rebuild:
 
-```dart
-class TodoList extends WatchingWidget {
-  static int _buildCount = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    print('TodoList rebuild #${++_buildCount} at ${DateTime.now()}');
-
-    final todos = watchValue((TodoManager m) => m.todos);
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#track_rebuild_frequency
 
 **Analyze output:**
 - Too many rebuilds? → Watching too much data
@@ -356,42 +344,7 @@ class TodoList extends WatchingWidget {
 
 Create minimal reproduction:
 
-```dart
-// Minimal test widget
-class DebugWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    print('DebugWidget.build()');
-
-    final data = watchValue((Manager m) => m.data);
-    print('Data value: $data');
-
-    return Text('Data: $data');
-  }
-}
-
-// Test it
-void main() {
-  di.registerSingleton<Manager>(Manager());
-
-  runApp(MaterialApp(
-    home: Scaffold(
-      body: Column(
-        children: [
-          DebugWidget(),
-          ElevatedButton(
-            onPressed: () {
-              print('Changing data...');
-              di<Manager>().data.value = 'New value';
-            },
-            child: Text('Change Data'),
-          ),
-        ],
-      ),
-    ),
-  ));
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#isolate_problem
 
 This isolates:
 - Does the watch subscription work?
@@ -426,22 +379,7 @@ void main() {
 
 ### Measure rebuild cost
 
-```dart
-class ExpensiveWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final stopwatch = Stopwatch()..start();
-
-    final data = watchValue((Manager m) => m.data);
-    // ... build UI
-
-    stopwatch.stop();
-    print('ExpensiveWidget.build() took ${stopwatch.elapsedMicroseconds}μs');
-
-    return YourUI();
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#measure_rebuild_cost
 
 **What to look for:**
 - Rebuilds taking > 16ms (60fps)
@@ -450,50 +388,11 @@ class ExpensiveWidget extends WatchingWidget {
 
 ### Profile memory usage
 
-```dart
-class MemoryProfiler {
-  static void logCurrentUsage(String label) {
-    // In real app, use dart:developer
-    print('[$label] Memory check');
-  }
-}
-
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    MemoryProfiler.logCurrentUsage('TodoList.build');
-
-    final todos = watchValue((TodoManager m) => m.todos);
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#profile_memory
 
 ### Find excessive watch calls
 
-```dart
-class TodoList extends WatchingWidget {
-  static final _watchCalls = <String, int>{};
-
-  T _profiledWatch<T>(String label, T Function() fn) {
-    _watchCalls[label] = (_watchCalls[label] ?? 0) + 1;
-    if (_watchCalls[label]! % 100 == 0) {
-      print('$label called ${_watchCalls[label]} times');
-    }
-    return fn();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final todos = _profiledWatch(
-      'todos',
-      () => watchValue((TodoManager m) => m.todos),
-    );
-
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#find_excessive_watch_calls
 
 ## Troubleshooting Checklist
 
@@ -531,77 +430,17 @@ When something doesn't work:
 
 ### Custom watch wrapper with logging
 
-```dart
-extension WatchDebug on WatchingWidget {
-  T debugWatch<T>(
-    String label,
-    T Function() watchFn,
-  ) {
-    print('[WATCH] $label - subscribing');
-    final result = watchFn();
-    print('[WATCH] $label - value: $result');
-    return result;
-  }
-}
-
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = debugWatch(
-      'todos',
-      () => watchValue((TodoManager m) => m.todos),
-    );
-
-    return ListView.builder(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#custom_watch_wrapper_logging
 
 ### Conditional tracing
 
 Enable tracing only for specific widgets:
 
-```dart
-class DebuggableWidget extends WatchingWidget {
-  final bool enableTracing;
-
-  DebuggableWidget({this.enableTracing = false});
-
-  @override
-  Widget build(BuildContext context) {
-    if (enableTracing) {
-      print('Building $runtimeType');
-    }
-
-    final data = watchValue((Manager m) => m.data);
-
-    if (enableTracing) {
-      print('Data value: $data');
-    }
-
-    return Text('$data');
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#conditional_tracing
 
 ### Detect watch ordering violations early
 
-```dart
-class StrictWatchingWidget extends WatchingWidget {
-  final _watchLabels = <String>[];
-
-  T _strictWatch<T>(String label, T Function() fn) {
-    if (_watchLabels.contains(label)) {
-      throw StateError('Duplicate watch call: $label');
-    }
-    _watchLabels.add(label);
-    return fn();
-  }
-
-  // Use in subclasses:
-  // final todos = _strictWatch('todos', () => watchValue(...));
-}
-```
+<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#detect_watch_ordering_violations
 
 ## Getting Help
 
