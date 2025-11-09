@@ -22,10 +22,10 @@ next:
 </ul>
 
 <strong>Common use cases:</strong>
-- Build reactive UIs that automatically update when data changes
-- Replace <code>setState</code>, <code>StreamBuilder</code>, and <code>FutureBuilder</code> with simple watch functions
-- Handle side effects (navigation, dialogs) without rebuilding widgets
-- Observe command execution state (loading, errors, results)
+- Display live data from managers (todos, user profiles, settings) without <code>setState</code>
+- Show real-time updates from streams (chat messages, notifications, sensor data)
+- Navigate or show dialogs in response to data changes
+- Display command progress (loading spinners, error messages, success states)
 
 > Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
 
