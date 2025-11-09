@@ -29,15 +29,14 @@ Use when you need both `setState` AND reactive state:
 <<< @/../code_samples/lib/watch_it/watching_widgets_patterns.dart#watching_stateful_widget
 
 **Use this when:**
-- You need local UI state (filter toggles, form input, expansion state)
-- You need animation controllers
+- You need local UI state (filter toggles, expansion state)
 - Mix `setState` with reactive updates
 
 **Note:** Your State class automatically gets all watch functions - no mixin needed!
 
 **Pattern:** Local state (`_showCompleted`) for UI-only preferences, reactive state (`todos`) from manager, and checkboxes call back into the manager to update data.
 
-> **💡 Important:** With watch_it, you'll **rarely need StatefulWidget anymore**. Most state belongs in your managers and is accessed reactively. Only use StatefulWidget for truly local UI state like animations, text controllers, or temporary UI preferences that don't need to be shared.
+> **💡 Important:** With watch_it, you'll **rarely need StatefulWidget anymore**. Most state belongs in your managers and is accessed reactively. Even `TextEditingController` and `AnimationController` can be created with `createOnce()` in `WatchingWidget` - no StatefulWidget needed! Only use StatefulWidget for truly local UI state that requires `setState`.
 
 ## Alternative: Using Mixins
 
