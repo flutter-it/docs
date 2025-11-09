@@ -16,7 +16,7 @@ void propertyValueDifference(BuildContext context) {
 
 void quickComparison(BuildContext context) {
   // #region quick_comparison
-  // 1. watchValue - Most common
+  // 1. watchValue - Watch ValueListenable property from get_it
   final todos = watchValue((TodoManager m) => m.todos);
 
   // 2. watchIt - When manager is a Listenable registered in get_it
