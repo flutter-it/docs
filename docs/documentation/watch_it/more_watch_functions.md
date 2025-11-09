@@ -31,56 +31,30 @@ Only rebuild when a specific property changes:
 <<< @/../code_samples/lib/watch_it/watch_property_value_selective_example.dart#example
 
 **The difference:**
-```dart
-// Rebuilds on EVERY SettingsModel change
-final settings = watchIt<SettingsModel>();
-final darkMode = settings.darkMode;
 
-// Rebuilds ONLY when darkMode changes
-final darkMode = watchPropertyValue((SettingsModel m) => m.darkMode);
-```
+<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#property_value_difference
 
 ## Quick Comparison
 
-```dart
-// 1. watchValue - Most common
-final todos = watchValue((TodoManager m) => m.todos);
-
-// 2. watchIt - When manager IS a Listenable
-final manager = watchIt<TodoManager>();
-
-// 3. watch - Local or direct Listenable
-final counter = createOnce(() => ValueNotifier(0));
-final count = watch(counter).value;
-
-// 4. watchPropertyValue - Selective updates
-final darkMode = watchPropertyValue((Settings m) => m.darkMode);
-```
+<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#quick_comparison
 
 ## Choosing the Right Function
 
 **Start with `watchValue()`** - it's the most common:
-```dart
-final data = watchValue((Manager m) => m.data);
-```
+
+<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watchValue_usage
 
 **Use `watchIt()` when you need the whole object:**
-```dart
-final manager = watchIt<TodoManager>();
-manager.addTodo('New todo');
-```
+
+<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watchIt_usage
 
 **Use `watch()` for local Listenables:**
-```dart
-final controller = createOnce(() => TextEditingController());
-final text = watch(controller).value.text;
-```
+
+<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watch_usage
 
 **Use `watchPropertyValue()` for optimization:**
-```dart
-// Only rebuild when THIS specific property changes
-final darkMode = watchPropertyValue((Settings m) => m.darkMode);
-```
+
+<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watchPropertyValue_usage
 
 ## Practical Example
 

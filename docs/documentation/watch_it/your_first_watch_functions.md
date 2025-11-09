@@ -49,32 +49,20 @@ Add a todo? Widget rebuilds automatically. No `setState`, no `StreamBuilder`.
 ## Try It Yourself
 
 1. Create a `ValueNotifier` in your manager:
-   ```dart
-   class MyManager {
-     final message = ValueNotifier<String>('Hello');
-   }
-   ```
+
+   <<< @/../code_samples/lib/watch_it/try_it_yourself_example.dart#manager
 
 2. Register it:
-   ```dart
-   di.registerSingleton<MyManager>(MyManager());
-   ```
+
+   <<< @/../code_samples/lib/watch_it/try_it_yourself_example.dart#register
 
 3. Watch it:
-   ```dart
-   class MyWidget extends WatchingWidget {
-     @override
-     Widget build(BuildContext context) {
-       final message = watchValue((MyManager m) => m.message);
-       return Text(message);
-     }
-   }
-   ```
+
+   <<< @/../code_samples/lib/watch_it/try_it_yourself_example.dart#watch
 
 4. Change it and watch the magic:
-   ```dart
-   di<MyManager>().message.value = 'World!';  // Widget rebuilds!
-   ```
+
+   <<< @/../code_samples/lib/watch_it/try_it_yourself_example.dart#change
 
 ## Key Takeaways
 
