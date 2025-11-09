@@ -25,7 +25,7 @@ When your registered object IS a `Listenable`, use `watchIt()`:
 - Most generic case
 
 ::: tip watch() is the Foundation
-`watch()` is the most flexible function - you can use it to replace `watchIt()` and `watchValue()`:
+`watch()` is the most flexible function - you could use it to replace `watchIt()` and `watchValue()`:
 
 ```dart
 // These are equivalent:
@@ -40,7 +40,7 @@ final count = watch(di<CounterManager>().count);
 **Why use the convenience functions?**
 - `watchIt()` is cleaner for getting the whole object from get_it
 - `watchValue()` provides better type inference and cleaner syntax
-- Both are just shortcuts that use `watch()` internally
+- Each is optimized for its specific use case
 :::
 
 ## watchPropertyValue - Selective Updates
