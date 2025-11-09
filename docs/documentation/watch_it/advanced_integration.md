@@ -147,6 +147,23 @@ app/
 
 ## Advanced Patterns
 
+### Local Reactive State with createOnce and watch
+
+For widget-local reactive state that doesn't need get_it registration, combine `createOnce` with `watch`:
+
+<<< @/../code_samples/lib/watch_it/watch_create_once_local_state.dart#example
+
+**When to use this pattern:**
+- Widget needs its own local reactive state
+- State should persist across rebuilds (not recreated)
+- State should be automatically disposed with widget
+- Don't want to register in get_it (truly local)
+
+**Key benefits:**
+- `createOnce` creates the notifier once and auto-disposes it
+- `watch` subscribes to changes and triggers rebuilds
+- No manual lifecycle management needed
+
 ### Global State Reset
 
 <<< @/../code_samples/lib/watch_it/advanced_integration_patterns.dart#global_state_reset
