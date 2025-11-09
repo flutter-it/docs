@@ -74,127 +74,31 @@ Combine synchronous and asynchronous data:
 
 Both `watchStream()` and `watchFuture()` return `AsyncSnapshot<T>`:
 
-```dart
-// Check connection state
-snapshot.connectionState == ConnectionState.waiting
-snapshot.connectionState == ConnectionState.done
-
-// Check for data/errors
-snapshot.hasData   // true if data available
-snapshot.hasError  // true if error occurred
-
-// Access data/error
-snapshot.data   // The value (T?)
-snapshot.error  // The error if any
-```
+<<< @/../code_samples/lib/watch_it/async_patterns.dart#async_snapshot_guide
 
 ## Common Patterns
 
 ### Pattern 1: Simple Loading
 
-```dart
-final snapshot = watchFuture(
-  (Service s) => s.fetchData(),
-  initialValue: null,
-);
-
-if (snapshot.connectionState == ConnectionState.waiting) {
-  return CircularProgressIndicator();
-}
-
-return DataDisplay(snapshot.data!);
-```
+<<< @/../code_samples/lib/watch_it/async_patterns.dart#pattern1_simple_loading
 
 ### Pattern 2: Error Handling
 
-```dart
-final snapshot = watchStream(
-  (Service s) => s.dataStream,
-  initialValue: <Data>[],
-);
-
-if (snapshot.hasError) {
-  return Column(
-    children: [
-      Text('Error: ${snapshot.error}'),
-      ElevatedButton(
-        onPressed: () => di<Service>().retryStream(),
-        child: Text('Retry'),
-      ),
-    ],
-  );
-}
-
-return ListView(children: snapshot.data!.map(...));
-```
+<<< @/../code_samples/lib/watch_it/async_patterns.dart#pattern2_error_handling
 
 ### Pattern 3: Keep Old Data While Refreshing
 
-```dart
-final snapshot = watchStream(
-  (Service s) => s.dataStream,
-  initialValue: <Item>[],
-);
-
-return Column(
-  children: [
-    // Show subtle loading indicator
-    if (snapshot.connectionState == ConnectionState.waiting)
-      LinearProgressIndicator(),
-
-    // Keep showing old data while loading new
-    Expanded(
-      child: ListView(
-        children: snapshot.data!.map((item) => ItemCard(item)).toList(),
-      ),
-    ),
-  ],
-);
-```
+<<< @/../code_samples/lib/watch_it/async_patterns.dart#pattern3_keep_old_data
 
 ## No More Nested Builders!
 
 **Before:**
-```dart
-return FutureBuilder(
-  future: initFuture,
-  builder: (context, futureSnapshot) {
-    if (futureSnapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
-    }
 
-    return StreamBuilder(
-      stream: dataStream,
-      builder: (context, streamSnapshot) {
-        if (streamSnapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        }
-        return Text(streamSnapshot.data!);
-      },
-    );
-  },
-);
-```
+<<< @/../code_samples/lib/watch_it/async_patterns.dart#nested_builders_before
 
 **After:**
-```dart
-final initSnapshot = watchFuture(
-  (Service s) => s.initialize(),
-  initialValue: false,
-);
 
-final dataSnapshot = watchStream(
-  (Service s) => s.dataStream,
-  initialValue: '',
-);
-
-if (initSnapshot.connectionState == ConnectionState.waiting ||
-    dataSnapshot.connectionState == ConnectionState.waiting) {
-  return CircularProgressIndicator();
-}
-
-return Text(dataSnapshot.data!);
-```
+<<< @/../code_samples/lib/watch_it/async_patterns.dart#nested_builders_after
 
 Flat, readable code!
 
