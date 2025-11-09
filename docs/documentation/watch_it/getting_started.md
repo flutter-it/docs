@@ -25,11 +25,6 @@ dependencies:
   get_it: ^8.0.0  # watch_it builds on get_it
 ```
 
-Run:
-```bash
-flutter pub get
-```
-
 ## Your First Reactive Widget
 
 Here's a simple counter that rebuilds automatically when the count changes:
