@@ -37,6 +37,8 @@ Use when you need both `setState` AND reactive state:
 
 **Pattern:** Local state (`_showCompleted`) for UI-only preferences, reactive state (`todos`) from manager, and checkboxes call back into the manager to update data.
 
+> **💡 Important:** With watch_it, you'll **rarely need StatefulWidget anymore**. Most state belongs in your managers and is accessed reactively. Only use StatefulWidget for truly local UI state like animations, text controllers, or temporary UI preferences that don't need to be shared.
+
 ## Alternative: Using Mixins
 
 If you have **existing widgets** you don't want to change, use mixins instead:
