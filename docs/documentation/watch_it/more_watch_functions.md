@@ -2,7 +2,7 @@
 
 You've learned [`watchValue()`](/documentation/watch_it/your_first_watch_functions.md) for watching `ValueListenable` properties. Now let's explore the other watch functions.
 
-## watchIt - Watch the Whole Object
+## watchIt - Watch Whole Object in get_it
 
 When your registered object IS a `Listenable`, use `watchIt()`:
 
