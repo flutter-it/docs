@@ -20,11 +20,11 @@ class UserProfile extends WatchingWidget {
     return Column(
       children: [
         Text('User: $userId'),
-        if (statsSnapshot.connectionState == ConnectionState.waiting)
+        if (statsSnapshot.data == null)
           CircularProgressIndicator()
         else if (statsSnapshot.hasError)
           Text('Error loading stats')
-        else if (statsSnapshot.hasData)
+        else
           Text('Stats: ${statsSnapshot.data!['data']}'),
       ],
     );
