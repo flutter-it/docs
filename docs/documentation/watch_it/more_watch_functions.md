@@ -71,21 +71,27 @@ Only rebuilds when a specific property of a Listenable parent Object changes:
 
 ## Choosing the Right Function
 
-**Start with `watchValue()`** - it's the most common:
+**If you have only one or two properties that should trigger an update:**
+
+Use `ValueNotifier` for each property and `watchValue()`:
 
 <<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watchValue_usage
 
-**Use `watchIt()` when you need the whole object:**
+**If the whole object can be updated or many properties can change:**
+
+Use `ChangeNotifier` and `watchIt()`:
 
 <<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watchIt_usage
 
-**Use `watch()` for local Listenables:**
-
-<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watch_usage
-
-**Use `watchPropertyValue()` for optimization:**
+Or if performance is important, use `watchPropertyValue()` for selective updates:
 
 <<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watchPropertyValue_usage
+
+**For local Listenables not registered in get_it:**
+
+Use `watch()`:
+
+<<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watch_usage
 
 ## Practical Example
 

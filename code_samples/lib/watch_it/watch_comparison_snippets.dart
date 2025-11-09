@@ -45,8 +45,8 @@ void watchItUsage(BuildContext context) {
 }
 
 void watchUsage(BuildContext context) {
-  // #region watch_usage
   final controller = createOnce(() => TextEditingController());
+  // #region watch_usage
   final text = watch(controller).value.text;
   // #endregion watch_usage
 }
