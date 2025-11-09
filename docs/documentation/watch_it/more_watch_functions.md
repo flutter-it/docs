@@ -43,6 +43,18 @@ final count = watch(di<CounterManager>().count).value;
 - Each is optimized for its specific use case
 :::
 
+### Using watch() Just to Trigger Rebuilds
+
+Sometimes you don't need the return value - you just want to trigger a rebuild when a Listenable changes:
+
+<<< @/../code_samples/lib/watch_it/watch_trigger_rebuild_example.dart#example
+
+**Key points:**
+- `watch(controller)` triggers rebuild when controller notifies
+- We don't use the return value - just call `watch()` for the side effect
+- The widget rebuilds, so `controller.text.length` is always current
+- Button enable/disable state updates automatically
+
 ## watchPropertyValue - Selective Updates
 
 Only rebuild when a specific property changes:
