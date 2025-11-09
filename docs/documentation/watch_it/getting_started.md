@@ -1,3 +1,9 @@
+---
+next:
+  text: 'WatchingWidgets'
+  link: '/documentation/watch_it/watching_widgets'
+---
+
 <div class="header-with-logo">
   <div class="header-content">
 
