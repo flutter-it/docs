@@ -15,18 +15,7 @@ Regular `StatelessWidget` doesn't give watch_it access to these lifecycle events
 
 Replace `StatelessWidget` with `WatchingWidget`:
 
-```dart
-class TodoList extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
-    return ListView.builder(
-      itemCount: todos.length,
-      itemBuilder: (context, index) => Text(todos[index]),
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/watching_widgets_patterns.dart#watching_widget_basic
 
 **Use this when:**
 - Writing new widgets
@@ -37,41 +26,7 @@ class TodoList extends WatchingWidget {
 
 Use when you need both `setState` AND reactive state:
 
-```dart
-class SearchableList extends WatchingStatefulWidget {
-  @override
-  State createState() => _SearchableListState();
-}
-
-class _SearchableListState extends State<SearchableList> {
-  String _query = '';  // Local state
-
-  @override
-  Widget build(BuildContext context) {
-    // Reactive state - automatically rebuilds
-    final items = watchValue((Manager m) => m.items);
-
-    // Filter using local state
-    final filtered = items.where((item) =>
-      item.name.contains(_query)
-    ).toList();
-
-    return Column(
-      children: [
-        TextField(
-          onChanged: (value) => setState(() => _query = value),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: filtered.length,
-            itemBuilder: (context, index) => Text(filtered[index]),
-          ),
-        ),
-      ],
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/watching_widgets_patterns.dart#watching_stateful_widget
 
 **Use this when:**
 - You need local UI state (search queries, form input, expansion state)
@@ -86,38 +41,11 @@ If you have **existing widgets** you don't want to change, use mixins instead:
 
 ### For Existing StatelessWidget
 
-```dart
-class TodoList extends StatelessWidget with WatchItMixin {
-  const TodoList({super.key});  // Can use const!
-
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.todos);
-    return ListView(...);
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/watching_widgets_patterns.dart#mixin_stateless
 
 ### For Existing StatefulWidget
 
-```dart
-class SearchableList extends StatefulWidget with WatchItStatefulWidgetMixin {
-  const SearchableList({super.key});
-
-  @override
-  State createState() => _SearchableListState();
-}
-
-class _SearchableListState extends State<SearchableList> {
-  String _query = '';
-
-  @override
-  Widget build(BuildContext context) {
-    final items = watchValue((Manager m) => m.items);
-    // ... rest of your code
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/watching_widgets_patterns.dart#mixin_stateful
 
 **Why use mixins?**
 - Keep existing class hierarchy
@@ -143,43 +71,7 @@ class _SearchableListState extends State<SearchableList> {
 
 ### Combining with Other Mixins
 
-```dart
-class AnimatedCard extends WatchingStatefulWidget {
-  @override
-  State createState() => _AnimatedCardState();
-}
-
-class _AnimatedCardState extends State<AnimatedCard>
-    with SingleTickerProviderStateMixin {  // Mix with other mixins!
-
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this, duration: Duration(seconds: 1));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final data = watchValue((Manager m) => m.data);
-
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) => Transform.scale(
-        scale: _controller.value,
-        child: Text(data),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-}
-```
+<<< @/../code_samples/lib/watch_it/watching_widgets_patterns.dart#combining_mixins
 
 ## See Also
 
