@@ -24,6 +24,25 @@ When your registered object IS a `Listenable`, use `watchIt()`:
 - You already have a reference to the `Listenable`
 - Most generic case
 
+::: tip watch() is the Foundation
+`watch()` is the most flexible function - you can use it to replace `watchIt()` and `watchValue()`:
+
+```dart
+// These are equivalent:
+final manager = watchIt<CounterManager>();
+final manager = watch(di<CounterManager>());
+
+// These are equivalent:
+final count = watchValue((CounterManager m) => m.count);
+final count = watch(di<CounterManager>().count);
+```
+
+**Why use the convenience functions?**
+- `watchIt()` is cleaner for getting the whole object from get_it
+- `watchValue()` provides better type inference and cleaner syntax
+- Both are just shortcuts that use `watch()` internally
+:::
+
 ## watchPropertyValue - Selective Updates
 
 Only rebuild when a specific property changes:
