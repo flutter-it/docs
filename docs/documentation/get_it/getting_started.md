@@ -29,6 +29,8 @@ next:
 - Manage app-wide state (view models, managers, BLoCs)
 - Easily swap implementations for testing
 
+> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
+
 ---
 
 ## Installation

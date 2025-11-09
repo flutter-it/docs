@@ -22,6 +22,8 @@ These primitives work together to help you build reactive data flows in your Flu
 
 ![listen_it Data Flow](/images/listen-it-flow.svg)
 
+> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
+
 ## Installation
 
 Add to your `pubspec.yaml`:
