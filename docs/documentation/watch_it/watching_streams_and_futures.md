@@ -90,10 +90,6 @@ Both `watchStream()` and `watchFuture()` return `AsyncSnapshot<T>`:
 
 <<< @/../code_samples/lib/watch_it/async_patterns.dart#pattern2_error_handling
 
-### Pattern 3: Keep Old Data While Refreshing
-
-<<< @/../code_samples/lib/watch_it/async_patterns.dart#pattern3_keep_old_data
-
 ## No More Nested Builders!
 
 **Before:**
