@@ -57,6 +57,7 @@ export default defineConfig({
               { text: 'Multiple registrations', link: '/documentation/get_it/multiple_registrations.md' },
               { text: 'Advanced', link: '/documentation/get_it/advanced.md' },
               { text: 'Testing', link: '/documentation/get_it/testing.md' },
+              { text: 'Flutter Previews', link: '/documentation/get_it/flutter_previews.md' },
               { text: 'FAQ', link: '/documentation/get_it/faq.md' }
             ]
           },
