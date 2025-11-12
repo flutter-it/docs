@@ -45,7 +45,7 @@ That's where **handlers** come in.
 
 ## Handler Types
 
-watch_it provides specialized handlers for different data types:
+`watch_it` provides specialized handlers for different data types:
 
 ### registerHandler - Generic Handler
 

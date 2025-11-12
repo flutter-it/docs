@@ -1,6 +1,6 @@
 # Your First Watch Functions
 
-Watch functions are the core of watch_it - they make your widgets automatically rebuild when data changes. Let's start with the most common one.
+Watch functions are the core of `watch_it` - they make your widgets automatically rebuild when data changes. Let's start with the most common one.
 
 ## The Simplest Watch: watchValue
 
@@ -64,7 +64,7 @@ When ANY of them change, the widget rebuilds. That's it!
 
 <<< @/../code_samples/lib/watch_it/multiple_objects_example.dart#builders
 
-Three levels of nesting! With watch_it, it's just three simple lines.
+Three levels of nesting! With `watch_it`, it's just three simple lines.
 
 ## Real Example: Todo List
 

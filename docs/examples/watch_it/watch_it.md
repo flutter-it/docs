@@ -2,12 +2,12 @@
 title: watch_it Examples
 ---
 
-# watch_it Examples
+# `watch_it` Examples
 
 ::: info Coming Soon
-Comprehensive watch_it examples are currently being written. Check back soon for practical code samples and real-world usage patterns.
+Comprehensive `watch_it` examples are currently being written. Check back soon for practical code samples and real-world usage patterns.
 
-In the meantime, please refer to the [watch_it documentation](/documentation/watch_it/getting_started) for detailed information.
+In the meantime, please refer to the [`watch_it` documentation](/documentation/watch_it/getting_started) for detailed information.
 :::
 
 ## What Will Be Included

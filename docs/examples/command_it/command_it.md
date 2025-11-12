@@ -18,7 +18,7 @@ In the meantime, please refer to the [command_it documentation](/documentation/c
 - Loading state management
 - Error handling patterns
 - Command restrictions and validation
-- Integration with watch_it
+- Integration with `watch_it`
 - Real-world application examples
 
 ---

@@ -69,7 +69,7 @@ Simple service locator that works anywhere in your app—no BuildContext, no Inh
 
 ---
 
-### <img src="/images/watch_it.svg" alt="watch_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />watch_it
+### <img src="/images/watch_it.svg" alt="watch_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />`watch_it`
 
 **Reactive UI updates, automatically**
 

@@ -18,7 +18,7 @@ In the meantime, please refer to the [listen_it documentation](/documentation/li
 - Chaining operators
 - Reactive collections (ListNotifier, MapNotifier, SetNotifier)
 - Stream transformations
-- Integration with watch_it and command_it
+- Integration with `watch_it` and command_it
 - Real-world application examples
 
 ---

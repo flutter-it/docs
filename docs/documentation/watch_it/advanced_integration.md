@@ -1,6 +1,6 @@
 # Advanced Integration
 
-Advanced patterns for integrating watch_it with get_it, including scopes, named instances, async initialization, and multi-package coordination.
+Advanced patterns for integrating `watch_it` with get_it, including scopes, named instances, async initialization, and multi-package coordination.
 
 ## get_it Scopes with pushScope
 

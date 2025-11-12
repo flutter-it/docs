@@ -18,7 +18,7 @@ title: What to do with which package?
 | You need to... | Use this package |
 |----------------|------------------|
 | Access services/dependencies anywhere in your app | **get_it** |
-| Update UI automatically when data changes | **watch_it** + **get_it** |
+| Update UI automatically when data changes | **`watch_it`** + **get_it** |
 | Handle async actions with loading/error states | **command_it** |
 | Transform, combine reactive data or use observable collections | **listen_it** |
 
@@ -66,7 +66,7 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 ---
 
-### <img src="/images/watch_it.svg" alt="watch_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />watch_it - Reactive UI updates
+### <img src="/images/watch_it.svg" alt="watch_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />`watch_it` - Reactive UI updates
 
 **Problem**: How do I update my UI when data changes without setState() or complex state management?
 
@@ -130,7 +130,7 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 ## Common Package Combinations
 
-### Minimal Setup: get_it + watch_it
+### Minimal Setup: get_it + `watch_it`
 Perfect for apps that need dependency injection and reactive UI. Covers 90% of typical app needs.
 
 **Example**: Most CRUD apps, dashboard apps, form-heavy apps.
@@ -160,7 +160,7 @@ flutter_it packages enable clean architecture by solving specific problems that 
 
 **The Challenge**: Once you move data out of widgets, you need:
 1. A way to access that data from anywhere → **get_it** solves this
-2. A way to update UI when data changes → **watch_it** solves this
+2. A way to update UI when data changes → **`watch_it`** solves this
 3. A way to handle async operations cleanly → **command_it** solves this
 4. A way to transform and combine reactive data → **listen_it** solves this
 

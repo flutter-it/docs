@@ -4,12 +4,12 @@
 
 You might wonder: "Why can't I just use `watchValue()` in a regular `StatelessWidget`?"
 
-**The problem:** watch_it needs to hook into your widget's lifecycle to:
+**The problem:** `watch_it` needs to hook into your widget's lifecycle to:
 1. **Subscribe** to changes when the widget builds
 2. **Unsubscribe** when the widget is disposed (prevent memory leaks)
 3. **Rebuild** the widget when data changes
 
-Regular `StatelessWidget` doesn't give watch_it access to these lifecycle events. You need a widget that watch_it can hook into.
+Regular `StatelessWidget` doesn't give `watch_it` access to these lifecycle events. You need a widget that `watch_it` can hook into.
 
 ## WatchingWidget - For Widgets Without Local State
 
@@ -36,7 +36,7 @@ Use when you need both `setState` AND reactive state:
 
 **Pattern:** Local state (`_showCompleted`) for UI-only preferences, reactive state (`todos`) from manager, and checkboxes call back into the manager to update data.
 
-> **💡 Important:** With watch_it, you'll **rarely need StatefulWidget anymore**. Most state belongs in your managers and is accessed reactively. Even `TextEditingController` and `AnimationController` can be created with `createOnce()` in `WatchingWidget` - no StatefulWidget needed! Only use StatefulWidget for truly local UI state that requires `setState`.
+> **💡 Important:** With `watch_it`, you'll **rarely need StatefulWidget anymore**. Most state belongs in your managers and is accessed reactively. Even `TextEditingController` and `AnimationController` can be created with `createOnce()` in `WatchingWidget` - no StatefulWidget needed! Only use StatefulWidget for truly local UI state that requires `setState`.
 
 ## Alternative: Using Mixins
 
@@ -78,6 +78,6 @@ If you have **existing widgets** you don't want to change, use mixins instead:
 
 ## See Also
 
-- [Getting Started](/documentation/watch_it/getting_started.md) - Basic watch_it usage
+- [Getting Started](/documentation/watch_it/getting_started.md) - Basic `watch_it` usage
 - [Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md) - Learn `watchValue()`
 - [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) - CRITICAL rules

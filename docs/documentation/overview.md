@@ -20,11 +20,11 @@ Simple service locator for dependency injection in Flutter applications.
 - [Advanced](/documentation/get_it/advanced.md) - Advanced techniques and patterns
 - [FAQ](/documentation/get_it/faq.md) - Frequently asked questions
 
-### 👁️ watch_it
+### 👁️ `watch_it`
 Reactive state management with automatic dependency tracking.
 
 **Documentation:**
-- [Getting Started](/documentation/watch_it/getting_started.md) - Complete guide to watch_it
+- [Getting Started](/documentation/watch_it/getting_started.md) - Complete guide to `watch_it`
 
 ### ✋ command_it
 Command pattern implementation for Flutter applications.
@@ -44,7 +44,7 @@ If you're new to flutter_it, we recommend starting with:
 
 1. **[What to do with which package?](/getting_started/what_to_do_with_which_package.md)** - Understand which package to use for what
 2. **[get_it Getting Started](/documentation/get_it/getting_started.md)** - Learn the fundamentals of dependency injection
-3. **[watch_it Getting Started](/documentation/watch_it/getting_started.md)** - Learn reactive state management
+3. **[`watch_it` Getting Started](/documentation/watch_it/getting_started.md)** - Learn reactive state management
 
 ## Examples
 

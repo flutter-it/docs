@@ -36,7 +36,7 @@ The general idea of any dependency injection system is that you have defined poi
 Furthermore GetIt helps you initialise your synchronous business objects while automatically care for dependencies between such objects.
 
 You wrote your already using some sort of state management solution. Which probably means that the solution already offer some sort of object location. In this case you probably won't need get_it.
-Together with the [watch_it](/documentation/watch_it/getting_started) however you don't need any other state management solution if you already use get_it.
+Together with the [`watch_it`](/documentation/watch_it/getting_started) however you don't need any other state management solution if you already use get_it.
 :::
 
 ## Object/factory with type X is not registered - how to fix?
@@ -381,18 +381,18 @@ See the [Object Registration documentation](/documentation/get_it/object_registr
 
 <<< @/../code_samples/lib/get_it/my_app_example_1.dart#example
 
-<strong>Or use get_it + watch_it instead:</strong>
+<strong>Or use get_it + `watch_it` instead:</strong>
 
 <<< @/../code_samples/lib/get_it/login_page_example_1.dart#example
 
 <strong>Choose:</strong>
 - <strong>get_it only</strong>: If you already have state management (BLoC, Riverpod, etc.)
-- <strong>get_it + watch_it</strong>: All-in-one DI + reactive state management
+- <strong>get_it + `watch_it`</strong>: All-in-one DI + reactive state management
 - <strong>get_it + Provider</strong>: If you're already using Provider and want better DI
 
-<strong>Bottom line:</strong> get_it is for service location, watch_it (built on get_it) handles both DI and state. Provider is orthogonal - you can use it with or without get_it.
+<strong>Bottom line:</strong> get_it is for service location, `watch_it` (built on get_it) handles both DI and state. Provider is orthogonal - you can use it with or without get_it.
 
-See [watch_it documentation](/documentation/watch_it/getting_started) for the complete solution.
+See [`watch_it` documentation](/documentation/watch_it/getting_started) for the complete solution.
 :::
 
 ## How do I re-register a service after unregister?

@@ -9,7 +9,7 @@ next:
   <h1 style="margin: 0;">Getting Started</h1>
 </div>
 
-<strong>watch_it</strong> makes your Flutter widgets automatically rebuild when data changes. No <code>setState</code>, no <code>StreamBuilder</code>, just simple reactive programming built on top of get_it.
+<strong>`watch_it`</strong> makes your Flutter widgets automatically rebuild when data changes. No <code>setState</code>, no <code>StreamBuilder</code>, just simple reactive programming built on top of get_it.
 
 <strong>Key benefits:</strong>
 <ul style="list-style: none; padding-left: 0;">
@@ -74,7 +74,7 @@ No need to change your widget hierarchy - just add `with WatchItMixin` and start
 
 ## What's Next?
 
-Now that you've seen the basics, there's so much more watch_it can do:
+Now that you've seen the basics, there's so much more `watch_it` can do:
 
 → **[Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md)** - Deep dive into `watchValue()` and other watch functions
 

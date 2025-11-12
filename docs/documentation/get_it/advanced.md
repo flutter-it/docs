@@ -134,13 +134,13 @@ Pop DetailPage(item1)       → Release, refCount = 0 (service disposed)
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Async loading triggered in constructor</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ No duplicate loading for same item (checked before loading)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Automatic memory management via reference counting</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Reactive UI updates via watch_it (rebuilds on state changes)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Reactive UI updates via `watch_it` (rebuilds on state changes)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ ChangeNotifier automatically disposed when refCount reaches 0</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Each itemId uniquely identified via `instanceName`</li>
 </ul>
 
 <strong>Key Integration:</strong>
-This example demonstrates how <strong>get_it</strong> (reference counting) and <strong>watch_it</strong> (reactive UI) work together seamlessly for complex navigation patterns.
+This example demonstrates how <strong>get_it</strong> (reference counting) and <strong>`watch_it`</strong> (reactive UI) work together seamlessly for complex navigation patterns.
 
 ---
 

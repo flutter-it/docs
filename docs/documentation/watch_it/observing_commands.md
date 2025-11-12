@@ -1,15 +1,15 @@
-# Observing Commands with watch_it
+# Observing Commands with `watch_it`
 
 One of the most powerful combinations in the flutter_it ecosystem is using `watch_it` to observe `command_it` commands. This pattern provides reactive, declarative state management for async operations with automatic loading states, error handling, and result updates.
 
-## Why watch_it + command_it?
+## Why `watch_it` + command_it?
 
-Commands encapsulate async operations and track their execution state (`isExecuting`, `value`, `errors`). watch_it allows your widgets to reactively rebuild when these states change, creating a seamless user experience without manual state management.
+Commands encapsulate async operations and track their execution state (`isExecuting`, `value`, `errors`). `watch_it` allows your widgets to reactively rebuild when these states change, creating a seamless user experience without manual state management.
 
 **Benefits:**
 - **Automatic loading states** - No need to manually track `isLoading` booleans
 - **Reactive results** - UI updates automatically when command completes
-- **Built-in error handling** - Commands track errors, watch_it displays them
+- **Built-in error handling** - Commands track errors, `watch_it` displays them
 - **Clean separation** - Business logic in commands, UI logic in widgets
 - **No boilerplate** - No `setState`, no `StreamBuilder`, no manual listeners
 

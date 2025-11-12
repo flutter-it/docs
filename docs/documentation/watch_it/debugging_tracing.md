@@ -1,6 +1,6 @@
 # Debugging & Troubleshooting
 
-Common errors, solutions, debugging techniques, and troubleshooting strategies for watch_it.
+Common errors, solutions, debugging techniques, and troubleshooting strategies for `watch_it`.
 
 ## Common Errors
 

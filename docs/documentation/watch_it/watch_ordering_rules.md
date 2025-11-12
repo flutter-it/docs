@@ -4,11 +4,11 @@
 
 **All watch function calls must occur in the SAME ORDER on every build.**
 
-This is the most important rule in watch_it. Violating it will cause errors or unexpected behavior.
+This is the most important rule in `watch_it`. Violating it will cause errors or unexpected behavior.
 
 ## Why Does Order Matter?
 
-watch_it uses a global state mechanism similar to React Hooks. Each watch call is assigned an index based on its position in the build sequence. When the widget rebuilds, watch_it expects to find the same watches in the same order.
+`watch_it` uses a global state mechanism similar to React Hooks. Each watch call is assigned an index based on its position in the build sequence. When the widget rebuilds, `watch_it` expects to find the same watches in the same order.
 
 **What happens if order changes:**
 - ❌ Runtime errors
@@ -115,13 +115,13 @@ The most common mistake is putting watch calls inside conditional statements:
 
 ## Advanced: Why This Happens
 
-watch_it uses a global `_watchItState` variable that tracks:
+`watch_it` uses a global `_watchItState` variable that tracks:
 - Current widget being built
 - Index of current watch call
 - List of previous watch subscriptions
 
 When you call `watch()`:
-1. watch_it increments the index
+1. `watch_it` increments the index
 2. Checks if subscription at that index exists
 3. If yes, reuses it
 4. If no, creates new subscription
@@ -135,7 +135,7 @@ This is similar to React Hooks rules for the same reason.
 
 ## See Also
 
-- [Getting Started](/documentation/watch_it/getting_started.md) - Basic watch_it usage
+- [Getting Started](/documentation/watch_it/getting_started.md) - Basic `watch_it` usage
 - [Watch Functions](/documentation/watch_it/watch_functions.md) - All watch functions
 - [Best Practices](/documentation/watch_it/best_practices.md) - General patterns
 - [Debugging & Troubleshooting](/documentation/watch_it/debugging_tracing.md) - Common issues

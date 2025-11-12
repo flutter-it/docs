@@ -1,6 +1,6 @@
 # Best Practices
 
-Production-ready patterns, performance tips, and testing strategies for watch_it applications.
+Production-ready patterns, performance tips, and testing strategies for `watch_it` applications.
 
 ## Architecture Patterns
 

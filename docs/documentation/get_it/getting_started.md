@@ -217,8 +217,8 @@ The standard pattern is to create a global variable:
 
 <strong>Recommendation:</strong> Use `getIt` or `di` - both are clear and widely recognized in the Flutter community.
 
-::: tip Using with watch_it
-If you're using the [watch_it](https://pub.dev/packages/watch_it) package, you already have a global `di` instance available - no need to create your own. Just import watch_it and use `di` directly.
+::: tip Using with `watch_it`
+If you're using the [`watch_it`](https://pub.dev/packages/watch_it) package, you already have a global `di` instance available - no need to create your own. Just import `watch_it` and use `di` directly.
 :::
 
 ::: tip Cross-Package Usage

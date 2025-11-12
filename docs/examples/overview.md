@@ -21,12 +21,12 @@ Comprehensive documentation: **[get_it docs](/documentation/get_it/getting_start
 
 ---
 
-### 👁️ watch_it Examples
-See how to implement reactive state management with watch_it.
+### 👁️ `watch_it` Examples
+See how to implement reactive state management with `watch_it`.
 
-**[View watch_it Examples](/examples/watch_it/watch_it.md)**
+**[View `watch_it` Examples](/examples/watch_it/watch_it.md)**
 
-Comprehensive documentation: **[watch_it docs](/documentation/watch_it/getting_started)**
+Comprehensive documentation: **[`watch_it` docs](/documentation/watch_it/getting_started)**
 
 ---
 
@@ -63,7 +63,7 @@ If you're new to flutter_it, we recommend:
 
 1. **[What to do with which package](/getting_started/what_to_do_with_which_package)** - Understand the ecosystem
 2. **[get_it documentation](/documentation/get_it/getting_started)** - Learn dependency injection basics
-3. **[watch_it documentation](/documentation/watch_it/getting_started)** - Learn reactive state management
+3. **[`watch_it` documentation](/documentation/watch_it/getting_started)** - Learn reactive state management
 
 ## Documentation
 

@@ -9,7 +9,7 @@ Streams and Futures are different from `Listenable`:
 - **Future** - Completes once with a value
 - Both have loading/error states
 
-watch_it provides `watchStream()` and `watchFuture()` - like `StreamBuilder` and `FutureBuilder`, but in one line.
+`watch_it` provides `watchStream()` and `watchFuture()` - like `StreamBuilder` and `FutureBuilder`, but in one line.
 
 ## watchStream - Reactive Streams
 
@@ -31,7 +31,7 @@ When you provide a **non-null** `initialValue` and use a **non-nullable stream t
 
 ### Compare with StreamBuilder
 
-**Without watch_it:**
+**Without `watch_it`:**
 
 <<< @/../code_samples/lib/watch_it/stream_builder_comparison.dart#example
 

@@ -9,7 +9,7 @@ Scopes provide **hierarchical lifecycle management** for your business objects, 
 ::: info get_it Scopes vs Widget-Tree Scoping (Provider, InheritedWidget)
 **get_it scopes are intentionally independent of the widget tree.** They manage the lifecycle of business objects based on application state (login/logout, sessions, features), not widget position.
 
-For **widget-lifetime scoping**, use [watch_it's `pushScope`](/documentation/watch_it/getting_started) which automatically pushes a get_it scope for the lifetime of a widget.
+For **widget-lifetime scoping**, use [`watch_it`'s `pushScope`](/documentation/watch_it/getting_started) which automatically pushes a get_it scope for the lifetime of a widget.
 :::
 
 ## What Are Scopes?
@@ -111,7 +111,7 @@ Get notified when any scope change occurs:
 
 <<< @/../code_samples/lib/get_it/code_sample_062bd775.dart#example
 
-**Note:** watch_it automatically handles UI rebuilds on scope changes via `rebuildOnScopeChanges`.
+**Note:** `watch_it` automatically handles UI rebuilds on scope changes via `rebuildOnScopeChanges`.
 
 ---
 
@@ -208,18 +208,18 @@ Use scopes to shadow real services with mocks while keeping the rest of your DI 
 - **Don't use scopes for temporary state** - use parameters or variables instead
 - **Don't forget to pop scopes** - memory leaks if scopes accumulate
 - **Don't rely on scope order** for logic - use explicit dependencies
-- **Don't push scopes inside build methods** - use watch_it's `pushScope` for widget-bound scopes
+- **Don't push scopes inside build methods** - use `watch_it`'s `pushScope` for widget-bound scopes
 
 ---
 
-## Widget-Bound Scopes with watch_it
+## Widget-Bound Scopes with `watch_it`
 
-For scopes tied to widget lifetime, use **watch_it**:
+For scopes tied to widget lifetime, use **`watch_it`**:
 
 
 <<< @/../code_samples/lib/get_it/user_profile_page_example.dart#example
 
-See [watch_it documentation](/documentation/watch_it/getting_started) for details.
+See [`watch_it` documentation](/documentation/watch_it/getting_started) for details.
 
 ---
 
@@ -258,4 +258,4 @@ See [watch_it documentation](/documentation/watch_it/getting_started) for detail
 - [Object Registration](/documentation/get_it/object_registration) - How to register objects
 - [Async Objects](/documentation/get_it/async_objects) - Working with async initialization
 - [Testing](/documentation/get_it/testing) - Using scopes in tests
-- [watch_it pushScope](/documentation/watch_it/getting_started) - Widget-bound scoping
+- [`watch_it` pushScope](/documentation/watch_it/getting_started) - Widget-bound scoping
