@@ -22,7 +22,7 @@ Replace `StreamBuilder` with `watchStream()`:
 <<< @/../code_samples/lib/watch_it/user_activity_stream_example.dart#example
 
 ::: tip AsyncSnapshot Always Has a Value
-When you provide `initialValue`, the `AsyncSnapshot.data` is **never null** - it starts with your initial value and updates when stream events arrive. This means no null checks needed:
+When you provide `initialValue`, the `AsyncSnapshot.data` is **never null** - it starts with your initial value and updates when stream events arrive. So your UI can always display something meaningful:
 
 <<< @/../code_samples/lib/watch_it/async_snapshot_always_has_value.dart#example
 
