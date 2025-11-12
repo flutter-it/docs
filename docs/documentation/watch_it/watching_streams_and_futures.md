@@ -21,6 +21,31 @@ Replace `StreamBuilder` with `watchStream()`:
 
 <<< @/../code_samples/lib/watch_it/user_activity_stream_example.dart#example
 
+**Method signature:**
+```dart
+AsyncSnapshot<R> watchStream<T extends Object, R>(
+  Stream<R> Function(T) select,
+  {required R initialValue,
+   bool preserveState = true,
+   String? instanceName,
+   GetIt? getIt}
+)
+```
+
+**Parameters:**
+- `select` - Function that gets the Stream from the registered object
+- `initialValue` - **Required**. The value shown before the first stream event arrives
+- `preserveState` - If `true` (default), keeps the last value when the stream changes
+- `instanceName` - Optional name if you registered multiple instances of the same type
+- `getIt` - Optional custom GetIt instance (rarely needed)
+
+**Returns `AsyncSnapshot<R>`:**
+- `data` - The current value (starts with `initialValue`)
+- `connectionState` - Current state: `waiting`, `active`, `done`
+- `hasData` - `true` if data is available
+- `hasError` - `true` if an error occurred
+- `error` - The error object if any
+
 ### Before and After
 
 **Compare with StreamBuilder:**
@@ -53,6 +78,31 @@ Much more nested and verbose!
 Replace `FutureBuilder` with `watchFuture()`:
 
 <<< @/../code_samples/lib/watch_it/data_watch_future_example.dart#example
+
+**Method signature:**
+```dart
+AsyncSnapshot<R> watchFuture<T extends Object, R>(
+  Future<R> Function(T) select,
+  {required R initialValue,
+   bool preserveState = true,
+   String? instanceName,
+   GetIt? getIt}
+)
+```
+
+**Parameters:**
+- `select` - Function that gets the Future from the registered object
+- `initialValue` - **Required**. The value shown before the future completes
+- `preserveState` - If `true` (default), keeps the last value when the future changes
+- `instanceName` - Optional name if you registered multiple instances of the same type
+- `getIt` - Optional custom GetIt instance (rarely needed)
+
+**Returns `AsyncSnapshot<R>`:**
+- `data` - The current value (starts with `initialValue`, updates when future completes)
+- `connectionState` - Current state: `waiting`, `done`
+- `hasData` - `true` if data is available
+- `hasError` - `true` if the future threw an error
+- `error` - The error object if any
 
 ### Common Pattern: App Initialization
 
