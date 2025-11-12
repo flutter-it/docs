@@ -49,9 +49,78 @@ The most common mistake is putting watch calls inside conditional statements:
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_after_early_return_wrong
 
+**Why this breaks:** Watches after early returns may or may not be called, disrupting the order.
+
 ### ❌ Watch in Callbacks
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_in_callbacks_wrong
+
+## Safe Exceptions to the Rule
+
+::: tip Understanding When Conditionals Are Safe
+The ordering rule only matters when **subsequent watches** exist. If a watch is conditional but **no watches follow it**, there's no order disruption!
+:::
+
+### ✅ Conditional Watches at the END
+
+Conditional watches are **perfectly safe** when they're the last watches in your build:
+
+```dart
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    // These watches always run in the same order
+    final todos = watchValue((TodoManager m) => m.todos);
+    final isLoading = watchValue((TodoManager m) => m.isLoading);
+
+    // ✅ Conditional watch at the END - perfectly safe!
+    if (showDetails) {
+      final details = watchValue((TodoManager m) => m.selectedDetails);
+      return DetailView(details);
+    }
+
+    return ListView(/* ... */);
+  }
+}
+```
+
+**Why this is safe:**
+- First two watches always execute in same order
+- Conditional watch is LAST - no subsequent watches to disrupt
+- On rebuild: same order maintained
+
+### ✅ Early Returns After All Watches
+
+Early returns are **safe** when all watches have already been called:
+
+```dart
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Call ALL watches first
+    final data = watchValue((DataManager m) => m.data);
+    final isLoading = watchValue((DataManager m) => m.isLoading);
+
+    // ✅ Early return AFTER watches - safe!
+    if (isLoading) {
+      return CircularProgressIndicator();
+    }
+
+    if (data.isEmpty) {
+      return Text('No data');
+    }
+
+    return ListView(/* ... */);
+  }
+}
+```
+
+**Why this is safe:**
+- All watches execute before any early return
+- Order is complete and consistent
+- Return statements don't affect watch order
+
+**Key principle:** The danger is watches that may or may not be called FOLLOWED by other watches. If your conditional/early return is at the end, there are no subsequent watches to worry about.
 
 ## Safe Conditional Patterns
 
@@ -74,21 +143,23 @@ The most common mistake is putting watch calls inside conditional statements:
 
 ### Error: "watch call order changed"
 
-**Cause:** You have conditional watch calls or watches in different branches.
+**Cause:** You have conditional watch calls **followed by other watches**.
 
 **Solution:**
 1. Move all watch calls to the top of `build()`
-2. Ensure they run unconditionally
-3. Use the values conditionally, not the watches
+2. Ensure they run unconditionally, OR
+3. Move conditional watches to the END (after all other watches)
+4. Use the values conditionally, not the watches
 
 ### Error: "More/fewer watches than last build"
 
-**Cause:** Number of watch calls changed between builds.
+**Cause:** Number of watch calls changed between builds due to conditionals in the middle.
 
 **Solution:**
-- Check for watches inside `if` statements
+- Check for watches inside `if` statements **followed by other watches**
 - Check for watches inside loops
-- Check for watches after early returns
+- Check for watches after early returns **when other watches exist after the return**
+- Move conditional watches to the END if you need them
 
 ### Unexpected Data
 
@@ -102,16 +173,16 @@ The most common mistake is putting watch calls inside conditional statements:
 
 ✅ **DO:**
 - Call all watches at the top of `build()`
-- Use unconditional watch calls
+- Use unconditional watch calls when possible
 - Store values in variables, use variables conditionally
 - Watch the full list, iterate over values
+- Use conditional watches or early returns **at the end** (after all other watches)
 
 ❌ **DON'T:**
-- Put watches in `if` statements
+- Put watches in `if` statements **when followed by other watches**
 - Put watches in loops
 - Put watches in callbacks
-- Return early before all watches
-- Change number of watches based on state
+- Return early **before calling all watches** (unless no watches follow)
 
 ## Advanced: Why This Happens
 
