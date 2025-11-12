@@ -7,7 +7,7 @@
   <img src="/images/command_it.svg" alt="command_it logo" width="150" class="header-logo" />
 </div>
 
-> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
+> Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ::: info Work In Progress
 This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!

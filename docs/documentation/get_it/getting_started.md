@@ -31,7 +31,7 @@ next:
 
 ![get_it Data Flow](/images/get-it-flow.svg)
 
-> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
+> Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ---
 

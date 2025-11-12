@@ -453,7 +453,7 @@ When reporting issues:
 5. **Code sample** - Complete, runnable example
 
 **Where to ask:**
-- **Discord:** [Join flutter_it community](https://discord.gg/ZHYHYCM38h)
+- **Discord:** [Join flutter_it community](https://discord.com/invite/Nn6GkYjzW)
 - **GitHub Issues:** [watch_it issues](https://github.com/escamoteur/watch_it/issues)
 - **Stack Overflow:** Tag with `flutter` and `watch-it`
 

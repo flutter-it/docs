@@ -512,4 +512,4 @@ user.select<String>((u) => u.name).listen((name, _) => print(name));
 - [Learn about operator details →](/documentation/listen_it/operators/overview)
 - [Learn about collections →](/documentation/listen_it/collections/introduction)
 - [See examples →](/examples/listen_it/listen_it)
-- [Join Discord for help →](https://discord.gg/ZHYHYCM38h)
+- [Join Discord for help →](https://discord.com/invite/Nn6GkYjzW)

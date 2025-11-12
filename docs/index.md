@@ -112,6 +112,6 @@ Transform, filter, combine, and debounce operators for ValueNotifier—plus reac
 Join the flutter_it community:
 
 - **[GitHub](https://github.com/flutter-it)** - Source code and issues
-- **[Discord](https://discord.gg/g5hUvhRz)** - Chat and support
+- **[Discord](https://discord.com/invite/Nn6GkYjzW)** - Chat and support
 - **[Twitter](https://x.com/ThomasBurkhartB)** - Updates and news
 

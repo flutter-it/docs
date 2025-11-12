@@ -26,4 +26,4 @@ In the meantime, please refer to the [listen_it documentation](/documentation/li
 **Need help now?**
 - Check the [listen_it README](https://github.com/flutter-it/listen_it#readme)
 - Visit the [documentation](/documentation/listen_it/listen_it)
-- Join our [Discord community](https://discord.gg/ZHYHYCM38h)
+- Join our [Discord community](https://discord.com/invite/Nn6GkYjzW)

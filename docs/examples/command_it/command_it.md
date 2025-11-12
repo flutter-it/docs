@@ -26,4 +26,4 @@ In the meantime, please refer to the [command_it documentation](/documentation/c
 **Need help now?**
 - Check the [command_it README](https://github.com/flutter-it/command_it#readme)
 - Visit the [documentation](/documentation/command_it/getting_started)
-- Join our [Discord community](https://discord.gg/ZHYHYCM38h)
+- Join our [Discord community](https://discord.com/invite/Nn6GkYjzW)

@@ -9,4 +9,4 @@ If you are as excited about this project as I am, you can help me by:
 
 * Helping me extending the documentation, although the readmes are pretty extensive they seem not to be as approachable as they could be. Especially for new users.
 * Provide small sample projects that show how to use the packages.
-* get involved in our discussion on github [here](https://github.com/orgs/flutter-it/discussions) or on [discord](https://discord.gg/g5hUvhRz)
+* get involved in our discussion on github [here](https://github.com/orgs/flutter-it/discussions) or on [discord](https://discord.com/invite/Nn6GkYjzW)

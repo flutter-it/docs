@@ -147,7 +147,7 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/flutter-it' },
-      { icon: 'discord', link: 'https://discord.gg/g5hUvhRz' },
+      { icon: 'discord', link: 'https://discord.com/invite/Nn6GkYjzW' },
       { icon: 'twitter', link: 'https://x.com/ThomasBurkhartB' }
     ],
 

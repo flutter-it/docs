@@ -29,7 +29,7 @@ next:
 
 ![watch_it Data Flow](/images/watch-it-flow.svg)
 
-> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
+> Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ---
 
@@ -89,5 +89,5 @@ The documentation will guide you step-by-step from there!
 ## Need Help?
 
 - **Documentation:** [flutter-it.dev](https://flutter-it.dev)
-- **Discord:** [Join our community](https://discord.gg/ZHYHYCM38h)
+- **Discord:** [Join our community](https://discord.com/invite/Nn6GkYjzW)
 - **GitHub:** [Report issues](https://github.com/escamoteur/watch_it/issues)

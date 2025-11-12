@@ -22,7 +22,7 @@ These primitives work together to help you build reactive data flows in your Flu
 
 ![listen_it Data Flow](/images/listen-it-flow.svg)
 
-> Join our support Discord server: [https://discord.gg/ZHYHYCM38h](https://discord.gg/ZHYHYCM38h)
+> Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ## Installation
 

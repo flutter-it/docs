@@ -53,5 +53,5 @@ Check out our [examples](/examples/overview.md) to see these packages in action 
 ## Community
 
 - [GitHub](https://github.com/flutter-it)
-- [Discord](https://discord.gg/g5hUvhRz)
+- [Discord](https://discord.com/invite/Nn6GkYjzW)
 - [Twitter](https://x.com/ThomasBurkhartB) 

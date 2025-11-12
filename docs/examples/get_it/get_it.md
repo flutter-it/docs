@@ -25,4 +25,4 @@ In the meantime, please refer to the [get_it documentation](/documentation/get_i
 **Need help now?**
 - Check the [get_it README](https://github.com/flutter-it/get_it#readme)
 - Visit the [documentation](/documentation/get_it/getting_started)
-- Join our [Discord community](https://discord.gg/ZHYHYCM38h)
+- Join our [Discord community](https://discord.com/invite/Nn6GkYjzW)

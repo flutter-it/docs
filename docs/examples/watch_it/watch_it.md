@@ -26,4 +26,4 @@ In the meantime, please refer to the [watch_it documentation](/documentation/wat
 **Need help now?**
 - Check the [watch_it README](https://github.com/flutter-it/watch_it#readme)
 - Visit the [documentation](/documentation/watch_it/getting_started)
-- Join our [Discord community](https://discord.gg/ZHYHYCM38h)
+- Join our [Discord community](https://discord.com/invite/Nn6GkYjzW)

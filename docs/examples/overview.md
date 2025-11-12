@@ -71,6 +71,6 @@ For detailed documentation on each package, visit our [Documentation Overview](/
 
 ## Community
 
-- **Discord**: [Join our community](https://discord.gg/ZHYHYCM38h)
+- **Discord**: [Join our community](https://discord.com/invite/Nn6GkYjzW)
 - **GitHub**: [flutter-it organization](https://github.com/flutter-it)
 - **Twitter**: [@ThomasBurkhartB](https://x.com/ThomasBurkhartB)
