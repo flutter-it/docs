@@ -52,14 +52,20 @@ If your stream isn't registered in get_it, use the `target` parameter:
 
 #### Allowing Stream Changes (allowStreamChange)
 
-By default, `watchStream` throws an error if the stream instance changes between rebuilds (to prevent infinite loops). Set `allowStreamChange: true` to allow dynamic streams:
+By default, `watchStream` expects the stream factory function to be called once and return the same stream instance. If you expect your stream to change between rebuilds (like when switching rooms), set `allowStreamChange: true`:
 
 <<< @/../code_samples/lib/watch_it/watch_stream_allow_change.dart#example
 
+**What happens:**
+- `watchStream` detects when the stream instance changes
+- Automatically unsubscribes from the old stream
+- Subscribes to the new stream
+- Widget rebuilds with data from the new stream
+
 **When to use:**
 - Stream depends on reactive parameters (like selected room ID)
-- Switching between different streams
-- **Warning:** Make sure the stream instance actually changes, not recreated each build
+- Switching between different streams based on user input
+- **Important:** The stream instance must actually change - not just be recreated with the same data
 
 #### Full Method Signature
 
@@ -106,14 +112,20 @@ If you need to wait for multiple async services to initialize (like database, au
 
 #### Allowing Future Changes (allowFutureChange)
 
-By default, `watchFuture` throws an error if the future instance changes between rebuilds (to prevent infinite loops). Set `allowFutureChange: true` for retriable operations:
+By default, `watchFuture` expects the future factory function to be called once and return the same future instance. If you expect your future to change between rebuilds (like retry operations), set `allowFutureChange: true`:
 
 <<< @/../code_samples/lib/watch_it/watch_future_allow_change.dart#example
 
+**What happens:**
+- `watchFuture` detects when the future instance changes
+- Starts watching the new future
+- Widget rebuilds when the new future completes
+- Previous future completion is ignored
+
 **When to use:**
 - Retry functionality for failed requests
-- Future depends on reactive parameters
-- **Warning:** Make sure the future instance actually changes, not recreated each build
+- Future depends on reactive parameters that change
+- **Important:** The future instance must actually change - not just be recreated with the same operation
 
 #### Full Method Signature
 
