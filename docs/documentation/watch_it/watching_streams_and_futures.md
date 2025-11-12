@@ -52,11 +52,16 @@ If your stream isn't registered in get_it, use the `target` parameter:
 
 #### Allowing Stream Changes (allowStreamChange)
 
-By default, `watchStream` expects the stream factory function to be called once and return the same stream instance. If you expect your stream to change between rebuilds (like when switching rooms), set `allowStreamChange: true`:
+By default, `watchStream` behaves differently depending on how you provide the stream:
+
+- **With `select` function:** Calls the selector once to prevent creating multiple streams on every rebuild
+- **With `target` parameter:** Throws an error if the stream instance changes between rebuilds
+
+Set `allowStreamChange: true` if you expect the stream to legitimately change between rebuilds:
 
 <<< @/../code_samples/lib/watch_it/watch_stream_allow_change.dart#example
 
-**What happens:**
+**What happens with `allowStreamChange: true`:**
 - `watchStream` detects when the stream instance changes
 - Automatically unsubscribes from the old stream
 - Subscribes to the new stream
@@ -65,7 +70,7 @@ By default, `watchStream` expects the stream factory function to be called once 
 **When to use:**
 - Stream depends on reactive parameters (like selected room ID)
 - Switching between different streams based on user input
-- **Important:** The stream instance must actually change - not just be recreated with the same data
+- **Important:** Only use when the stream should actually change, not when accidentally recreating the same stream
 
 #### Full Method Signature
 
@@ -112,11 +117,16 @@ If you need to wait for multiple async services to initialize (like database, au
 
 #### Allowing Future Changes (allowFutureChange)
 
-By default, `watchFuture` expects the future factory function to be called once and return the same future instance. If you expect your future to change between rebuilds (like retry operations), set `allowFutureChange: true`:
+By default, `watchFuture` behaves differently depending on how you provide the future:
+
+- **With `select` function:** Calls the selector once to prevent creating multiple futures on every rebuild
+- **With `target` parameter:** Throws an error if the future instance changes between rebuilds
+
+Set `allowFutureChange: true` if you expect the future to legitimately change between rebuilds (like retry operations):
 
 <<< @/../code_samples/lib/watch_it/watch_future_allow_change.dart#example
 
-**What happens:**
+**What happens with `allowFutureChange: true`:**
 - `watchFuture` detects when the future instance changes
 - Starts watching the new future
 - Widget rebuilds when the new future completes
@@ -125,7 +135,7 @@ By default, `watchFuture` expects the future factory function to be called once 
 **When to use:**
 - Retry functionality for failed requests
 - Future depends on reactive parameters that change
-- **Important:** The future instance must actually change - not just be recreated with the same operation
+- **Important:** Only use when the future should actually change, not when accidentally recreating the same future
 
 #### Full Method Signature
 
