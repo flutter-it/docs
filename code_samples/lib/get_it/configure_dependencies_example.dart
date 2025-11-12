@@ -6,8 +6,8 @@ final getIt = GetIt.instance;
 
 void configureDependencies() {
   // Register your services
-  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
-  getIt.registerLazySingleton<Database>(() => Database());
-  getIt.registerLazySingleton<AuthService>(() => AuthService());
+  getIt.registerSingleton<ApiClient>(ApiClient());
+  getIt.registerSingleton<Database>(Database());
+  getIt.registerSingleton<AuthService>(AuthService());
 }
 // #endregion example

@@ -21,7 +21,7 @@
     },
     {
       "name": "listen_it",
-      "version": "5.1.1",
+      "version": "5.3.3",
       "dependencies": [
         "collection",
         "flutter"
@@ -29,7 +29,7 @@
     },
     {
       "name": "watch_it",
-      "version": "1.7.0",
+      "version": "2.1.0",
       "dependencies": [
         "flutter",
         "get_it",
@@ -38,7 +38,7 @@
     },
     {
       "name": "get_it",
-      "version": "8.3.0",
+      "version": "9.0.5",
       "dependencies": [
         "async",
         "collection",
