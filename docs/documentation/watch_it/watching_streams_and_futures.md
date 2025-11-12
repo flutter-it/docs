@@ -62,8 +62,8 @@ Set `allowStreamChange: true` if you expect the stream to legitimately change be
 <<< @/../code_samples/lib/watch_it/watch_stream_allow_change.dart#example
 
 **What happens with `allowStreamChange: true`:**
-- `watchStream` detects when the stream instance changes
-- Automatically unsubscribes from the old stream
+- The selector function is called and evaluated on every build
+- If the stream instance changed, `watchStream` automatically unsubscribes from the old stream
 - Subscribes to the new stream
 - Widget rebuilds with data from the new stream
 
@@ -127,8 +127,8 @@ Set `allowFutureChange: true` if you expect the future to legitimately change be
 <<< @/../code_samples/lib/watch_it/watch_future_allow_change.dart#example
 
 **What happens with `allowFutureChange: true`:**
-- `watchFuture` detects when the future instance changes
-- Starts watching the new future
+- The selector function is called and evaluated on every build
+- If the future instance changed, `watchFuture` starts watching the new future
 - Widget rebuilds when the new future completes
 - Previous future completion is ignored
 
