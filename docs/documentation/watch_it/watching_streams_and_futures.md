@@ -24,18 +24,22 @@ Replace `StreamBuilder` with `watchStream()`:
 **Method signature:**
 ```dart
 AsyncSnapshot<R> watchStream<T extends Object, R>(
-  Stream<R> Function(T) select,
-  {required R initialValue,
-   bool preserveState = true,
-   String? instanceName,
-   GetIt? getIt}
-)
+  Stream<R> Function(T)? select, {
+  T? target,
+  R? initialValue,
+  bool preserveState = true,
+  bool allowStreamChange = false,
+  String? instanceName,
+  GetIt? getIt,
+})
 ```
 
 **Parameters:**
-- `select` - Function that gets the Stream from the registered object
-- `initialValue` - **Required**. The value shown before the first stream event arrives
+- `select` - Optional. Function that gets the Stream from the registered object. If `null`, `target` must be a `Stream<R>`
+- `target` - Optional. Direct Stream to watch (not from get_it). If `null`, gets object from get_it
+- `initialValue` - Optional. The value shown before the first stream event arrives
 - `preserveState` - If `true` (default), keeps the last value when the stream changes
+- `allowStreamChange` - If `true`, allows the stream to change between rebuilds
 - `instanceName` - Optional name if you registered multiple instances of the same type
 - `getIt` - Optional custom GetIt instance (rarely needed)
 
@@ -82,18 +86,22 @@ Replace `FutureBuilder` with `watchFuture()`:
 **Method signature:**
 ```dart
 AsyncSnapshot<R> watchFuture<T extends Object, R>(
-  Future<R> Function(T) select,
-  {required R initialValue,
-   bool preserveState = true,
-   String? instanceName,
-   GetIt? getIt}
-)
+  Future<R> Function(T)? select, {
+  T? target,
+  required R initialValue,
+  bool preserveState = true,
+  bool allowFutureChange = false,
+  String? instanceName,
+  GetIt? getIt,
+})
 ```
 
 **Parameters:**
-- `select` - Function that gets the Future from the registered object
+- `select` - Optional. Function that gets the Future from the registered object. If `null`, `target` must be a `Future<R>`
+- `target` - Optional. Direct Future to watch (not from get_it). If `null`, gets object from get_it
 - `initialValue` - **Required**. The value shown before the future completes
 - `preserveState` - If `true` (default), keeps the last value when the future changes
+- `allowFutureChange` - If `true`, allows the future to change between rebuilds
 - `instanceName` - Optional name if you registered multiple instances of the same type
 - `getIt` - Optional custom GetIt instance (rarely needed)
 
