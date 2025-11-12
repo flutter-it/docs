@@ -31,9 +31,11 @@ final count = watchValue((CounterManager m) => m.count);
 **Method signature:**
 ```dart
 R watchValue<T extends Object, R>(
-  ValueListenable<R> Function(T) selectProperty,
-  {String? instanceName, GetIt? getIt}
-)
+  ValueListenable<R> Function(T) selectProperty, {
+  bool allowObservableChange = false,
+  String? instanceName,
+  GetIt? getIt,
+})
 ```
 
 Dart infers:
