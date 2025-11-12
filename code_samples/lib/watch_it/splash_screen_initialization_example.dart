@@ -4,17 +4,15 @@ import '_shared/stubs.dart';
 
 // #region example
 class SplashScreen extends WatchingWidget {
+  const SplashScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
+    // Selector function called once - starts initialization automatically
     final snapshot = watchFuture(
       (AppService s) => s.initialize(),
       initialValue: false,
     );
-
-    // Trigger initialization once
-    callOnce((_) {
-      di<AppService>().initialize();
-    });
 
     if (snapshot.connectionState == ConnectionState.waiting) {
       return Column(
