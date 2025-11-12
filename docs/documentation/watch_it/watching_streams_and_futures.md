@@ -21,12 +21,12 @@ Replace `StreamBuilder` with `watchStream()`:
 
 <<< @/../code_samples/lib/watch_it/user_activity_stream_example.dart#example
 
-::: tip AsyncSnapshot Always Has a Value
-When you provide `initialValue`, the `AsyncSnapshot.data` is **never null** - it starts with your initial value and updates when stream events arrive. So your UI can always display something meaningful:
+::: tip AsyncSnapshot and Null Safety
+When you provide a **non-null** `initialValue` and use a **non-nullable stream type** (like `Stream<String>`), `AsyncSnapshot.data` won't be null. It starts with your initial value and updates with stream events:
 
 <<< @/../code_samples/lib/watch_it/async_snapshot_always_has_value.dart#example
 
-You can safely use `snapshot.data!` because it's guaranteed to have a value.
+**Note:** If your stream type is nullable (like `Stream<String?>`), then stream events can emit null values, making `snapshot.data` null even with a non-null `initialValue`.
 :::
 
 ### Compare with StreamBuilder
@@ -90,8 +90,8 @@ Replace `FutureBuilder` with `watchFuture()`:
 
 <<< @/../code_samples/lib/watch_it/data_watch_future_example.dart#example
 
-::: tip AsyncSnapshot Always Has a Value
-Just like `watchStream`, when you provide `initialValue` to `watchFuture`, the `AsyncSnapshot.data` is **never null** - it starts with your initial value and updates when the future completes. See the [AsyncSnapshot tip above](#handling-stream-states) for details.
+::: tip AsyncSnapshot and Null Safety
+Just like `watchStream`, when you provide a **non-null** `initialValue` to `watchFuture` with a **non-nullable future type** (like `Future<String>`), `AsyncSnapshot.data` won't be null. See the [AsyncSnapshot tip above](#handling-stream-states) for details.
 :::
 
 ### Common Pattern: App Initialization

@@ -8,16 +8,18 @@ class MessageWidget extends WatchingWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Stream<String> - non-nullable type
     final snapshot = watchStream(
       (ChatService s) => s.messageStream,
       initialValue: 'Waiting for messages...',
     );
 
-    // No null check needed! snapshot.data always has a value
-    // It starts with initialValue and updates with stream events
+    // Safe to use ! because:
+    // 1. We provided a non-null initialValue
+    // 2. Stream type is non-nullable (String, not String?)
     return Column(
       children: [
-        Text(snapshot.data!), // Safe to use ! because data is never null
+        Text(snapshot.data!),
         if (snapshot.connectionState == ConnectionState.waiting)
           Text('(connecting...)', style: TextStyle(fontSize: 12)),
       ],
