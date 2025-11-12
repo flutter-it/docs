@@ -21,7 +21,48 @@ Replace `StreamBuilder` with `watchStream()`:
 
 <<< @/../code_samples/lib/watch_it/user_activity_stream_example.dart#example
 
-**Method signature:**
+::: tip AsyncSnapshot Always Has a Value
+When you provide `initialValue`, the `AsyncSnapshot.data` is **never null** - it starts with your initial value and updates when stream events arrive. This means no null checks needed:
+
+<<< @/../code_samples/lib/watch_it/async_snapshot_always_has_value.dart#example
+
+You can safely use `snapshot.data!` because it's guaranteed to have a value.
+:::
+
+### Compare with StreamBuilder
+
+**Without watch_it:**
+
+<<< @/../code_samples/lib/watch_it/stream_builder_comparison.dart#example
+
+Much more nested and verbose!
+
+### Advanced watchStream Usage
+
+#### Watching Local Streams (target parameter)
+
+If your stream isn't registered in get_it, use the `target` parameter:
+
+<<< @/../code_samples/lib/watch_it/watch_stream_with_target.dart#example
+
+**When to use:**
+- Stream passed as widget parameter
+- Locally created streams
+- Streams from external packages
+
+#### Allowing Stream Changes (allowStreamChange)
+
+By default, `watchStream` throws an error if the stream instance changes between rebuilds (to prevent infinite loops). Set `allowStreamChange: true` to allow dynamic streams:
+
+<<< @/../code_samples/lib/watch_it/watch_stream_allow_change.dart#example
+
+**When to use:**
+- Stream depends on reactive parameters (like selected room ID)
+- Switching between different streams
+- **Warning:** Make sure the stream instance actually changes, not recreated each build
+
+#### Full Method Signature
+
 ```dart
 AsyncSnapshot<R> watchStream<T extends Object, R>(
   Stream<R> Function(T)? select, {
@@ -34,48 +75,14 @@ AsyncSnapshot<R> watchStream<T extends Object, R>(
 })
 ```
 
-**Parameters:**
-- `select` - Optional. Function that gets the Stream from the registered object. If `null`, `target` must be a `Stream<R>`
-- `target` - Optional. Direct Stream to watch (not from get_it). If `null`, gets object from get_it
-- `initialValue` - Optional. The value shown before the first stream event arrives
-- `preserveState` - If `true` (default), keeps the last value when the stream changes
-- `allowStreamChange` - If `true`, allows the stream to change between rebuilds
-- `instanceName` - Optional name if you registered multiple instances of the same type
-- `getIt` - Optional custom GetIt instance (rarely needed)
-
-**Returns `AsyncSnapshot<R>`:**
-- `data` - The current value (starts with `initialValue`)
-- `connectionState` - Current state: `waiting`, `active`, `done`
-- `hasData` - `true` if data is available
-- `hasError` - `true` if an error occurred
-- `error` - The error object if any
-
-### Before and After
-
-**Compare with StreamBuilder:**
-
-```dart
-class UserActivity extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: di<UserService>().activityStream,
-      initialValue: 'No activity',
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        return Text('Activity: ${snapshot.data}');
-      },
-    );
-  }
-}
-```
-
-Much more nested and verbose!
+**All parameters:**
+- `select` - Function to get Stream from registered object (optional if using `target`)
+- `target` - Direct stream to watch (optional, not from get_it)
+- `initialValue` - Value shown before first stream event (makes `data` never null)
+- `preserveState` - Keep last value when stream changes (default: `true`)
+- `allowStreamChange` - Allow stream instance to change (default: `false`)
+- `instanceName` - For named registrations
+- `getIt` - Custom GetIt instance (rarely needed)
 
 ## watchFuture - Reactive Futures
 
@@ -83,7 +90,33 @@ Replace `FutureBuilder` with `watchFuture()`:
 
 <<< @/../code_samples/lib/watch_it/data_watch_future_example.dart#example
 
-**Method signature:**
+::: tip AsyncSnapshot Always Has a Value
+Just like `watchStream`, when you provide `initialValue` to `watchFuture`, the `AsyncSnapshot.data` is **never null** - it starts with your initial value and updates when the future completes. See the [AsyncSnapshot tip above](#handling-stream-states) for details.
+:::
+
+### Common Pattern: App Initialization
+
+<<< @/../code_samples/lib/watch_it/splash_screen_initialization_example.dart#example
+
+::: tip Advanced: Wait for Multiple Dependencies
+If you need to wait for multiple async services to initialize (like database, auth, config), use `allReady()` instead of individual futures. See [Async Initialization with allReady](/documentation/watch_it/advanced_integration.md#async-initialization-with-isready-and-allready) for more details.
+:::
+
+### Advanced watchFuture Usage
+
+#### Allowing Future Changes (allowFutureChange)
+
+By default, `watchFuture` throws an error if the future instance changes between rebuilds (to prevent infinite loops). Set `allowFutureChange: true` for retriable operations:
+
+<<< @/../code_samples/lib/watch_it/watch_future_allow_change.dart#example
+
+**When to use:**
+- Retry functionality for failed requests
+- Future depends on reactive parameters
+- **Warning:** Make sure the future instance actually changes, not recreated each build
+
+#### Full Method Signature
+
 ```dart
 AsyncSnapshot<R> watchFuture<T extends Object, R>(
   Future<R> Function(T)? select, {
@@ -96,29 +129,14 @@ AsyncSnapshot<R> watchFuture<T extends Object, R>(
 })
 ```
 
-**Parameters:**
-- `select` - Optional. Function that gets the Future from the registered object. If `null`, `target` must be a `Future<R>`
-- `target` - Optional. Direct Future to watch (not from get_it). If `null`, gets object from get_it
-- `initialValue` - **Required**. The value shown before the future completes
-- `preserveState` - If `true` (default), keeps the last value when the future changes
-- `allowFutureChange` - If `true`, allows the future to change between rebuilds
-- `instanceName` - Optional name if you registered multiple instances of the same type
-- `getIt` - Optional custom GetIt instance (rarely needed)
-
-**Returns `AsyncSnapshot<R>`:**
-- `data` - The current value (starts with `initialValue`, updates when future completes)
-- `connectionState` - Current state: `waiting`, `done`
-- `hasData` - `true` if data is available
-- `hasError` - `true` if the future threw an error
-- `error` - The error object if any
-
-### Common Pattern: App Initialization
-
-<<< @/../code_samples/lib/watch_it/splash_screen_initialization_example.dart#example
-
-::: tip Advanced: Wait for Multiple Dependencies
-If you need to wait for multiple async services to initialize (like database, auth, config), use `allReady()` instead of individual futures. See [Async Initialization with allReady](/documentation/watch_it/advanced_integration.md#async-initialization-with-isready-and-allready) for more details.
-:::
+**All parameters:**
+- `select` - Function to get Future from registered object (optional if using `target`)
+- `target` - Direct future to watch (optional, not from get_it)
+- `initialValue` - **Required**. Value shown before future completes (makes `data` never null)
+- `preserveState` - Keep last value when future changes (default: `true`)
+- `allowFutureChange` - Allow future instance to change (default: `false`)
+- `instanceName` - For named registrations
+- `getIt` - Custom GetIt instance (rarely needed)
 
 ## Multiple Async Sources
 
