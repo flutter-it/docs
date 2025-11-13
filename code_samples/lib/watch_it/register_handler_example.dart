@@ -15,14 +15,13 @@ class TodoCreationPage extends WatchingWidget {
     registerHandler(
       select: (TodoManager m) => m.createTodoCommand,
       handler: (context, result, _) {
-        if (result != null) {
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Created: ${result.title}')),
-          );
-          // Navigate back
-          Navigator.of(context).pop(result);
-        }
+        // Handler only fires when command completes with result
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Created: ${result!.title}')),
+        );
+        // Navigate back
+        Navigator.of(context).pop(result);
       },
     );
 
@@ -66,11 +65,12 @@ class TodoCreationPage extends WatchingWidget {
               onPressed: isCreating
                   ? null
                   : () {
-                      final params = CreateTodoParams(
-                        title: titleController.text,
-                        description: descController.text,
-                      );
-                      di<TodoManager>().createTodoCommand.execute(params);
+                      di<TodoManager>().createTodoCommand.execute(
+                            CreateTodoParams(
+                              title: titleController.text,
+                              description: descController.text,
+                            ),
+                          );
                     },
               child: isCreating
                   ? const SizedBox(
