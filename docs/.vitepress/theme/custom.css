@@ -79,5 +79,15 @@ html:not(.dark) .diagram-light {
 
 /* Ensure headings explicitly use emoji fonts for emoji characters */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--vp-font-family-base);
+  font-family: var(--vp-font-family-base) !important;
+}
+
+/* Specifically target VitePress doc headings */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5,
+.vp-doc h6 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji" !important;
 }
