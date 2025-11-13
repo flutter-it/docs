@@ -74,9 +74,6 @@ p, li, td, th,
 .vp-doc {
   /* Chrome-specific: force color emoji rendering */
   font-variant-emoji: emoji;
-  /* Fallback for older browsers */
-  -webkit-font-feature-settings: "emoji" 1;
-  font-feature-settings: "emoji" 1;
 }
 
 /* Ensure table cells render emojis properly in Chrome */
@@ -85,11 +82,4 @@ table td, table th {
   font-size: 1em;
   line-height: 1.7;
   vertical-align: middle;
-}
-
-/* Disable emoji font features in code blocks to prevent number spacing issues */
-code, pre, .vp-code {
-  font-variant-emoji: normal;
-  -webkit-font-feature-settings: normal;
-  font-feature-settings: normal;
 }
