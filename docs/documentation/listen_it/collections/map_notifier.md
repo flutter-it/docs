@@ -20,8 +20,8 @@ final preferences = MapNotifier<String, dynamic>(
 
 preferences.listen((map, _) => print('Preferences: $map'));
 
-preferences['theme'] = 'light';  // ✅️ Notifies
-preferences['fontSize'] = 16;    // ✅️ Notifies
+preferences['theme'] = 'light';  // ✅ Notifies
+preferences['fontSize'] = 16;    // ✅ Notifies
 ```
 
 ## Creating a MapNotifier
@@ -122,8 +122,8 @@ final map = MapNotifier<String, int>(
   notificationMode: CustomNotifierMode.always,
 );
 
-map['count'] = 0;     // ✅️ Notifies (even though value unchanged)
-map.remove('missing'); // ✅️ Notifies (even though key doesn't exist)
+map['count'] = 0;     // ✅ Notifies (even though value unchanged)
+map.remove('missing'); // ✅ Notifies (even though key doesn't exist)
 ```
 
 ### normal
@@ -134,9 +134,9 @@ final map = MapNotifier<String, int>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-map['count'] = 0;     // ❌️ No notification (value unchanged)
-map['count'] = 1;     // ✅️ Notifies (value changed)
-map.remove('missing'); // ❌️ No notification (key doesn't exist)
+map['count'] = 0;     // ❌ No notification (value unchanged)
+map['count'] = 1;     // ✅ Notifies (value changed)
+map.remove('missing'); // ❌ No notification (key doesn't exist)
 ```
 
 ### manual
@@ -148,7 +148,7 @@ final map = MapNotifier<String, int>(
 
 map['key1'] = 1;  // No notification
 map['key2'] = 2;  // No notification
-map.notifyListeners();  // ✅️ Manual notification
+map.notifyListeners();  // ✅ Manual notification
 ```
 
 [Learn more about notification modes →](/documentation/listen_it/collections/notification_modes)
@@ -179,10 +179,10 @@ final map = MapNotifier<String, int>(data: {'a': 1, 'b': 2});
 final immutableView = map.value;
 print(immutableView);  // {a: 1, b: 2}
 
-// ❌️ Throws UnsupportedError
+// ❌ Throws UnsupportedError
 // immutableView['c'] = 3;
 
-// ✅️ Mutate through the notifier
+// ✅ Mutate through the notifier
 map['c'] = 3;  // Works and notifies
 ```
 
@@ -197,8 +197,8 @@ final map = MapNotifier<String, int>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-map.addAll({});          // ✅️ Notifies (even though empty)
-map.addEntries([]);      // ✅️ Notifies (even though empty)
+map.addAll({});          // ✅ Notifies (even though empty)
+map.addEntries([]);      // ✅ Notifies (even though empty)
 ```
 
 **Why?** For performance reasons - to avoid comparing all elements. These operations are typically used for bulk loading data.
@@ -381,19 +381,19 @@ For very large maps (1000+ entries):
 - Consider `normal` mode if you have many no-op operations
 
 ```dart
-// ❌️ Bad: 1000 notifications
+// ❌ Bad: 1000 notifications
 for (final entry in entries) {
   map[entry.key] = entry.value;
 }
 
-// ✅️ Good: 1 notification
+// ✅ Good: 1 notification
 map.startTransAction();
 for (final entry in entries) {
   map[entry.key] = entry.value;
 }
 map.endTransAction();
 
-// ✅️ Even better: addAll
+// ✅ Even better: addAll
 map.startTransAction();
 map.addAll(Map.fromEntries(entries));
 map.endTransAction();
@@ -463,23 +463,23 @@ All standard `Map<K, V>` methods plus:
 ### 1. Modifying the .value View
 
 ```dart
-// ❌️ Don't try to modify the .value getter
+// ❌ Don't try to modify the .value getter
 final view = map.value;
 view['key'] = 'value';  // Throws UnsupportedError!
 
-// ✅️ Modify through the notifier
+// ✅ Modify through the notifier
 map['key'] = 'value';
 ```
 
 ### 2. Forgetting Transactions
 
 ```dart
-// ❌️ Many notifications
+// ❌ Many notifications
 for (final entry in entries) {
   map[entry.key] = entry.value;
 }
 
-// ✅️ Single notification
+// ✅ Single notification
 map.startTransAction();
 for (final entry in entries) {
   map[entry.key] = entry.value;
@@ -490,10 +490,10 @@ map.endTransAction();
 ### 3. Not Handling Null Values
 
 ```dart
-// ❌️ May throw if value is null
+// ❌ May throw if value is null
 final value = map['key'].toString();
 
-// ✅️ Handle null safely
+// ✅ Handle null safely
 final value = map['key']?.toString() ?? 'default';
 ```
 

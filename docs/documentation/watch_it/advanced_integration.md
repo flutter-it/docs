@@ -42,12 +42,12 @@ get_it scopes create isolated registration contexts:
 
 ### Scope Best Practices
 
-**✅️️ DO:**
+**✅ DO:**
 - Use scopes for screen/feature-specific dependencies
 - Clean up resources in `dispose` callback
 - Keep scopes focused and short-lived
 
-**❌️️ DON'T:**
+**❌️ DON'T:**
 - Use scopes for app-wide singletons (use global registration)
 - Create deeply nested scopes (keeps things simple)
 - Register the same type in multiple scopes (use named instances instead)

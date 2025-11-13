@@ -71,10 +71,10 @@ final processed = dataNotifier.map((raw) {
 ### When to Use map()
 
 Use `map()` when:
-- ✅️ You need to transform every value
-- ✅️ You need to change the type
-- ✅️ The transformation is always valid
-- ✅️ You want to be notified on every source change
+- ✅ You need to transform every value
+- ✅ You need to change the type
+- ✅ The transformation is always valid
+- ✅ You want to be notified on every source change
 
 ::: tip Performance
 The transformation function is called on **every** source value change. For expensive transformations, consider using `select()` if you only need to react to specific property changes.
@@ -192,20 +192,20 @@ final user = ValueNotifier<User>(User(age: 18, name: "John"));
 
 // map() - notifies on EVERY user change
 final userMap = user.map((u) => u.age);
-user.value = User(age: 18, name: "Johnny"); // ✅️ Notifies (age still 18)
+user.value = User(age: 18, name: "Johnny"); // ✅ Notifies (age still 18)
 
 // select() - notifies only when age ACTUALLY changes
 final userSelect = user.select<int>((u) => u.age);
-user.value = User(age: 18, name: "Johnny"); // ❌️ No notification (age unchanged)
+user.value = User(age: 18, name: "Johnny"); // ❌ No notification (age unchanged)
 ```
 
 ### When to Use select()
 
 Use `select()` when:
-- ✅️ You only care about specific properties of a complex object
-- ✅️ You want to avoid unnecessary notifications
-- ✅️ The object changes frequently but the property you care about doesn't
-- ✅️ You want to optimize widget rebuilds
+- ✅ You only care about specific properties of a complex object
+- ✅ You want to avoid unnecessary notifications
+- ✅ The object changes frequently but the property you care about doesn't
+- ✅ You want to optimize widget rebuilds
 
 ::: tip Best Practice
 `select()` is ideal for view models or state objects that have many properties but your widget only depends on a few of them.

@@ -13,12 +13,12 @@ next:
 
 <strong>Key benefits:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="/documentation/watch_it/your_first_watch_functions.md">Automatic rebuilds</a></strong> - Widgets rebuild when data changes, no <code>setState</code> needed</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="/documentation/watch_it/how_it_works.md">No manual listeners</a></strong> - Automatic subscription & cleanup, prevent memory leaks</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="/documentation/watch_it/watching_streams_and_futures.md">Simpler async</a></strong> - Replace <code>StreamBuilder</code>/<code>FutureBuilder</code> with <code>watchStream()</code>/<code>watchFuture()</code></li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="/documentation/watch_it/handlers.md">Side effects</a></strong> - Navigation, dialogs, toasts without rebuilding</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="/documentation/watch_it/lifecycle.md">Lifecycle helpers</a></strong> - <code>callOnce()</code> for initialization, <code>createOnce()</code> for controllers</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="/documentation/watch_it/observing_commands.md">Command integration</a></strong> - Observe <code>command_it</code> commands reactively</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/your_first_watch_functions.md">Automatic rebuilds</a></strong> - Widgets rebuild when data changes, no <code>setState</code> needed</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/how_it_works.md">No manual listeners</a></strong> - Automatic subscription & cleanup, prevent memory leaks</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/watching_streams_and_futures.md">Simpler async</a></strong> - Replace <code>StreamBuilder</code>/<code>FutureBuilder</code> with <code>watchStream()</code>/<code>watchFuture()</code></li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/handlers.md">Side effects</a></strong> - Navigation, dialogs, toasts without rebuilding</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/lifecycle.md">Lifecycle helpers</a></strong> - <code>callOnce()</code> for initialization, <code>createOnce()</code> for controllers</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="/documentation/watch_it/observing_commands.md">Command integration</a></strong> - Observe <code>command_it</code> commands reactively</li>
 </ul>
 
 <strong>Common use cases:</strong>

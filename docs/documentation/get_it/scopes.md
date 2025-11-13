@@ -39,7 +39,7 @@ The search order is **top to bottom** - get_it always returns the first match st
 
 ## When to Use Scopes
 
-### ✅️ Perfect Use Cases
+### ✅ Perfect Use Cases
 
 **1. Authentication States**
 
@@ -195,7 +195,7 @@ Use scopes to shadow real services with mocks while keeping the rest of your DI 
 
 ## Best Practices
 
-### ✅️ Do
+### ✅ Do
 
 - **Name your scopes** for easier debugging and management
 - **Use init parameter** to register objects immediately when pushing scope
@@ -203,7 +203,7 @@ Use scopes to shadow real services with mocks while keeping the rest of your DI 
 - **Implement Disposable** for automatic cleanup instead of passing dispose functions
 - **Use scopes for business logic lifecycle**, not UI state
 
-### ❌️ Don't
+### ❌ Don't
 
 - **Don't use scopes for temporary state** - use parameters or variables instead
 - **Don't forget to pop scopes** - memory leaks if scopes accumulate

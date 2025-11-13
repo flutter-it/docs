@@ -260,10 +260,10 @@ final age = user.select<int>((u) => u.age);
 ### When to Use where()
 
 Use `where()` when:
-- ✅️ You need to filter values based on conditions
-- ✅️ You only want to react to certain values
-- ✅️ You're implementing validation logic
-- ✅️ You need to filter based on runtime state
+- ✅ You need to filter values based on conditions
+- ✅ You only want to react to certain values
+- ✅ You're implementing validation logic
+- ✅ You need to filter based on runtime state
 
 ## Real-World Example
 

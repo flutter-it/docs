@@ -52,7 +52,7 @@ print(lazy.value);  // 21 ✓ (NOW updates on next change)
 **Recommendation**: Don't mix. Use all-eager (default, simple) or all-lazy (memory optimization). Mixing can cause hard-to-debug stale values.
 :::
 
-### ❌️ WRONG: Chains in Build Methods
+### ❌ WRONG: Chains in Build Methods
 
 Never create chains inline in build methods:
 
@@ -70,7 +70,7 @@ Never create chains inline in build methods:
 - Multiple rebuilds = multiple leaked chains
 - Memory usage grows indefinitely
 
-### ✅️ CORRECT: Create Chains Once
+### ✅ CORRECT: Create Chains Once
 
 Create chains ensuring they're created only once. Here are three safe approaches:
 
@@ -87,7 +87,7 @@ Create chains ensuring they're created only once. Here are three safe approaches
 Never create chains in a StatelessWidget constructor or as field initializers - the constructor runs on **every rebuild**, causing the same memory leak as creating in build!
 :::
 
-### ✅️ RECOMMENDED: Use watch_it
+### ✅ RECOMMENDED: Use watch_it
 
 The safest approach is using watch_it v2.0+, which provides automatic selector caching:
 
@@ -115,7 +115,7 @@ The safest approach is using watch_it v2.0+, which provides automatic selector c
 
 ### When Chain Disposal is NOT Needed
 
-**✅️ You DON'T need to dispose chains when:**
+**✅ You DON'T need to dispose chains when:**
 
 1. **The source is owned by the same object as the chain**
    ```dart
@@ -156,7 +156,7 @@ The safest approach is using watch_it v2.0+, which provides automatic selector c
 
 ### When You SHOULD Dispose the Source
 
-**✅️ Always dispose the source ValueNotifier to:**
+**✅ Always dispose the source ValueNotifier to:**
 - Stop handlers from being called
 - Free resources held by the source
 - Follow proper resource management
@@ -242,12 +242,12 @@ Batch multiple operations into a single notification:
 ```dart
 final items = ListNotifier<String>(data: []);
 
-// ❌️ WITHOUT transaction: 3 notifications
+// ❌ WITHOUT transaction: 3 notifications
 items.add('item1');
 items.add('item2');
 items.add('item3');
 
-// ✅️ WITH transaction: 1 notification
+// ✅ WITH transaction: 1 notification
 items.startTransAction();
 items.add('item1');
 items.add('item2');
@@ -262,11 +262,11 @@ The `.value` getter returns an **unmodifiable view**:
 ```dart
 final items = ListNotifier<String>(data: ['one']);
 
-// ✅️ CORRECT: Use collection methods
+// ✅ CORRECT: Use collection methods
 items.add('two');
 items.removeAt(0);
 
-// ❌️ WRONG: Don't modify .value directly
+// ❌ WRONG: Don't modify .value directly
 items.value.add('three'); // Throws UnsupportedError!
 ```
 
@@ -277,7 +277,7 @@ items.value.add('three'); // Throws UnsupportedError!
 Long chains are powerful but can become hard to read. Consider breaking them up:
 
 ```dart
-// ❌️ Hard to read
+// ❌ Hard to read
 final result = source
   .where((x) => x.isNotEmpty)
   .map((x) => x.trim())
@@ -286,7 +286,7 @@ final result = source
   .where((len) => len > 3)
   .map((len) => len.toString());
 
-// ✅️ Better: Break into logical steps with descriptive names
+// ✅ Better: Break into logical steps with descriptive names
 final nonEmpty = source.where((x) => x.isNotEmpty);
 final trimmed = nonEmpty.map((x) => x.trim());
 final length = trimmed.select<int>((x) => x.length);
@@ -302,10 +302,10 @@ When working with objects, use `select()` to react only when specific properties
 ```dart
 final user = ValueNotifier(User(name: 'John', age: 25));
 
-// ❌️ INEFFICIENT: Notifies on ANY user change
+// ❌ INEFFICIENT: Notifies on ANY user change
 final name = user.map((u) => u.name);
 
-// ✅️ BETTER: Only notifies when name actually changes
+// ✅ BETTER: Only notifies when name actually changes
 final name = user.select<String>((u) => u.name);
 ```
 
@@ -316,14 +316,14 @@ Filter at the source rather than in the handler:
 ```dart
 final input = ValueNotifier<String>('');
 
-// ❌️ Less efficient: All updates reach handler
+// ❌ Less efficient: All updates reach handler
 input.listen((value, _) {
   if (value.length >= 3) {
     search(value);
   }
 });
 
-// ✅️ Better: Filter updates before they reach handler
+// ✅ Better: Filter updates before they reach handler
 input
   .where((term) => term.length >= 3)
   .listen((value, _) => search(value));
@@ -391,12 +391,12 @@ test('example test', () {
 Only debounce when necessary (user input, rapid changes):
 
 ```dart
-// ✅️ GOOD: Debounce user input
+// ✅ GOOD: Debounce user input
 searchTerm
   .debounce(Duration(milliseconds: 300))
   .listen((term, _) => search(term));
 
-// ❌️ UNNECESSARY: Debouncing infrequent updates
+// ❌ UNNECESSARY: Debouncing infrequent updates
 userProfile
   .debounce(Duration(seconds: 1)) // Profile changes rarely
   .listen((profile, _) => updateUI(profile));
@@ -407,12 +407,12 @@ userProfile
 Batch operations to reduce notification overhead:
 
 ```dart
-// ❌️ INEFFICIENT: 1000 notifications
+// ❌ INEFFICIENT: 1000 notifications
 for (var i = 0; i < 1000; i++) {
   items.add(i);
 }
 
-// ✅️ EFFICIENT: 1 notification
+// ✅ EFFICIENT: 1 notification
 items.startTransAction();
 for (var i = 0; i < 1000; i++) {
   items.add(i);
@@ -437,12 +437,12 @@ chain.listen((value, _) {
 ### 1. Forgetting to Dispose
 
 ```dart
-// ❌️ WRONG: Chain never disposed
+// ❌ WRONG: Chain never disposed
 class MyWidget extends StatefulWidget {
   // ... chain created in initState but never disposed
 }
 
-// ✅️ CORRECT: Always dispose
+// ✅ CORRECT: Always dispose
 @override
 void dispose() {
   if (chain is ChangeNotifier) {
@@ -455,7 +455,7 @@ void dispose() {
 ### 2. Creating Chains in Build
 
 ```dart
-// ❌️ WRONG: New chain every build
+// ❌ WRONG: New chain every build
 Widget build(BuildContext context) {
   return ValueListenableBuilder(
     valueListenable: source.map((x) => x * 2), // LEAK!
@@ -463,17 +463,17 @@ Widget build(BuildContext context) {
   );
 }
 
-// ✅️ CORRECT: Use watch_it or create chain once
+// ✅ CORRECT: Use watch_it or create chain once
 late final chain = source.map((x) => x * 2);
 ```
 
 ### 3. Modifying Collection .value Directly
 
 ```dart
-// ❌️ WRONG: Throws error
+// ❌ WRONG: Throws error
 items.value.add('new'); // UnsupportedError!
 
-// ✅️ CORRECT: Use collection methods
+// ✅ CORRECT: Use collection methods
 items.add('new');
 ```
 
@@ -482,10 +482,10 @@ items.add('new');
 ```dart
 final user = ValueNotifier(User(name: 'John', age: 25));
 
-// ❌️ INEFFICIENT: Notifies even when name doesn't change
+// ❌ INEFFICIENT: Notifies even when name doesn't change
 user.map((u) => u.name).listen((name, _) => print(name));
 
-// ✅️ EFFICIENT: Only notifies when name changes
+// ✅ EFFICIENT: Only notifies when name changes
 user.select<String>((u) => u.name).listen((name, _) => print(name));
 ```
 
@@ -493,13 +493,13 @@ user.select<String>((u) => u.name).listen((name, _) => print(name));
 
 **Key takeaways:**
 
-1. ✅️ **Never create chains in build methods** (or use watch_it for automatic caching)
-2. ✅️ **Always dispose chains** when done (except with watch_it)
-3. ✅️ **Use transactions** for bulk collection operations
-4. ✅️ **Use select()** when reacting to object properties
-5. ✅️ **Prefer where()** over conditional logic in handlers
-6. ✅️ **Choose the right notification mode** for collections
-7. ✅️ **Test your chains** and clean up in tests
+1. ✅ **Never create chains in build methods** (or use watch_it for automatic caching)
+2. ✅ **Always dispose chains** when done (except with watch_it)
+3. ✅ **Use transactions** for bulk collection operations
+4. ✅ **Use select()** when reacting to object properties
+5. ✅ **Prefer where()** over conditional logic in handlers
+6. ✅ **Choose the right notification mode** for collections
+7. ✅ **Test your chains** and clean up in tests
 
 **Recommended approach:**
 - Use **watch_it** for widgets (automatic lifecycle management)

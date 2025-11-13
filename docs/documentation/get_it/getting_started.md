@@ -17,11 +17,11 @@ next:
 
 <strong>Key benefits:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Extremely fast</strong> - O(1) lookup using Dart's Map</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Easy to test</strong> - Switch implementations for mocks in tests</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>No BuildContext needed</strong> - Access from anywhere in your app (UI, business logic, anywhere)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Type safe</strong> - Compile-time type checking</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>No code generation</strong> - Works without build_runner</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Extremely fast</strong> - O(1) lookup using Dart's Map</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Easy to test</strong> - Switch implementations for mocks in tests</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>No BuildContext needed</strong> - Access from anywhere in your app (UI, business logic, anywhere)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Type safe</strong> - Compile-time type checking</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>No code generation</strong> - Works without build_runner</li>
 </ul>
 
 <strong>Common use cases:</strong>
@@ -106,11 +106,11 @@ This is simpler and makes IDE navigation to implementation easier.
 
 <strong>When to use interfaces:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Multiple implementations (production vs test, different providers)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Platform-specific implementations (mobile vs web)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Feature flags to switch implementations</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Multiple implementations (production vs test, different providers)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Platform-specific implementations (mobile vs web)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags to switch implementations</li>
 </ul>
-- ❌️ Don't use "just because" - creates navigation friction in your IDE
+- ❌ Don't use "just because" - creates navigation friction in your IDE
 
 ---
 
@@ -168,28 +168,28 @@ As your app grows, you need to separate business logic from UI code. This makes 
 <strong>Traditional approaches and their limitations:</strong>
 
 <strong>InheritedWidget / Provider:</strong>
-- ❌️ Requires `BuildContext` (not available in business layer)
-- ❌️ Adds complexity to widget tree
-- ❌️ Hard to access from background tasks, isolates
+- ❌ Requires `BuildContext` (not available in business layer)
+- ❌ Adds complexity to widget tree
+- ❌ Hard to access from background tasks, isolates
 
 <strong>Plain Singletons:</strong>
-- ❌️ Can't swap implementation for tests
-- ❌️ Tight coupling to concrete classes
-- ❌️ No lifecycle management
+- ❌ Can't swap implementation for tests
+- ❌ Tight coupling to concrete classes
+- ❌ No lifecycle management
 
 <strong>IoC/DI Containers:</strong>
-- ❌️ Slow startup (reflection-based)
-- ❌️ "Magic" - hard to understand where objects come from
-- ❌️ Most don't work with Flutter (no reflection)
+- ❌ Slow startup (reflection-based)
+- ❌ "Magic" - hard to understand where objects come from
+- ❌ Most don't work with Flutter (no reflection)
 
 <strong>get_it solves these problems:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Access from anywhere without BuildContext</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Easy to mock for tests (register interface, swap implementation)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Extremely fast (no reflection, just Map lookup)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Clear and explicit (you see exactly what's registered)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Lifecycle management (scopes, disposal)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Works in pure Dart and Flutter</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Access from anywhere without BuildContext</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Easy to mock for tests (register interface, swap implementation)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Extremely fast (no reflection, just Map lookup)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Clear and explicit (you see exactly what's registered)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Lifecycle management (scopes, disposal)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Works in pure Dart and Flutter</li>
 </ul>
 
 <strong>Service Locator pattern:</strong>

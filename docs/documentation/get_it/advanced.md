@@ -130,13 +130,13 @@ Pop DetailPage(item1)       → Release, refCount = 0 (service disposed)
 
 <strong>Benefits:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Service created synchronously (no async factory needed)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Async loading triggered in constructor</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ No duplicate loading for same item (checked before loading)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Automatic memory management via reference counting</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Reactive UI updates via `watch_it` (rebuilds on state changes)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ ChangeNotifier automatically disposed when refCount reaches 0</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Each itemId uniquely identified via `instanceName`</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Service created synchronously (no async factory needed)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Async loading triggered in constructor</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ No duplicate loading for same item (checked before loading)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Automatic memory management via reference counting</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Reactive UI updates via `watch_it` (rebuilds on state changes)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ ChangeNotifier automatically disposed when refCount reaches 0</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Each itemId uniquely identified via `instanceName`</li>
 </ul>
 
 <strong>Key Integration:</strong>
@@ -157,12 +157,12 @@ Only use `ignoreReferenceCount: true` when you're certain no other code is using
 
 ### When to Use Reference Counting
 
-✅️ <strong>Good use cases:</strong>
+✅ <strong>Good use cases:</strong>
 - Recursive navigation (same page pushed multiple times)
 - Services needed by multiple simultaneously active features
 - Complex hierarchical component structures
 
-❌️ <strong>Don't use when:</strong>
+❌ <strong>Don't use when:</strong>
 - Simple singleton that lives for app lifetime (use regular `registerSingleton`)
 - One-to-one widget-service relationship (use scopes)
 - Testing (use scopes to shadow instead)
@@ -192,15 +192,15 @@ Returns `null` instead of throwing an exception if the type is not registered. U
 
 <strong>When to use:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Optional features that may or may not be registered</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Feature flags (service registered only when feature enabled)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Platform-specific services (might not exist on all platforms)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Graceful degradation scenarios</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Optional features that may or may not be registered</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags (service registered only when feature enabled)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Platform-specific services (might not exist on all platforms)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Graceful degradation scenarios</li>
 </ul>
 
 <strong>Don't use when:</strong>
-- ❌️ The dependency is required - use `get<T>()` to fail fast
-- ❌️ Missing registration indicates a bug - exception is helpful
+- ❌ The dependency is required - use `get<T>()` to fail fast
+- ❌ Missing registration indicates a bug - exception is helpful
 
 ---
 

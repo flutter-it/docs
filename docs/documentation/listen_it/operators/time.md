@@ -160,7 +160,7 @@ searchInput
 ::: warning setState and debounce
 Using `debounce()` inside a widget's build method with `setState` can cause issues because the debounce creates a new chain object on each rebuild, losing the timer state.
 
-**❌️ DON'T:**
+**❌ DON'T:**
 ```dart
 Widget build(BuildContext context) {
   return ValueListenableBuilder(
@@ -170,7 +170,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-**✅️ BETTER: Create chain outside build**
+**✅ BETTER: Create chain outside build**
 ```dart
 // Create debounced chain as field
 late final debounced = input.debounce(Duration(milliseconds: 300));
@@ -183,7 +183,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-**✅️ BEST: Use watch_it with get_it**
+**✅ BEST: Use watch_it with get_it**
 ```dart
 class SearchWidget extends WatchingWidget {
   @override
@@ -209,10 +209,10 @@ class SearchModel {
 ### When to Use debounce()
 
 Use `debounce()` when:
-- ✅️ You have rapid value changes (user typing, scrolling, resizing)
-- ✅️ You want to reduce API calls or expensive operations
-- ✅️ You only care about the "final" value after changes stop
-- ✅️ You're implementing search, auto-save, or validation
+- ✅ You have rapid value changes (user typing, scrolling, resizing)
+- ✅ You want to reduce API calls or expensive operations
+- ✅ You only care about the "final" value after changes stop
+- ✅ You're implementing search, auto-save, or validation
 
 ## async()
 
@@ -236,9 +236,9 @@ asyncSource.listen((value, _) => setState(() => _data = value));
 ### When to Use async()
 
 Use `async()` when:
-- ✅️ You need to call `setState()` from a listener
-- ✅️ You're getting "setState called during build" errors
-- ✅️ You want to batch multiple synchronous changes
+- ✅ You need to call `setState()` from a listener
+- ✅ You're getting "setState called during build" errors
+- ✅ You want to batch multiple synchronous changes
 
 ::: tip
 In most cases, using watch_it is a better solution than `async()`. watch_it handles state updates automatically without requiring async deferral.

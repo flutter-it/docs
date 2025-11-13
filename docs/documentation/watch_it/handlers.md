@@ -152,11 +152,11 @@ You can use both in the same widget:
 
 ## Common Mistakes
 
-### ❌️️ Using watch() for navigation
+### ❌️ Using watch() for navigation
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#mistake_bad
 
-### ✅️️ Use handler for navigation
+### ✅ Use handler for navigation
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#mistake_good
 
@@ -170,12 +170,12 @@ Now you know when to rebuild (watch) vs when to run side effects (handlers). Nex
 
 ## Key Takeaways
 
-✅️️ `watch()` = Rebuild the widget
-✅️️ `registerHandler()` = Side effect (navigation, toast, etc.)
-✅️️ Handlers receive `context`, `value`, and `cancel`
-✅️️ Use `cancel()` for one-time actions
-✅️️ Combine watch and handlers in same widget
-✅️️ Choose based on: "Does this need to update the UI?"
+✅ `watch()` = Rebuild the widget
+✅ `registerHandler()` = Side effect (navigation, toast, etc.)
+✅ Handlers receive `context`, `value`, and `cancel`
+✅ Use `cancel()` for one-time actions
+✅ Combine watch and handlers in same widget
+✅ Choose based on: "Does this need to update the UI?"
 
 ## See Also
 

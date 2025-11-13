@@ -116,7 +116,7 @@ Swap two elements by index - only notifies if elements are different:
 ```dart
 final items = ListNotifier<int>(data: [1, 2, 3]);
 
-items.swap(0, 2);  // ✅️ Notifies: [3, 2, 1]
+items.swap(0, 2);  // ✅ Notifies: [3, 2, 1]
 
 // With normal mode and equal elements
 final items2 = ListNotifier<int>(
@@ -124,7 +124,7 @@ final items2 = ListNotifier<int>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items2.swap(0, 1);  // ❌️ No notification (elements are equal)
+items2.swap(0, 1);  // ❌ No notification (elements are equal)
 ```
 
 ## Integration with Flutter
@@ -148,9 +148,9 @@ final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.always,
 );
 
-items.add('item');   // ✅️ Notifies
-items[0] = 'item';   // ✅️ Notifies (even though value unchanged)
-items.remove('xyz'); // ✅️ Notifies (even though not in list)
+items.add('item');   // ✅ Notifies
+items[0] = 'item';   // ✅ Notifies (even though value unchanged)
+items.remove('xyz'); // ✅ Notifies (even though not in list)
 ```
 
 ### normal
@@ -160,9 +160,9 @@ final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.add('item');   // ✅️ Notifies
-items[0] = 'item';   // ❌️ No notification (value unchanged)
-items.remove('xyz'); // ❌️ No notification (not in list)
+items.add('item');   // ✅ Notifies
+items[0] = 'item';   // ❌ No notification (value unchanged)
+items.remove('xyz'); // ❌ No notification (not in list)
 ```
 
 ### manual
@@ -174,7 +174,7 @@ final items = ListNotifier<String>(
 
 items.add('item1');  // No notification
 items.add('item2');  // No notification
-items.notifyListeners();  // ✅️ Manual notification
+items.notifyListeners();  // ✅ Manual notification
 ```
 
 [Learn more about notification modes →](/documentation/listen_it/collections/notification_modes)
@@ -197,10 +197,10 @@ final items = ListNotifier<String>(data: ['a', 'b', 'c']);
 final immutableView = items.value;
 print(immutableView);  // [a, b, c]
 
-// ❌️ Throws UnsupportedError
+// ❌ Throws UnsupportedError
 // immutableView.add('d');
 
-// ✅️ Mutate through the notifier
+// ✅ Mutate through the notifier
 items.add('d');  // Works and notifies
 ```
 
@@ -219,10 +219,10 @@ final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.addAll([]);       // ✅️ Notifies (even though empty)
-items.insertAll(0, []); // ✅️ Notifies (even though empty)
-items.setAll(0, []);    // ✅️ Notifies (even though empty)
-items.setRange(0, 0, []); // ✅️ Notifies (even though empty)
+items.addAll([]);       // ✅ Notifies (even though empty)
+items.insertAll(0, []); // ✅ Notifies (even though empty)
+items.setAll(0, []);    // ✅ Notifies (even though empty)
+items.setRange(0, 0, []); // ✅ Notifies (even though empty)
 ```
 
 **Why?** For performance reasons - to avoid comparing all elements. These operations are typically used for bulk loading data.
@@ -237,11 +237,11 @@ final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.fillRange(0, 3, 'a');  // ❌️ No notification (values unchanged)
-items.fillRange(0, 3, 'b');  // ✅️ Notifies (values changed)
+items.fillRange(0, 3, 'a');  // ❌ No notification (values unchanged)
+items.fillRange(0, 3, 'b');  // ✅ Notifies (values changed)
 
-items.replaceRange(0, 2, ['b', 'b']);  // ❌️ No notification (same values)
-items.replaceRange(0, 2, ['c', 'd']);  // ✅️ Notifies (values changed)
+items.replaceRange(0, 2, ['b', 'b']);  // ❌ No notification (same values)
+items.replaceRange(0, 2, ['c', 'd']);  // ✅ Notifies (values changed)
 ```
 
 ### Always-Notify Operations
@@ -406,19 +406,19 @@ For very large lists (1000+ items):
 - Consider `normal` mode if you have many no-op operations
 
 ```dart
-// ❌️ Bad: 1000 notifications
+// ❌ Bad: 1000 notifications
 for (var i = 0; i < 1000; i++) {
   items.add(i);
 }
 
-// ✅️ Good: 1 notification
+// ✅ Good: 1 notification
 items.startTransAction();
 for (var i = 0; i < 1000; i++) {
   items.add(i);
 }
 items.endTransAction();
 
-// ✅️ Even better: addAll
+// ✅ Even better: addAll
 items.startTransAction();
 items.addAll(List.generate(1000, (i) => i));
 items.endTransAction();
@@ -488,23 +488,23 @@ All standard `List<T>` methods plus:
 ### 1. Modifying the .value View
 
 ```dart
-// ❌️ Don't try to modify the .value getter
+// ❌ Don't try to modify the .value getter
 final view = items.value;
 view.add('item');  // Throws UnsupportedError!
 
-// ✅️ Modify through the notifier
+// ✅ Modify through the notifier
 items.add('item');
 ```
 
 ### 2. Forgetting Transactions
 
 ```dart
-// ❌️ Many notifications
+// ❌ Many notifications
 for (final item in newItems) {
   items.add(item);
 }
 
-// ✅️ Single notification
+// ✅ Single notification
 items.startTransAction();
 for (final item in newItems) {
   items.add(item);
@@ -515,12 +515,12 @@ items.endTransAction();
 ### 3. Nested Transactions
 
 ```dart
-// ❌️ Will throw assertion error
+// ❌ Will throw assertion error
 items.startTransAction();
 items.add('a');
 items.startTransAction();  // ERROR!
 
-// ✅️ End first transaction before starting another
+// ✅ End first transaction before starting another
 items.startTransAction();
 items.add('a');
 items.endTransAction();

@@ -16,11 +16,11 @@ GetIt provides comprehensive support for asynchronous object creation and initia
 
 <strong>Key capabilities:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="#async-factories">Async Factories</a></strong> - Create new instances asynchronously on each access</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="#async-singletons">Async Singletons</a></strong> - Create singletons with async initialization</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="#dependency-management">Dependency Management</a></strong> - Automatically wait for dependencies before initialization</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="#startup-orchestration">Startup Orchestration</a></strong> - Coordinate complex initialization sequences</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong><a href="#manual-ready-signaling">Manual Signaling</a></strong> - Fine-grained control over ready state</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="#async-factories">Async Factories</a></strong> - Create new instances asynchronously on each access</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="#async-singletons">Async Singletons</a></strong> - Create singletons with async initialization</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="#dependency-management">Dependency Management</a></strong> - Automatically wait for dependencies before initialization</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="#startup-orchestration">Startup Orchestration</a></strong> - Coordinate complex initialization sequences</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong><a href="#manual-ready-signaling">Manual Signaling</a></strong> - Fine-grained control over ready state</li>
 </ul>
 
 ## Quick Reference
