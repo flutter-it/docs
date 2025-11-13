@@ -73,14 +73,6 @@ html:not(.dark) .diagram-light {
   --vp-font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
 }
 
-/* Force proper emoji presentation in Chrome, Firefox, Edge (2024-2025 solution) */
-/* Supported in Chrome 131+, Firefox 141+, Edge 131+ */
-/* Apply to all content */
-.vp-doc {
-  font-variant-emoji: emoji;
-}
-
-/* Exclude list markers from emoji rendering */
-.vp-doc li::marker {
-  font-variant-emoji: normal;
-}
+/* NOTE: font-variant-emoji has browser bugs affecting digits 0-9
+ * See: https://github.com/w3c/csswg-drafts/issues/11014
+ * Relying on emoji fonts in font stack above for emoji rendering */
