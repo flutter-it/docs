@@ -67,22 +67,22 @@ html:not(.dark) .diagram-light {
   }
 }
 
-/* Ensure emojis render correctly with color and proper size */
-/* This fixes the issue where ✅ ❌ and other emojis show too small or without color */
-:root {
-  /* Emoji font stack with color emoji support */
-  --emoji-font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
-}
-
-/* Apply emoji font to headings, tables, and general content */
+/* Fix Chrome emoji rendering - Chrome renders emojis as text/monochrome by default */
+/* Force color emoji presentation for Chrome and other browsers */
 h1, h2, h3, h4, h5, h6,
 p, li, td, th,
 .vp-doc {
-  font-family: var(--vp-font-family-base), var(--emoji-font-family);
+  /* Chrome-specific: force color emoji rendering */
+  font-variant-emoji: emoji;
+  /* Fallback for older browsers */
+  -webkit-font-feature-settings: "emoji" 1;
+  font-feature-settings: "emoji" 1;
 }
 
-/* Ensure table emojis render at proper size */
+/* Ensure table cells render emojis properly in Chrome */
 table td, table th {
+  font-variant-emoji: emoji;
   font-size: 1em;
-  line-height: 1.5;
+  line-height: 1.7;
+  vertical-align: middle;
 }
