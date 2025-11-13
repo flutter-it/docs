@@ -154,16 +154,12 @@ You can safely use `listen_it` operators like `combineLatest()` inside selector 
 
 <<< @/../code_samples/lib/watch_it/multiple_values_inline_combine_safe.dart#safe_inline_combine
 
-**How it works:**
+**How it works (default `allowObservableChange: false`):**
 1. First build: Selector runs, creates the `combineLatest()` chain
 2. Result is cached automatically
 3. Subsequent builds: Cached chain is reused
-4. No memory leaks, no repeated chain creation
-
-**Default behavior:** `allowObservableChange: false`
-- Selector called **once** on first build
-- Result cached and reused
-- Exception thrown if observable identity changes
+4. Exception thrown if observable identity changes
+5. No memory leaks, no repeated chain creation
 
 **When to set `allowObservableChange: true`:**
 Only when the observable genuinely needs to change between builds:
