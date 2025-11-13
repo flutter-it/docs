@@ -92,7 +92,8 @@ h1, h2, h3, h4, h5, h6 {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji" !important;
 }
 
-/* Hide list bullets when emoji acts as the bullet */
+/* Hide default list markers to use emoji as bullets */
+/* This allows emoji-prefixed list items to use the emoji as the visual bullet */
 .vp-doc ul li::marker {
   content: none;
 }
