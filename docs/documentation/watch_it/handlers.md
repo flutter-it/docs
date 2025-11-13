@@ -1,6 +1,6 @@
 # Side Effects with Handlers
 
-You've learned [`watch()`](/documentation/watch_it/your_first_watch_functions.md) functions for rebuilding widgets. But what about actions that DON'T need a rebuild, like navigation, showing toasts, or logging?
+You've learned [`watch()`](/documentation/watch_it/your_first_watch_functions.md) functions for rebuilding widgets. But what about actions that DON'T need a rebuild, like calling a function, navigation, showing toasts, or logging?
 
 That's where **handlers** come in.
 
