@@ -66,20 +66,3 @@ html:not(.dark) .diagram-light {
     margin-bottom: 0.5rem;
   }
 }
-
-/* Fix Chrome emoji rendering - Chrome renders emojis as text/monochrome by default */
-/* Force color emoji presentation for Chrome and other browsers */
-h1, h2, h3, h4, h5, h6,
-p, li, td, th,
-.vp-doc {
-  /* Chrome-specific: force color emoji rendering */
-  font-variant-emoji: emoji;
-}
-
-/* Ensure table cells render emojis properly in Chrome */
-table td, table th {
-  font-variant-emoji: emoji;
-  font-size: 1em;
-  line-height: 1.7;
-  vertical-align: middle;
-}
