@@ -45,11 +45,13 @@ The most common mistake is putting watch calls inside conditional statements:
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_inside_loops_wrong
 
-### ❌ Watch After Early Returns
+### ❌ Watches AFTER Early Returns
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_after_early_return_wrong
 
-**Why this breaks:** Watches after early returns may or may not be called, disrupting the order.
+**Why this breaks:** Watches AFTER early returns may or may not be called, disrupting the order.
+
+**Important:** Early returns themselves are not the problem - watches that come AFTER them are the problem!
 
 ### ❌ Watch in Callbacks
 
