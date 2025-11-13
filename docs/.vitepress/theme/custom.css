@@ -86,3 +86,10 @@ table td, table th {
   line-height: 1.7;
   vertical-align: middle;
 }
+
+/* Disable emoji font features in code blocks to prevent number spacing issues */
+code, pre, .vp-code {
+  font-variant-emoji: normal;
+  -webkit-font-feature-settings: normal;
+  font-feature-settings: normal;
+}
