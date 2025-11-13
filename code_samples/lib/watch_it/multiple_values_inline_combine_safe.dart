@@ -21,7 +21,6 @@ class SafeInlineCombineWidget extends WatchingWidget {
         m.value2,
         (v1, v2) => v1 + v2,
       ),
-      // allowObservableChange: false (default) - selector called once, result cached
     );
 
     print('Widget rebuilt with sum: $sum');
