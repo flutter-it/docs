@@ -68,6 +68,7 @@ export default defineConfig({
               { text: 'Getting started', link: '/documentation/watch_it/getting_started.md' },
               { text: 'Your First Watch Functions', link: '/documentation/watch_it/your_first_watch_functions.md' },
               { text: 'More Watch Functions', link: '/documentation/watch_it/more_watch_functions.md' },
+              { text: 'Watching Multiple Values', link: '/documentation/watch_it/watching_multiple_values.md' },
               { text: 'Watching Streams & Futures', link: '/documentation/watch_it/watching_streams_and_futures.md' },
               { text: 'Watch Ordering Rules', link: '/documentation/watch_it/watch_ordering_rules.md' },
               { text: 'Side Effects with Handlers', link: '/documentation/watch_it/handlers.md' },

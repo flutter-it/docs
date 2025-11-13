@@ -213,3 +213,4 @@ class MyWidget extends WatchingWidget {
 - [Learn about filtering operators →](/documentation/listen_it/operators/filter)
 - [Learn about combining operators →](/documentation/listen_it/operators/combine)
 - [Learn about time-based operators →](/documentation/listen_it/operators/time)
+- [Using operators with watch_it →](/documentation/watch_it/watching_multiple_values)

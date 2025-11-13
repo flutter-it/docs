@@ -116,10 +116,11 @@ Mixing different watch functions:
 ✅ Choose based on property count and update patterns
 ✅ Mix and match based on your needs
 
-**Next:** Learn how to [watch Streams & Futures](/documentation/watch_it/watching_streams_and_futures.md).
+**Next:** Learn about [watching multiple values](/documentation/watch_it/watching_multiple_values.md).
 
 ## See Also
 
 - [Your First Watch Functions](/documentation/watch_it/your_first_watch_functions.md) - Start here
+- [Watching Multiple Values](/documentation/watch_it/watching_multiple_values.md) - Strategies for combining values
 - [Watching Streams & Futures](/documentation/watch_it/watching_streams_and_futures.md) - Streams and Futures
 - [Watch Functions Reference](/documentation/watch_it/watch_functions.md) - Complete API

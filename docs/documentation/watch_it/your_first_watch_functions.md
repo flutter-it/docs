@@ -108,4 +108,5 @@ Add a todo? Widget rebuilds automatically. No `setState`, no `StreamBuilder`.
 
 - [WatchingWidgets](/documentation/watch_it/watching_widgets.md) - Which widget type to use (WatchingWidget, mixins, StatefulWidget)
 - [More Watch Functions](/documentation/watch_it/more_watch_functions.md) - watchIt, watchPropertyValue, and more
+- [Watching Multiple Values](/documentation/watch_it/watching_multiple_values.md) - Advanced patterns for combining values
 - [Watch Functions Reference](/documentation/watch_it/watch_functions.md) - Complete API reference
