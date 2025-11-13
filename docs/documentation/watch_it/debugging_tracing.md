@@ -4,74 +4,67 @@ Common errors, solutions, debugging techniques, and troubleshooting strategies f
 
 ## Common Errors
 
-### "watch call order changed"
+### "Watch ordering violation detected!"
 
-**Error message:**
+**Full error message:**
 ```
-Assertion failed: Watch call order has changed
+Watch ordering violation detected!
+
+You have conditional watch calls (inside if/switch statements) that are
+causing watch_it to retrieve the wrong objects on rebuild.
+
+Fix: Move ALL conditional watch calls to the END of your build method.
+Only the LAST watch call can be conditional.
 ```
 
-**Cause:** You have conditional watch calls or watches in different execution branches.
+**What happened:**
+- You have a watch inside an `if` statement
+- This watch is **followed by other watches**
+- On rebuild, the condition changed, causing watch_it to try to retrieve the wrong type at that position
+- A TypeError was thrown when trying to cast the watch entry
 
 **Example:**
 ```dart
-// BAD
+// BAD - Conditional watch FOLLOWED by other watches
+final todos = watchValue((TodoManager m) => m.todos);
+
 if (showDetails) {
-  final details = watchValue((M m) => m.details);  // Only sometimes!
+  final details = watchValue((M m) => m.details);  // Conditional!
+}
+
+final isLoading = watchValue((M m) => m.isLoading);  // This gets wrong type!
+```
+
+**Solutions:**
+
+**Option 1:** Make all watches unconditional:
+```dart
+// GOOD - All watches always execute
+final todos = watchValue((TodoManager m) => m.todos);
+final details = watchValue((M m) => m.details);  // Always watch
+final isLoading = watchValue((M m) => m.isLoading);
+
+if (showDetails) {
+  return DetailView(details);  // Use conditionally
 }
 ```
 
-**Solution:** Move ALL watch calls to the top of build(), unconditionally:
-
+**Option 2:** Move conditional watch to the END:
 ```dart
-// GOOD
-final details = watchValue((M m) => m.details);  // ALWAYS watch
+// GOOD - Conditional watch at the END
+final todos = watchValue((TodoManager m) => m.todos);
+final isLoading = watchValue((M m) => m.isLoading);
 
+// Conditional watch at the end - safe!
 if (showDetails) {
-  // Use the value conditionally
+  final details = watchValue((M m) => m.details);
   return DetailView(details);
 }
 ```
 
+**Tip:** Call `enableTracing()` in your build method to see exact source locations of the conflicting watch statements.
+
 **See:** [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for complete explanation.
-
-### "More/fewer watches than last build"
-
-**Error message:**
-```
-Expected X watches but found Y
-```
-
-**Cause:** Number of watch calls changed between builds.
-
-**Common causes:**
-- Watches inside `if` statements
-- Watches inside loops
-- Watches after early returns
-
-**Example:**
-```dart
-// BAD
-if (isLoading) {
-  return CircularProgressIndicator();  // Returns early!
-}
-
-// This watch only happens sometimes
-final data = watchValue((M m) => m.data);
-```
-
-**Solution:** Call ALL watches before any early returns:
-
-```dart
-// GOOD
-final data = watchValue((M m) => m.data);
-
-if (isLoading) {
-  return CircularProgressIndicator();  // Can return now
-}
-
-return DataView(data);
-```
 
 ### "watch() called outside build"
 
@@ -273,44 +266,40 @@ class MyWidget extends WatchingWidget {
 
 ### Enable watch_it Tracing
 
-Get detailed logs of all watch subscriptions:
+Get detailed logs of watch subscriptions and source locations for ordering violations:
 
 ```dart
-void main() {
-  // Enable tracing BEFORE runApp
-  GetIt.I.enableWatchItTracing = true;
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Call at the start of build to enable tracing
+    enableTracing(
+      logRebuilds: true,
+      logHandlers: true,
+      logHelperFunctions: true,
+    );
 
-  runApp(MyApp());
+    final todos = watchValue((TodoManager m) => m.todos);
+    // ... rest of build
+  }
 }
 ```
 
-**Output:**
-```
-watch_it: TodoList subscribed to TodoManager.todos
-watch_it: UserHeader subscribed to UserModel.name
-watch_it: TodoList disposed subscription to TodoManager.todos
-```
+**Benefits:**
+- Shows exact source locations of watch calls
+- Helps identify ordering violations
+- Tracks rebuild activity
+- Shows handler executions
 
-### Use debugLabel for watch calls
-
-Label your watch calls to identify them in traces:
+**Alternative:** Use `WatchItSubTreeTraceControl` widget to enable tracing for an entire subtree:
 
 ```dart
-final todos = watchValue(
-  (TodoManager m) => m.todos,
-  debugLabel: 'TodoList.todos',  // Shows in traces
+return WatchItSubTreeTraceControl(
+  logRebuilds: true,
+  logHandlers: true,
+  logHelperFunctions: true,
+  child: MyApp(),
 );
-
-final user = watchValue(
-  (UserModel m) => m.user,
-  debugLabel: 'UserHeader.user',
-);
-```
-
-**Output with labels:**
-```
-watch_it: [TodoList.todos] subscribed to TodoManager.todos
-watch_it: [UserHeader.user] subscribed to UserModel.name
 ```
 
 ### Track rebuild frequency
@@ -408,10 +397,10 @@ When something doesn't work:
 
 ### 2. Ordering errors?
 
-- [ ] Are ALL watch calls at the top of `build()`?
-- [ ] No watches inside `if` statements?
+- [ ] Are conditional watches at the END of `build()`?
+- [ ] No watches inside `if` statements **followed by other watches**?
 - [ ] No watches inside loops?
-- [ ] No early returns before all watches?
+- [ ] Call `enableTracing()` to see source locations?
 
 ### 3. Memory issues?
 
