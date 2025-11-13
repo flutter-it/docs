@@ -67,9 +67,8 @@ html:not(.dark) .diagram-light {
   }
 }
 
-/* Fix Chrome emoji rendering for ❌ and other emojis */
-/* Apply only to headings and table cells where we use emojis */
-h3, h4,
-table td, table th {
-  font-variant-emoji: emoji;
+/* Ensure color emoji fonts are available for all emoji rendering */
+:root {
+  --vp-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
+  --vp-font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
 }
