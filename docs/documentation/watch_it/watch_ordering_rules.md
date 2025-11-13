@@ -11,10 +11,10 @@ This is the most important rule in `watch_it`. Violating it will cause errors or
 `watch_it` uses a global state mechanism similar to React Hooks. Each watch call is assigned an index based on its position in the build sequence. When the widget rebuilds, `watch_it` expects to find the same watches in the same order.
 
 **What happens if order changes:**
-- ❌ Runtime errors
-- ❌ Wrong data displayed
-- ❌ Unexpected rebuilds
-- ❌ Memory leaks
+- ❌️ Runtime errors
+- ❌️ Wrong data displayed
+- ❌️ Unexpected rebuilds
+- ❌️ Memory leaks
 
 ## Correct Pattern
 
@@ -30,7 +30,7 @@ This is the most important rule in `watch_it`. Violating it will cause errors or
 
 ## Common Violations
 
-### ❌ Conditional Watch Calls
+### ❌️ Conditional Watch Calls
 
 The most common mistake is putting watch calls inside conditional statements:
 
@@ -41,11 +41,11 @@ The most common mistake is putting watch calls inside conditional statements:
 - When `show` is true: watches [showDetails, todos]
 - Order changes = error!
 
-### ❌ Watch Inside Loops
+### ❌️ Watch Inside Loops
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_inside_loops_wrong
 
-### ❌ Watch in Callbacks
+### ❌️ Watch in Callbacks
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_in_callbacks_wrong
 
@@ -175,7 +175,7 @@ Only the LAST watch call can be conditional.
 - Use conditional watches at the end (after all other watches)
 - Use early returns freely - they're always safe
 
-❌ **DON'T:**
+❌️ **DON'T:**
 - Put watches in `if` statements **when followed by other watches**
 - Put watches in loops
 - Put watches in callbacks

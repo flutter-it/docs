@@ -45,7 +45,7 @@ Dart infers:
 **Without the type annotation**, you'd need to specify both generics manually:
 
 ```dart
-// ❌ More verbose - manual type parameters required
+// ❌️ More verbose - manual type parameters required
 final count = watchValue<CounterManager, int>((m) => m.count);
 ```
 

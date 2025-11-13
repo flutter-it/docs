@@ -152,7 +152,7 @@ You can use both in the same widget:
 
 ## Common Mistakes
 
-### ❌ Using watch() for navigation
+### ❌️ Using watch() for navigation
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#mistake_bad
 

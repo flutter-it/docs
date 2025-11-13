@@ -85,11 +85,11 @@ Let's see both approaches side by side with the same Manager class:
 
 | Scenario | Use Separate Watches | Use Combining |
 |----------|---------------------|---------------|
-| Unrelated values (name, email, avatar) | ✅ Simpler | ❌ Overkill |
-| Computed result (firstName + lastName) | ❌ Rebuilds unnecessarily | ✅ Better |
-| Form validation (all fields valid?) | ❌ Rebuilds on every keystroke | ✅ Much better |
-| Independent values all needed in UI | ✅ Natural | ❌ More complex |
-| Performance-sensitive with frequent changes | ❌ More rebuilds | ✅ Fewer rebuilds |
+| Unrelated values (name, email, avatar) | ✅ Simpler | ❌️ Overkill |
+| Computed result (firstName + lastName) | ❌️ Rebuilds unnecessarily | ✅ Better |
+| Form validation (all fields valid?) | ❌️ Rebuilds on every keystroke | ✅ Much better |
+| Independent values all needed in UI | ✅ Natural | ❌️ More complex |
+| Performance-sensitive with frequent changes | ❌️ More rebuilds | ✅ Fewer rebuilds |
 
 ## watchIt() vs Multiple watchValue()
 
@@ -204,7 +204,7 @@ Combining provides minimal benefit when:
 
 ## Common Mistakes
 
-### ❌ Creating Operators Outside Selector
+### ❌️ Creating Operators Outside Selector
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_create_outside_selector
 
@@ -214,7 +214,7 @@ Combining provides minimal benefit when:
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#correct_create_in_selector
 
-### ❌ Using allowObservableChange Unnecessarily
+### ❌️ Using allowObservableChange Unnecessarily
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_unnecessary_allow_change
 
@@ -222,7 +222,7 @@ Combining provides minimal benefit when:
 
 **Solution:** Remove `allowObservableChange: true` unless actually needed.
 
-### ❌ Using Getter for Combined Values
+### ❌️ Using Getter for Combined Values
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_create_in_data_layer
 
