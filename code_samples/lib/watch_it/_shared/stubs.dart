@@ -620,6 +620,19 @@ class EventBus {
   }
 }
 
+class StreamManager {
+  final _controller1 = StreamController<int>.broadcast();
+  final _controller2 = StreamController<int>.broadcast();
+
+  Stream<int> get stream1 => _controller1.stream;
+  Stream<int> get stream2 => _controller2.stream;
+
+  void dispose() {
+    _controller1.close();
+    _controller2.close();
+  }
+}
+
 abstract class AppEvent {}
 
 class TodoCreatedEvent extends AppEvent {
