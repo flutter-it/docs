@@ -76,3 +76,8 @@ html:not(.dark) .diagram-light {
 /* NOTE: font-variant-emoji has browser bugs affecting digits 0-9
  * See: https://github.com/w3c/csswg-drafts/issues/11014
  * Relying on emoji fonts in font stack above for emoji rendering */
+
+/* Ensure headings explicitly use emoji fonts for emoji characters */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--vp-font-family-base);
+}
