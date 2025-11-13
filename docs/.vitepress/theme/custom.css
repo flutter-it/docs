@@ -66,3 +66,10 @@ html:not(.dark) .diagram-light {
     margin-bottom: 0.5rem;
   }
 }
+
+/* Fix Chrome emoji rendering for ❌ and other emojis */
+/* Apply only to headings and table cells where we use emojis */
+h3, h4,
+table td, table th {
+  font-variant-emoji: emoji;
+}
