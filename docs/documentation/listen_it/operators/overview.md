@@ -43,7 +43,7 @@ final mapped = source.map((x) => x * 2); // Subscribes immediately
 print(mapped.value); // Always correct: 10
 
 source.value = 7;
-print(mapped.value); // Immediately updated: 14 ✓
+print(mapped.value); // Immediately updated: 14 ✅
 ```
 
 For memory-constrained scenarios, pass `lazy: true` to delay subscription until the first listener is added:

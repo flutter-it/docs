@@ -18,7 +18,7 @@ This is the most important rule in `watch_it`. Violating it will cause errors or
 
 ## Correct Pattern
 
-✓ All watch calls happen in the same order every time:
+✅ All watch calls happen in the same order every time:
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_good_example.dart#example
 
@@ -123,7 +123,7 @@ class MyWidget extends WatchingWidget {
 
 ## Safe Conditional Patterns
 
-✓ Call ALL watches first, THEN use conditions:
+✅ Call ALL watches first, THEN use conditions:
 
 <<< @/../code_samples/lib/watch_it/conditional_watch_safe_example.dart#example
 

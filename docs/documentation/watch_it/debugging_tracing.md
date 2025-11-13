@@ -355,7 +355,7 @@ void main() {
 
   try {
     final manager = di<TodoManager>();
-    print('✓ TodoManager registered');
+    print('✅ TodoManager registered');
   } catch (e) {
     print('✗ TodoManager NOT registered');
   }
