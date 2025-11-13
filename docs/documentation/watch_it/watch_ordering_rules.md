@@ -11,10 +11,11 @@ This is the most important rule in `watch_it`. Violating it will cause errors or
 `watch_it` uses a global state mechanism similar to React Hooks. Each watch call is assigned an index based on its position in the build sequence. When the widget rebuilds, `watch_it` expects to find the same watches in the same order.
 
 **What happens if order changes:**
-- ❌️ Runtime errors
-- ❌️ Wrong data displayed
-- ❌️ Unexpected rebuilds
-- ❌️ Memory leaks
+
+❌️ Runtime errors
+❌️ Wrong data displayed
+❌️ Unexpected rebuilds
+❌️ Memory leaks
 
 ## Correct Pattern
 
