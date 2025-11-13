@@ -37,10 +37,10 @@ You pass an instance of `T` that will <strong>always</strong> be returned on cal
 
 <strong>When to use Singleton:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Service needed at app startup</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Fast to create (no expensive initialization)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Service needed at app startup</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Fast to create (no expensive initialization)</li>
 </ul>
-- ❌ Avoid for slow initialization (use LazySingleton instead)
+- ❌️ Avoid for slow initialization (use LazySingleton instead)
 
 ---
 
@@ -65,9 +65,9 @@ You pass a factory function that returns an instance of `T`. The function is <st
 
 <strong>When to use LazySingleton:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Expensive-to-create services (database, HTTP client, etc.)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Services not always needed by every user</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ When you need to delay initialization</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Expensive-to-create services (database, HTTP client, etc.)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Services not always needed by every user</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ When you need to delay initialization</li>
 </ul>
 
 ---
@@ -94,11 +94,11 @@ You pass a factory function that returns a <strong>NEW instance</strong> of `T` 
 
 <strong>When to use Factory:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Temporary objects (dialogs, forms, temporary data holders)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Objects that need fresh state each time</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Objects with short lifecycle</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Temporary objects (dialogs, forms, temporary data holders)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Objects that need fresh state each time</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Objects with short lifecycle</li>
 </ul>
-- ❌ Avoid for expensive-to-create objects used frequently (consider Cached Factory)
+- ❌️ Avoid for expensive-to-create objects used frequently (consider Cached Factory)
 
 ---
 
@@ -156,13 +156,13 @@ Cached factories are a <strong>performance optimization</strong> that sits betwe
 
 <strong>When to use cached factories:</strong>
 
-✅ <strong>Good use cases:</strong>
+✅️ <strong>Good use cases:</strong>
 - <strong>Heavy objects recreated frequently</strong>: Parsers, formatters, calculators
 - <strong>Memory-sensitive scenarios</strong>: Want automatic cleanup but prefer reuse
 - <strong>Objects with expensive initialization</strong>: Database connections, file readers
 - <strong>Short-to-medium lifetime objects</strong>: Active for a while but not forever
 
-❌ <strong>Don't use when:</strong>
+❌️ <strong>Don't use when:</strong>
 - Object should always be new (use regular factory)
 - Object should live forever (use singleton/lazy singleton)
 - Object holds critical state that must not be reused
@@ -246,9 +246,9 @@ Sometimes you want to reset a lazy singleton (force recreation on next access) w
 
 <strong>When to use:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Refresh cached data (after login/logout)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Testing - reset state between tests</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Development - reload configuration</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Refresh cached data (after login/logout)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Testing - reset state between tests</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Development - reload configuration</li>
 </ul>
 
 ::: tip Reset All Lazy Singletons

@@ -114,17 +114,17 @@ Or with `watchValue` from [watch_it](/documentation/watch_it/getting_started) fo
 ## When to Use What
 
 ### Use ValueListenable Operators When:
-- ✅ You need to transform values (map, select)
-- ✅ You need to filter updates (where)
-- ✅ You need to debounce rapid changes (search inputs)
-- ✅ You need to combine multiple ValueListenables
-- ✅ You're building data transformation pipelines
+- ✅️ You need to transform values (map, select)
+- ✅️ You need to filter updates (where)
+- ✅️ You need to debounce rapid changes (search inputs)
+- ✅️ You need to combine multiple ValueListenables
+- ✅️ You're building data transformation pipelines
 
 ### Use Reactive Collections When:
-- ✅ You need a List, Map, or Set that notifies listeners on mutations
-- ✅ You want automatic UI updates without manual `notifyListeners()` calls
-- ✅ You're building reactive lists, caches, or sets in your UI layer
-- ✅ You want to batch multiple operations into a single notification
+- ✅️ You need a List, Map, or Set that notifies listeners on mutations
+- ✅️ You want automatic UI updates without manual `notifyListeners()` calls
+- ✅️ You're building reactive lists, caches, or sets in your UI layer
+- ✅️ You want to batch multiple operations into a single notification
 
 ## Key Concepts
 
@@ -190,8 +190,8 @@ final counter = CustomValueNotifier<int>(
   mode: CustomNotifierMode.normal,  // default
 );
 
-counter.value = 0;  // ❌ No notification (value unchanged)
-counter.value = 1;  // ✅ Notifies (value changed)
+counter.value = 0;  // ❌️ No notification (value unchanged)
+counter.value = 1;  // ✅️ Notifies (value changed)
 ```
 
 ::: tip Different Defaults

@@ -18,12 +18,12 @@ flutter_it is a **modular construction set** of reactive tools for Flutter. Pick
 ## Why flutter_it?
 
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Zero build_runner</strong> - No code generation, no waiting for builds</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Pure Dart</strong> - Works with standard Flutter, no magic</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Modular by design</strong> - Use one package or combine several—you choose</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Built on ChangeNotifier and ValueNotifier</strong> - Seamless Flutter integration with familiar primitives</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Type-safe</strong> - Full compile-time type checking</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Battle-tested</strong> - Trusted by thousands of Flutter developers</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Zero build_runner</strong> - No code generation, no waiting for builds</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Pure Dart</strong> - Works with standard Flutter, no magic</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Modular by design</strong> - Use one package or combine several—you choose</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Built on ChangeNotifier and ValueNotifier</strong> - Seamless Flutter integration with familiar primitives</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Type-safe</strong> - Full compile-time type checking</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Battle-tested</strong> - Trusted by thousands of Flutter developers</li>
 </ul>
 
 ## See it in action

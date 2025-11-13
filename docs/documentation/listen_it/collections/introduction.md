@@ -27,10 +27,10 @@ final items = ListNotifier<String>();
 
 items.listen((list, _) => print('List changed: $list'));
 
-items.add('item1');        // ✅ Notifies
-items.addAll(['a', 'b']);  // ✅ Notifies
-items[0] = 'updated';      // ✅ Notifies
-items.removeAt(0);         // ✅ Notifies
+items.add('item1');        // ✅️ Notifies
+items.addAll(['a', 'b']);  // ✅️ Notifies
+items[0] = 'updated';      // ✅️ Notifies
+items.removeAt(0);         // ✅️ Notifies
 ```
 
 ### 2. Notification Modes
@@ -67,7 +67,7 @@ The `.value` getter returns an unmodifiable view:
 final items = ListNotifier<String>(data: ['a', 'b']);
 
 final immutableView = items.value;  // UnmodifiableListView
-// immutableView.add('c');  // ❌ Throws UnsupportedError
+// immutableView.add('c');  // ❌️ Throws UnsupportedError
 ```
 
 This ensures all mutations go through the notification system.
@@ -110,7 +110,7 @@ final preferences = MapNotifier<String, dynamic>(
 
 preferences.listen((map, _) => savePreferences(map));
 
-preferences['theme'] = 'light';  // ✅ Notifies
+preferences['theme'] = 'light';  // ✅️ Notifies
 ```
 
 ### SetNotifier - Unique Collections
@@ -128,7 +128,7 @@ final selectedIds = SetNotifier<String>(data: {});
 
 selectedIds.listen((set, _) => print('Selection changed: $set'));
 
-selectedIds.add('item1');  // ✅ Notifies
+selectedIds.add('item1');  // ✅️ Notifies
 selectedIds.add('item1');  // No duplicate added (Set behavior)
 ```
 
@@ -194,8 +194,8 @@ final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.add('item1');  // ✅ Notifies
-items.add('item1');  // ❌ No notification (duplicate in set/map, or no change)
+items.add('item1');  // ✅️ Notifies
+items.add('item1');  // ❌️ No notification (duplicate in set/map, or no change)
 ```
 
 ## Why Reactive Collections?
@@ -228,16 +228,16 @@ class TodoList extends ValueNotifier<List<Todo>> {
 ```dart
 final todos = ListNotifier<Todo>();
 
-todos.add(todo);           // ✅ Automatic notification
-todos.removeAt(index);     // ✅ Automatic notification
-todos[index] = updatedTodo; // ✅ Automatic notification
+todos.add(todo);           // ✅️ Automatic notification
+todos.removeAt(index);     // ✅️ Automatic notification
+todos[index] = updatedTodo; // ✅️ Automatic notification
 ```
 
 **Benefits:**
-- ✅ Less boilerplate
-- ✅ Standard List/Map/Set APIs
-- ✅ Automatic notifications
-- ✅ Transaction support for batching
+- ✅️ Less boilerplate
+- ✅️ Standard List/Map/Set APIs
+- ✅️ Automatic notifications
+- ✅️ Transaction support for batching
 
 ## Next Steps
 

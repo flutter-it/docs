@@ -39,7 +39,7 @@ class User {
 
   User(this.name, this.age);
 
-  // ❌ No equality override - each instance is unique
+  // ❌️ No equality override - each instance is unique
 }
 
 final users = ListNotifier<User>();  // Default: always mode
@@ -47,8 +47,8 @@ final users = ListNotifier<User>();  // Default: always mode
 users.listen((list, _) => print('Users: ${list.length}'));
 
 final user1 = User('John', 25);
-users.add(user1);  // ✅ Notifies
-users.add(user1);  // ✅ Notifies (duplicate reference, but UI updates)
+users.add(user1);  // ✅️ Notifies
+users.add(user1);  // ✅️ Notifies (duplicate reference, but UI updates)
 ```
 
 **Problem with `normal` mode here:** Without overriding `==`, Dart uses reference equality. Even though it's the same object reference, users might expect the UI to update when they call `.add()`.
@@ -57,19 +57,19 @@ users.add(user1);  // ✅ Notifies (duplicate reference, but UI updates)
 
 ### When to Use always
 
-- ✅ Default choice - works correctly regardless of equality implementation
-- ✅ When you want UI to update on every operation
-- ✅ When objects don't override `==` operator
-- ✅ When debugging - see every operation
+- ✅️ Default choice - works correctly regardless of equality implementation
+- ✅️ When you want UI to update on every operation
+- ✅️ When objects don't override `==` operator
+- ✅️ When debugging - see every operation
 
 ```dart
 final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.always,
 );
 
-items.add('item');  // ✅ Notifies
-items.add('item');  // ✅ Notifies (even though it's a duplicate)
-items[0] = 'item';  // ✅ Notifies (even though value didn't change)
+items.add('item');  // ✅️ Notifies
+items.add('item');  // ✅️ Notifies (even though it's a duplicate)
+items[0] = 'item';  // ✅️ Notifies (even though value didn't change)
 ```
 
 ## normal Mode
@@ -85,10 +85,10 @@ final items = ListNotifier<String>(
 
 items.listen((list, _) => print('Changed: $list'));
 
-items.add('item1');  // ✅ Notifies (new item)
-items.add('item2');  // ✅ Notifies (new item)
-items[0] = 'item1';  // ❌ No notification (same value)
-items.remove('xyz'); // ❌ No notification (item not in list)
+items.add('item1');  // ✅️ Notifies (new item)
+items.add('item2');  // ✅️ Notifies (new item)
+items[0] = 'item1';  // ❌️ No notification (same value)
+items.remove('xyz'); // ❌️ No notification (item not in list)
 ```
 
 ### With Custom Equality
@@ -113,7 +113,7 @@ final product1 = Product('1', 'Widget', 9.99);
 final product2 = Product('1', 'Widget Pro', 14.99);  // Same ID, different name
 
 products.add(product1);
-products[0] = product2;  // ❌ No notification (same ID according to customEquality)
+products[0] = product2;  // ❌️ No notification (same ID according to customEquality)
 ```
 
 ### Bulk Operations in normal Mode
@@ -126,9 +126,9 @@ final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.addAll([]);       // ✅ Notifies (even though empty)
-items.insertAll(0, []); // ✅ Notifies (even though empty)
-items.setAll(0, []);    // ✅ Notifies (even though empty)
+items.addAll([]);       // ✅️ Notifies (even though empty)
+items.insertAll(0, []); // ✅️ Notifies (even though empty)
+items.setAll(0, []);    // ✅️ Notifies (even though empty)
 ```
 
 **Replace operations** - Only notify if changes occurred:
@@ -139,10 +139,10 @@ items.replaceRange(0, 2, []); // Only notifies if values changed
 
 ### When to Use normal
 
-- ✅ Performance optimization - reduce unnecessary notifications
-- ✅ Objects override `==` operator correctly
-- ✅ You have custom equality logic
-- ✅ No-op operations shouldn't trigger UI updates
+- ✅️ Performance optimization - reduce unnecessary notifications
+- ✅️ Objects override `==` operator correctly
+- ✅️ You have custom equality logic
+- ✅️ No-op operations shouldn't trigger UI updates
 
 ```dart
 class Todo {
@@ -170,9 +170,9 @@ final todos = ListNotifier<Todo>(
 );
 
 final todo1 = Todo('1', 'Buy milk', false);
-todos.add(todo1);              // ✅ Notifies
-todos[0] = todo1;               // ❌ No notification (same object)
-todos[0] = Todo('1', 'Buy milk', false);  // ❌ No notification (equal by ==)
+todos.add(todo1);              // ✅️ Notifies
+todos[0] = todo1;               // ❌️ No notification (same object)
+todos[0] = Todo('1', 'Buy milk', false);  // ❌️ No notification (equal by ==)
 ```
 
 ## manual Mode
@@ -192,15 +192,15 @@ items.add('item1');  // No notification
 items.add('item2');  // No notification
 items.add('item3');  // No notification
 
-items.notifyListeners();  // ✅ Single notification for all 3 adds
+items.notifyListeners();  // ✅️ Single notification for all 3 adds
 ```
 
 ### When to Use manual
 
-- ✅ Complex operations requiring multiple steps
-- ✅ You want explicit control over when notifications fire
-- ✅ Batching operations for performance (use transactions instead!)
-- ✅ Conditional notifications based on custom logic
+- ✅️ Complex operations requiring multiple steps
+- ✅️ You want explicit control over when notifications fire
+- ✅️ Batching operations for performance (use transactions instead!)
+- ✅️ Conditional notifications based on custom logic
 
 ```dart
 final cart = ListNotifier<Product>(
@@ -222,7 +222,7 @@ void updateCart(List<Product> newProducts) {
 
 For batching operations, **transactions are usually better** than manual mode:
 
-**❌ With manual mode:**
+**❌️ With manual mode:**
 ```dart
 final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.manual,
@@ -234,7 +234,7 @@ items.add('b');
 items.notifyListeners();  // Easy to forget!
 ```
 
-**✅ With transactions (any mode):**
+**✅️ With transactions (any mode):**
 ```dart
 final items = ListNotifier<String>();  // Any mode works
 
@@ -250,13 +250,13 @@ items.endTransAction();  // Guaranteed notification
 
 | Operation | always | normal | manual |
 |-----------|--------|--------|--------|
-| `add(newItem)` | ✅ Notifies | ✅ Notifies | ❌ No notification |
-| `add(duplicate)` (Set) | ✅ Notifies | ❌ No notification | ❌ No notification |
-| `[index] = sameValue` | ✅ Notifies | ❌ No notification | ❌ No notification |
-| `remove(nonExistent)` | ✅ Notifies | ❌ No notification | ❌ No notification |
-| `addAll([])` (empty) | ✅ Notifies | ✅ Notifies | ❌ No notification |
-| `fillRange()` no change | ✅ Notifies | ❌ No notification | ❌ No notification |
-| `notifyListeners()` | ✅ Notifies | ✅ Notifies | ✅ Notifies |
+| `add(newItem)` | ✅️ Notifies | ✅️ Notifies | ❌️ No notification |
+| `add(duplicate)` (Set) | ✅️ Notifies | ❌️ No notification | ❌️ No notification |
+| `[index] = sameValue` | ✅️ Notifies | ❌️ No notification | ❌️ No notification |
+| `remove(nonExistent)` | ✅️ Notifies | ❌️ No notification | ❌️ No notification |
+| `addAll([])` (empty) | ✅️ Notifies | ✅️ Notifies | ❌️ No notification |
+| `fillRange()` no change | ✅️ Notifies | ❌️ No notification | ❌️ No notification |
+| `notifyListeners()` | ✅️ Notifies | ✅️ Notifies | ✅️ Notifies |
 
 ## Choosing the Right Mode
 
@@ -340,9 +340,9 @@ final selectedIds = SetNotifier<String>(
 
 selectedIds.listen((ids, _) => print('Selection changed: $ids'));
 
-selectedIds.add('item1');  // ✅ Notifies
-selectedIds.add('item1');  // ❌ No notification (already in set)
-selectedIds.add('item2');  // ✅ Notifies
+selectedIds.add('item1');  // ✅️ Notifies
+selectedIds.add('item1');  // ❌️ No notification (already in set)
+selectedIds.add('item2');  // ✅️ Notifies
 ```
 
 ### Example 3: Form Data (manual mode)

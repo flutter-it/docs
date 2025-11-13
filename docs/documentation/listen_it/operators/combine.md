@@ -131,10 +131,10 @@ Similarly available: `combineLatest4`, `combineLatest5`, `combineLatest6`
 ### When to Use combineLatest()
 
 Use `combineLatest()` when:
-- ✅ You need values from 2-6 ValueListenables
-- ✅ You want to update whenever any source changes
-- ✅ You need to combine values into a new type
-- ✅ You're implementing derived state or computed properties
+- ✅️ You need values from 2-6 ValueListenables
+- ✅️ You want to update whenever any source changes
+- ✅️ You need to combine values into a new type
+- ✅️ You're implementing derived state or computed properties
 
 ## mergeWith()
 
@@ -265,10 +265,10 @@ print(anyLoading.value); // false (from isLoadingData)
 ### When to Use mergeWith()
 
 Use `mergeWith()` when:
-- ✅ You have multiple sources of the same type
-- ✅ You want to react to changes from any source
-- ✅ You don't need to combine values, just monitor any change
-- ✅ You're aggregating similar event streams
+- ✅️ You have multiple sources of the same type
+- ✅️ You want to react to changes from any source
+- ✅️ You don't need to combine values, just monitor any change
+- ✅️ You're aggregating similar event streams
 
 ## Chaining with Other Operators
 

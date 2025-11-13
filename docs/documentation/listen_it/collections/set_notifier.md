@@ -19,8 +19,8 @@ final selectedIds = SetNotifier<String>(data: {});
 
 selectedIds.listen((set, _) => print('Selected: $set'));
 
-selectedIds.add('id1');  // ✅ Notifies
-selectedIds.add('id2');  // ✅ Notifies
+selectedIds.add('id1');  // ✅️ Notifies
+selectedIds.add('id2');  // ✅️ Notifies
 selectedIds.add('id1');  // No duplicate added (Set behavior)
 ```
 
@@ -53,12 +53,12 @@ final selectedItems = SetNotifier<String>(
 **Important:** Unlike `ListNotifier` and `MapNotifier`, `SetNotifier` does **NOT** support custom equality functions. Sets inherently use `==` and `hashCode` for membership testing. Custom equality would only apply to notification decisions, which could be confusing.
 
 ```dart
-// ❌ SetNotifier doesn't have customEquality parameter
+// ❌️ SetNotifier doesn't have customEquality parameter
 // final items = SetNotifier<Product>(
 //   customEquality: (a, b) => a.id == b.id,  // NOT SUPPORTED
 // );
 
-// ✅ Override == and hashCode in your class instead
+// ✅️ Override == and hashCode in your class instead
 class Product {
   final String id;
   final String name;
@@ -155,9 +155,9 @@ final items = SetNotifier<String>(
   notificationMode: CustomNotifierMode.always,
 );
 
-items.add('item1');  // ✅ Notifies (even though already exists)
-items.add('item2');  // ✅ Notifies
-items.remove('xyz'); // ✅ Notifies (even though doesn't exist)
+items.add('item1');  // ✅️ Notifies (even though already exists)
+items.add('item2');  // ✅️ Notifies
+items.remove('xyz'); // ✅️ Notifies (even though doesn't exist)
 ```
 
 **Why default?** Without seeing the return value of `add()` or `remove()`, users might expect UI updates when they perform operations.
@@ -170,9 +170,9 @@ final items = SetNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.add('item1');  // ❌ No notification (already exists)
-items.add('item2');  // ✅ Notifies (new element)
-items.remove('xyz'); // ❌ No notification (doesn't exist)
+items.add('item1');  // ❌️ No notification (already exists)
+items.add('item2');  // ✅️ Notifies (new element)
+items.remove('xyz'); // ❌️ No notification (doesn't exist)
 ```
 
 **Best for:** Optimizing performance when you have many duplicate add/remove attempts.
@@ -186,7 +186,7 @@ final items = SetNotifier<String>(
 
 items.add('item1');  // No notification
 items.add('item2');  // No notification
-items.notifyListeners();  // ✅ Manual notification
+items.notifyListeners();  // ✅️ Manual notification
 ```
 
 [Learn more about notification modes →](/documentation/listen_it/collections/notification_modes)
@@ -217,10 +217,10 @@ final items = SetNotifier<String>(data: {'a', 'b'});
 final immutableView = items.value;
 print(immutableView);  // {a, b}
 
-// ❌ Throws UnsupportedError
+// ❌️ Throws UnsupportedError
 // immutableView.add('c');
 
-// ✅ Mutate through the notifier
+// ✅️ Mutate through the notifier
 items.add('c');  // Works and notifies
 ```
 
@@ -235,9 +235,9 @@ final items = SetNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.addAll({});       // ✅ Notifies (even though empty)
-items.removeAll({});    // ✅ Notifies (even though empty)
-items.retainAll({});    // ✅ Notifies (even though empty)
+items.addAll({});       // ✅️ Notifies (even though empty)
+items.removeAll({});    // ✅️ Notifies (even though empty)
+items.retainAll({});    // ✅️ Notifies (even though empty)
 ```
 
 **Why?** For performance reasons - to avoid comparing all elements. These operations are typically used for bulk updates.
@@ -410,19 +410,19 @@ For very large sets (1000+ elements):
 - Consider `normal` mode if you have many duplicate operations
 
 ```dart
-// ❌ Bad: 1000 notifications
+// ❌️ Bad: 1000 notifications
 for (final item in items) {
   set.add(item);
 }
 
-// ✅ Good: 1 notification
+// ✅️ Good: 1 notification
 set.startTransAction();
 for (final item in items) {
   set.add(item);
 }
 set.endTransAction();
 
-// ✅ Even better: addAll
+// ✅️ Even better: addAll
 set.startTransAction();
 set.addAll(items);
 set.endTransAction();
@@ -502,23 +502,23 @@ In `normal` mode, notifications are based on these return values.
 ### 1. Modifying the .value View
 
 ```dart
-// ❌ Don't try to modify the .value getter
+// ❌️ Don't try to modify the .value getter
 final view = items.value;
 view.add('item');  // Throws UnsupportedError!
 
-// ✅ Modify through the notifier
+// ✅️ Modify through the notifier
 items.add('item');
 ```
 
 ### 2. Forgetting Transactions
 
 ```dart
-// ❌ Many notifications
+// ❌️ Many notifications
 for (final item in newItems) {
   items.add(item);
 }
 
-// ✅ Single notification
+// ✅️ Single notification
 items.startTransAction();
 for (final item in newItems) {
   items.add(item);
@@ -529,18 +529,18 @@ items.endTransAction();
 ### 3. Expecting Ordered Iteration
 
 ```dart
-// ❌ Sets don't guarantee order
+// ❌️ Sets don't guarantee order
 final items = SetNotifier<int>(data: {3, 1, 2});
 print(items.toList());  // Might be [1, 2, 3] or [3, 1, 2] or any order
 
-// ✅ Sort if you need specific order
+// ✅️ Sort if you need specific order
 final sorted = items.toList()..sort();
 ```
 
 ### 4. Not Overriding == and hashCode
 
 ```dart
-// ❌ Without proper equality, duplicates based on identity
+// ❌️ Without proper equality, duplicates based on identity
 class User {
   final String id;
   final String name;
@@ -552,7 +552,7 @@ final users = SetNotifier<User>();
 users.add(User('1', 'John'));
 users.add(User('1', 'John'));  // Adds duplicate! (different instances)
 
-// ✅ Override == and hashCode
+// ✅️ Override == and hashCode
 class User {
   final String id;
   final String name;
@@ -584,16 +584,16 @@ users.add(User('1', 'John'));  // No duplicate (same id)
 | **Custom equality** | No (use == override) | Yes (customEquality param) |
 
 **Choose SetNotifier when:**
-- ✅ You need unique elements
-- ✅ You need fast membership testing (contains)
-- ✅ Order doesn't matter
-- ✅ Examples: selected IDs, active filters, user permissions
+- ✅️ You need unique elements
+- ✅️ You need fast membership testing (contains)
+- ✅️ Order doesn't matter
+- ✅️ Examples: selected IDs, active filters, user permissions
 
 **Choose ListNotifier when:**
-- ✅ Order matters
-- ✅ Duplicates are allowed
-- ✅ You need indexed access
-- ✅ Examples: todo lists, message history, search results
+- ✅️ Order matters
+- ✅️ Duplicates are allowed
+- ✅️ You need indexed access
+- ✅️ Examples: todo lists, message history, search results
 
 ## Next Steps
 

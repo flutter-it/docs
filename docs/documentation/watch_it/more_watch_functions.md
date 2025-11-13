@@ -109,12 +109,12 @@ Mixing different watch functions:
 
 ## Key Takeaways
 
-✅ `watchValue()` - Watch `ValueListenable` properties from get_it (one or two properties)
-✅ `watchIt()` - Watch whole `Listenable` objects from get_it (many properties change)
-✅ `watchPropertyValue()` - Selective updates from `Listenable` in get_it (performance optimization)
-✅ `watch()` - Most flexible, any `Listenable` (local or parameter)
-✅ Choose based on property count and update patterns
-✅ Mix and match based on your needs
+✅️ `watchValue()` - Watch `ValueListenable` properties from get_it (one or two properties)
+✅️ `watchIt()` - Watch whole `Listenable` objects from get_it (many properties change)
+✅️ `watchPropertyValue()` - Selective updates from `Listenable` in get_it (performance optimization)
+✅️ `watch()` - Most flexible, any `Listenable` (local or parameter)
+✅️ Choose based on property count and update patterns
+✅️ Mix and match based on your needs
 
 **Next:** Learn about [watching multiple values](/documentation/watch_it/watching_multiple_values.md).
 

@@ -11,10 +11,10 @@ This is the most important rule in `watch_it`. Violating it will cause errors or
 `watch_it` uses a global state mechanism similar to React Hooks. Each watch call is assigned an index based on its position in the build sequence. When the widget rebuilds, `watch_it` expects to find the same watches in the same order.
 
 **What happens if order changes:**
-- ❌️ Runtime errors
-- ❌️ Wrong data displayed
-- ❌️ Unexpected rebuilds
-- ❌️ Memory leaks
+- ❌️️ Runtime errors
+- ❌️️ Wrong data displayed
+- ❌️️ Unexpected rebuilds
+- ❌️️ Memory leaks
 
 ## Correct Pattern
 
@@ -30,7 +30,7 @@ This is the most important rule in `watch_it`. Violating it will cause errors or
 
 ## Common Violations
 
-### ❌️ Conditional Watch Calls
+### ❌️️ Conditional Watch Calls
 
 The most common mistake is putting watch calls inside conditional statements:
 
@@ -41,11 +41,11 @@ The most common mistake is putting watch calls inside conditional statements:
 - When `show` is true: watches [showDetails, todos]
 - Order changes = error!
 
-### ❌️ Watch Inside Loops
+### ❌️️ Watch Inside Loops
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_inside_loops_wrong
 
-### ❌️ Watch in Callbacks
+### ❌️️ Watch in Callbacks
 
 <<< @/../code_samples/lib/watch_it/watch_ordering_patterns.dart#watch_in_callbacks_wrong
 
@@ -59,7 +59,7 @@ The ordering rule only matters when watches **may or may not be called on the SA
 :::
 
 
-### ✅ Conditional Watches at the END
+### ✅️️ Conditional Watches at the END
 
 Conditional watches are **perfectly safe** when they're the last watches in your build:
 
@@ -71,7 +71,7 @@ class MyWidget extends WatchingWidget {
     final todos = watchValue((TodoManager m) => m.todos);
     final isLoading = watchValue((TodoManager m) => m.isLoading);
 
-    // ✅ Conditional watch at the END - perfectly safe!
+    // ✅️️ Conditional watch at the END - perfectly safe!
     if (showDetails) {
       final details = watchValue((TodoManager m) => m.selectedDetails);
       return DetailView(details);
@@ -87,7 +87,7 @@ class MyWidget extends WatchingWidget {
 - Conditional watch is LAST - no subsequent watches to disrupt
 - On rebuild: same order maintained
 
-### ✅ Early Returns Are Always Safe
+### ✅️️ Early Returns Are Always Safe
 
 Early returns don't affect watch ordering because watches after them are never called:
 
@@ -97,7 +97,7 @@ class MyWidget extends WatchingWidget {
   Widget build(BuildContext context) {
     final isLoading = watchValue((DataManager m) => m.isLoading);
 
-    // ✅ Early return - completely safe!
+    // ✅️️ Early return - completely safe!
     if (isLoading) {
       return CircularProgressIndicator();
     }
@@ -167,7 +167,7 @@ Only the LAST watch call can be conditional.
 
 ## Best Practices Checklist
 
-✅ **DO:**
+✅️️ **DO:**
 - Call all watches at the top of `build()` when possible
 - Use unconditional watch calls for watches that need to execute on all paths
 - Store values in variables, use variables conditionally
@@ -175,7 +175,7 @@ Only the LAST watch call can be conditional.
 - Use conditional watches at the end (after all other watches)
 - Use early returns freely - they're always safe
 
-❌️ **DON'T:**
+❌️️ **DON'T:**
 - Put watches in `if` statements **when followed by other watches**
 - Put watches in loops
 - Put watches in callbacks

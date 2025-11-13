@@ -11,9 +11,9 @@ Watch each value separately - widget rebuilds when **ANY** value changes:
 <<< @/../code_samples/lib/watch_it/multiple_values_separate_watches.dart#example
 
 **When to use:**
-- ✅ Values are unrelated
-- ✅ Simple UI logic
-- ✅ All values are needed for rendering
+- ✅️️ Values are unrelated
+- ✅️️ Simple UI logic
+- ✅️️ All values are needed for rendering
 
 **Rebuild behavior:** Widget rebuilds whenever **any** of the three values changes.
 
@@ -26,10 +26,10 @@ Combine multiple values using `listen_it` operators in your manager - widget reb
 <<< @/../code_samples/lib/watch_it/multiple_values_combine_latest_form.dart#widget
 
 **When to use:**
-- ✅ Values are related/dependent
-- ✅ Need computed result
-- ✅ Want to reduce rebuilds
-- ✅ Complex validation logic
+- ✅️️ Values are related/dependent
+- ✅️️ Need computed result
+- ✅️️ Want to reduce rebuilds
+- ✅️️ Complex validation logic
 
 **Rebuild behavior:** Widget rebuilds only when `isValid` changes, not when individual email or password values change (unless it affects validity).
 
@@ -85,11 +85,11 @@ Let's see both approaches side by side with the same Manager class:
 
 | Scenario | Use Separate Watches | Use Combining |
 |----------|---------------------|---------------|
-| Unrelated values (name, email, avatar) | ✅ Simpler | ❌️ Overkill |
-| Computed result (firstName + lastName) | ❌️ Rebuilds unnecessarily | ✅ Better |
-| Form validation (all fields valid?) | ❌️ Rebuilds on every keystroke | ✅ Much better |
-| Independent values all needed in UI | ✅ Natural | ❌️ More complex |
-| Performance-sensitive with frequent changes | ❌️ More rebuilds | ✅ Fewer rebuilds |
+| Unrelated values (name, email, avatar) | ✅️️ Simpler | ❌️️ Overkill |
+| Computed result (firstName + lastName) | ❌️️ Rebuilds unnecessarily | ✅️️ Better |
+| Form validation (all fields valid?) | ❌️️ Rebuilds on every keystroke | ✅️️ Much better |
+| Independent values all needed in UI | ✅️️ Natural | ❌️️ More complex |
+| Performance-sensitive with frequent changes | ❌️️ More rebuilds | ✅️️ Fewer rebuilds |
 
 ## watchIt() vs Multiple watchValue()
 
@@ -100,9 +100,9 @@ The choice between `watchIt()` on a `ChangeNotifier` and multiple `watchValue()`
 <<< @/../code_samples/lib/watch_it/multiple_values_watch_it_vs_watch_value.dart#watch_it_approach
 
 **When to use:**
-- ✅ You need **most/all** properties in your UI
-- ✅ Properties are **updated together** (batched updates)
-- ✅ Simple design - one notifyListeners() call updates everything
+- ✅️️ You need **most/all** properties in your UI
+- ✅️️ Properties are **updated together** (batched updates)
+- ✅️️ Simple design - one notifyListeners() call updates everything
 
 **Trade-off:** Widget rebuilds even if only one property changes.
 
@@ -111,9 +111,9 @@ The choice between `watchIt()` on a `ChangeNotifier` and multiple `watchValue()`
 <<< @/../code_samples/lib/watch_it/multiple_values_watch_it_vs_watch_value.dart#better_design
 
 **When to use:**
-- ✅ Properties update **independently** and **frequently**
-- ✅ You only display a **subset** of properties in each widget
-- ✅ Want granular control over rebuilds
+- ✅️️ Properties update **independently** and **frequently**
+- ✅️️ You only display a **subset** of properties in each widget
+- ✅️️ Want granular control over rebuilds
 
 **Trade-off:** If multiple properties update together, you get multiple rebuilds. In such cases:
 - **Better: Use ChangeNotifier instead** and call `notifyListeners()` once after all updates
@@ -140,9 +140,9 @@ class SettingsWidget extends WatchingWidget {
 ```
 
 **When to use:**
-- ✅ ChangeNotifier has many properties
-- ✅ You only need one or few properties
-- ✅ Other properties change frequently but you don't care
+- ✅️️ ChangeNotifier has many properties
+- ✅️️ You only need one or few properties
+- ✅️️ Other properties change frequently but you don't care
 
 **Key benefit:** Rebuilds only when `s.darkMode` **value** changes, ignoring notifications about other property changes.
 
@@ -204,7 +204,7 @@ Combining provides minimal benefit when:
 
 ## Common Mistakes
 
-### ❌️ Creating Operators Outside Selector
+### ❌️️ Creating Operators Outside Selector
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_create_outside_selector
 
@@ -214,7 +214,7 @@ Combining provides minimal benefit when:
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#correct_create_in_selector
 
-### ❌️ Using allowObservableChange Unnecessarily
+### ❌️️ Using allowObservableChange Unnecessarily
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_unnecessary_allow_change
 
@@ -222,7 +222,7 @@ Combining provides minimal benefit when:
 
 **Solution:** Remove `allowObservableChange: true` unless actually needed.
 
-### ❌️ Using Getter for Combined Values
+### ❌️️ Using Getter for Combined Values
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_create_in_data_layer
 
@@ -232,19 +232,19 @@ Combining provides minimal benefit when:
 
 ## Key Takeaways
 
-✅ **Separate watches** are simple and fine for unrelated values all needed in UI
+✅️️ **Separate watches** are simple and fine for unrelated values all needed in UI
 
-✅ **Combining in data layer** reduces rebuilds when computing from multiple sources
+✅️️ **Combining in data layer** reduces rebuilds when computing from multiple sources
 
-✅ Use **`combineLatest()`** for dependent values with computed results
+✅️️ Use **`combineLatest()`** for dependent values with computed results
 
-✅ Use **`mergeWith()`** for multiple event sources of same type
+✅️️ Use **`mergeWith()`** for multiple event sources of same type
 
-✅ **Safe to use operators in selectors** - automatic caching with default `allowObservableChange: false`
+✅️️ **Safe to use operators in selectors** - automatic caching with default `allowObservableChange: false`
 
-✅ **Never set `allowObservableChange: true`** unless observable genuinely changes
+✅️️ **Never set `allowObservableChange: true`** unless observable genuinely changes
 
-✅ **Create combined observables with `late final`** in managers, not getters
+✅️️ **Create combined observables with `late final`** in managers, not getters
 
 **Next:** Learn about [watching streams and futures](/documentation/watch_it/watching_streams_and_futures.md).
 

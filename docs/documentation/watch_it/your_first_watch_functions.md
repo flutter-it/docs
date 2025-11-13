@@ -24,7 +24,7 @@ Notice how we specify the type of the parent object in the selector function:
 By declaring the parent object type `CounterManager`, Dart automatically **infers** both generic type parameters:
 
 ```dart
-// ✅ Recommended - Dart infers types automatically
+// ✅️️ Recommended - Dart infers types automatically
 final count = watchValue((CounterManager m) => m.count);
 ```
 
@@ -45,7 +45,7 @@ Dart infers:
 **Without the type annotation**, you'd need to specify both generics manually:
 
 ```dart
-// ❌️ More verbose - manual type parameters required
+// ❌️️ More verbose - manual type parameters required
 final count = watchValue<CounterManager, int>((m) => m.count);
 ```
 
@@ -96,11 +96,11 @@ Add a todo? Widget rebuilds automatically. No `setState`, no `StreamBuilder`.
 
 ## Key Takeaways
 
-✅ `watchValue()` is your go-to function
-✅ One line replaces manual listeners and `setState`
-✅ Works with any `ValueListenable<T>`
-✅ Automatic subscription and cleanup
-✅ Multiple watch calls = multiple subscriptions
+✅️️ `watchValue()` is your go-to function
+✅️️ One line replaces manual listeners and `setState`
+✅️️ Works with any `ValueListenable<T>`
+✅️️ Automatic subscription and cleanup
+✅️️ Multiple watch calls = multiple subscriptions
 
 **Next:** Learn about [more watch functions](/documentation/watch_it/more_watch_functions.md) for different use cases.
 

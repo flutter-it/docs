@@ -105,11 +105,11 @@ This error means you're trying to register the same type twice. Common causes:
 <strong>2. Registering inside build methods (hot reload issue)</strong>
 If you register services inside `build()` or `initState()`, hot reload will call it again.
 
-❌ <strong>Wrong:</strong>
+❌️ <strong>Wrong:</strong>
 
 <<< @/../code_samples/lib/get_it/my_app_example.dart#example
 
-✅ <strong>Fix:</strong> Move registration to `main()` before `runApp()`:
+✅️ <strong>Fix:</strong> Move registration to `main()` before `runApp()`:
 
 <<< @/../code_samples/lib/get_it/main_example_9.dart#example
 
@@ -199,9 +199,9 @@ Circular dependencies often mean:
 - Logic should be in a third service that coordinates both
 
 <strong>What NOT to do:</strong>
-❌ Using `late` without proper initialization
-❌ Using global variables to break the cycle
-❌ Passing getIt instance around
+❌️ Using `late` without proper initialization
+❌️ Using global variables to break the cycle
+❌️ Passing getIt instance around
 :::
 
 ## Why do I get "This instance is not available in GetIt" when calling signalReady?
@@ -271,17 +271,17 @@ Split registrations into separate functions that encapsulate scope management:
 
 <strong>Why functions matter:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Reusable</strong> - Call the same function when pushing scopes to reinitialize features</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Testable</strong> - Call specific registration functions in test setup</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Organized</strong> - Clear separation of concerns by feature/layer</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <strong>Centralized</strong> - All registration logic in one place, not scattered</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Reusable</strong> - Call the same function when pushing scopes to reinitialize features</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Testable</strong> - Call specific registration functions in test setup</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Organized</strong> - Clear separation of concerns by feature/layer</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ <strong>Centralized</strong> - All registration logic in one place, not scattered</li>
 </ul>
 
 <strong>Don't:</strong>
-❌ Scatter registration calls throughout your app
-❌ Call registration methods from widget code
-❌ Mix registration with business logic
-❌ Duplicate registration code for different scopes
+❌️ Scatter registration calls throughout your app
+❌️ Call registration methods from widget code
+❌️ Mix registration with business logic
+❌️ Duplicate registration code for different scopes
 
 See [Scopes documentation](/documentation/get_it/scopes) for more on scope-based architecture.
 :::
@@ -292,21 +292,21 @@ See [Scopes documentation](/documentation/get_it/scopes) for more on scope-based
 
 Use <strong>scopes</strong> - they're designed for this exact use case:
 
-<strong>With Scopes (Recommended ✅):</strong>
+<strong>With Scopes (Recommended ✅️):</strong>
 
 <<< @/../code_samples/lib/get_it/on_login_example.dart#example
 
-<strong>Without Scopes (Not recommended ❌):</strong>
+<strong>Without Scopes (Not recommended ❌️):</strong>
 
 <<< @/../code_samples/lib/get_it/on_login.dart#example
 
 <strong>Why scopes are better:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Automatic cleanup and restoration</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Can't forget to re-register original services</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Dispose functions called automatically</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Cleaner, less error-prone code</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Can push multiple nested scopes</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Automatic cleanup and restoration</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Can't forget to re-register original services</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Dispose functions called automatically</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Cleaner, less error-prone code</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Can push multiple nested scopes</li>
 </ul>
 
 <strong>Use unregister when:</strong>
@@ -332,16 +332,16 @@ See [Scopes documentation](/documentation/get_it/scopes) for more patterns.
 
 <strong>When to use injectable:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Large apps with many services (50+)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You prefer declarative over imperative code</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want dependency injection to be more automatic</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Large apps with many services (50+)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ You prefer declarative over imperative code</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ You want dependency injection to be more automatic</li>
 </ul>
 
 <strong>When manual registration is fine:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Small to medium apps (< 50 services)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You prefer explicit, straightforward code</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want to avoid code generation build step</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Small to medium apps (< 50 services)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ You prefer explicit, straightforward code</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ You want to avoid code generation build step</li>
 </ul>
 
 <strong>Important:</strong> injectable is <strong>optional</strong>. get_it works great without it! The documentation here focuses on manual registration, which is simpler to learn and works for most apps.

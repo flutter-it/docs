@@ -29,7 +29,7 @@ final intNotifier = ValueNotifier<int>(42);
 final stringNotifier = intNotifier.map<String>((i) => i.toString());
 
 // Compile error if types don't match
-// final badNotifier = intNotifier.map<String>((i) => i); // ❌ Error
+// final badNotifier = intNotifier.map<String>((i) => i); // ❌️ Error
 ```
 
 ### Eager Initialization
@@ -172,7 +172,7 @@ source1
 ::: danger Important
 **Always** create chains outside build methods or use watch_it for automatic caching.
 
-**❌ DON'T:**
+**❌️ DON'T:**
 ```dart
 Widget build(BuildContext context) {
   return ValueListenableBuilder(
@@ -182,7 +182,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-**✅ DO:**
+**✅️ DO:**
 ```dart
 // Option 1: Create chain as field
 late final chain = source.map((x) => x * 2);

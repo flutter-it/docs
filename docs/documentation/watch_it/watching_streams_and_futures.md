@@ -202,11 +202,11 @@ Flat, readable code!
 
 ## Key Takeaways
 
-✅ `watchStream()` replaces `StreamBuilder` - no nesting
-✅ `watchFuture()` replaces `FutureBuilder` - same benefit
-✅ Both return `AsyncSnapshot<T>` - same API you know
-✅ Automatic subscription and cleanup
-✅ Combine sync and async data easily
+✅️ `watchStream()` replaces `StreamBuilder` - no nesting
+✅️ `watchFuture()` replaces `FutureBuilder` - same benefit
+✅️ Both return `AsyncSnapshot<T>` - same API you know
+✅️ Automatic subscription and cleanup
+✅️ Combine sync and async data easily
 
 **Next:** Learn about [side effects with handlers](/documentation/watch_it/handlers.md).
 

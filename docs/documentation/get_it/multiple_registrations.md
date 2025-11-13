@@ -17,9 +17,9 @@ Register multiple instances of the same type by giving each a unique name. This 
 
 <strong>Best for:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Different configurations of the same type (dev/prod endpoints)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Known set of instances accessed individually</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags (old/new implementation)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Different configurations of the same type (dev/prod endpoints)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Known set of instances accessed individually</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Feature flags (old/new implementation)</li>
 </ul>
 
 ### Approach 2: Multiple Unnamed Registrations (Requires Opt-In)
@@ -31,10 +31,10 @@ Register multiple instances without names and retrieve them all at once with `ge
 
 <strong>Best for:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Plugin systems (modules can add implementations)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Observer/event handler patterns</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Middleware chains</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ When you don't need to access instances individually</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Plugin systems (modules can add implementations)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Observer/event handler patterns</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Middleware chains</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ When you don't need to access instances individually</li>
 </ul>
 
 ::: tip You Can Combine Both Approaches
@@ -208,7 +208,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 
 ## Best Practices
 
-### ✅ Do
+### ✅️ Do
 
 - <strong>Enable at app startup</strong> before any registrations
 - <strong>Register most important/default implementation first</strong> (for `get<T>()`)
@@ -216,7 +216,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 - <strong>Document order dependencies</strong> if middleware/observer order matters
 - <strong>Use named registrations</strong> for special-purpose implementations that also need individual access
 
-### ❌ Don't
+### ❌️ Don't
 
 - <strong>Don't enable mid-application</strong> - do it during initialization
 - <strong>Don't rely on `get<T>()`</strong> to retrieve all implementations - use `getAll<T>()`
@@ -238,18 +238,18 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 
 <strong>When to use named registration:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Different configurations (dev/prod API endpoints)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags (old/new implementation)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Known set of instances accessed individually</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Multiple database connections</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Different configurations (dev/prod API endpoints)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Feature flags (old/new implementation)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Known set of instances accessed individually</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Multiple database connections</li>
 </ul>
 
 <strong>When to use multiple unnamed registration:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Modular plugin architecture</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Observer/event handler pattern</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Middleware chains</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Validators/processors pipeline</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Modular plugin architecture</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Observer/event handler pattern</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Middleware chains</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Validators/processors pipeline</li>
 </ul>
 
 <strong>Combining both approaches:</strong>

@@ -39,10 +39,10 @@ For testing classes in complete isolation (without get_it), use optional constru
 
 <strong>When to use:</strong>
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Testing pure business logic in isolation</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Classes that don't need the full dependency graph</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Testing pure business logic in isolation</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅️ Classes that don't need the full dependency graph</li>
 </ul>
-- ❌ Integration-style tests where you want real dependencies
+- ❌️ Integration-style tests where you want real dependencies
 
 ---
 
@@ -101,7 +101,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 
 ## Best Practices
 
-### ✅ Do
+### ✅️ Do
 
 1. <strong>Use scopes for test isolation</strong>
 
@@ -123,7 +123,7 @@ Factories create new instances on each `get()` call - verify this behavior in te
 
    <<< @/../code_samples/lib/get_it/testing_cc70be3d.dart#example
 
-### ❌ Don't
+### ❌️ Don't
 
 1. <strong>Don't call `reset()` between tests</strong>
 
