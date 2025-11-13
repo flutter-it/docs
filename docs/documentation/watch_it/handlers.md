@@ -4,16 +4,6 @@ You've learned [`watch()`](/documentation/watch_it/your_first_watch_functions.md
 
 That's where **handlers** come in.
 
-## Watch vs Handler: When to Use Each
-
-**Use `watch()` when you need to REBUILD the widget:**
-
-<<< @/../code_samples/lib/watch_it/handler_patterns.dart#watch_vs_handler_watch
-
-**Use `registerHandler()` when you need a SIDE EFFECT (no rebuild):**
-
-<<< @/../code_samples/lib/watch_it/handler_patterns.dart#watch_vs_handler_handler
-
 ## registerHandler - The Basics
 
 `registerHandler()` runs a callback when data changes, but doesn't trigger a rebuild:
@@ -24,6 +14,42 @@ That's where **handlers** come in.
 1. `select` - What to watch (like `watchValue`)
 2. `handler` - What to do when it changes
 3. Handler receives `context`, `value`, and `cancel` function
+
+## Key Handler Patterns
+
+### Triggering Actions on Business Objects
+
+One of the most common uses of handlers is to call commands or methods on business objects in response to triggers:
+
+<<< @/../code_samples/lib/watch_it/handler_trigger_business_object.dart#example
+
+**Key points:**
+- Handler watches a trigger (form submit, button press, etc.)
+- Handler calls command/method on business object
+- Same widget can optionally watch the command state (for loading indicators, etc.)
+- Clear separation: handler triggers action, watch shows state
+
+### Chaining Actions (Reload After Save)
+
+Handlers excel at chaining actions - triggering one operation after another completes:
+
+<<< @/../code_samples/lib/watch_it/handler_chain_actions_reload.dart#example
+
+**Key points:**
+- Handler watches for save completion
+- Handler triggers reload on another service
+- Common pattern: save → reload list, update → refresh data
+- Each service remains independent
+
+## Watch vs Handler: When to Use Each
+
+**Use `watch()` when you need to REBUILD the widget:**
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#watch_vs_handler_watch
+
+**Use `registerHandler()` when you need a SIDE EFFECT (no rebuild):**
+
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#watch_vs_handler_handler
 
 ## Common Use Cases
 
