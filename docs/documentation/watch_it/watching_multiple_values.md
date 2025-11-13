@@ -115,9 +115,9 @@ The choice between `watchIt()` on a `ChangeNotifier` and multiple `watchValue()`
 - ✅ You only display a **subset** of properties in each widget
 - ✅ Want granular control over rebuilds
 
-**Trade-off:** If multiple properties update together, you get multiple rebuilds. In such cases, consider:
-- **Batching with ChangeNotifier:** Update all properties, then call `notifyListeners()` once
-- **Using `watchPropertyValue()`:** Only rebuilds when the specific property VALUE changes, not just when the ChangeNotifier notifies
+**Trade-off:** If multiple properties update together, you get multiple rebuilds. In such cases:
+- **Better: Use ChangeNotifier instead** and call `notifyListeners()` once after all updates
+- **Alternative: Use `watchPropertyValue()`** to rebuild only when the specific property VALUE changes, not on every notifyListeners call
 
 ### Approach 3: watchPropertyValue() - Selective Updates
 
