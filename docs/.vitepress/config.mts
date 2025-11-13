@@ -13,11 +13,6 @@ export default defineConfig({
   // Ensure proper file handling
   cleanUrls: true,
 
-  // Rewrites for URL aliases
-  rewrites: {
-    'documentation/get_it/flutter_preview.md': 'documentation/get_it/flutter_previews.md'
-  },
-
   // Ignore dead links for documentation that's still being developed
   ignoreDeadLinks: [
     /\/documentation\/(watch_it|command_it)\/getting_started/
