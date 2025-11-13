@@ -627,9 +627,13 @@ class StreamManager {
   Stream<int> get stream1 => _controller1.stream;
   Stream<int> get stream2 => _controller2.stream;
 
+  // Controls which stream to use
+  final useStream1 = ValueNotifier<bool>(true);
+
   void dispose() {
     _controller1.close();
     _controller2.close();
+    useStream1.dispose();
   }
 }
 

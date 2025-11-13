@@ -79,14 +79,15 @@ class UnsafeInlineCombineWidget extends WatchingWidget {
 
 // #region when_to_use_allow_change
 class DynamicStreamWidget extends WatchingWidget {
-  const DynamicStreamWidget({super.key, required this.useStream1});
-
-  final bool useStream1;
+  const DynamicStreamWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ✅ CORRECT use of allowObservableChange: true
-    // Stream actually changes based on widget parameter
+    // Get dynamic value that determines which stream to watch
+    final useStream1 = watchValue((StreamManager m) => m.useStream1);
+
+    // ✅ CORRECT use of allowStreamChange: true
+    // Stream identity changes when useStream1 changes
     final data = watchStream(
       (StreamManager m) => useStream1 ? m.stream1 : m.stream2,
       initialValue: 0,
