@@ -64,14 +64,12 @@ class TodoCreationPage extends WatchingWidget {
             ElevatedButton(
               onPressed: isCreating
                   ? null
-                  : () {
-                      di<TodoManager>().createTodoCommand.execute(
-                            CreateTodoParams(
-                              title: titleController.text,
-                              description: descController.text,
-                            ),
-                          );
-                    },
+                  : () => di<TodoManager>().createTodoCommand.execute(
+                        CreateTodoParams(
+                          title: titleController.text,
+                          description: descController.text,
+                        ),
+                      ),
               child: isCreating
                   ? const SizedBox(
                       height: 20,
