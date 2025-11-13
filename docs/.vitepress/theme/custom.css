@@ -75,6 +75,12 @@ html:not(.dark) .diagram-light {
 
 /* Force proper emoji presentation in Chrome, Firefox, Edge (2024-2025 solution) */
 /* Supported in Chrome 131+, Firefox 141+, Edge 131+ */
-body {
+/* Apply to all content */
+.vp-doc {
   font-variant-emoji: emoji;
+}
+
+/* Exclude list markers from emoji rendering */
+.vp-doc li::marker {
+  font-variant-emoji: normal;
 }
