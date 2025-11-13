@@ -3,6 +3,7 @@ import 'package:watch_it/watch_it.dart' hide di;
 import 'package:listen_it/listen_it.dart';
 import '_shared/stubs.dart';
 
+// #region manager
 class Manager {
   final value1 = ValueNotifier<int>(0);
   final value2 = ValueNotifier<int>(0);
@@ -13,6 +14,7 @@ class Manager {
     (v1, v2) => v1 > 0 && v2 > 0,
   );
 }
+// #endregion manager
 
 // #region separate_watches
 class SeparateWatchesWidget extends WatchingWidget {

@@ -69,7 +69,9 @@ When you have multiple event sources of the **same type** that should trigger th
 
 ## Comparison: When to Use Each Approach
 
-Let's see both approaches side by side:
+Let's see both approaches side by side with the same Manager class:
+
+<<< @/../code_samples/lib/watch_it/multiple_values_comparison_example.dart#manager
 
 <<< @/../code_samples/lib/watch_it/multiple_values_comparison_example.dart#separate_watches
 
