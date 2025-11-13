@@ -140,32 +140,30 @@ class MyWidget extends WatchingWidget {
 
 ## Troubleshooting
 
-### Error: "watch call order changed"
+### Error: "Watch ordering violation detected!"
 
-**Cause:** You have conditional watch calls **followed by other watches**.
+**Full error message:**
+```
+Watch ordering violation detected!
+
+You have conditional watch calls (inside if/switch statements) that are
+causing watch_it to retrieve the wrong objects on rebuild.
+
+Fix: Move ALL conditional watch calls to the END of your build method.
+Only the LAST watch call can be conditional.
+```
+
+**What happened:**
+- You have a watch inside an `if` statement
+- This watch is **followed by other watches**
+- On rebuild, the condition changed, causing watch_it to try to retrieve the wrong type at that position
+- A TypeError was thrown when trying to cast the watch entry
 
 **Solution:**
-1. Move all watch calls to the top of `build()`
-2. Ensure they run unconditionally, OR
-3. Move conditional watches to the END (after all other watches)
-4. Use the values conditionally, not the watches
+1. Move conditional watches to the END of your build method, OR
+2. Make all watches unconditional and use the values conditionally instead
 
-### Error: "More/fewer watches than last build"
-
-**Cause:** Number of watch calls changed between builds due to conditionals in the middle.
-
-**Solution:**
-- Check for watches inside `if` statements **followed by other watches**
-- Check for watches inside loops
-- Move conditional watches to the END if you need them
-
-### Unexpected Data
-
-**Symptom:** Widget shows data from wrong source.
-
-**Cause:** Watch order changed, so watch #2 is now receiving data meant for watch #3.
-
-**Solution:** Fix the ordering to be consistent.
+**Tip:** Call `enableTracing()` in your build method to see exact source locations of the conflicting watch statements.
 
 ## Best Practices Checklist
 
