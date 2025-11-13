@@ -93,18 +93,58 @@ Let's see both approaches side by side with the same Manager class:
 
 ## watchIt() vs Multiple watchValue()
 
-If you're using `ChangeNotifier` and need ALL its properties:
+The choice between `watchIt()` on a `ChangeNotifier` and multiple `watchValue()` calls depends on your update patterns.
+
+### Approach 1: watchIt() - Watch Entire ChangeNotifier
 
 <<< @/../code_samples/lib/watch_it/multiple_values_watch_it_vs_watch_value.dart#watch_it_approach
 
-**However**, the better design is to use individual `ValueNotifiers`:
+**When to use:**
+- ✅ You need **most/all** properties in your UI
+- ✅ Properties are **updated together** (batched updates)
+- ✅ Simple design - one notifyListeners() call updates everything
+
+**Trade-off:** Widget rebuilds even if only one property changes.
+
+### Approach 2: Multiple ValueNotifiers
 
 <<< @/../code_samples/lib/watch_it/multiple_values_watch_it_vs_watch_value.dart#better_design
 
-**Why better:**
-- More granular: Watch only what you need
-- Better performance: Fewer unnecessary rebuilds
-- More flexible: Can combine specific values
+**When to use:**
+- ✅ Properties update **independently** and **frequently**
+- ✅ You only display a **subset** of properties in each widget
+- ✅ Want granular control over rebuilds
+
+**Trade-off:** If multiple properties update together, you get multiple rebuilds. In such cases, consider:
+- **Batching with ChangeNotifier:** Update all properties, then call `notifyListeners()` once
+- **Using `watchPropertyValue()`:** Only rebuilds when the specific property VALUE changes, not just when the ChangeNotifier notifies
+
+### Approach 3: watchPropertyValue() - Selective Updates
+
+If you need to watch a ChangeNotifier but only care about specific property value changes:
+
+```dart
+class SettingsWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Only rebuilds when darkMode VALUE changes
+    // (not on every notifyListeners call)
+    final darkMode = watchPropertyValue((UserSettings s) => s.darkMode);
+
+    return Switch(
+      value: darkMode,
+      onChanged: (value) => di<UserSettings>().setDarkMode(value),
+    );
+  }
+}
+```
+
+**When to use:**
+- ✅ ChangeNotifier has many properties
+- ✅ You only need one or few properties
+- ✅ Other properties change frequently but you don't care
+
+**Key benefit:** Rebuilds only when `s.darkMode` **value** changes, ignoring notifications about other property changes.
 
 ## Safety: Automatic Caching with allowObservableChange
 
