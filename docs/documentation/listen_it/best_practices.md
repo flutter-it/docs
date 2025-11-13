@@ -52,7 +52,7 @@ print(lazy.value);  // 21 ✅ (NOW updates on next change)
 **Recommendation**: Don't mix. Use all-eager (default, simple) or all-lazy (memory optimization). Mixing can cause hard-to-debug stale values.
 :::
 
-### ❌ WRONG: Chains in Build Methods
+### ❌️ WRONG: Chains in Build Methods
 
 Never create chains inline in build methods:
 
