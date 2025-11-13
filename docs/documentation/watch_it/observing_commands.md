@@ -1,5 +1,9 @@
 # Observing Commands with `watch_it`
 
+::: warning
+This content is AI generated and is currently under review.
+:::
+
 One of the most powerful combinations in the flutter_it ecosystem is using `watch_it` to observe `command_it` commands. This pattern provides reactive, declarative state management for async operations with automatic loading states, error handling, and result updates.
 
 ## Why `watch_it` + command_it?

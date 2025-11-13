@@ -2,34 +2,72 @@
 
 ## callOnce() and onDispose()
 
-If you want to execute a function  only on the first built (even in in a StatelessWidget), you can use the `callOnce` function anywhere in your build function. It has an optional `dispose` handler which will be called when the widget is disposed.
+Execute a function only on the first build (even in a StatelessWidget), with optional dispose handler.
 
-To dispose anything when the widget is disposed you can use call `onDispose` anywhere in your build function
+**Method signatures:**
+
+```dart
+void callOnce(
+  void Function(BuildContext context) init,
+  {void Function()? dispose}
+);
+
+void onDispose(void Function() dispose);
+```
+
+**Typical use case:** Trigger data loading on first build, then display results with `watchValue`:
+
+<<< @/../code_samples/lib/watch_it/lifecycle_call_once_example.dart#example
 
 ## createOnce and createOnceAsync
 
-If you need an object that is created on the first build of your stateless widget that is automatically disposed when the widget is destroyed you can use `createOnce`:
+Create an object on the first build that is automatically disposed when the widget is destroyed. Ideal for all types of controllers (`TextEditingController`, `AnimationController`, `ScrollController`, etc.) or reactive local state (`ValueNotifier`, `ChangeNotifier`).
+
+**Method signatures:**
+
+```dart
+T createOnce<T extends Object>(
+  T Function() factoryFunc,
+  {void Function(T)? dispose}
+);
+
+AsyncSnapshot<T> createOnceAsync<T>(
+  Future<T> Function() factoryFunc,
+  {required T initialValue, void Function(T)? dispose}
+);
+```
 
 <<< @/../code_samples/lib/watch_it/lifecycle_create_once_example.dart#example
 
-On the first build, the controller gets created. On all following builds the same controller instance is returned. When the widget is disposed the controller gets disposed by either:
+**How it works:**
+- On first build, the object is created with `factoryFunc`
+- On subsequent builds, the same instance is returned
+- When the widget is disposed:
+  - If the object has a `dispose()` method, it's called automatically
+  - If you need a different dispose function (like `cancel()` on StreamSubscription), pass it as the `dispose` parameter
 
-* if the object contains a `dispose()` method it will be called automatically
-* if you need to call a different function to dispose the object, like `cancel()` on a StreamSubscription you can pass a custom dispose function as a second parameter to `createOnce`.
+**Creating local state with ValueNotifier:**
 
-If the object you need requires an async creation function you can use:
+<<< @/../code_samples/lib/watch_it/watch_create_once_local_state.dart#example
+
+## createOnceAsync
+
+Ideal for one-time async function calls to display data, for instance from some backend endpoint.
+
+**Full signature:**
 
 ```dart
-/// [createOnceAsync] creates an  object with the async factory function
-/// [factoryFunc] at the time of the first build and disposes it when the widget
-/// is disposed if the object implements the Disposable interface.
-/// [initialValue] is the value that will be returned until the factory function
-/// completes.
-/// When the [factoryFunc] completes the value will be updated with the new value
-/// and the widget will be rebuilt.
-/// [dispose] allows you to pass a custom dispose function to dispose of the
-/// object.
-/// if provided it will override the default dispose behavior.
-AsyncSnapshot<T> createOnceAsync<T>(Future<T> Function() factoryFunc,
-    {required T initialValue, void Function(T)? dispose});
+AsyncSnapshot<T> createOnceAsync<T>(
+  Future<T> Function() factoryFunc,
+  {required T initialValue, void Function(T)? dispose}
+);
 ```
+
+**How it works:**
+- Returns `AsyncSnapshot<T>` immediately with `initialValue`
+- Executes `factoryFunc` asynchronously on first build
+- Widget rebuilds automatically when the future completes
+- `AsyncSnapshot` contains the state (loading, data, error)
+- Object is disposed when widget is destroyed
+
+<<< @/../code_samples/lib/watch_it/lifecycle_create_once_async_example.dart#example

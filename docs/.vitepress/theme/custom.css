@@ -97,3 +97,26 @@ h1, h2, h3, h4, h5, h6 {
 .emoji-list li::marker {
   content: none;
 }
+
+/* Custom warning banner colors - Orange option */
+.vp-doc .warning {
+  background-color: #fff7ed;
+  border-color: #ea580c;
+}
+
+.dark .vp-doc .warning {
+  background-color: #7c2d12;
+  border-color: #fdba74;
+}
+
+/* Purple option - uncomment to use instead of orange
+.vp-doc .warning {
+  background-color: #f3e8ff;
+  border-color: #9333ea;
+}
+
+.dark .vp-doc .warning {
+  background-color: #2e1065;
+  border-color: #a855f7;
+}
+*/

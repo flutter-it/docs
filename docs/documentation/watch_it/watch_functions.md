@@ -1,5 +1,9 @@
 # Watch Functions
 
+::: warning
+This content is AI generated and is currently under review.
+:::
+
 ## Watching Data
 
 Where `WatchIt` really shines is data-binding. It comes with a set of `watch` methods to rebuild a widget when data changes.

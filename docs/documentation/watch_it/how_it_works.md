@@ -1,5 +1,9 @@
 # How Does It Work?
 
+::: warning
+This content is AI generated and is currently under review.
+:::
+
 ## Lifting the magic curtain
 
 *It's not necessary to understand the following chapter to use `WatchIt` successfully.

@@ -1,5 +1,9 @@
 # Best Practices
 
+::: warning
+This content is AI generated and is currently under review.
+:::
+
 Production-ready patterns, performance tips, and testing strategies for `watch_it` applications.
 
 ## Architecture Patterns

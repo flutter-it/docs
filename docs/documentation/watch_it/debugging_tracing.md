@@ -1,5 +1,9 @@
 # Debugging & Troubleshooting
 
+::: warning
+This content is AI generated and is currently under review.
+:::
+
 Common errors, solutions, debugging techniques, and troubleshooting strategies for `watch_it`.
 
 ## Common Errors
