@@ -1,7 +1,7 @@
 // ignore_for_file: unused_local_variable, unreachable_from_main, undefined_class, undefined_identifier, unused_element
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart' hide di;
+import 'package:listen_it/listen_it.dart';
 import '_shared/stubs.dart';
 
 // #region watch_vs_handler_watch
@@ -134,39 +134,16 @@ class Pattern2LoadingDialog extends WatchingWidget {
 }
 // #endregion pattern2_loading_dialog
 
-// #region pattern3_chain_actions
-class Pattern3ChainActions extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    // When create succeeds, refresh the list
-    registerHandler(
-      select: (TodoManager m) => m.todos,
-      handler: (context, todos, cancel) {
-        if (todos.isNotEmpty) {
-          // Todos changed - could refresh or do something else
-          print('Todos updated: ${todos.length}');
-        }
-      },
-    );
-    return Container();
-  }
-}
-// #endregion pattern3_chain_actions
-
 // #region pattern4_debounced_actions
 class Pattern4DebouncedActions extends WatchingWidget {
-  Timer? _debounce;
-
   @override
   Widget build(BuildContext context) {
     registerHandler(
-      select: (SimpleUserManager m) => m.name,
+      select: (SimpleUserManager m) =>
+          m.name.debounce(Duration(milliseconds: 300)),
       handler: (context, query, cancel) {
-        _debounce?.cancel();
-        _debounce = Timer(Duration(milliseconds: 300), () {
-          // Debounced search
-          print('Searching for: $query');
-        });
+        // Handler only fires after 300ms of no changes
+        print('Searching for: $query');
       },
     );
     return Container();

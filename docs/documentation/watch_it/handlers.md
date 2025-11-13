@@ -2,22 +2,28 @@
 
 You've learned [`watch()`](/documentation/watch_it/your_first_watch_functions.md) functions for rebuilding widgets. But what about actions that DON'T need a rebuild, like calling a function, navigation, showing toasts, or logging?
 
-That's where **handlers** come in.
+That's where **handlers** come in. Handlers can react to changes in [ValueListenables](#registerhandler-for-valuelistenables), [Listenables](#registerchangenotifierhandler-for-changenotifier), [Streams](#registerstreamhandler-for-streams), and [Futures](#registerfuturehandler-for-futures) without triggering widget rebuilds.
 
 ## registerHandler - The Basics
 
 `registerHandler()` runs a callback when data changes, but doesn't trigger a rebuild:
 
-<<< @/../code_samples/lib/watch_it/register_handler_example.dart#example
+<<< @/../code_samples/lib/watch_it/register_handler_basic_example.dart#example
 
 **The pattern:**
 1. `select` - What to watch (like `watchValue`)
 2. `handler` - What to do when it changes
 3. Handler receives `context`, `value`, and `cancel` function
 
-## Key Handler Patterns
+## Common Handler Patterns
 
-### Triggering Actions on Business Objects
+::: details Navigation on Success {open}
+
+<<< @/../code_samples/lib/watch_it/handler_navigation_example.dart#example
+
+:::
+
+::: details Calling Business Functions
 
 One of the most common uses of handlers is to call commands or methods on business objects in response to triggers:
 
@@ -29,17 +35,13 @@ One of the most common uses of handlers is to call commands or methods on busine
 - Same widget can optionally watch the command state (for loading indicators, etc.)
 - Clear separation: handler triggers action, watch shows state
 
-### Chaining Actions (Reload After Save)
+:::
 
-Handlers excel at chaining actions - triggering one operation after another completes:
+::: details Show Snackbar
 
-<<< @/../code_samples/lib/watch_it/handler_chain_actions_reload.dart#example
+<<< @/../code_samples/lib/watch_it/handler_snackbar_example.dart#example
 
-**Key points:**
-- Handler watches for save completion
-- Handler triggers reload on another service
-- Common pattern: save → reload list, update → refresh data
-- Each service remains independent
+:::
 
 ## Watch vs Handler: When to Use Each
 
@@ -51,29 +53,33 @@ Handlers excel at chaining actions - triggering one operation after another comp
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#watch_vs_handler_handler
 
-## Common Use Cases
+## Complete Example: Todo Creation
 
-### 1. Navigation on Success
+This example combines multiple handler patterns - navigation on success, error handling, and watching loading state:
 
-<<< @/../code_samples/lib/watch_it/handler_navigation_example.dart#example
+<<< @/../code_samples/lib/watch_it/register_handler_example.dart#example
 
-### 2. Show Snackbar
+**This example demonstrates:**
+- Watching command result for navigation
+- Separate error handler with error UI
+- Combining `registerHandler()` (side effects) with `watchValue()` (UI state)
+- Using `createOnce()` for controllers
 
-<<< @/../code_samples/lib/watch_it/handler_snackbar_example.dart#example
+## The `cancel` Parameter
 
-### 3. Show Error Dialog
+All handlers receive a `cancel` function. Call it to stop reacting:
 
-<<< @/../code_samples/lib/watch_it/command_handler_error_example.dart#example
+<<< @/../code_samples/lib/watch_it/handler_patterns.dart#cancel_parameter
 
-### 4. Logging / Analytics
+**Common use case**: One-time actions
 
-<<< @/../code_samples/lib/watch_it/handler_patterns.dart#logging_analytics
+<<< @/../code_samples/lib/watch_it/handler_cancel_example.dart#example
 
 ## Handler Types
 
 `watch_it` provides specialized handlers for different data types:
 
-### registerHandler - Generic Handler
+### registerHandler - For ValueListenables
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#register_handler_generic
 
@@ -104,39 +110,73 @@ Handlers excel at chaining actions - triggering one operation after another comp
 - Need access to the full notifier object
 - Want to trigger actions on any change
 
-## The `cancel` Parameter
+## Advanced Patterns
 
-All handlers receive a `cancel` function. Call it to stop watching:
+::: details Chaining Actions
 
-<<< @/../code_samples/lib/watch_it/handler_patterns.dart#cancel_parameter
+Handlers excel at chaining actions - triggering one operation after another completes:
 
-**Common use case**: One-time actions
+<<< @/../code_samples/lib/watch_it/handler_chain_actions_reload.dart#example
 
-<<< @/../code_samples/lib/watch_it/handler_cancel_example.dart#example
+**Key points:**
+- Handler watches for save completion
+- Handler triggers reload on another service
+- Common pattern: save → reload list, update → refresh data
+- Each service remains independent
 
-## Combining Handlers and Watch
+:::
 
-You can use both in the same widget:
+::: details Error Handling
 
-<<< @/../code_samples/lib/watch_it/handler_combining_watch_example.dart#example
+<<< @/../code_samples/lib/watch_it/command_handler_error_example.dart#example
 
-## Handler Patterns
+:::
 
-### Pattern 1: Conditional Navigation
-
-<<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern1_conditional_navigation
-
-### Pattern 2: Show Loading Dialog
-
-<<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern2_loading_dialog
-
-### Pattern 3: Chain Actions
-
-<<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern3_chain_actions
-
-### Pattern 4: Debounced Actions
+::: details Debounced Actions
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#pattern4_debounced_actions
+
+:::
+
+## Optional Handler Configuration
+
+All handler functions accept additional optional parameters:
+
+**`target`** - Provide a local object to watch (instead of using get_it):
+```dart
+final myManager = UserManager();
+
+registerHandler(
+  select: (UserManager m) => m.currentUser,
+  handler: (context, user, cancel) { /* ... */ },
+  target: myManager, // Use this local object, not get_it
+);
+
+// Or provide the listenable/stream/future directly without selector
+registerHandler(
+  handler: (context, user, cancel) { /* ... */ },
+  target: myValueNotifier, // Watch this ValueNotifier directly
+);
+```
+
+::: warning Important
+If `target` is used as the observable object (listenable/stream/future) and it changes during builds with `allowObservableChange: false` (the default), an exception will be thrown. Set `allowObservableChange: true` if the target observable needs to change between builds.
+:::
+
+**`allowObservableChange`** - Controls selector caching behavior (default: `false`):
+
+See [Safety: Automatic Caching in Selector Functions](/documentation/watch_it/watching_multiple_values.md#safety-automatic-caching-in-selector-functions) for detailed explanation of this parameter.
+
+**`executeImmediately`** - Execute handler on first build with current value (default: `false`):
+```dart
+registerHandler(
+  select: (DataManager m) => m.data,
+  handler: (context, value, cancel) { /* ... */ },
+  executeImmediately: true, // Handler called immediately with current value
+);
+```
+
+When `true`, the handler is called on the first build with the current value of the observed object, without waiting for a change. The handler then continues to execute on subsequent changes.
 
 ## Handler vs Watch Decision Tree
 
@@ -146,9 +186,11 @@ You can use both in the same widget:
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#decision_tree_watch
 
-**NO** → Use `registerHandler()`:
+**NO (Should it call a function, navigate, show a toast, etc.)** → Use `registerHandler()`:
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#decision_tree_handler
+
+**Important**: You cannot update local variables inside a handler that will be used in the build function outside the handler. Handlers don't trigger rebuilds, so any variable changes won't be reflected in the UI. If you need to update the UI, use `watch()` instead.
 
 ## Common Mistakes
 

@@ -20,15 +20,15 @@ class UserService {
 // Form manager that triggers save
 class FormManager {
   final isValid = ValueNotifier<bool>(false);
-  final submitTrigger = ValueNotifier<bool>(false);
+  final onSubmitted = ValueNotifier<int>(0);
 
   void submit() {
-    submitTrigger.value = true;
+    onSubmitted.value++; // Increment to trigger
   }
 
   void dispose() {
     isValid.dispose();
-    submitTrigger.dispose();
+    onSubmitted.dispose();
   }
 }
 
@@ -40,12 +40,10 @@ class UserFormWidget extends WatchingWidget {
   Widget build(BuildContext context) {
     // Handler triggers the save command on the business object
     registerHandler(
-      select: (FormManager m) => m.submitTrigger,
-      handler: (context, shouldSubmit, cancel) {
-        if (shouldSubmit) {
-          // Call command on business object
-          di<UserService>().saveUserCommand.execute();
-        }
+      select: (FormManager m) => m.onSubmitted,
+      handler: (context, _, cancel) {
+        // Call command on business object whenever triggered
+        di<UserService>().saveUserCommand.execute();
       },
     );
 
