@@ -184,7 +184,7 @@ class MyWidget extends WatchingWidget {
 - Put watches in `if` statements **when followed by other watches**
 - Put watches in loops
 - Put watches in callbacks
-- Return early **before calling all watches** (unless no watches follow)
+- Have watches after early returns
 
 ## Advanced: Why This Happens
 
