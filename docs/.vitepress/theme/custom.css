@@ -72,3 +72,9 @@ html:not(.dark) .diagram-light {
   --vp-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
   --vp-font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji";
 }
+
+/* Force proper emoji presentation in Chrome, Firefox, Edge (2024-2025 solution) */
+/* Supported in Chrome 131+, Firefox 141+, Edge 131+ */
+body {
+  font-variant-emoji: emoji;
+}
