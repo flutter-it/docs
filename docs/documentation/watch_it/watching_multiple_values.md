@@ -146,10 +146,10 @@ class SettingsWidget extends WatchingWidget {
 
 **Key benefit:** Rebuilds only when `s.darkMode` **value** changes, ignoring notifications about other property changes.
 
-## Safety: Automatic Caching with allowObservableChange
+## Safety: Automatic Caching in Selector Functions
 
 ::: tip Safe to Use Operators in Selectors
-You can safely use `listen_it` operators like `combineLatest()` inside your `watchValue()` selector function. The default `allowObservableChange: false` ensures the operator chain is created once and cached.
+You can safely use `listen_it` operators like `combineLatest()` inside selector functions of `watchValue()`, `watchStream()`, `watchFuture()`, and other watch functions. The default `allowObservableChange: false` ensures the operator chain is created once and cached.
 :::
 
 <<< @/../code_samples/lib/watch_it/multiple_values_inline_combine_safe.dart#safe_inline_combine
