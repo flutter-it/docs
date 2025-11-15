@@ -15,7 +15,7 @@ dependencies:
     path: ../../get_it
   watch_it:
     path: ../../watch_it
-  command_it: ^8.0.0
+  command_it: ^9.0.1
   listen_it:
     path: ../../listen_it
 

@@ -6,15 +6,15 @@ import '_shared/stubs.dart';
 class TodoLoadingWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    // Watch command's isExecuting property to show loading state
+    // Watch command's isRunning property to show loading state
     // This is the most common pattern for reactive loading indicators
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
     final todos = watchValue((TodoManager m) => m.todos);
 
     // Load data on first build
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(
@@ -48,7 +48,7 @@ class TodoLoadingWidget extends WatchingWidget {
               // Disable button while loading
               onPressed: isLoading
                   ? null
-                  : () => di<TodoManager>().fetchTodosCommand.execute(),
+                  : () => di<TodoManager>().fetchTodosCommand.run(),
               child: const Text('Refresh'),
             ),
           ),

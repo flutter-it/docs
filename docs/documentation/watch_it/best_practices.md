@@ -204,7 +204,7 @@ testWidgets('shows snackbar on success', (tester) async {
   );
 
   // Trigger command
-  manager.createTodoCommand.execute('New Todo');
+  manager.createTodoCommand.run('New Todo');
   await tester.pump();  // Process command
   await tester.pump();  // Show snackbar
 

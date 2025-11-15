@@ -47,17 +47,17 @@ class UserListWidget extends WatchingWidget {
       handler: (context, count, cancel) {
         if (count > 0) {
           // Chain action: trigger reload on another service
-          di<UserListService>().reloadCommand.execute();
+          di<UserListService>().reloadCommand.run();
         }
       },
     );
 
     // Watch the reload state to show loading indicator
     final isReloading = watchValue(
-      (UserListService s) => s.reloadCommand.isExecuting,
+      (UserListService s) => s.reloadCommand.isRunning,
     );
     final isSaving = watchValue(
-      (UserService s) => s.saveUserCommand.isExecuting,
+      (UserService s) => s.saveUserCommand.isRunning,
     );
 
     return Column(
@@ -78,7 +78,7 @@ class UserListWidget extends WatchingWidget {
           onPressed: isSaving
               ? null
               : () {
-                  di<UserService>().saveUserCommand.execute();
+                  di<UserService>().saveUserCommand.run();
                   // Trigger the reload handler
                   di<UserService>().saveCompleted.value++;
                 },

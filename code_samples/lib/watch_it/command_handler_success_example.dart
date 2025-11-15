@@ -29,7 +29,7 @@ class CreateTodoWithHandlerWidget extends WatchingWidget {
     );
 
     final isCreating =
-        watchValue((TodoManager m) => m.createTodoCommand.isExecuting);
+        watchValue((TodoManager m) => m.createTodoCommand.isRunning);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Command Handler - Success')),
@@ -69,7 +69,7 @@ class CreateTodoWithHandlerWidget extends WatchingWidget {
                           title: titleController.text,
                           description: descController.text,
                         );
-                        di<TodoManager>().createTodoCommand.execute(params);
+                        di<TodoManager>().createTodoCommand.run(params);
                       },
                 child: isCreating
                     ? const SizedBox(

@@ -23,10 +23,10 @@ class _FilteredTodoListPageState extends State<FilteredTodoListPage> {
     // Reactive state from watch_it
     final todos = watchValue((TodoManager m) => m.todos);
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
 
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     // Filter todos using local state

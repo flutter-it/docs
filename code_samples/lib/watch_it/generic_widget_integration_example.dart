@@ -55,7 +55,7 @@ class GenericWidgetExample extends StatelessWidget with WatchItMixin {
   @override
   Widget build(BuildContext context) {
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(
@@ -65,7 +65,7 @@ class GenericWidgetExample extends StatelessWidget with WatchItMixin {
           // Generic DataDisplay widget
           DataDisplay<bool>(
             select: (_) =>
-                watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting),
+                watchValue((TodoManager m) => m.fetchTodosCommand.isRunning),
             builder: (context, isLoading) {
               return Container(
                 padding: const EdgeInsets.all(16),
@@ -99,7 +99,7 @@ class GenericWidgetExample extends StatelessWidget with WatchItMixin {
                     value: todo.completed,
                     onChanged: (value) {
                       final updated = todo.copyWith(completed: value ?? false);
-                      di<TodoManager>().updateTodoCommand.execute(updated);
+                      di<TodoManager>().updateTodoCommand.run(updated);
                     },
                   ),
                 );

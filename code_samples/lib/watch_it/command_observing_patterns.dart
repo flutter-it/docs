@@ -12,7 +12,7 @@ void watchValuePattern(BuildContext context) {
 
   // Watch its value
   final weather = watch(manager.fetchWeatherCommand).value;
-  final isLoading = watch(manager.fetchWeatherCommand.isExecuting).value;
+  final isLoading = watch(manager.fetchWeatherCommand.isRunning).value;
 }
 // #endregion watch_value_pattern
 
@@ -22,7 +22,7 @@ class DontAwaitExecuteGood extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => di<TodoManager>().createTodoCommand.execute(
+      onPressed: () => di<TodoManager>().createTodoCommand.run(
             CreateTodoParams(title: 'New todo', description: 'Description'),
           ),
       child: Text('Submit'),
@@ -38,7 +38,7 @@ class DontAwaitExecuteBad extends WatchingWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        await di<TodoManager>().createTodoCommand.executeWithFuture(
+        await di<TodoManager>().createTodoCommand.runAsync(
               CreateTodoParams(title: 'New todo', description: 'Description'),
             );
       },
@@ -50,21 +50,21 @@ class DontAwaitExecuteBad extends WatchingWidget {
 
 // Helper command for examples
 class Command {
-  final isExecuting = ValueNotifier<bool>(false);
+  final isRunning = ValueNotifier<bool>(false);
   final errors = ValueNotifier<String?>(null);
   final value = ValueNotifier<String?>(null);
 
-  void execute() {}
-  Future<void> executeWithFuture() async {}
+  void run() {}
+  Future<void> runAsync() async {}
 }
 
 // #region watch_execution_state_good
-// ✓ GOOD - Watch isExecuting
+// ✓ GOOD - Watch isRunning
 class WatchExecutionStateGood extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final command = createOnce(() => Command());
-    final isLoading = watch(command.isExecuting).value;
+    final isLoading = watch(command.isRunning).value;
 
     if (isLoading) {
       return CircularProgressIndicator();
@@ -122,7 +122,7 @@ class InitialLoadPattern extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final command = di<TodoManager>().fetchTodosCommand;
-    final isLoading = watch(command.isExecuting).value;
+    final isLoading = watch(command.isRunning).value;
     final data = watch(command).value;
 
     // Show spinner only when no data yet
@@ -160,12 +160,12 @@ class FormSubmissionPattern extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     final manager = di<Manager>();
-    final isSubmitting = watch(manager.submitCommand.isExecuting).value;
+    final isSubmitting = watch(manager.submitCommand.isRunning).value;
     final canSubmit = formKey.currentState?.validate() ?? false;
 
     return ElevatedButton(
       onPressed: canSubmit && !isSubmitting
-          ? () => manager.submitCommand.execute()
+          ? () => manager.submitCommand.run()
           : null,
       child: isSubmitting ? CircularProgressIndicator() : Text('Submit'),
     );
@@ -182,8 +182,8 @@ class PullToRefreshPattern extends WatchingWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        manager.fetchTodosCommand.execute();
-        await manager.fetchTodosCommand.executeWithFuture();
+        manager.fetchTodosCommand.run();
+        await manager.fetchTodosCommand.runAsync();
       },
       child: ListView(children: []),
     );
@@ -204,7 +204,7 @@ class RetryOnErrorPattern extends WatchingWidget {
         children: [
           Text('Error: $error'),
           ElevatedButton(
-            onPressed: () => command.execute(),
+            onPressed: () => command.run(),
             child: Text('Retry'),
           ),
         ],

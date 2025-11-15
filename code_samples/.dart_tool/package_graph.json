@@ -54,7 +54,7 @@
     },
     {
       "name": "test",
-      "version": "1.26.2",
+      "version": "1.26.3",
       "dependencies": [
         "analyzer",
         "async",
@@ -104,7 +104,7 @@
     },
     {
       "name": "command_it",
-      "version": "8.0.0",
+      "version": "9.0.1",
       "dependencies": [
         "flutter",
         "listen_it",
@@ -131,7 +131,7 @@
     },
     {
       "name": "meta",
-      "version": "1.16.0",
+      "version": "1.17.0",
       "dependencies": []
     },
     {
@@ -183,7 +183,7 @@
     },
     {
       "name": "test_core",
-      "version": "0.6.11",
+      "version": "0.6.12",
       "dependencies": [
         "analyzer",
         "args",
@@ -210,7 +210,7 @@
     },
     {
       "name": "test_api",
-      "version": "0.7.6",
+      "version": "0.7.7",
       "dependencies": [
         "async",
         "boolean_selector",

@@ -377,7 +377,7 @@ class TodoListStructure extends WatchingWidget {
 
     // 3. One-time initialization
     callOnce((_) {
-      di<TodoManagerStructure>().fetchCommand.execute();
+      di<TodoManagerStructure>().fetchCommand.run();
     });
 
     // 4. Build UI
@@ -445,8 +445,8 @@ class PullToRefreshPattern extends WatchingWidget {
     return RefreshIndicator(
       onRefresh: () async {
         final manager = di<TodoManager>();
-        manager.fetchTodosCommand.execute();
-        await manager.fetchTodosCommand.executeWithFuture();
+        manager.fetchTodosCommand.run();
+        await manager.fetchTodosCommand.runAsync();
       },
       child: ListView.builder(
         itemCount: todos.length,
@@ -519,7 +519,7 @@ class _PaginationPatternState extends State<PaginationPattern> {
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      di<Manager>().loadMoreCommand.execute();
+      di<Manager>().loadMoreCommand.run();
     }
   }
 
@@ -527,7 +527,7 @@ class _PaginationPatternState extends State<PaginationPattern> {
   Widget build(BuildContext context) {
     final items = watchValue((Manager m) => m.items);
     final isLoadingMore =
-        watchValue((Manager m) => m.loadMoreCommand.isExecuting);
+        watchValue((Manager m) => m.loadMoreCommand.isRunning);
 
     return ListView.builder(
       controller: _scrollController,
@@ -555,7 +555,7 @@ class DontAccessGetItConstructorsGood extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     callOnce((_) {
-      di<Manager>().loadMoreCommand.execute(); // Do this instead
+      di<Manager>().loadMoreCommand.run(); // Do this instead
     });
     return Container();
   }
@@ -586,7 +586,7 @@ class DontAwaitExecuteBadAnti extends WatchingWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        await di<TodoManager>().createTodoCommand.executeWithFuture(
+        await di<TodoManager>().createTodoCommand.runAsync(
             CreateTodoParams(title: 'New', description: '')); // Blocks!
       },
       child: Text('Submit'),
@@ -601,7 +601,7 @@ class DontAwaitExecuteGoodAnti extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => di<TodoManager>().createTodoCommand.execute(
+      onPressed: () => di<TodoManager>().createTodoCommand.run(
           CreateTodoParams(
               title: 'New', description: '')), // Returns immediately
       child: Text('Submit'),

@@ -12,11 +12,11 @@ class CallOnceWidget extends WatchingWidget {
     callOnce((_) {
       debugPrint('This runs once on first build');
       // Trigger initial data load
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
     final todos = watchValue((TodoManager m) => m.todos);
 
     return Scaffold(
@@ -65,7 +65,7 @@ class CallOnceWidget extends WatchingWidget {
             child: ElevatedButton(
               onPressed: isLoading
                   ? null
-                  : () => di<TodoManager>().fetchTodosCommand.execute(),
+                  : () => di<TodoManager>().fetchTodosCommand.run(),
               child: const Text('Refresh'),
             ),
           ),

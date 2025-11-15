@@ -108,9 +108,9 @@ class Pattern2LoadingDialog extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     registerHandler(
-      select: (TodoManager m) => m.createTodoCommand.isExecuting,
-      handler: (context, isExecuting, cancel) {
-        if (isExecuting) {
+      select: (TodoManager m) => m.createTodoCommand.isRunning,
+      handler: (context, isRunning, cancel) {
+        if (isRunning) {
           showDialog(
             context: context,
             barrierDismissible: false,

@@ -8,7 +8,7 @@
   static Command<void, void> createSyncNoParamNoResult(
     void Function() action, {
     ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
+    void Function()? ifRestrictedRunInstead,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,
     String? debugName,
@@ -17,7 +17,7 @@
   static Command<TParam, void> createSyncNoResult<TParam>(
     void Function(TParam x) action, {
     ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
+    ExecuteInsteadHandler<TParam>? ifRestrictedRunInstead,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,
     String? debugName,
@@ -27,7 +27,7 @@
     TResult Function() func,
     TResult initialValue, {
     ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
+    void Function()? ifRestrictedRunInstead,
     bool includeLastResultInCommandResults = false,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,
@@ -38,7 +38,7 @@
     TResult Function(TParam x) func,
     TResult initialValue, {
     ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
+    ExecuteInsteadHandler<TParam>? ifRestrictedRunInstead,
     bool includeLastResultInCommandResults = false,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,
@@ -49,7 +49,7 @@
   static Command<void, void> createAsyncNoParamNoResult(
     Future Function() action, {
     ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
+    void Function()? ifRestrictedRunInstead,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,
     String? debugName,
@@ -57,7 +57,7 @@
   static Command<TParam, void> createAsyncNoResult<TParam>(
     Future Function(TParam x) action, {
     ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
+    ExecuteInsteadHandler<TParam>? ifRestrictedRunInstead,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,
     String? debugName,
@@ -66,7 +66,7 @@
     Future<TResult> Function() func,
     TResult initialValue, {
     ValueListenable<bool>? restriction,
-    void Function()? ifRestrictedExecuteInstead,
+    void Function()? ifRestrictedRunInstead,
     bool includeLastResultInCommandResults = false,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,
@@ -76,7 +76,7 @@
     Future<TResult> Function(TParam x) func,
     TResult initialValue, {
     ValueListenable<bool>? restriction,
-    ExecuteInsteadHandler<TParam>? ifRestrictedExecuteInstead,
+    ExecuteInsteadHandler<TParam>? ifRestrictedRunInstead,
     bool includeLastResultInCommandResults = false,
     bool? catchAlways,
     bool notifyOnlyWhenValueChanges = false,

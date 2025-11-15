@@ -8,7 +8,7 @@ One of the most powerful combinations in the flutter_it ecosystem is using `watc
 
 ## Why `watch_it` + command_it?
 
-Commands encapsulate async operations and track their execution state (`isExecuting`, `value`, `errors`). `watch_it` allows your widgets to reactively rebuild when these states change, creating a seamless user experience without manual state management.
+Commands encapsulate async operations and track their execution state (`isRunning`, `value`, `errors`). `watch_it` allows your widgets to reactively rebuild when these states change, creating a seamless user experience without manual state management.
 
 **Benefits:**
 - **Automatic loading states** - No need to manually track `isLoading` booleans
@@ -19,12 +19,12 @@ Commands encapsulate async operations and track their execution state (`isExecut
 
 ## Watching Command Execution State
 
-The most common pattern is watching `isExecuting` to show loading indicators:
+The most common pattern is watching `isRunning` to show loading indicators:
 
 <<< @/../code_samples/lib/watch_it/watch_command_basic_example.dart#example
 
 **Key points:**
-- `command.isExecuting` is a `ValueListenable<bool>`
+- `command.isRunning` is a `ValueListenable<bool>`
 - Widget rebuilds automatically when command starts/stops
 - Button disables during execution
 - Progress indicator shows while loading
@@ -82,7 +82,7 @@ A complete pattern for buttons that show loading state:
 <<< @/../code_samples/lib/watch_it/command_loading_button_example.dart#example
 
 **This pattern:**
-- Disables button during execution (`onPressed: isExecuting ? null : ...`)
+- Disables button during execution (`onPressed: isRunning ? null : ...`)
 - Shows inline loading indicator
 - Provides visual feedback to user
 - Prevents double-submission
@@ -94,10 +94,10 @@ You can watch different aspects of the same command:
 <<< @/../code_samples/lib/watch_it/command_multiple_states_example.dart#example
 
 **Watch multiple properties:**
-- `command.isExecuting` - Is it running?
+- `command.isRunning` - Is it running?
 - `command.value` - What's the result?
 - `command.errors` - Did it fail?
-- `command.canExecute` - Can it run now?
+- `command.canRun` - Can it run now?
 
 ## Chaining Commands
 
@@ -128,13 +128,13 @@ Use handlers to chain commands together:
 - Triggering other commands
 - Any side effect that doesn't require rebuild
 
-### 2. Don't Await execute()
+### 2. Don't Await run()
 
 <<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#dont_await_execute_good
 
 <<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#dont_await_execute_bad
 
-**Why?** Commands handle async internally. Just call `execute()` and let watch_it update the UI reactively.
+**Why?** Commands handle async internally. Just call `run()` and let watch_it update the UI reactively.
 
 ### 3. Watch Execution State for Loading
 

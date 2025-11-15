@@ -43,13 +43,13 @@ class UserFormWidget extends WatchingWidget {
       select: (FormManager m) => m.onSubmitted,
       handler: (context, _, cancel) {
         // Call command on business object whenever triggered
-        di<UserService>().saveUserCommand.execute();
+        di<UserService>().saveUserCommand.run();
       },
     );
 
     // Optionally watch the command state to show loading indicator
     final isSaving = watchValue(
-      (UserService s) => s.saveUserCommand.isExecuting,
+      (UserService s) => s.saveUserCommand.isRunning,
     );
 
     return Column(

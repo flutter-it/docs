@@ -52,7 +52,7 @@ class _ExpandableTodoCardState extends State<ExpandableTodoCard> {
                     value: todo.completed,
                     onChanged: (value) {
                       final updated = todo.copyWith(completed: value ?? false);
-                      di<TodoManager>().updateTodoCommand.execute(updated);
+                      di<TodoManager>().updateTodoCommand.run(updated);
                     },
                   ),
                   const Text('Completed'),
@@ -61,7 +61,7 @@ class _ExpandableTodoCardState extends State<ExpandableTodoCard> {
                     icon: const Icon(Icons.delete),
                     label: const Text('Delete'),
                     onPressed: () {
-                      di<TodoManager>().deleteTodoCommand.execute(todo.id);
+                      di<TodoManager>().deleteTodoCommand.run(todo.id);
                     },
                   ),
                 ],
@@ -80,10 +80,10 @@ class TodoListWithExpandable extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final todos = watchValue((TodoManager m) => m.todos);
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
 
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(

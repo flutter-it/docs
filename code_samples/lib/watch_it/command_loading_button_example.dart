@@ -9,7 +9,7 @@ class LoadingButtonWidget extends WatchingWidget {
     final manager = di<TodoManager>();
 
     // Watch command execution to show inline loading state in button
-    final isExecuting = watch(manager.fetchTodosCommand.isExecuting).value;
+    final isRunning = watch(manager.fetchTodosCommand.isRunning).value;
     final todos = watchValue((TodoManager m) => m.todos);
 
     return Scaffold(
@@ -36,10 +36,10 @@ class LoadingButtonWidget extends WatchingWidget {
               width: double.infinity,
               child: ElevatedButton(
                 // Disable button while executing
-                onPressed: isExecuting
+                onPressed: isRunning
                     ? null
-                    : () => manager.fetchTodosCommand.execute(),
-                child: isExecuting
+                    : () => manager.fetchTodosCommand.run(),
+                child: isRunning
                     ? const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

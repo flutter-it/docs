@@ -11,10 +11,10 @@ class WeatherResultWidget extends WatchingWidget {
 
     // Watch the command to get its result value
     final weather = watch(manager.fetchWeatherCommand).value;
-    final isLoading = watch(manager.fetchWeatherCommand.isExecuting).value;
+    final isLoading = watch(manager.fetchWeatherCommand.isRunning).value;
 
     callOnce((_) {
-      di<WeatherManager>().fetchWeatherCommand.execute();
+      di<WeatherManager>().fetchWeatherCommand.run();
     });
 
     return Scaffold(
@@ -46,7 +46,7 @@ class WeatherResultWidget extends WatchingWidget {
             ElevatedButton(
               onPressed: isLoading
                   ? null
-                  : () => di<WeatherManager>().fetchWeatherCommand.execute(),
+                  : () => di<WeatherManager>().fetchWeatherCommand.run(),
               child: const Text('Refresh Weather'),
             ),
           ],

@@ -31,7 +31,7 @@ class BadWatchOrderingWidget extends WatchingWidget {
 
     // Different watch calls in different branches
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
 
     return Scaffold(
       appBar: AppBar(title: const Text('❌ Bad Ordering - Simple View')),

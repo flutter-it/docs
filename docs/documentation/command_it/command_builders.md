@@ -6,7 +6,7 @@
 ```dart
 child: CommandBuilder<String, List<WeatherEntry>>(
   command: weatherManager.updateWeatherCommand,
-  whileExecuting: (context, _) => Center(
+  whileRunning: (context, _) => Center(
     child: SizedBox(
       width: 50.0,
       height: 50.0,
@@ -32,7 +32,7 @@ I you are using a package `get_it_mixin`, `provider` or `flutter_hooks` you prob
 
 ```dart
 return result.toWidget(
-  whileExecuting: (lastValue, _) => Center(
+  whileRunning: (lastValue, _) => Center(
     child: SizedBox(
       width: 50.0,
       height: 50.0,

@@ -13,12 +13,12 @@ class TodoListBasic extends WatchingWidget {
     // Watch reactive state - widget rebuilds when it changes
     final todos = watchValue((TodoManager m) => m.todos);
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
 
     // callOnce replaces initState - runs once on first build
     callOnce((_) {
       debugPrint('Loading todos...');
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(
@@ -48,7 +48,7 @@ class TodoListBasic extends WatchingWidget {
                                     todo.copyWith(completed: value ?? false);
                                 di<TodoManager>()
                                     .updateTodoCommand
-                                    .execute(updated);
+                                    .run(updated);
                               },
                             ),
                           );
@@ -63,7 +63,7 @@ class TodoListBasic extends WatchingWidget {
             title: 'New Todo ${todos.length + 1}',
             description: 'Created at ${DateTime.now()}',
           );
-          di<TodoManager>().createTodoCommand.execute(params);
+          di<TodoManager>().createTodoCommand.run(params);
         },
         child: const Icon(Icons.add),
       ),

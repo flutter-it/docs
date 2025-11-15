@@ -2,7 +2,7 @@
 
 ## Error Handling
 If the wrapped function inside a `Command` throws an `Exception` the `Command` catches it so your App won't crash.
-Instead it will wrap the caught error together with the value that was passed when the command was executed in a `CommandError` object and assign it to the `Command's` `thrownExeceptions` property which is a `ValueListenable<CommandError>`.
+Instead it will wrap the caught error together with the value that was passed when the command was executed in a `CommandError` object and assign it to the `Command's` `errors` property which is a `ValueListenable<CommandError>`.
 So to react on occurring error you can register your handler with `addListener` or use my `listen` extension function from `listen_it` as it is done in the example:
 
 ```dart

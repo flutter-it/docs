@@ -48,7 +48,7 @@ class _TodoListWithFilterState extends State<TodoListWithFilter> {
             itemBuilder: (context, index) => CheckboxListTile(
               title: Text(filtered[index].title),
               value: filtered[index].completed,
-              onChanged: (_) => di<TodoManager>().updateTodoCommand.execute(
+              onChanged: (_) => di<TodoManager>().updateTodoCommand.run(
                   filtered[index]
                       .copyWith(completed: !filtered[index].completed)),
             ),
@@ -107,7 +107,7 @@ class _TodoListWithFilterMixinState extends State<TodoListWithFilterMixin> {
             itemBuilder: (context, index) => CheckboxListTile(
               title: Text(filtered[index].title),
               value: filtered[index].completed,
-              onChanged: (_) => di<TodoManager>().updateTodoCommand.execute(
+              onChanged: (_) => di<TodoManager>().updateTodoCommand.run(
                   filtered[index]
                       .copyWith(completed: !filtered[index].completed)),
             ),

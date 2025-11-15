@@ -10,11 +10,11 @@ class CommandErrorWidget extends WatchingWidget {
 
     // Watch command's errors property to display error messages
     final error = watch(manager.fetchTodosCommand.errors).value;
-    final isLoading = watch(manager.fetchTodosCommand.isExecuting).value;
+    final isLoading = watch(manager.fetchTodosCommand.isRunning).value;
     final todos = watchValue((TodoManager m) => m.todos);
 
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(
@@ -40,7 +40,7 @@ class CommandErrorWidget extends WatchingWidget {
                     icon: const Icon(Icons.close),
                     onPressed: () {
                       // Clear error by executing again
-                      manager.fetchTodosCommand.execute();
+                      manager.fetchTodosCommand.run();
                     },
                   ),
                 ],
@@ -64,7 +64,7 @@ class CommandErrorWidget extends WatchingWidget {
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () =>
-                                manager.fetchTodosCommand.execute(),
+                                manager.fetchTodosCommand.run(),
                             child: const Text('Retry'),
                           ),
                         ] else if (isLoading)

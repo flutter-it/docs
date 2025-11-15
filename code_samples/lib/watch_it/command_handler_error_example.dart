@@ -26,7 +26,7 @@ class CommandErrorHandlerWidget extends WatchingWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    di<TodoManager>().fetchTodosCommand.execute();
+                    di<TodoManager>().fetchTodosCommand.run();
                   },
                   child: const Text('Retry'),
                 ),
@@ -38,11 +38,11 @@ class CommandErrorHandlerWidget extends WatchingWidget {
     );
 
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
     final todos = watchValue((TodoManager m) => m.todos);
 
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(
@@ -78,7 +78,7 @@ class CommandErrorHandlerWidget extends WatchingWidget {
             child: ElevatedButton(
               onPressed: isLoading
                   ? null
-                  : () => di<TodoManager>().fetchTodosCommand.execute(),
+                  : () => di<TodoManager>().fetchTodosCommand.run(),
               child: const Text('Refresh'),
             ),
           ),

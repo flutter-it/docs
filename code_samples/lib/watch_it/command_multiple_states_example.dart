@@ -9,16 +9,16 @@ class MultipleCommandStatesWidget extends WatchingWidget {
     final manager = di<TodoManager>();
 
     // Watch multiple aspects of the same command
-    final isCreating = watch(manager.createTodoCommand.isExecuting).value;
+    final isCreating = watch(manager.createTodoCommand.isRunning).value;
     final createResult = watch(manager.createTodoCommand).value;
     final createError = watch(manager.createTodoCommand.errors).value;
 
     // Watch another command's states
-    final isFetching = watch(manager.fetchTodosCommand.isExecuting).value;
+    final isFetching = watch(manager.fetchTodosCommand.isRunning).value;
     final todos = watchValue((TodoManager m) => m.todos);
 
     callOnce((_) {
-      manager.fetchTodosCommand.execute();
+      manager.fetchTodosCommand.run();
     });
 
     return Scaffold(
@@ -103,7 +103,7 @@ class MultipleCommandStatesWidget extends WatchingWidget {
                   child: ElevatedButton(
                     onPressed: isFetching
                         ? null
-                        : () => manager.fetchTodosCommand.execute(),
+                        : () => manager.fetchTodosCommand.run(),
                     child: const Text('Refresh'),
                   ),
                 ),
@@ -117,7 +117,7 @@ class MultipleCommandStatesWidget extends WatchingWidget {
                               title: 'Quick Todo ${todos.length + 1}',
                               description: 'Created at ${DateTime.now()}',
                             );
-                            manager.createTodoCommand.execute(params);
+                            manager.createTodoCommand.run(params);
                           },
                     child: const Text('Create'),
                   ),

@@ -17,14 +17,14 @@ class GoodWatchOrderingWidget extends WatchingWidget {
 
     // Order: 2. isLoading
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
 
     // Order: 3. counter (local state)
     final counter = createOnce(() => SimpleCounter());
     final count = watch(counter).value;
 
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(
@@ -59,7 +59,7 @@ class GoodWatchOrderingWidget extends WatchingWidget {
               children: [
                 ElevatedButton(
                   onPressed: () =>
-                      di<TodoManager>().fetchTodosCommand.execute(),
+                      di<TodoManager>().fetchTodosCommand.run(),
                   child: const Text('Refresh Todos'),
                 ),
                 const SizedBox(height: 8),

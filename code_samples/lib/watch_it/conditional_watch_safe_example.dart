@@ -15,10 +15,10 @@ class SafeConditionalWatchWidget extends WatchingWidget {
     // The ORDER stays the same every build!
     final todos = watchValue((TodoManager m) => m.todos);
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
 
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     // Now use conditional logic AFTER all watch calls

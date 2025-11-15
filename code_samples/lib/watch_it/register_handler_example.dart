@@ -42,7 +42,7 @@ class TodoCreationPage extends WatchingWidget {
 
     // Watch loading state to disable button
     final isCreating =
-        watchValue((TodoManager m) => m.createTodoCommand.isExecuting);
+        watchValue((TodoManager m) => m.createTodoCommand.isRunning);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Create Todo')),
@@ -64,7 +64,7 @@ class TodoCreationPage extends WatchingWidget {
             ElevatedButton(
               onPressed: isCreating
                   ? null
-                  : () => di<TodoManager>().createTodoCommand.execute(
+                  : () => di<TodoManager>().createTodoCommand.run(
                         CreateTodoParams(
                           title: titleController.text,
                           description: descController.text,

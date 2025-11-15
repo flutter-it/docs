@@ -148,7 +148,7 @@ class WeatherListView extends StatelessWidget {
 `Command` has a property
 
 ```dart
-ValueListenable<bool> isExecuting;
+ValueListenable<bool> isRunning;
 ```
 that has the value of `false` while the wrapped function isn't executed and `true` when it is.
 So we use this in the UI in `homepage.dart` to display a progress indicator while the app waits for the result of the REST call:
@@ -156,7 +156,7 @@ So we use this in the UI in `homepage.dart` to display a progress indicator whil
 ```dart
 child: ValueListenableBuilder<bool>(
     valueListenable:
-        weatherManager.updateWeatherCommand.isExecuting,
+        weatherManager.updateWeatherCommand.isRunning,
     builder: (BuildContext context, bool isRunning, _) {
     // if true we show a buys Spinner otherwise the ListView
     if (isRunning == true) {
@@ -174,7 +174,7 @@ child: ValueListenableBuilder<bool>(
 ),
 ```
 
-> :triangular_flag_on_post: As it's not possible to update the UI while a synchronous function is being executed `Commands` that wrap a synchronous function don't support `isExecuting` and will throw an assertion if you try to access it.
+> :triangular_flag_on_post: As it's not possible to update the UI while a synchronous function is being executed `Commands` that wrap a synchronous function don't support `isRunning` and will throw an assertion if you try to access it.
 
 ### Update the UI on change of the search field
 As we don't want to send a new HTTP request on every keypress in the search field we don't directly wire the `onChanged` event to the `updateWeatherCommand`. Instead we use a second `Command` to convert the `onChanged` event to a `ValueListenable` so that we can use the `debounce` and `listen` function of my extension function package `listen_it`:
@@ -193,9 +193,9 @@ textChangedCommand = Command.createSync((s) => s, '');
 // make sure we start processing only if the user make a short pause typing
 textChangedCommand.debounce(Duration(milliseconds: 500)).listen(
     (filterText, _) {
-    // I could omit the execute because Command is a callable
+    // I could omit the run because Command is a callable
     // class  but here it makes the intention clearer
-    updateWeatherCommand.execute(filterText);
+    updateWeatherCommand.run(filterText);
     },
 );
 ```
@@ -242,7 +242,7 @@ ValueListenableBuilder<bool>(
 
 ### Disabling the update button while another update is in progress
 The update button should not be active while an update is running or when the
-`Switch` deactivates it. We could achieve this, again by using the `isExecuting` property of `Command` but we would have to somehow combine it with the value of `setExecutionStateCommand` which is cumbersome. Luckily `Command` has another property `canExecute` which reflects a combined value of `!isExecuting && restriction`.
+`Switch` deactivates it. We could achieve this, again by using the `isRunning` property of `Command` but we would have to somehow combine it with the value of `setExecutionStateCommand` which is cumbersome. Luckily `Command` has another property `canRun` which reflects a combined value of `!isRunning && !restriction`.
 
 So we can easily solve this requirement with another....wait for it...`ValueListenableBuilder`
 
@@ -250,10 +250,10 @@ So we can easily solve this requirement with another....wait for it...`ValueList
 child: ValueListenableBuilder<bool>(
   valueListenable: weatherManager
       .updateWeatherCommand
-      .canExecute,
-  builder: (BuildContext context, bool canExecute, _) {
-    // Depending on the value of canExecute we set or clear the handler
-    final handler = canExecute
+      .canRun,
+  builder: (BuildContext context, bool canRun, _) {
+    // Depending on the value of canRun we set or clear the handler
+    final handler = canRun
         ? weatherManager.updateWeatherCommand
         : null;
     return RaisedButton(
@@ -267,15 +267,15 @@ child: ValueListenableBuilder<bool>(
 ```
 
 ## Getting all data at once
-`isExecuting` and `errors` are great properties but what if you don't want to use separate `ValueListenableBuilders` for each of them plus one for the data?
+`isRunning` and `errors` are great properties but what if you don't want to use separate `ValueListenableBuilders` for each of them plus one for the data?
 `Command` got you covered with the `results` property that is an `ValueListenable<CommandResult>` which combines all needed data and is updated several times during a `Command` execution.
 
 ```dart
 /// Combined execution state of an `Command`
 /// Will be updated for any state change of any of the fields
 /// 1. If the command was just newly created `results.value` has the value:
-///    `param data,null, null, false` (paramData,data, error, isExecuting)
-/// 2. When calling execute: `param data, null, null, true`
+///    `param data,null, null, false` (paramData,data, error, isRunning)
+/// 2. When calling run: `param data, null, null, true`
 /// 3. When execution finishes: `param data, the result, null, false`
 /// If an error occurs: `param data, null, error, false`
 /// `param data` is the data that you pass as parameter when calling the command
@@ -283,9 +283,9 @@ class CommandResult<TParam, TResult> {
   final TParam paramData;
   final TResult data;
   final Object error;
-  final bool isExecuting;
+  final bool isRunning;
 
-  bool get isSuccsess => !hasError && !isExecuting;
+  bool get isSuccsess => !hasError && !isRunning;
   bool get hasData => data != null;
   bool get hasError => error != null;
 
@@ -302,7 +302,7 @@ child: ValueListenableBuilder<
   valueListenable:
       weatherManager.updateWeatherCommand.results,
   builder: (BuildContext context, result, _) {
-    if (result.isExecuting) {
+    if (result.isRunning) {
       return Center(
         child: SizedBox(
           width: 50.0,
@@ -334,7 +334,7 @@ If you want to be able to always display data (while loading or in case of an er
   Even if your wrapped function doesn't return a value, you can react on the end of the function execution by registering a listener to the `Command`. The command Value will be void but your handler is ensured to be called.
 
 ## Restricting Commands in Detail
-As described above you can pass in a `ValueListenable<bool>` named `restriction` this allows to control the executability of a Command from the outside. Typical example would be if a user is logged in. To allow you to declarative describe what should happen if the user tries to executed a restricted Command you can pass in an optional `ifRestrictedExecuteInstead` handler function that get the parameter of the command passed in if the command expects a parameter.
+As described above you can pass in a `ValueListenable<bool>` named `restriction` this allows to control the executability of a Command from the outside. Typical example would be if a user is logged in. To allow you to declarative describe what should happen if the user tries to executed a restricted Command you can pass in an optional `ifRestrictedRunInstead` handler function that get the parameter of the command passed in if the command expects a parameter.
 This can be nicely used to push a login screen in the case described above.
 
 ## Logging
@@ -347,13 +347,13 @@ It will get executed on every `Command` execution in your App. `commandName` is 
 
 ## Awaiting Commands
 In general you shouldn't await a command as it goes against the reactive philosophy. Your UI should react to the result of the command by "listening" to one of its `ValueListenable` interfaces.
-In case you really need to await the completion of a command you can use the `executeWithFuture()` function of the Command. `executeWithFuture` starts the execution of the Command and returns a `Future<T>` that completes when the function that it wraps.
+In case you really need to await the completion of a command you can use the `runAsync()` function of the Command. `runAsync` starts the execution of the Command and returns a `Future<T>` that completes when the function that it wraps.
 
 The main reason that this function exists is that you can use `RefreshIndicator` directly with a command like:
 
 ```dart
 return RefreshIndicator(
-  onRefresh: () => updateMovieCmd.executeWithFuture(),
+  onRefresh: () => updateMovieCmd.runAsync(),
   child: GridView.extent(
     maxCrossAxisExtent: 200,
     crossAxisSpacing: 12,

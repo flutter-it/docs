@@ -59,7 +59,7 @@ class TodoItem extends StatelessWidget with WatchItMixin {
         value: todo.completed,
         onChanged: (value) {
           final updated = todo.copyWith(completed: value ?? false);
-          di<TodoManager>().updateTodoCommand.execute(updated);
+          di<TodoManager>().updateTodoCommand.run(updated);
         },
       ),
     );
@@ -74,7 +74,7 @@ class ConstWidgetExample extends StatelessWidget with WatchItMixin {
     final todos = watchValue((TodoManager m) => m.todos);
 
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     return Scaffold(

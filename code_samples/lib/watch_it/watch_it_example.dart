@@ -26,7 +26,7 @@ class WeatherDisplay extends WatchingWidget {
           const Text('No weather data'),
         const SizedBox(height: 16),
         ElevatedButton(
-          onPressed: () => di<WeatherManager>().fetchWeatherCommand.execute(),
+          onPressed: () => di<WeatherManager>().fetchWeatherCommand.run(),
           child: const Text('Refresh Weather'),
         ),
       ],

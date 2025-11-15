@@ -10,11 +10,11 @@ class TodoListWidget extends WatchingWidget {
     // Widget rebuilds only when that specific ValueListenable changes
     final todos = watchValue((TodoManager m) => m.todos);
     final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isExecuting);
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
 
     // Load todos on first build
     callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.execute();
+      di<TodoManager>().fetchTodosCommand.run();
     });
 
     if (isLoading && todos.isEmpty) {
@@ -36,7 +36,7 @@ class TodoListWidget extends WatchingWidget {
             value: todo.completed,
             onChanged: (value) {
               final updated = todo.copyWith(completed: value ?? false);
-              di<TodoManager>().updateTodoCommand.execute(updated);
+              di<TodoManager>().updateTodoCommand.run(updated);
             },
           ),
         );
