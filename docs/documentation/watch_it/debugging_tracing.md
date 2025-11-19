@@ -287,26 +287,6 @@ class MyWidget extends WatchingWidget {
 }
 ```
 
-#### 2. Selecting non-Listenable object
-
-```dart
-// BAD - Selecting a non-observable value
-registerHandler(
-  select: (M m) => m.someValue,  // Not a Listenable!
-  handler: (context, value, cancel) { },
-);
-```
-
-**Solution:** Select a Listenable (Command, ValueNotifier, etc.):
-
-```dart
-// GOOD - Selecting a Command
-registerHandler(
-  select: (M m) => m.saveCommand,
-  handler: (context, result, cancel) { },
-);
-```
-
 ### callOnce runs multiple times
 
 **Symptoms:**
