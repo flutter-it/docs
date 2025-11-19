@@ -5,17 +5,6 @@ import '_shared/stubs.dart';
 
 final di = GetIt.instance;
 
-// #region watch_value_pattern
-// Get the command
-void watchValuePattern(BuildContext context) {
-  final manager = di<WeatherManager>();
-
-  // Watch its value
-  final weather = watch(manager.fetchWeatherCommand).value;
-  final isLoading = watch(manager.fetchWeatherCommand.isRunning).value;
-}
-// #endregion watch_value_pattern
-
 // #region dont_await_execute_good
 // ✓ GOOD - Non-blocking, UI stays responsive
 class DontAwaitExecuteGood extends WatchingWidget {
@@ -121,19 +110,19 @@ class HandleErrorsGoodHandler extends WatchingWidget {
 class InitialLoadPattern extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    final command = di<TodoManager>().fetchTodosCommand;
-    final isLoading = watch(command.isRunning).value;
-    final data = watch(command).value;
+    final isLoading =
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
+    final data = watchValue((TodoManager m) => m.fetchTodosCommand);
 
     // Show spinner only when no data yet
     if (isLoading && data.isEmpty) {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     }
 
     // Show data even while refreshing
     return ListView(
       children: [
-        if (isLoading) LinearProgressIndicator(), // Subtle indicator
+        if (isLoading) const LinearProgressIndicator(), // Subtle indicator
         ...data.map((item) => ListTile(title: Text(item.title))),
       ],
     );
@@ -151,41 +140,50 @@ class Manager {
   final submitCommand = Command();
 }
 
-// #region form_submission_pattern
 // Form submission pattern
 class FormSubmissionPattern extends WatchingWidget {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final formData = FormData('Example');
 
+  // #region form_submission_pattern
   @override
   Widget build(BuildContext context) {
-    final manager = di<Manager>();
-    final isSubmitting = watch(manager.submitCommand.isRunning).value;
+    final isSubmitting = watchValue((Manager m) => m.submitCommand.isRunning);
     final canSubmit = formKey.currentState?.validate() ?? false;
 
     return ElevatedButton(
       onPressed: canSubmit && !isSubmitting
-          ? () => manager.submitCommand.run()
+          ? () => di<Manager>().submitCommand.run()
           : null,
-      child: isSubmitting ? CircularProgressIndicator() : Text('Submit'),
+      child: isSubmitting
+          ? const CircularProgressIndicator()
+          : const Text('Submit'),
     );
   }
+  // #endregion form_submission_pattern
 }
-// #endregion form_submission_pattern
 
 // #region pull_to_refresh_pattern
 // Pull to refresh pattern
 class PullToRefreshPattern extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    final manager = di<TodoManager>();
+    final todos = watchValue((TodoManager m) => m.fetchTodosCommand);
 
     return RefreshIndicator(
-      onRefresh: () async {
-        manager.fetchTodosCommand.run();
-        await manager.fetchTodosCommand.runAsync();
-      },
-      child: ListView(children: []),
+      onRefresh: di<TodoManager>().fetchTodosCommand.runAsync,
+      child: todos.isEmpty
+          ? ListView(
+              children: const [
+                Center(child: Text('No todos - pull to refresh')),
+              ],
+            )
+          : ListView.builder(
+              itemCount: todos.length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(todos[index].title),
+              ),
+            ),
     );
   }
 }

@@ -601,9 +601,8 @@ class DontAwaitExecuteGoodAnti extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => di<TodoManager>().createTodoCommand.run(
-          CreateTodoParams(
-              title: 'New', description: '')), // Returns immediately
+      onPressed: () => di<TodoManager>().createTodoCommand.run(CreateTodoParams(
+          title: 'New', description: '')), // Returns immediately
       child: Text('Submit'),
     );
   }

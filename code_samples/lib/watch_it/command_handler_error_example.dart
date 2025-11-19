@@ -6,44 +6,42 @@ import '_shared/stubs.dart';
 class CommandErrorHandlerWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
+    callOnce((_) {
+      di<TodoManager>().fetchTodosCommand.run();
+    });
+
     // Use registerHandler to handle command errors
     // Shows error dialog or snackbar when command fails
     registerHandler(
       select: (TodoManager m) => m.fetchTodosCommand.errors,
       handler: (context, error, _) {
-        if (error != null) {
-          // Show error dialog
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Error'),
-              content: Text(error.toString()),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    di<TodoManager>().fetchTodosCommand.run();
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
-          );
-        }
+        // Show error dialog
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(error.toString()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  di<TodoManager>().fetchTodosCommand.run();
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        );
       },
     );
 
     final isLoading =
         watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
-    final todos = watchValue((TodoManager m) => m.todos);
-
-    callOnce((_) {
-      di<TodoManager>().fetchTodosCommand.run();
-    });
+    final todos = watchValue((TodoManager m) => m.fetchTodosCommand);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Command Handler - Errors')),

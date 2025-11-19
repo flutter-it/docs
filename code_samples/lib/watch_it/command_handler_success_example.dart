@@ -14,17 +14,15 @@ class CreateTodoWithHandlerWidget extends WatchingWidget {
     registerHandler(
       select: (TodoManager m) => m.createTodoCommand,
       handler: (context, result, _) {
-        if (result != null) {
-          // Show success snackbar
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Created: ${result.title}'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          // Navigate back with result
-          Navigator.of(context).pop(result);
-        }
+        // Show success snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Created: ${result!.title}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Navigate back with result
+        Navigator.of(context).pop(result);
       },
     );
 

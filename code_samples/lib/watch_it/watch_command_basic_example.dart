@@ -6,16 +6,18 @@ import '_shared/stubs.dart';
 class TodoLoadingWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    // Watch command's isRunning property to show loading state
-    // This is the most common pattern for reactive loading indicators
-    final isLoading =
-        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
-    final todos = watchValue((TodoManager m) => m.todos);
-
     // Load data on first build
     callOnce((_) {
       di<TodoManager>().fetchTodosCommand.run();
     });
+
+    // Watch command's isRunning property to show loading state
+    final isLoading =
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
+
+    // Watch the command itself to get its value (List<TodoModel>)
+    // Commands are ValueListenables, so watching them gives you their current value
+    final todos = watchValue((TodoManager m) => m.fetchTodosCommand);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Watch Command - Loading State')),

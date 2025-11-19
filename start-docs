@@ -1,0 +1,4 @@
+#!/bin/bash
+# Start VitePress development server
+
+npm run docs:dev

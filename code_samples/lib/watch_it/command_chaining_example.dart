@@ -6,34 +6,32 @@ import '_shared/stubs.dart';
 class CommandChainingWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    final manager = di<TodoManager>();
+    callOnce((_) {
+      di<TodoManager>().fetchTodosCommand.run();
+    });
 
     // Use registerHandler to chain commands
     // When create succeeds, automatically refresh the list
     registerHandler(
       select: (TodoManager m) => m.createTodoCommand,
       handler: (context, result, _) {
-        if (result != null) {
-          // Chain: after creating, fetch the updated list
-          manager.fetchTodosCommand.run();
+        // Chain: after creating, fetch the updated list
+        di<TodoManager>().fetchTodosCommand.run();
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Created "${result.title}" and refreshed list'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Created "${result!.title}" and refreshed list'),
+            backgroundColor: Colors.green,
+          ),
+        );
       },
     );
 
-    final isCreating = watch(manager.createTodoCommand.isRunning).value;
-    final isFetching = watch(manager.fetchTodosCommand.isRunning).value;
-    final todos = watchValue((TodoManager m) => m.todos);
-
-    callOnce((_) {
-      manager.fetchTodosCommand.run();
-    });
+    final isCreating =
+        watchValue((TodoManager m) => m.createTodoCommand.isRunning);
+    final isFetching =
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
+    final todos = watchValue((TodoManager m) => m.fetchTodosCommand);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Command Chaining')),
@@ -74,11 +72,11 @@ class CommandChainingWidget extends WatchingWidget {
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
-                            manager.deleteTodoCommand.run(todo.id);
+                            di<TodoManager>().deleteTodoCommand.run(todo.id);
                             // Chain: after deleting, refresh
                             Future.delayed(
                               const Duration(milliseconds: 100),
-                              () => manager.fetchTodosCommand.run(),
+                              () => di<TodoManager>().fetchTodosCommand.run(),
                             );
                           },
                         ),
@@ -100,7 +98,7 @@ class CommandChainingWidget extends WatchingWidget {
                               title: 'New Todo ${todos.length + 1}',
                               description: 'Created at ${DateTime.now()}',
                             );
-                            manager.createTodoCommand.run(params);
+                            di<TodoManager>().createTodoCommand.run(params);
                           },
                     child: isCreating
                         ? const Row(
@@ -125,7 +123,7 @@ class CommandChainingWidget extends WatchingWidget {
                   child: OutlinedButton(
                     onPressed: isFetching
                         ? null
-                        : () => manager.fetchTodosCommand.run(),
+                        : () => di<TodoManager>().fetchTodosCommand.run(),
                     child: const Text('Manual Refresh'),
                   ),
                 ),

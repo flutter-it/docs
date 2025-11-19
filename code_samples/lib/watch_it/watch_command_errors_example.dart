@@ -6,16 +6,15 @@ import '_shared/stubs.dart';
 class CommandErrorWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    final manager = di<TodoManager>();
-
-    // Watch command's errors property to display error messages
-    final error = watch(manager.fetchTodosCommand.errors).value;
-    final isLoading = watch(manager.fetchTodosCommand.isRunning).value;
-    final todos = watchValue((TodoManager m) => m.todos);
-
     callOnce((_) {
       di<TodoManager>().fetchTodosCommand.run();
     });
+
+    // Watch command's errors property to display error messages
+    final error = watchValue((TodoManager m) => m.fetchTodosCommand.errors);
+    final isLoading =
+        watchValue((TodoManager m) => m.fetchTodosCommand.isRunning);
+    final todos = watchValue((TodoManager m) => m.fetchTodosCommand);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Watch Command - Errors')),
@@ -40,7 +39,7 @@ class CommandErrorWidget extends WatchingWidget {
                     icon: const Icon(Icons.close),
                     onPressed: () {
                       // Clear error by executing again
-                      manager.fetchTodosCommand.run();
+                      di<TodoManager>().fetchTodosCommand.run();
                     },
                   ),
                 ],
@@ -64,7 +63,7 @@ class CommandErrorWidget extends WatchingWidget {
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () =>
-                                manager.fetchTodosCommand.run(),
+                                di<TodoManager>().fetchTodosCommand.run(),
                             child: const Text('Retry'),
                           ),
                         ] else if (isLoading)

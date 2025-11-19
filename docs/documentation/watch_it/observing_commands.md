@@ -1,10 +1,10 @@
 # Observing Commands with `watch_it`
 
-::: warning
-This content is AI generated and is currently under review.
-:::
+One of the most powerful combinations in the flutter_it ecosystem is using `watch_it` to observe `command_it` commands. Commands are `ValueListenable` objects that expose their state (`isRunning`, `value`, `errors`) as `ValueListenable` properties, making them naturally observable by `watch_it`. This pattern provides reactive, declarative state management for async operations with automatic loading states, error handling, and result updates.
 
-One of the most powerful combinations in the flutter_it ecosystem is using `watch_it` to observe `command_it` commands. This pattern provides reactive, declarative state management for async operations with automatic loading states, error handling, and result updates.
+::: tip Learn about Commands First
+If you're new to `command_it`, start with the [command_it Getting Started](/documentation/command_it/getting_started.md) guide to understand how commands work.
+:::
 
 ## Why `watch_it` + command_it?
 
@@ -17,27 +17,19 @@ Commands encapsulate async operations and track their execution state (`isRunnin
 - **Clean separation** - Business logic in commands, UI logic in widgets
 - **No boilerplate** - No `setState`, no `StreamBuilder`, no manual listeners
 
-## Watching Command Execution State
+## Watching a Command
 
-The most common pattern is watching `isRunning` to show loading indicators:
+A typical pattern is to watch both the command's result and its execution state as separate values:
 
 <<< @/../code_samples/lib/watch_it/watch_command_basic_example.dart#example
 
 **Key points:**
-- `command.isRunning` is a `ValueListenable<bool>`
-- Widget rebuilds automatically when command starts/stops
+- Watch the command itself to get its value (the result)
+- Watch `command.isRunning` to get the execution state
+- Widget rebuilds automatically when either changes
+- Commands are `ValueListenable` objects, so they work seamlessly with `watch_it`
 - Button disables during execution
 - Progress indicator shows while loading
-
-## Watching Command Results
-
-Watch the command's `value` property to display results:
-
-<<< @/../code_samples/lib/watch_it/watch_command_value_example.dart#example
-
-**Pattern:**
-
-<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#watch_value_pattern
 
 ## Watching Command Errors
 
@@ -75,29 +67,32 @@ While `watch` is for rebuilding UI, use `registerHandler` for side effects like 
 - Log error to crash reporting
 - Retry logic
 
-## Loading Button Pattern
+## Watching Command Results
 
-A complete pattern for buttons that show loading state:
+The `results` property provides a `CommandResult` object containing all command state in one place:
 
-<<< @/../code_samples/lib/watch_it/command_loading_button_example.dart#example
+<<< @/../code_samples/lib/watch_it/command_results_example.dart#example
 
-**This pattern:**
-- Disables button during execution (`onPressed: isRunning ? null : ...`)
-- Shows inline loading indicator
-- Provides visual feedback to user
-- Prevents double-submission
+**CommandResult contains:**
+- `data` - The command's current value
+- `isRunning` - Whether the command is executing
+- `hasError` - Whether an error occurred
+- `error` - The error object if any
+- `isSuccess` - Whether execution succeeded (`!isRunning && !hasError`)
 
-## Watching Multiple Command States
+**The `.toWidget()` extension:**
+- `onData` - Build UI when data is available
+- `onError` - Build UI when an error occurs (shows last successful result if available)
+- `whileRunning` - Build UI while command is executing
 
-You can watch different aspects of the same command:
+This pattern is ideal when you need to handle all command states in a declarative way.
 
-<<< @/../code_samples/lib/watch_it/command_multiple_states_example.dart#example
-
-**Watch multiple properties:**
-- `command.isRunning` - Is it running?
-- `command.value` - What's the result?
-- `command.errors` - Did it fail?
-- `command.canRun` - Can it run now?
+::: tip Other Command Properties
+You can also watch other command properties individually:
+- `command.isRunning` - Execution state
+- `command.errors` - Error notifications
+- `command.canRun` - Whether the command can currently execute (combines `!isRunning && !restriction`)
+:::
 
 ## Chaining Commands
 
@@ -142,16 +137,6 @@ Use handlers to chain commands together:
 
 **Avoid manual tracking:** Don't use `setState` and boolean flags. Let commands and watch_it handle state reactively.
 
-### 4. Handle Errors Gracefully
-
-<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#handle_errors_good_watch
-
-<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#handle_errors_good_handler
-
-### 5. Only Show Loading on Initial Load
-
-<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#initial_load_pattern
-
 ## Common Patterns
 
 ### Form Submission
@@ -161,10 +146,6 @@ Use handlers to chain commands together:
 ### Pull to Refresh
 
 <<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#pull_to_refresh_pattern
-
-### Retry on Error
-
-<<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#retry_on_error_pattern
 
 ## See Also
 

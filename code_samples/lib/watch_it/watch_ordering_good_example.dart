@@ -58,8 +58,7 @@ class GoodWatchOrderingWidget extends WatchingWidget {
             child: Column(
               children: [
                 ElevatedButton(
-                  onPressed: () =>
-                      di<TodoManager>().fetchTodosCommand.run(),
+                  onPressed: () => di<TodoManager>().fetchTodosCommand.run(),
                   child: const Text('Refresh Todos'),
                 ),
                 const SizedBox(height: 8),
