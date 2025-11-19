@@ -163,16 +163,34 @@ class TodoManager {
 }
 ```
 
+**Option 1 - Use ListNotifier from listen_it (recommended):**
+
 ```dart
-// GOOD - Create new list to trigger notification
+// GOOD - ListNotifier automatically notifies on mutations
 class TodoManager {
-  final todos = ValueNotifier<List<Todo>>([]);
+  final todos = ListNotifier<Todo>([]);
 
   void addTodo(Todo todo) {
-    todos.value = [...todos.value, todo];  // New list triggers notification
+    todos.add(todo);  // Automatically notifies listeners!
   }
 }
 ```
+
+**Option 2 - Use custom ValueNotifier with manual notification:**
+
+```dart
+// GOOD - Extend ValueNotifier and call notifyListeners
+class TodoManager extends ValueNotifier<List<Todo>> {
+  TodoManager() : super([]);
+
+  void addTodo(Todo todo) {
+    value.add(todo);
+    notifyListeners();  // Manually trigger notification
+  }
+}
+```
+
+See [listen_it Collections](/documentation/listen_it/collections/introduction.md) for ListNotifier, MapNotifier, and SetNotifier.
 
 ### Memory leaks - subscriptions not cleaned up
 
