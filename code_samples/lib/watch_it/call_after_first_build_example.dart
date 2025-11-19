@@ -6,10 +6,10 @@ import '_shared/stubs.dart';
 class CallAfterFirstBuildWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    // callAfterFirstBuild executes after the first frame is rendered
+    // callOnceAfterThisBuild executes after the first frame is rendered
     // Perfect for showing dialogs, snackbars, or accessing RenderBox
     // Runs after build is complete, similar to WidgetsBinding.instance.addPostFrameCallback
-    callAfterFirstBuild((_) {
+    callOnceAfterThisBuild((_) {
       debugPrint('First frame rendered!');
 
       // Show welcome dialog after first build
@@ -33,7 +33,7 @@ class CallAfterFirstBuildWidget extends WatchingWidget {
     final count = watch(counter).value;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('callAfterFirstBuild Example')),
+      appBar: AppBar(title: const Text('callOnceAfterThisBuild Example')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -41,7 +41,7 @@ class CallAfterFirstBuildWidget extends WatchingWidget {
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'callAfterFirstBuild shows the welcome dialog after rendering',
+                'callOnceAfterThisBuild shows the welcome dialog after rendering',
                 style: TextStyle(fontStyle: FontStyle.italic),
                 textAlign: TextAlign.center,
               ),

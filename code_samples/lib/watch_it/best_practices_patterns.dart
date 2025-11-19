@@ -68,8 +68,8 @@ class TodoManagerWithFiltering {
 class LogicInManagerGoodWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    final manager = di<TodoManagerWithFiltering>();
-    final todos = watch(manager.filteredTodos).value;
+    final todos = watchValue<TodoManagerWithFiltering, List<Todo>>(
+        (m) => m.filteredTodos);
     return ListView.builder(
       itemCount: todos.length,
       itemBuilder: (context, index) => Text(todos[index].title),
@@ -210,7 +210,6 @@ class OneWidgetWatchesEverythingBad extends WatchingWidget {
 // #endregion one_widget_watches_everything_bad
 
 // #region split_widgets_good_dashboard
-// ✅ Good - Each widget watches its own data
 class SplitWidgetsGoodDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -365,9 +364,10 @@ class TodoManagerStructure {
 class TodoListStructure extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    // 1. Watch reactive state
-    final todos = watchValue((TodoManagerStructure m) => m.todos);
-    final isLoading = watchValue((TodoManagerStructure m) => m.isLoading);
+    // 1. One-time initialization
+    callOnce((_) {
+      di<TodoManagerStructure>().fetchCommand.run();
+    });
 
     // 2. Register handlers
     registerHandler(
@@ -375,10 +375,9 @@ class TodoListStructure extends WatchingWidget {
       handler: _onTodoCreated,
     );
 
-    // 3. One-time initialization
-    callOnce((_) {
-      di<TodoManagerStructure>().fetchCommand.run();
-    });
+    // 3. Watch reactive state
+    final todos = watchValue((TodoManagerStructure m) => m.todos);
+    final isLoading = watchValue((TodoManagerStructure m) => m.isLoading);
 
     // 4. Build UI
     if (isLoading) return CircularProgressIndicator();
@@ -549,8 +548,23 @@ class _PaginationPatternState extends State<PaginationPattern> {
 }
 // #endregion pagination_pattern
 
+// #region dont_access_getit_constructors_bad
+// ❌ BAD - Accessing get_it in constructor
+class DontAccessGetItConstructorsBad extends WatchingWidget {
+  DontAccessGetItConstructorsBad() {
+    // DON'T DO THIS - constructor runs before widget is attached to tree
+    di<Manager>().loadMoreCommand.run(); // Will fail or cause issues
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+// #endregion dont_access_getit_constructors_bad
+
 // #region dont_access_getit_constructors_good
-// GOOD - Use callOnce
+// ✅ GOOD - Use callOnce
 class DontAccessGetItConstructorsGood extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
@@ -580,14 +594,14 @@ class DontViolateOrderingBad extends WatchingWidget {
 // #endregion dont_violate_ordering_bad
 
 // #region dont_await_execute_bad_anti
-// ❌ Don't await execute - BAD
+// ❌ Don't await commands - BAD
 class DontAwaitExecuteBadAnti extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
         await di<TodoManager>().createTodoCommand.runAsync(
-            CreateTodoParams(title: 'New', description: '')); // Blocks!
+            CreateTodoParams(title: 'New', description: '')); // Blocks UI!
       },
       child: Text('Submit'),
     );
@@ -596,7 +610,7 @@ class DontAwaitExecuteBadAnti extends WatchingWidget {
 // #endregion dont_await_execute_bad_anti
 
 // #region dont_await_execute_good_anti
-// ✅ Don't await execute - GOOD
+// ✅ Don't await commands - GOOD
 class DontAwaitExecuteGoodAnti extends WatchingWidget {
   @override
   Widget build(BuildContext context) {

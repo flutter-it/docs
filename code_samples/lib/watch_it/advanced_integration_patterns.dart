@@ -49,10 +49,6 @@ class ProfileManager {
   final profile = ValueNotifier<String>('Profile');
 }
 
-class EditController {
-  void dispose() {}
-}
-
 class ProductDetailManager {
   ProductDetailManager({required String productId});
   final product = ValueNotifier<String>('Product');
@@ -218,17 +214,14 @@ class UserProfileScreen extends WatchingWidget {
   Widget build(BuildContext context) {
     // Create scope on first build
     pushScope(
-      init: (scope) {
+      init: (getIt) {
         // Register screen-specific dependencies
-        scope.registerLazySingleton<ProfileManager>(
+        getIt.registerLazySingleton<ProfileManager>(
           () => ProfileManager(userId: '123'),
-        );
-        scope.registerLazySingleton<EditController>(
-          () => EditController(),
         );
       },
       dispose: () {
-        // Cleanup when scope is popped (widget disposed)
+        // Optional cleanUp when the scope is popped when the widget gets disposed
         print('Profile screen scope disposed');
       },
     );
@@ -250,9 +243,9 @@ class ProductDetailScreen extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     pushScope(
-      init: (scope) {
+      init: (getIt) {
         // Register screen-specific manager
-        scope.registerLazySingleton<ProductDetailManager>(
+        getIt.registerLazySingleton<ProductDetailManager>(
           () => ProductDetailManager(productId: productId),
         );
       },
@@ -272,11 +265,11 @@ class CheckoutFlow extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     pushScope(
-      init: (scope) {
+      init: (getIt) {
         // Register all checkout-related services
-        scope.registerLazySingleton<CartManager>(() => CartManager());
-        scope.registerLazySingleton<PaymentService>(() => PaymentService());
-        scope.registerLazySingleton<ShippingService>(() => ShippingService());
+        getIt.registerLazySingleton<CartManager>(() => CartManager());
+        getIt.registerLazySingleton<PaymentService>(() => PaymentService());
+        getIt.registerLazySingleton<ShippingService>(() => ShippingService());
       },
       dispose: () {
         print('Checkout flow completed, cleaning up');
@@ -297,12 +290,12 @@ class AuthenticatedApp extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     pushScope(
-      init: (scope) {
+      init: (getIt) {
         // User-specific services
-        scope.registerLazySingleton<AdvancedUserManager>(
+        getIt.registerLazySingleton<AdvancedUserManager>(
           () => AdvancedUserManager(user),
         );
-        scope.registerLazySingleton<UserPreferences>(
+        getIt.registerLazySingleton<UserPreferences>(
           () => UserPreferences(userId: user.id),
         );
       },
@@ -460,7 +453,11 @@ class AppAllReady extends WatchingWidget {
     );
 
     if (!ready) {
-      return SplashScreen();
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     return MainApp();
@@ -481,7 +478,7 @@ class InitializationScreen extends WatchingWidget {
 
     if (dbReady && configReady && authReady) {
       // All ready, navigate to main app
-      callOnce((_) {
+      callOnceAfterThisBuild((context) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => MainApp()),
         );
@@ -614,8 +611,8 @@ class FeatureLoader extends WatchingWidget {
     callOnce((_) {
       // Load feature module on demand
       pushScope(
-        init: (scope) {
-          FeatureModule.register(scope);
+        init: (getIt) {
+          FeatureModule.register(getIt);
         },
       );
     });

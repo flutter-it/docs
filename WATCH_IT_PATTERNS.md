@@ -14,7 +14,7 @@ The most common pattern for observing reactive state changes from managers.
 ```dart
 // Watch specific manager properties
 final data = watchValue((DataManager m) => m.data);
-final isLoading = watchValue((DataManager m) => m.command.isExecuting);
+final isLoading = watchValue((DataManager m) => m.command.isRunning);
 
 // Watch command state
 final result = watchValue((DataManager m) => m.fetchCommand);
@@ -45,7 +45,7 @@ Used for initialization logic that should run only once, similar to `initState` 
 ```dart
 callOnce((_) {
   // Initialize data, trigger commands
-  di<Manager>().loadCommand.execute();
+  di<Manager>().loadCommand.run();
 });
 ```
 
@@ -54,8 +54,8 @@ callOnce((_) {
 ```dart
 // Load initial data on first build
 callOnce((_) {
-  di<DataManager>().fetchDataCommand.execute();
-  di<DataManager>().loadSettingsCommand.execute();
+  di<DataManager>().fetchDataCommand.run();
+  di<DataManager>().loadSettingsCommand.run();
 });
 ```
 
@@ -63,7 +63,7 @@ callOnce((_) {
 // Conditional initialization
 callOnce((_) {
   if (di<DataManager>().needsRefresh) {
-    di<DataManager>().refreshCommand.execute();
+    di<DataManager>().refreshCommand.run();
   }
 });
 ```
@@ -116,7 +116,7 @@ registerHandler(
     if (result != null) {
       Navigator.of(context).pop();
       // Optional: trigger related actions
-      di<RelatedManager>().refreshCommand.execute();
+      di<RelatedManager>().refreshCommand.run();
     }
   },
 );
@@ -277,7 +277,7 @@ final value = watch(object.property).value;  // Watch property with .value acces
 
 ```dart
 // Watch command execution state
-final isLoading = watch(command.isExecuting).value;
+final isLoading = watch(command.isRunning).value;
 ```
 
 ```dart
@@ -296,7 +296,7 @@ final errors = watch(dataSource.errors).value;
 ```dart
 // Watch inherited data
 final proxy = watch(InheritedData.of(context).proxy);
-final isLoading = watch(proxy.updateCommand.isExecuting).value;
+final isLoading = watch(proxy.updateCommand.isRunning).value;
 ```
 
 ```dart
@@ -318,7 +318,7 @@ class MyWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     callOnce((_) {
-      di<Manager>().loadCommand.execute();
+      di<Manager>().loadCommand.run();
     });
 
     final data = watchValue((Manager m) => m.data);
@@ -409,7 +409,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
   @override
   Widget build(BuildContext context) {
     // Use watch_it for reactive state
-    final isLoading = watch(di<Manager>().command.isExecuting).value;
+    final isLoading = watch(di<Manager>().command.isRunning).value;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -471,12 +471,12 @@ late final deleteItemCommand = Command.createAsyncNoParamNoResult(
     await api.deleteItem(id);
 
     // Refresh related data
-    await loadItemsCommand.executeWithFuture();
+    await loadItemsCommand.runAsync();
 
     // Update parent if exists
     if (parentId != null) {
       final parent = await di<Manager>().getItemById(parentId!);
-      parent.refreshCommand.execute();
+      parent.refreshCommand.run();
     }
   },
   debugName: 'deleteItem',
@@ -489,19 +489,19 @@ late final deleteItemCommand = Command.createAsyncNoParamNoResult(
 **Non-blocking (fire-and-forget):**
 ```dart
 // Don't await - UI remains responsive
-command.execute();
+command.run();
 ```
 
 **Blocking (wait for result):**
 ```dart
 // Use when you need the result
-await command.executeWithFuture();
+await command.runAsync();
 ```
 
 **In UI (preferred pattern):**
 ```dart
 ElevatedButton(
-  onPressed: () => di<Manager>().command.execute(),  // No await!
+  onPressed: () => di<Manager>().command.run(),  // No await!
   child: Text('Submit'),
 )
 ```
@@ -510,7 +510,7 @@ ElevatedButton(
 
 **Pattern:**
 ```dart
-final isLoading = watchValue((Manager m) => m.command.isExecuting);
+final isLoading = watchValue((Manager m) => m.command.isRunning);
 final data = watchValue((Manager m) => m.command.value);
 
 // In UI
@@ -523,7 +523,7 @@ if (isLoading) {
 ```dart
 ElevatedButton(
   onPressed: canSubmit && !isSubmitting
-      ? () => di<Manager>().submitCommand.execute(data)
+      ? () => di<Manager>().submitCommand.run(data)
       : null,
   child: isSubmitting
       ? const SizedBox(
@@ -638,7 +638,7 @@ class MyWidget extends WatchingWidget {
     final manager = di<DataManager>();
     final data = watchValue((DataManager m) => m.data);
 
-    callOnce((_) => manager.loadCommand.execute());
+    callOnce((_) => manager.loadCommand.run());
 
     return content;
   }
@@ -668,7 +668,7 @@ late final loadDataCommand = Command.createAsyncNoParam(
 );
 
 // In widget
-callOnce((_) => di<Manager>().loadDataCommand.execute());
+callOnce((_) => di<Manager>().loadDataCommand.run());
 ```
 
 **Bad:**
@@ -770,7 +770,7 @@ registerHandler(
   select: (Manager m) => m.firstCommand,
   handler: (context, result, _) {
     if (result?.isValid == true) {
-      di<Manager>().secondCommand.execute(result);
+      di<Manager>().secondCommand.run(result);
     }
   },
 );
@@ -799,7 +799,7 @@ class MyWidget<T> extends StatelessWidget with WatchItMixin {
   Widget build(BuildContext context) {
     final data = watchValue((Manager m) => m.data);
 
-    callOnce((_) => di<Manager>().loadCommand.execute());
+    callOnce((_) => di<Manager>().loadCommand.run());
 
     return content;
   }
@@ -818,9 +818,9 @@ class MyWidget<T> extends StatelessWidget with WatchItMixin {
 
 4. **registerHandler replaces .listen()** - Widget-lifecycle-aware event handling
 
-5. **Non-blocking execution** - Use `command.execute()` without `await` in UI
+5. **Non-blocking execution** - Use `command.run()` without `await` in UI
 
-6. **Reactive loading states** - Watch `command.isExecuting` for UI feedback
+6. **Reactive loading states** - Watch `command.isRunning` for UI feedback
 
 7. **Error filters for different scenarios** - Use appropriate filters for error handling strategy
 
@@ -854,6 +854,6 @@ class MyWidget<T> extends StatelessWidget with WatchItMixin {
 - [ ] Use `watchValue` for reactive state
 - [ ] Use `callOnce` for initialization
 - [ ] Use `registerHandler` for success/error handling
-- [ ] Execute commands with `.execute()` (no await)
-- [ ] Watch `command.isExecuting` for loading states
+- [ ] Execute commands with `.run()` (no await)
+- [ ] Watch `command.isRunning` for loading states
 - [ ] Use `createOnce` for disposable objects

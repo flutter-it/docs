@@ -1,24 +1,8 @@
 # Best Practices
 
-::: warning
-This content is AI generated and is currently under review.
-:::
-
 Production-ready patterns, performance tips, and testing strategies for `watch_it` applications.
 
 ## Architecture Patterns
-
-### Keep Business Logic Out of Widgets
-
-**❌️ Bad - Logic in widget:**
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#logic_in_widget_bad
-
-**✅ Good - Logic in manager:**
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#logic_in_manager_good_manager
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#logic_in_manager_good_widget
 
 ### Self-Contained Widgets
 
@@ -48,35 +32,52 @@ Widgets should access their dependencies directly from get_it, not via construct
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#business_state
 
+### Local Reactive State with createOnce
+
+For widget-local reactive state that doesn't need get_it registration, combine `createOnce` with `watch`:
+
+<<< @/../code_samples/lib/watch_it/watch_create_once_local_state.dart#example
+
+**When to use this pattern:**
+- Widget needs its own local reactive state
+- State should persist across rebuilds (not recreated)
+- State should be automatically disposed with widget
+- Don't want to register in get_it (truly local)
+
+**Key benefits:**
+- `createOnce` creates the notifier once and auto-disposes it
+- `watch` subscribes to changes and triggers rebuilds
+- No manual lifecycle management needed
+
 ## Performance Optimization
 
-### Minimize Watch Scope
+### Watch Only What You Need
 
-Watch only what you need. Don't watch the whole manager if you only need one property.
+Watch specific properties, not entire objects. The approach depends on your manager's structure:
 
-**❌️ Bad - Watching too much:**
+**For managers with ValueListenable properties** - use `watchValue()`:
+
+**❌️ Bad - Watching whole manager:**
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#watching_too_much_bad
 
-**✅ Good - Watch specific property:**
+**✅ Good - Watch specific ValueListenable property:**
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#watch_specific_good
 
-### Use watchPropertyValue for Selective Updates
+**For ChangeNotifier managers** - use `watchPropertyValue()` to rebuild only when a specific property value changes:
 
-When watching a `Listenable` with many properties, use `watchPropertyValue()` to rebuild only when specific property changes:
-
-**❌️ Bad - Rebuilds on every settings change:**
+**❌️ Bad - Rebuilds on every notifyListeners call:**
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#rebuilds_on_every_settings_bad
 
-**✅ Good - Rebuilds only when darkMode changes:**
+**✅ Good - Rebuilds only when darkMode value changes:**
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#rebuilds_only_darkmode_good
 
 ### Split Large Widgets
 
-Don't watch everything in one giant widget. Split into smaller widgets that watch only what they need.
+Don't watch everything in one giant widget. Split into smaller widgets that watch only what they need. This ensures that only the smaller widgets rebuild when their data changes.
 
 **❌️ Bad - One widget watches everything:**
 
@@ -94,168 +95,96 @@ Don't watch everything in one giant widget. Split into smaller widgets that watc
 
 ### Const Constructors
 
-Use `const` constructors with `WatchItMixin` for better performance:
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#const_constructors
-
-Flutter can optimize const widgets for better rebuild performance.
-
-### Derived Data in Manager
-
-Compute derived data in the manager, not in the widget:
-
-**❌️ Bad - Computing in widget:**
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#computing_in_widget_bad
-
-**✅ Good - Computed in manager:**
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#computed_in_manager_good_manager
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#computed_in_manager_good_widget
+::: tip Use const with your watching widgets
+Const constructors work with all watch_it widget types: `WatchingWidget`, `WatchingStatefulWidget`, and widgets using `WatchItMixin`. Flutter can optimize const widgets for better rebuild performance.
+:::
 
 ## Testing
 
 ### Test Business Logic Separately
 
-Test managers/services independently of widgets:
+Keep your business logic (managers, services) separate from widgets and test them independently:
 
+**Unit test the manager:**
 ```dart
-void main() {
-  late TodoManager manager;
+test('TodoManager filters completed todos', () {
+  final manager = TodoManager();
+  manager.addTodo('Task 1');
+  manager.addTodo('Task 2');
+  manager.todos[0].complete();
 
-  setUp(() {
-    manager = TodoManager();
-  });
-
-  test('addTodo increases todo count', () {
-    expect(manager.todos.value.length, 0);
-
-    manager.addTodo('Test todo');
-
-    expect(manager.todos.value.length, 1);
-    expect(manager.todos.value.first.title, 'Test todo');
-  });
-
-  test('completeTodo updates status', () {
-    final todo = manager.addTodo('Test');
-
-    manager.completeTodo(todo.id);
-
-    expect(manager.todos.value.first.completed, true);
-  });
-}
+  expect(manager.completedTodos.length, 1);
+  expect(manager.activeTodos.length, 1);
+});
 ```
 
-### Mock get_it for Widget Tests
+**No Flutter dependencies = fast tests.**
+
+### Test Widgets with Mocked Dependencies
+
+For widget tests, use scopes to isolate dependencies. **Critical:** You must register any object that your widget watches BEFORE calling `pumpWidget`:
 
 ```dart
-testWidgets('TodoList displays todos', (tester) async {
-  // Mock get_it
-  final mockManager = MockTodoManager();
-  when(mockManager.todos).thenReturn(
-    ValueNotifier([
-      Todo(id: '1', title: 'Test Todo'),
-    ]),
-  );
+testWidgets('TodoListWidget displays todos', (tester) async {
+  // Use a scope for test isolation
+  await GetIt.I.pushNewScope();
 
+  // Register mocks BEFORE pumpWidget
+  final mockManager = MockTodoManager();
+  when(mockManager.todos).thenReturn([
+    Todo('Task 1'),
+    Todo('Task 2'),
+  ]);
   GetIt.I.registerSingleton<TodoManager>(mockManager);
 
-  await tester.pumpWidget(
-    MaterialApp(home: TodoList()),
-  );
+  // Now create the widget
+  await tester.pumpWidget(MaterialApp(home: TodoListWidget()));
 
-  expect(find.text('Test Todo'), findsOneWidget);
+  expect(find.text('Task 1'), findsOneWidget);
+  expect(find.text('Task 2'), findsOneWidget);
+
+  // Clean up scope
+  await GetIt.I.popScope();
 });
 ```
 
-### Test Reactive Updates
+**Key insights:**
+- **Register watched objects BEFORE `pumpWidget`** - the widget will try to access them during first build
+- Use `pushNewScope()` for test isolation instead of `reset()`
+- Widget accesses mocks via get_it automatically
+- Self-contained widgets are easier to test - no constructor parameters needed
 
-```dart
-testWidgets('TodoList updates when todos change', (tester) async {
-  final manager = TodoManager();
-  GetIt.I.registerSingleton<TodoManager>(manager);
-
-  await tester.pumpWidget(
-    MaterialApp(home: TodoList()),
-  );
-
-  // Initially empty
-  expect(find.byType(ListTile), findsNothing);
-
-  // Add todo
-  manager.addTodo('New Todo');
-  await tester.pump();  // Rebuild
-
-  // Now shows todo
-  expect(find.text('New Todo'), findsOneWidget);
-});
-```
-
-### Test Handlers
-
-```dart
-testWidgets('shows snackbar on success', (tester) async {
-  final manager = TodoManager();
-  GetIt.I.registerSingleton<TodoManager>(manager);
-
-  await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: TodoForm())),
-  );
-
-  // Trigger command
-  manager.createTodoCommand.run('New Todo');
-  await tester.pump();  // Process command
-  await tester.pump();  // Show snackbar
-
-  expect(find.byType(SnackBar), findsOneWidget);
-  expect(find.text('Todo created!'), findsOneWidget);
-});
-```
+For comprehensive testing strategies with get_it, see the [Testing Guide](/documentation/get_it/testing.md).
 
 ## Code Organization
-
-### Manager/Service Structure
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#manager_service_structure
 
 ### Widget Structure
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#widget_structure
 
-## Common Patterns
-
-### Master-Detail Navigation
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#master_detail_navigation
-
-### Pull-to-Refresh
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#pull_to_refresh_pattern
-
-### Search/Filter
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#search_filter_pattern
-
-### Pagination
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#pagination_pattern
-
 ## Anti-Patterns
 
 ### ❌️ Don't Access get_it in Constructors
 
-**GOOD - Use callOnce:**
+**❌️ Bad - Accessing in constructor:**
+
+<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_access_getit_constructors_bad
+
+**✅ Good - Use callOnce:**
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_access_getit_constructors_good
 
+**Why?** Constructors run before the widget is attached to the tree, and they will be called again every time the widget gets recreated. Use `callOnce()` to ensure initialization happens only once when the widget is actually built.
+
 ### ❌️ Don't Violate Watch Ordering Rules
 
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_violate_ordering_bad
+::: warning Watch Ordering is Critical
+All `watch*`, `callOnce`, `createOnce`, and `registerHandler` calls must be in the same order on every build. This is a fundamental constraint of watch_it's design.
 
-See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for details.
+See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for complete details and safe exceptions.
+:::
 
-### ❌️ Don't Await execute()
+### ❌️ Don't Await Commands
 
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#dont_await_execute_bad_anti
 
@@ -265,19 +194,9 @@ See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for 
 
 See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) - watch calls must be in build(), not in callbacks.
 
-## Debugging Tips
+## Debugging
 
-### Enable watch_it Tracing
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#enable_tracing
-
-### Log Watch Calls
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#log_watch_calls
-
-### Check Rebuild Frequency
-
-<<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#check_rebuild_frequency
+Enable tracing with `enableTracing()` or `WatchItSubTreeTraceControl` to understand rebuild behavior. For detailed debugging techniques and troubleshooting common issues, see [Debugging & Troubleshooting](/documentation/watch_it/debugging_tracing.md).
 
 ## See Also
 
