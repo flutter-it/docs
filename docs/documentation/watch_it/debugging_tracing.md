@@ -150,19 +150,7 @@ final todos = manager.todos.value;  // No watch!
 final todos = watchValue((TodoManager m) => m.todos);
 ```
 
-#### 2. Watching the wrong thing
-
-```dart
-// BAD - Watching a one-time snapshot
-final todos = watchValue((TodoManager m) => m.todos).value;  // Gets value once
-```
-
-```dart
-// GOOD - Watching the listenable itself
-final todos = watchValue((TodoManager m) => m.todos);  // Watches for changes
-```
-
-#### 3. Not notifying changes
+#### 2. Not notifying changes
 
 ```dart
 // BAD - Changing value without notifying
