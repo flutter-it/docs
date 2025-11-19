@@ -6,7 +6,7 @@ Common errors, solutions, debugging techniques, and troubleshooting strategies f
 
 ### "Watch ordering violation detected!"
 
-**Full error message:**
+**Error message:**
 ```
 Watch ordering violation detected!
 
@@ -17,54 +17,11 @@ Fix: Move ALL conditional watch calls to the END of your build method.
 Only the LAST watch call can be conditional.
 ```
 
-**What happened:**
-- You have a watch inside an `if` statement
-- This watch is **followed by other watches**
-- On rebuild, the condition changed, causing watch_it to try to retrieve the wrong type at that position
-- A TypeError was thrown when trying to cast the watch entry
+**Cause:** Watch calls inside `if` statements followed by other watches, causing order to change between builds.
 
-**Example:**
-```dart
-// BAD - Conditional watch FOLLOWED by other watches
-final todos = watchValue((TodoManager m) => m.todos);
+**Solution:** See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for detailed explanation, examples, and safe patterns.
 
-if (showDetails) {
-  final details = watchValue((M m) => m.details);  // Conditional!
-}
-
-final isLoading = watchValue((M m) => m.isLoading);  // This gets wrong type!
-```
-
-**Solutions:**
-
-**Option 1:** Make all watches unconditional:
-```dart
-// GOOD - All watches always execute
-final todos = watchValue((TodoManager m) => m.todos);
-final details = watchValue((M m) => m.details);  // Always watch
-final isLoading = watchValue((M m) => m.isLoading);
-
-if (showDetails) {
-  return DetailView(details);  // Use conditionally
-}
-```
-
-**Option 2:** Move conditional watch to the END:
-```dart
-// GOOD - Conditional watch at the END
-final todos = watchValue((TodoManager m) => m.todos);
-final isLoading = watchValue((M m) => m.isLoading);
-
-// Conditional watch at the end - safe!
-if (showDetails) {
-  final details = watchValue((M m) => m.details);
-  return DetailView(details);
-}
-```
-
-**Tip:** Call `enableTracing()` in your build method to see exact source locations of the conflicting watch statements.
-
-**See:** [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for complete explanation.
+**Debugging tip:** Call `enableTracing()` in your build method to see exact source locations of conflicting watch statements.
 
 ### "watch() called outside build"
 
