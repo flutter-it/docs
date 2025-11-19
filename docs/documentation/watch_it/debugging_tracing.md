@@ -127,6 +127,8 @@ void main() {
 }
 ```
 
+See [get_it Object Registration](/documentation/get_it/object_registration.md) for all registration methods.
+
 ### Widget doesn't rebuild when data changes
 
 **Symptoms:**
