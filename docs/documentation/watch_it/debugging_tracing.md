@@ -1,9 +1,5 @@
 # Debugging & Troubleshooting
 
-::: warning
-This content is AI generated and is currently under review.
-:::
-
 Common errors, solutions, debugging techniques, and troubleshooting strategies for `watch_it`.
 
 ## Common Errors
@@ -266,6 +262,252 @@ class MyWidget extends WatchingWidget {
 }
 ```
 
+### registerHandler not firing
+
+**Symptoms:**
+- Handler callback never executes
+- Side effects (navigation, dialogs) don't happen
+- No errors thrown
+
+**Common causes:**
+
+#### 1. Handler registered after conditional return
+
+```dart
+// BAD - Handler registered AFTER early return
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final isLoading = watchValue((M m) => m.isLoading);
+
+    if (isLoading) {
+      return CircularProgressIndicator();  // Returns early!
+    }
+
+    // This handler never gets registered when loading!
+    registerHandler(
+      select: (M m) => m.saveCommand,
+      handler: (context, result, cancel) {
+        Navigator.pop(context);
+      },
+    );
+
+    return MyForm();
+  }
+}
+```
+
+**Solution:** Register handlers BEFORE any conditional returns:
+
+```dart
+// GOOD - Handler registered before conditional logic
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    registerHandler(
+      select: (M m) => m.saveCommand,
+      handler: (context, result, cancel) {
+        Navigator.pop(context);
+      },
+    );
+
+    final isLoading = watchValue((M m) => m.isLoading);
+
+    if (isLoading) {
+      return CircularProgressIndicator();
+    }
+
+    return MyForm();
+  }
+}
+```
+
+#### 2. Selecting non-Listenable object
+
+```dart
+// BAD - Selecting a non-observable value
+registerHandler(
+  select: (M m) => m.someValue,  // Not a Listenable!
+  handler: (context, value, cancel) { },
+);
+```
+
+**Solution:** Select a Listenable (Command, ValueNotifier, etc.):
+
+```dart
+// GOOD - Selecting a Command
+registerHandler(
+  select: (M m) => m.saveCommand,
+  handler: (context, result, cancel) { },
+);
+```
+
+### callOnce runs multiple times
+
+**Symptoms:**
+- `callOnce` callback executes more than once
+- Initialization happens repeatedly
+- Commands run multiple times unexpectedly
+
+**Cause:** Widget gets recreated (not rebuilt), creating new Element instances.
+
+**Example:**
+
+```dart
+// This creates NEW widget instances on every parent rebuild
+Widget build(BuildContext context) {
+  return MyWidget();  // New instance each time!
+}
+
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    callOnce((_) {
+      print('Init');  // Will print multiple times!
+    });
+    return Container();
+  }
+}
+```
+
+**Solution:** Use `const` constructors or cache widget instances:
+
+```dart
+// Option 1: const constructor
+Widget build(BuildContext context) {
+  return const MyWidget();  // Same instance reused
+}
+
+// Option 2: Cache the instance
+class ParentWidget extends StatelessWidget {
+  final child = MyWidget();  // Created once
+
+  @override
+  Widget build(BuildContext context) {
+    return child;  // Reuses same instance
+  }
+}
+```
+
+**Note:** This is normal Flutter behavior - `callOnce` runs once per widget Element, not per widget class. If you need initialization that survives widget recreation, use get_it registration or manager initialization.
+
+### callOnceAfterThisBuild doesn't execute
+
+**Symptoms:**
+- Callback never runs
+- Navigation/dialogs don't appear
+- No errors
+
+**Cause:** Called inside a conditional that becomes false before the post-frame callback executes.
+
+**Example:**
+
+```dart
+// BAD - Condition might change
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final isReady = isReady<Database>();
+
+    if (isReady) {
+      callOnceAfterThisBuild((context) {
+        Navigator.push(...);  // Might not execute if widget rebuilds first
+      });
+      return LoadedView();
+    }
+
+    return LoadingView();
+  }
+}
+```
+
+**Solution:** Use unconditional `callOnceAfterThisBuild` with conditional logic inside:
+
+```dart
+// GOOD - Always registers, conditionally executes
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final isReady = isReady<Database>();
+
+    callOnceAfterThisBuild((context) {
+      if (isReady) {  // Check condition in callback
+        Navigator.push(...);
+      }
+    });
+
+    return isReady ? LoadedView() : LoadingView();
+  }
+}
+```
+
+### createOnce recreates on every build
+
+**Symptoms:**
+- Objects created multiple times
+- State resets unexpectedly
+- Memory leaks from creating many instances
+
+**Cause:** Using `allowObservableChange: true` or creating different objects each build.
+
+**Bad example:**
+
+```dart
+// BAD - Creates new notifier every build
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    // This creates a NEW selector function each build
+    final counter = createOnce(
+      () => ValueNotifier(0),
+      allowObservableChange: true,  // DON'T DO THIS!
+    );
+
+    return Text('$counter.value');
+  }
+}
+```
+
+**Solution:** Remove `allowObservableChange: true`:
+
+```dart
+// GOOD - Creates once, reuses instance
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final counter = createOnce(() => ValueNotifier(0));
+    // Throws exception if selector changes - helps catch bugs!
+
+    return Text('${counter.value}');
+  }
+}
+```
+
+**When to use `allowObservableChange: true`:**
+
+Only when the created object genuinely needs to change based on other reactive state:
+
+```dart
+// Valid use case - different notifier per user
+class UserWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final userId = watchValue((AppState s) => s.currentUserId);
+
+    // Create different notifier for different users
+    final userNotes = createOnce(
+      () => ValueNotifier<String>(''),
+      allowObservableChange: true,  // OK here - userId changes
+    );
+
+    return TextField(
+      controller: TextEditingController(text: userNotes.value),
+      onChanged: (value) => userNotes.value = value,
+    );
+  }
+}
+```
+
 ## Debugging Techniques
 
 ### Enable watch_it Tracing
@@ -316,23 +558,6 @@ Add print statements to track how often widgets rebuild:
 - Too many rebuilds? → Watching too much data
 - Not rebuilding? → Not watching the data that changes
 
-### Use Flutter DevTools
-
-#### 1. Widget Inspector
-- See rebuild highlights (enable "Highlight Repaints")
-- Check if correct widgets rebuild when data changes
-- Verify no unnecessary rebuilds
-
-#### 2. Performance View
-- Check for performance issues during rebuilds
-- Look for expensive operations in `build()`
-- Profile memory usage
-
-#### 3. Timeline
-- See when widgets rebuild
-- Correlate with data changes
-- Identify unnecessary work
-
 ### Isolate the problem
 
 Create minimal reproduction:
@@ -344,48 +569,16 @@ This isolates:
 - Does the widget rebuild on data change?
 - Are there ordering issues?
 
-### Verify get_it registration
-
-Check what's registered:
-
-```dart
-void main() {
-  setupDependencies();
-
-  // Print all registrations
-  print('Registered types:');
-  // GetIt doesn't expose registrations publicly,
-  // but you can test by trying to get them:
-
-  try {
-    final manager = di<TodoManager>();
-    print('✅ TodoManager registered');
-  } catch (e) {
-    print('✗ TodoManager NOT registered');
-  }
-
-  runApp(MyApp());
-}
-```
-
 ## Performance Profiling
 
-### Measure rebuild cost
+If you suspect performance issues, measure how long your watch-heavy widgets take to rebuild:
 
 <<< @/../code_samples/lib/watch_it/debugging_patterns.dart#measure_rebuild_cost
 
 **What to look for:**
-- Rebuilds taking > 16ms (60fps)
-- Expensive computations in build()
-- Move expensive work to managers
-
-### Profile memory usage
-
-<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#profile_memory
-
-### Find excessive watch calls
-
-<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#find_excessive_watch_calls
+- Rebuilds taking > 16ms (60fps) - consider splitting the widget
+- Expensive computations in build() - move to managers
+- Too many watch calls - watch only what you need
 
 ## Troubleshooting Checklist
 
@@ -419,22 +612,6 @@ When something doesn't work:
 - [ ] Split large widgets into smaller ones?
 - [ ] Move computations to managers?
 
-## Advanced Debugging
-
-### Custom watch wrapper with logging
-
-<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#custom_watch_wrapper_logging
-
-### Conditional tracing
-
-Enable tracing only for specific widgets:
-
-<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#conditional_tracing
-
-### Detect watch ordering violations early
-
-<<< @/../code_samples/lib/watch_it/debugging_patterns.dart#detect_watch_ordering_violations
-
 ## Getting Help
 
 When reporting issues:
@@ -446,7 +623,7 @@ When reporting issues:
 5. **Code sample** - Complete, runnable example
 
 **Where to ask:**
-- **Discord:** [Join flutter_it community](https://discord.com/invite/Nn6GkYjzW)
+- **Discord:** [Join flutter_it community](https://discord.gg/ZHYHYCM38h)
 - **GitHub Issues:** [watch_it issues](https://github.com/escamoteur/watch_it/issues)
 - **Stack Overflow:** Tag with `flutter` and `watch-it`
 
