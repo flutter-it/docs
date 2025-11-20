@@ -336,56 +336,6 @@ class ParentWidget extends StatelessWidget {
 
 **Note:** This is normal Flutter behavior - `callOnce` runs once per widget Element, not per widget class. If you need initialization that survives widget recreation, use get_it registration or manager initialization.
 
-### callOnceAfterThisBuild doesn't execute
-
-**Symptoms:**
-- Callback never runs
-- Navigation/dialogs don't appear
-- No errors
-
-**Cause:** Called inside a conditional that becomes false before the post-frame callback executes.
-
-**Example:**
-
-```dart
-// BAD - Condition might change
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final isReady = isReady<Database>();
-
-    if (isReady) {
-      callOnceAfterThisBuild((context) {
-        Navigator.push(...);  // Might not execute if widget rebuilds first
-      });
-      return LoadedView();
-    }
-
-    return LoadingView();
-  }
-}
-```
-
-**Solution:** Use unconditional `callOnceAfterThisBuild` with conditional logic inside:
-
-```dart
-// GOOD - Always registers, conditionally executes
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final isReady = isReady<Database>();
-
-    callOnceAfterThisBuild((context) {
-      if (isReady) {  // Check condition in callback
-        Navigator.push(...);
-      }
-    });
-
-    return isReady ? LoadedView() : LoadingView();
-  }
-}
-```
-
 ### createOnce recreates on every build
 
 **Symptoms:**
