@@ -203,7 +203,7 @@ Use scopes to shadow real services with mocks while keeping the rest of your DI 
 - **Implement Disposable** for automatic cleanup instead of passing dispose functions
 - **Use scopes for business logic lifecycle**, not UI state
 
-### ❌ Don't
+### ❌️ Don't
 
 - **Don't use scopes for temporary state** - use parameters or variables instead
 - **Don't forget to pop scopes** - memory leaks if scopes accumulate

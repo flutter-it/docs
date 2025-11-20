@@ -67,7 +67,7 @@ The `.value` getter returns an unmodifiable view:
 final items = ListNotifier<String>(data: ['a', 'b']);
 
 final immutableView = items.value;  // UnmodifiableListView
-// immutableView.add('c');  // ❌ Throws UnsupportedError
+// immutableView.add('c');  // ❌️ Throws UnsupportedError
 ```
 
 This ensures all mutations go through the notification system.
@@ -195,7 +195,7 @@ final items = ListNotifier<String>(
 );
 
 items.add('item1');  // ✅ Notifies
-items.add('item1');  // ❌ No notification (duplicate in set/map, or no change)
+items.add('item1');  // ❌️ No notification (duplicate in set/map, or no change)
 ```
 
 ## Why Reactive Collections?
@@ -234,10 +234,12 @@ todos[index] = updatedTodo; // ✅ Automatic notification
 ```
 
 **Benefits:**
-- ✅ Less boilerplate
-- ✅ Standard List/Map/Set APIs
-- ✅ Automatic notifications
-- ✅ Transaction support for batching
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Less boilerplate</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Standard List/Map/Set APIs</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Automatic notifications</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Transaction support for batching</li>
+</ul>
 
 ## Next Steps
 

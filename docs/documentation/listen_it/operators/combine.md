@@ -131,10 +131,12 @@ Similarly available: `combineLatest4`, `combineLatest5`, `combineLatest6`
 ### When to Use combineLatest()
 
 Use `combineLatest()` when:
-- ✅ You need values from 2-6 ValueListenables
-- ✅ You want to update whenever any source changes
-- ✅ You need to combine values into a new type
-- ✅ You're implementing derived state or computed properties
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need values from 2-6 ValueListenables</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want to update whenever any source changes</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need to combine values into a new type</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You're implementing derived state or computed properties</li>
+</ul>
 
 ## mergeWith()
 
@@ -265,10 +267,12 @@ print(anyLoading.value); // false (from isLoadingData)
 ### When to Use mergeWith()
 
 Use `mergeWith()` when:
-- ✅ You have multiple sources of the same type
-- ✅ You want to react to changes from any source
-- ✅ You don't need to combine values, just monitor any change
-- ✅ You're aggregating similar event streams
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You have multiple sources of the same type</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want to react to changes from any source</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You don't need to combine values, just monitor any change</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You're aggregating similar event streams</li>
+</ul>
 
 ## Chaining with Other Operators
 

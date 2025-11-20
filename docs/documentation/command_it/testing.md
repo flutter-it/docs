@@ -1,0 +1,672 @@
+# Testing Commands
+
+Learn how to write effective tests for commands, verify state transitions, and test error handling. command_it is designed to be highly testable.
+
+## Why Commands Are Easy to Test
+
+Commands provide clear interfaces for testing:
+
+- **Observable state**: All state changes via `ValueListenable`
+- **Predictable behavior**: Run → execute → notify
+- **Error containment**: Errors don't crash tests
+- **No UI dependencies**: Test business logic independently
+
+## Basic Testing Pattern
+
+<<< @/../code_samples/test/command_it/command_testing_example_test.dart#example
+
+## The Collector Pattern
+
+Use a `Collector` helper to accumulate `ValueListenable` emissions:
+
+```dart
+class Collector<T> {
+  List<T>? values;
+
+  void call(T value) {
+    values ??= <T>[];
+    values!.add(value);
+  }
+
+  void reset() {
+    values?.clear();
+    values = null;
+  }
+}
+
+// Usage in tests
+final resultCollector = Collector<String>();
+command.listen((result, _) => resultCollector(result));
+
+await command.runAsync();
+
+expect(resultCollector.values, ['initial', 'loaded data']);
+```
+
+**Why this pattern?**
+- Captures all emitted values
+- Verifies state transitions
+- Easy to reset between tests
+- Works with any `ValueListenable`
+
+## Testing Async Commands
+
+### Using runAsync()
+
+```dart
+test('Async command executes successfully', () async {
+  final command = Command.createAsyncNoParam<String>(
+    () async {
+      await Future.delayed(Duration(milliseconds: 100));
+      return 'result';
+    },
+    initialValue: '',
+  );
+
+  // Await the result
+  final result = await command.runAsync();
+
+  expect(result, 'result');
+});
+```
+
+### Verifying isRunning State
+
+```dart
+test('isRunning state transitions', () async {
+  final collector = Collector<bool>();
+
+  final command = Command.createAsyncNoParam<String>(
+    () async {
+      await Future.delayed(Duration(milliseconds: 50));
+      return 'done';
+    },
+    initialValue: '',
+  );
+
+  command.isRunning.listen((running, _) => collector(running));
+
+  await command.runAsync();
+
+  expect(collector.values, [false, true, false]);
+  // false (initial) → true (started) → false (completed)
+});
+```
+
+### Testing Parallel Execution Prevention
+
+```dart
+test('Prevents parallel execution', () async {
+  var executionCount = 0;
+
+  final command = Command.createAsyncNoParam<int>(
+    () async {
+      executionCount++;
+      await Future.delayed(Duration(milliseconds: 50));
+      return executionCount;
+    },
+    initialValue: 0,
+  );
+
+  // Try to run multiple times rapidly
+  command.run();
+  command.run();
+  command.run();
+
+  await Future.delayed(Duration(milliseconds: 100));
+
+  // Only one execution occurred
+  expect(executionCount, 1);
+});
+```
+
+## Testing Sync Commands
+
+Sync commands execute immediately, simplifying tests:
+
+```dart
+test('Sync command executes immediately', () {
+  var result = '';
+
+  final command = Command.createSyncNoParam<String>(
+    () => 'immediate',
+    initialValue: '',
+  );
+
+  command.listen((value, _) => result = value);
+  command.run();
+
+  // No await needed
+  expect(result, 'immediate');
+});
+```
+
+**Important**: Sync commands don't have `isRunning`:
+
+```dart
+test('Sync command does not have isRunning', () {
+  final command = Command.createSyncNoParam<String>(
+    () => 'test',
+    initialValue: '',
+  );
+
+  // This throws AssertionError
+  expect(
+    () => command.isRunning,
+    throwsA(isA<AssertionError>()),
+  );
+});
+```
+
+## Testing Error Handling
+
+### Basic Error Testing
+
+```dart
+test('Command handles errors', () async {
+  final errorCollector = Collector<CommandError?>();
+
+  final command = Command.createAsyncNoParam<String>(
+    () async {
+      throw Exception('Test error');
+    },
+    initialValue: '',
+  );
+
+  command.errors.listen((error, _) => errorCollector(error));
+
+  try {
+    await command.runAsync();
+    fail('Should have thrown');
+  } catch (e) {
+    expect(e.toString(), contains('Test error'));
+  }
+
+  // errors emits null first, then the error
+  expect(errorCollector.values?.length, 2);
+  expect(errorCollector.values?.last?.error.toString(), contains('Test error'));
+});
+```
+
+### Testing ErrorFilters
+
+```dart
+test('ErrorFilter routes errors correctly', () async {
+  var localHandlerCalled = false;
+  var globalHandlerCalled = false;
+
+  Command.globalExceptionHandler = (error, stackTrace) {
+    globalHandlerCalled = true;
+  };
+
+  final command = Command.createAsyncNoParam<String>(
+    () => throw Exception('Test error'),
+    initialValue: '',
+    errorFilter: PredicatesErrorFilter([
+      (error, stackTrace) => ErrorReaction.localHandler,
+    ]),
+  );
+
+  command.errors.listen((error, _) {
+    if (error != null) localHandlerCalled = true;
+  });
+
+  try {
+    await command.runAsync();
+  } catch (_) {}
+
+  expect(localHandlerCalled, true);
+  expect(globalHandlerCalled, false); // Only local
+});
+```
+
+## Testing Restrictions
+
+### Basic Restriction Test
+
+```dart
+test('Restriction prevents execution', () {
+  final restriction = ValueNotifier<bool>(false);
+  var executionCount = 0;
+
+  final command = Command.createSyncNoParamNoResult(
+    () => executionCount++,
+    restriction: restriction,
+  );
+
+  // Can execute when not restricted
+  expect(command.canRun.value, true);
+  command.run();
+  expect(executionCount, 1);
+
+  // Cannot execute when restricted
+  restriction.value = true;
+  expect(command.canRun.value, false);
+  command.run();
+  expect(executionCount, 1); // Still 1, didn't execute
+});
+```
+
+### Testing canRun
+
+```dart
+test('canRun combines restriction and running', () {
+  final restriction = ValueNotifier<bool>(false);
+
+  final command = Command.createAsyncNoParam<void>(
+    () async {
+      await Future.delayed(Duration(milliseconds: 50));
+    },
+    restriction: restriction,
+  );
+
+  expect(command.canRun.value, true); // Not restricted, not running
+
+  restriction.value = true;
+  expect(command.canRun.value, false); // Restricted
+
+  restriction.value = false;
+  command.run(); // Start execution
+  // Note: canRun will be false during execution
+});
+```
+
+## Testing CommandResult
+
+### State Transitions
+
+```dart
+test('CommandResult state transitions', () async {
+  final collector = Collector<CommandResult<void, String>>();
+
+  final command = Command.createAsyncNoParam<String>(
+    () async {
+      await Future.delayed(Duration(milliseconds: 50));
+      return 'result';
+    },
+    initialValue: 'initial',
+  );
+
+  command.results.listen((result, _) => collector(result));
+
+  await command.runAsync();
+
+  final results = collector.values!;
+
+  // Initial state
+  expect(results[0].data, 'initial');
+  expect(results[0].isRunning, false);
+
+  // Running state
+  expect(results[1].isRunning, true);
+  expect(results[1].data, null); // Cleared during execution
+
+  // Success state
+  expect(results[2].isRunning, false);
+  expect(results[2].data, 'result');
+  expect(results[2].hasError, false);
+});
+```
+
+### Testing includeLastResultInCommandResults
+
+```dart
+test('includeLastResultInCommandResults keeps old data', () async {
+  final collector = Collector<CommandResult<void, String>>();
+
+  final command = Command.createAsyncNoParam<String>(
+    () async {
+      await Future.delayed(Duration(milliseconds: 50));
+      return 'new data';
+    },
+    initialValue: 'old data',
+    includeLastResultInCommandResults: true,
+  );
+
+  command.results.listen((result, _) => collector(result));
+
+  await command.runAsync();
+
+  final results = collector.values!;
+
+  // Running state KEEPS old data
+  expect(results[1].isRunning, true);
+  expect(results[1].data, 'old data'); // Still visible
+
+  // Success state
+  expect(results[2].data, 'new data');
+});
+```
+
+## Mocking Dependencies
+
+### Using Mock Classes
+
+```dart
+class MockApi {
+  bool shouldFail = false;
+  int callCount = 0;
+
+  Future<String> fetchData() async {
+    callCount++;
+
+    if (shouldFail) {
+      throw Exception('API Error');
+    }
+
+    return 'Data $callCount';
+  }
+}
+
+test('Command with mocked dependency', () async {
+  final mockApi = MockApi();
+
+  final command = Command.createAsyncNoParam<String>(
+    () => mockApi.fetchData(),
+    initialValue: '',
+  );
+
+  final result = await command.runAsync();
+
+  expect(result, 'Data 1');
+  expect(mockApi.callCount, 1);
+});
+```
+
+### Testing Error Scenarios with Mocks
+
+```dart
+test('Command handles API errors', () async {
+  final mockApi = MockApi();
+  mockApi.shouldFail = true;
+
+  final command = Command.createAsyncNoParam<String>(
+    () => mockApi.fetchData(),
+    initialValue: '',
+  );
+
+  expect(
+    () => command.runAsync(),
+    throwsA(isA<Exception>()),
+  );
+});
+```
+
+## Testing with fake_async
+
+For precise timing control, use `fake_async`:
+
+```dart
+import 'package:fake_async/fake_async.dart';
+
+test('Test with controlled time', () {
+  fakeAsync((async) {
+    var result = '';
+
+    final command = Command.createAsyncNoParam<String>(
+      () async {
+        await Future.delayed(Duration(seconds: 5));
+        return 'delayed result';
+      },
+      initialValue: '',
+    );
+
+    command.listen((value, _) => result = value);
+    command.run();
+
+    // Immediately after run, still initial
+    expect(result, '');
+
+    // Advance time
+    async.elapse(Duration(seconds: 5));
+
+    // Now the result is set
+    expect(result, 'delayed result');
+  });
+});
+```
+
+## Testing Disposal
+
+Verify commands clean up properly:
+
+```dart
+test('Command disposes correctly', () async {
+  var disposed = false;
+
+  final command = Command.createAsyncNoParam<String>(
+    () async => 'result',
+    initialValue: '',
+  );
+
+  // Add listener
+  command.listen((_, __) {});
+
+  // Dispose
+  await command.dispose();
+
+  // Verify disposed (accessing properties should throw)
+  expect(() => command.value, throwsA(anything));
+});
+```
+
+## Integration Testing
+
+### Testing Commands in Managers
+
+```dart
+class DataManager {
+  final api = ApiClient();
+
+  late final loadCommand = Command.createAsyncNoParam<List<String>>(
+    () => api.fetchData(),
+    initialValue: [],
+  );
+
+  void dispose() {
+    loadCommand.dispose();
+  }
+}
+
+test('DataManager integration', () async {
+  final manager = DataManager();
+
+  final result = await manager.loadCommand.runAsync();
+
+  expect(result, isNotEmpty);
+
+  manager.dispose();
+});
+```
+
+### Testing Command Chains
+
+```dart
+test('Commands chain via restrictions', () async {
+  final loadCommand = Command.createAsyncNoParam<void>(
+    () async {
+      await Future.delayed(Duration(milliseconds: 50));
+    },
+  );
+
+  final saveCommand = Command.createAsyncNoParam<void>(
+    () async {},
+    restriction: loadCommand.isRunningSync,
+  );
+
+  loadCommand.run();
+
+  // Save is restricted while load is running
+  expect(saveCommand.canRun.value, false);
+
+  await Future.delayed(Duration(milliseconds: 100));
+
+  // After load completes, save can run
+  expect(saveCommand.canRun.value, true);
+});
+```
+
+## Common Testing Patterns
+
+### Pattern 1: Setup/Teardown
+
+```dart
+group('Command Tests', () {
+  late Command<void, String> command;
+  late Collector<String> collector;
+
+  setUp(() {
+    collector = Collector<String>();
+    command = Command.createAsyncNoParam<String>(
+      () async => 'result',
+      initialValue: '',
+    );
+    command.listen((value, _) => collector(value));
+  });
+
+  tearDown(() async {
+    await command.dispose();
+    collector.reset();
+  });
+
+  test('test 1', () async {
+    // Test using command and collector
+  });
+
+  test('test 2', () async {
+    // Test using command and collector
+  });
+});
+```
+
+### Pattern 2: Verify All States
+
+```dart
+test('Verify complete state flow', () async {
+  final states = <String>[];
+
+  final command = Command.createAsyncNoParam<String>(
+    () async {
+      await Future.delayed(Duration(milliseconds: 50));
+      return 'done';
+    },
+    initialValue: 'initial',
+  );
+
+  command.results.listen((result, _) {
+    if (result.isRunning) {
+      states.add('running');
+    } else if (result.hasError) {
+      states.add('error');
+    } else if (result.hasData) {
+      states.add('success');
+    }
+  });
+
+  await command.runAsync();
+
+  expect(states, ['success', 'running', 'success']);
+  // success (initial), running, success (completed)
+});
+```
+
+### Pattern 3: Error Recovery
+
+```dart
+test('Command recovers after error', () async {
+  var shouldFail = true;
+
+  final command = Command.createAsyncNoParam<String>(
+    () async {
+      if (shouldFail) {
+        throw Exception('Error');
+      }
+      return 'success';
+    },
+    initialValue: '',
+  );
+
+  // First call fails
+  expect(() => command.runAsync(), throwsA(anything));
+
+  await Future.delayed(Duration(milliseconds: 50));
+
+  // Second call succeeds
+  shouldFail = false;
+  final result = await command.runAsync();
+  expect(result, 'success');
+});
+```
+
+## Debugging Tests
+
+### Enable Print Statements
+
+```dart
+void setupCollectors(Command command, {bool enablePrint = true}) {
+  command.canRun.listen((canRun, _) {
+    if (enablePrint) print('canRun: $canRun');
+  });
+
+  command.results.listen((result, _) {
+    if (enablePrint) {
+      print('Result: data=${result.data}, error=${result.error}, '
+          'isRunning=${result.isRunning}');
+    }
+  });
+}
+```
+
+### Use testWidgets for UI Integration
+
+```dart
+testWidgets('CommandBuilder widget test', (tester) async {
+  final command = Command.createAsyncNoParam<String>(
+    () async => 'result',
+    initialValue: '',
+  );
+
+  await tester.pumpWidget(
+    MaterialApp(
+      home: CommandBuilder<void, String>(
+        command: command,
+        whileRunning: (context, _, __) => CircularProgressIndicator(),
+        onData: (context, data, _) => Text(data),
+      ),
+    ),
+  );
+
+  await tester.pumpAndSettle();
+
+  expect(find.text('result'), findsOneWidget);
+});
+```
+
+## Best Practices
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Do:**</li>
+</ul>
+- Use `Collector` pattern for state verification
+- Test both success and error paths
+- Verify state transitions with `CommandResult`
+- Use `runAsync()` to await results in tests
+- Mock external dependencies
+- Test restriction behavior
+- Verify disposal
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️️ **Don't:**</li>
+</ul>
+- Access `isRunning` on sync commands
+- Forget to dispose commands in tearDown
+- Test UI and business logic together
+- Rely on timing without `fake_async`
+- Ignore error handling tests
+
+## See Also
+
+- [Command Basics](/documentation/command_it/command_basics) — Creating commands
+- [Command Properties](/documentation/command_it/command_properties) — Observable properties
+- [Error Handling](/documentation/command_it/error_handling) — Error management
+- [Best Practices](/documentation/command_it/best_practices) — Production patterns

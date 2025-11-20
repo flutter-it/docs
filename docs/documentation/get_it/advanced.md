@@ -162,7 +162,7 @@ Only use `ignoreReferenceCount: true` when you're certain no other code is using
 - Services needed by multiple simultaneously active features
 - Complex hierarchical component structures
 
-❌ <strong>Don't use when:</strong>
+❌️ <strong>Don't use when:</strong>
 - Simple singleton that lives for app lifetime (use regular `registerSingleton`)
 - One-to-one widget-service relationship (use scopes)
 - Testing (use scopes to shadow instead)
@@ -199,8 +199,10 @@ Returns `null` instead of throwing an exception if the type is not registered. U
 </ul>
 
 <strong>Don't use when:</strong>
-- ❌ The dependency is required - use `get<T>()` to fail fast
-- ❌ Missing registration indicates a bug - exception is helpful
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ The dependency is required - use <code>get&lt;T&gt;()</code> to fail fast</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Missing registration indicates a bug - exception is helpful</li>
+</ul>
 
 ---
 

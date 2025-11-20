@@ -11,9 +11,11 @@ Watch each value separately - widget rebuilds when **ANY** value changes:
 <<< @/../code_samples/lib/watch_it/multiple_values_separate_watches.dart#example
 
 **When to use:**
-- ✅ Values are unrelated
-- ✅ Simple UI logic
-- ✅ All values are needed for rendering
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Values are unrelated</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Simple UI logic</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ All values are needed for rendering</li>
+</ul>
 
 **Rebuild behavior:** Widget rebuilds whenever **any** of the three values changes.
 
@@ -26,10 +28,12 @@ Combine multiple values using `listen_it` operators in your manager - widget reb
 <<< @/../code_samples/lib/watch_it/multiple_values_combine_latest_form.dart#widget
 
 **When to use:**
-- ✅ Values are related/dependent
-- ✅ Need computed result
-- ✅ Want to reduce rebuilds
-- ✅ Complex validation logic
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Values are related/dependent</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Need computed result</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Want to reduce rebuilds</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Complex validation logic</li>
+</ul>
 
 **Rebuild behavior:** Widget rebuilds only when `isValid` changes, not when individual email or password values change (unless it affects validity).
 
@@ -100,9 +104,11 @@ The choice between `watchIt()` on a `ChangeNotifier` and multiple `watchValue()`
 <<< @/../code_samples/lib/watch_it/multiple_values_watch_it_vs_watch_value.dart#watch_it_approach
 
 **When to use:**
-- ✅ You need **most/all** properties in your UI
-- ✅ Properties are **updated together** (batched updates)
-- ✅ Simple design - one notifyListeners() call updates everything
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need **most/all** properties in your UI</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Properties are **updated together** (batched updates)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Simple design - one notifyListeners() call updates everything</li>
+</ul>
 
 **Trade-off:** Widget rebuilds even if only one property changes.
 
@@ -111,9 +117,11 @@ The choice between `watchIt()` on a `ChangeNotifier` and multiple `watchValue()`
 <<< @/../code_samples/lib/watch_it/multiple_values_watch_it_vs_watch_value.dart#better_design
 
 **When to use:**
-- ✅ Properties update **independently** and **frequently**
-- ✅ You only display a **subset** of properties in each widget
-- ✅ Want granular control over rebuilds
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Properties update **independently** and **frequently**</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You only display a **subset** of properties in each widget</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Want granular control over rebuilds</li>
+</ul>
 
 **Trade-off:** If multiple properties update together, you get multiple rebuilds. In such cases:
 - **Better: Use ChangeNotifier instead** and call `notifyListeners()` once after all updates
@@ -140,9 +148,11 @@ class SettingsWidget extends WatchingWidget {
 ```
 
 **When to use:**
-- ✅ ChangeNotifier has many properties
-- ✅ You only need one or few properties
-- ✅ Other properties change frequently but you don't care
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ ChangeNotifier has many properties</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You only need one or few properties</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Other properties change frequently but you don't care</li>
+</ul>
 
 **Key benefit:** Rebuilds only when `s.darkMode` **value** changes, ignoring notifications about other property changes.
 

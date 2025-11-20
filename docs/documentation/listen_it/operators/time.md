@@ -160,7 +160,7 @@ searchInput
 ::: warning setState and debounce
 Using `debounce()` inside a widget's build method with `setState` can cause issues because the debounce creates a new chain object on each rebuild, losing the timer state.
 
-**❌ DON'T:**
+**❌️ DON'T:**
 ```dart
 Widget build(BuildContext context) {
   return ValueListenableBuilder(
@@ -209,10 +209,12 @@ class SearchModel {
 ### When to Use debounce()
 
 Use `debounce()` when:
-- ✅ You have rapid value changes (user typing, scrolling, resizing)
-- ✅ You want to reduce API calls or expensive operations
-- ✅ You only care about the "final" value after changes stop
-- ✅ You're implementing search, auto-save, or validation
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You have rapid value changes (user typing, scrolling, resizing)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want to reduce API calls or expensive operations</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You only care about the "final" value after changes stop</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You're implementing search, auto-save, or validation</li>
+</ul>
 
 ## async()
 
@@ -236,9 +238,11 @@ asyncSource.listen((value, _) => setState(() => _data = value));
 ### When to Use async()
 
 Use `async()` when:
-- ✅ You need to call `setState()` from a listener
-- ✅ You're getting "setState called during build" errors
-- ✅ You want to batch multiple synchronous changes
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need to call `setState()` from a listener</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You're getting "setState called during build" errors</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want to batch multiple synchronous changes</li>
+</ul>
 
 ::: tip
 In most cases, using watch_it is a better solution than `async()`. watch_it handles state updates automatically without requiring async deferral.

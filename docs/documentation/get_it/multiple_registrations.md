@@ -216,7 +216,7 @@ If you have async registrations, use `getAllAsync<T>()` which waits for all regi
 - <strong>Document order dependencies</strong> if middleware/observer order matters
 - <strong>Use named registrations</strong> for special-purpose implementations that also need individual access
 
-### ❌ Don't
+### ❌️ Don't
 
 - <strong>Don't enable mid-application</strong> - do it during initialization
 - <strong>Don't rely on `get<T>()`</strong> to retrieve all implementations - use `getAll<T>()`

@@ -110,7 +110,9 @@ This is simpler and makes IDE navigation to implementation easier.
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Platform-specific implementations (mobile vs web)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Feature flags to switch implementations</li>
 </ul>
-- ❌ Don't use "just because" - creates navigation friction in your IDE
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Don't use "just because" - creates navigation friction in your IDE</li>
+</ul>
 
 ---
 
@@ -168,19 +170,25 @@ As your app grows, you need to separate business logic from UI code. This makes 
 <strong>Traditional approaches and their limitations:</strong>
 
 <strong>InheritedWidget / Provider:</strong>
-- ❌ Requires `BuildContext` (not available in business layer)
-- ❌ Adds complexity to widget tree
-- ❌ Hard to access from background tasks, isolates
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Requires `BuildContext` (not available in business layer)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Adds complexity to widget tree</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Hard to access from background tasks, isolates</li>
+</ul>
 
 <strong>Plain Singletons:</strong>
-- ❌ Can't swap implementation for tests
-- ❌ Tight coupling to concrete classes
-- ❌ No lifecycle management
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Can't swap implementation for tests</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Tight coupling to concrete classes</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ No lifecycle management</li>
+</ul>
 
 <strong>IoC/DI Containers:</strong>
-- ❌ Slow startup (reflection-based)
-- ❌ "Magic" - hard to understand where objects come from
-- ❌ Most don't work with Flutter (no reflection)
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Slow startup (reflection-based)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ "Magic" - hard to understand where objects come from</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Most don't work with Flutter (no reflection)</li>
+</ul>
 
 <strong>get_it solves these problems:</strong>
 <ul style="list-style: none; padding-left: 0;">

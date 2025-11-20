@@ -134,9 +134,9 @@ final map = MapNotifier<String, int>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-map['count'] = 0;     // ❌ No notification (value unchanged)
+map['count'] = 0;     // ❌️ No notification (value unchanged)
 map['count'] = 1;     // ✅ Notifies (value changed)
-map.remove('missing'); // ❌ No notification (key doesn't exist)
+map.remove('missing'); // ❌️ No notification (key doesn't exist)
 ```
 
 ### manual
@@ -179,7 +179,7 @@ final map = MapNotifier<String, int>(data: {'a': 1, 'b': 2});
 final immutableView = map.value;
 print(immutableView);  // {a: 1, b: 2}
 
-// ❌ Throws UnsupportedError
+// ❌️ Throws UnsupportedError
 // immutableView['c'] = 3;
 
 // ✅ Mutate through the notifier
@@ -381,7 +381,7 @@ For very large maps (1000+ entries):
 - Consider `normal` mode if you have many no-op operations
 
 ```dart
-// ❌ Bad: 1000 notifications
+// ❌️ Bad: 1000 notifications
 for (final entry in entries) {
   map[entry.key] = entry.value;
 }
@@ -463,7 +463,7 @@ All standard `Map<K, V>` methods plus:
 ### 1. Modifying the .value View
 
 ```dart
-// ❌ Don't try to modify the .value getter
+// ❌️ Don't try to modify the .value getter
 final view = map.value;
 view['key'] = 'value';  // Throws UnsupportedError!
 
@@ -474,7 +474,7 @@ map['key'] = 'value';
 ### 2. Forgetting Transactions
 
 ```dart
-// ❌ Many notifications
+// ❌️ Many notifications
 for (final entry in entries) {
   map[entry.key] = entry.value;
 }
@@ -490,7 +490,7 @@ map.endTransAction();
 ### 3. Not Handling Null Values
 
 ```dart
-// ❌ May throw if value is null
+// ❌️ May throw if value is null
 final value = map['key'].toString();
 
 // ✅ Handle null safely

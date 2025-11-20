@@ -40,7 +40,9 @@ You pass an instance of `T` that will <strong>always</strong> be returned on cal
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Service needed at app startup</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Fast to create (no expensive initialization)</li>
 </ul>
-- ❌ Avoid for slow initialization (use LazySingleton instead)
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Avoid for slow initialization (use LazySingleton instead)</li>
+</ul>
 
 ---
 
@@ -98,7 +100,9 @@ You pass a factory function that returns a <strong>NEW instance</strong> of `T` 
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Objects that need fresh state each time</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Objects with short lifecycle</li>
 </ul>
-- ❌ Avoid for expensive-to-create objects used frequently (consider Cached Factory)
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Avoid for expensive-to-create objects used frequently (consider Cached Factory)</li>
+</ul>
 
 ---
 
@@ -162,7 +166,7 @@ Cached factories are a <strong>performance optimization</strong> that sits betwe
 - <strong>Objects with expensive initialization</strong>: Database connections, file readers
 - <strong>Short-to-medium lifetime objects</strong>: Active for a while but not forever
 
-❌ <strong>Don't use when:</strong>
+❌️ <strong>Don't use when:</strong>
 - Object should always be new (use regular factory)
 - Object should live forever (use singleton/lazy singleton)
 - Object holds critical state that must not be reused

@@ -124,7 +124,7 @@ final items2 = ListNotifier<int>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items2.swap(0, 1);  // ❌ No notification (elements are equal)
+items2.swap(0, 1);  // ❌️ No notification (elements are equal)
 ```
 
 ## Integration with Flutter
@@ -161,8 +161,8 @@ final items = ListNotifier<String>(
 );
 
 items.add('item');   // ✅ Notifies
-items[0] = 'item';   // ❌ No notification (value unchanged)
-items.remove('xyz'); // ❌ No notification (not in list)
+items[0] = 'item';   // ❌️ No notification (value unchanged)
+items.remove('xyz'); // ❌️ No notification (not in list)
 ```
 
 ### manual
@@ -197,7 +197,7 @@ final items = ListNotifier<String>(data: ['a', 'b', 'c']);
 final immutableView = items.value;
 print(immutableView);  // [a, b, c]
 
-// ❌ Throws UnsupportedError
+// ❌️ Throws UnsupportedError
 // immutableView.add('d');
 
 // ✅ Mutate through the notifier
@@ -237,10 +237,10 @@ final items = ListNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.fillRange(0, 3, 'a');  // ❌ No notification (values unchanged)
+items.fillRange(0, 3, 'a');  // ❌️ No notification (values unchanged)
 items.fillRange(0, 3, 'b');  // ✅ Notifies (values changed)
 
-items.replaceRange(0, 2, ['b', 'b']);  // ❌ No notification (same values)
+items.replaceRange(0, 2, ['b', 'b']);  // ❌️ No notification (same values)
 items.replaceRange(0, 2, ['c', 'd']);  // ✅ Notifies (values changed)
 ```
 
@@ -406,7 +406,7 @@ For very large lists (1000+ items):
 - Consider `normal` mode if you have many no-op operations
 
 ```dart
-// ❌ Bad: 1000 notifications
+// ❌️ Bad: 1000 notifications
 for (var i = 0; i < 1000; i++) {
   items.add(i);
 }
@@ -488,7 +488,7 @@ All standard `List<T>` methods plus:
 ### 1. Modifying the .value View
 
 ```dart
-// ❌ Don't try to modify the .value getter
+// ❌️ Don't try to modify the .value getter
 final view = items.value;
 view.add('item');  // Throws UnsupportedError!
 
@@ -499,7 +499,7 @@ items.add('item');
 ### 2. Forgetting Transactions
 
 ```dart
-// ❌ Many notifications
+// ❌️ Many notifications
 for (final item in newItems) {
   items.add(item);
 }
@@ -515,7 +515,7 @@ items.endTransAction();
 ### 3. Nested Transactions
 
 ```dart
-// ❌ Will throw assertion error
+// ❌️ Will throw assertion error
 items.startTransAction();
 items.add('a');
 items.startTransAction();  // ERROR!

@@ -14,10 +14,12 @@ This is the most important rule in `watch_it`. Violating it will cause errors or
 
 <div class="emoji-list">
 
-- ❌️ Runtime errors
-- ❌️ Wrong data displayed
-- ❌️ Unexpected rebuilds
-- ❌️ Memory leaks
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Runtime errors</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Wrong data displayed</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Unexpected rebuilds</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Memory leaks</li>
+</ul>
 
 </div>
 

@@ -160,7 +160,7 @@ items.endTransAction();  // ✅ Notifies (something changed)
 
 items.startTransAction();
 items.remove('nonexistent');  // No actual change
-items.endTransAction();  // ❌ No notification (nothing changed)
+items.endTransAction();  // ❌️ No notification (nothing changed)
 ```
 
 ### With manual Mode
@@ -173,7 +173,7 @@ final items = ListNotifier<String>(
 items.startTransAction();
 items.add('a');
 items.add('b');
-items.endTransAction();  // ❌ No notification (manual mode)
+items.endTransAction();  // ❌️ No notification (manual mode)
 
 // Must call notifyListeners() manually even after transaction
 items.notifyListeners();  // ✅ Now notifies
@@ -191,7 +191,7 @@ final items = ListNotifier<int>();
 items.startTransAction();
 items.add(1);
 
-// ❌ ERROR: Assertion failed
+// ❌️ ERROR: Assertion failed
 items.startTransAction();  // Can't nest transactions!
 ```
 
@@ -226,7 +226,7 @@ operation2();
 
 Make sure to always call `endTransAction()`, even if errors occur:
 
-**❌ Unsafe:**
+**❌️ Unsafe:**
 ```dart
 items.startTransAction();
 items.add(data);  // Might throw exception
@@ -410,7 +410,7 @@ for (final item in newItems) {
 }
 items.endTransAction();
 
-// ❌ Bad
+// ❌️ Bad
 for (final item in newItems) {
   items.add(item);  // Notification for each!
 }
@@ -421,7 +421,7 @@ for (final item in newItems) {
 Don't hold transactions open for long periods or across async operations:
 
 ```dart
-// ❌ Bad - transaction held during async operation
+// ❌️ Bad - transaction held during async operation
 items.startTransAction();
 items.clear();
 await fetchData();  // Long async operation
@@ -461,7 +461,7 @@ items.add('a');
 items.add('b');
 items.endTransAction();
 
-// ❌ Worse - requires manual mode, easy to forget notification
+// ❌️ Worse - requires manual mode, easy to forget notification
 items.add('a');
 items.add('b');
 items.notifyListeners();
@@ -472,9 +472,9 @@ items.notifyListeners();
 | Feature | Transactions | manual Mode |
 |---------|-------------|-------------|
 | **Syntax** | `startTransAction()` / `endTransAction()` | `notifyListeners()` |
-| **Works with any mode** | ✅ Yes | ❌ No (requires manual mode) |
-| **Clear intent** | ✅ Explicit batching | ❌ Easy to forget notification |
-| **Assertions** | ✅ Helps catch errors | ❌ No safety checks |
+| **Works with any mode** | ✅ Yes | ❌️ No (requires manual mode) |
+| **Clear intent** | ✅ Explicit batching | ❌️ Easy to forget notification |
+| **Assertions** | ✅ Helps catch errors | ❌️ No safety checks |
 | **Recommended** | ✅ Yes | ⚠️ Use transactions instead |
 
 ## Next Steps

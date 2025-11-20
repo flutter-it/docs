@@ -114,17 +114,21 @@ Or with `watchValue` from [watch_it](/documentation/watch_it/getting_started) fo
 ## When to Use What
 
 ### Use ValueListenable Operators When:
-- ✅ You need to transform values (map, select)
-- ✅ You need to filter updates (where)
-- ✅ You need to debounce rapid changes (search inputs)
-- ✅ You need to combine multiple ValueListenables
-- ✅ You're building data transformation pipelines
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need to transform values (map, select)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need to filter updates (where)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need to debounce rapid changes (search inputs)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need to combine multiple ValueListenables</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You're building data transformation pipelines</li>
+</ul>
 
 ### Use Reactive Collections When:
-- ✅ You need a List, Map, or Set that notifies listeners on mutations
-- ✅ You want automatic UI updates without manual `notifyListeners()` calls
-- ✅ You're building reactive lists, caches, or sets in your UI layer
-- ✅ You want to batch multiple operations into a single notification
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need a List, Map, or Set that notifies listeners on mutations</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want automatic UI updates without manual `notifyListeners()` calls</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You're building reactive lists, caches, or sets in your UI layer</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You want to batch multiple operations into a single notification</li>
+</ul>
 
 ## Key Concepts
 
@@ -190,7 +194,7 @@ final counter = CustomValueNotifier<int>(
   mode: CustomNotifierMode.normal,  // default
 );
 
-counter.value = 0;  // ❌ No notification (value unchanged)
+counter.value = 0;  // ❌️ No notification (value unchanged)
 counter.value = 1;  // ✅ Notifies (value changed)
 ```
 

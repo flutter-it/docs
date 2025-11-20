@@ -53,7 +53,7 @@ final selectedItems = SetNotifier<String>(
 **Important:** Unlike `ListNotifier` and `MapNotifier`, `SetNotifier` does **NOT** support custom equality functions. Sets inherently use `==` and `hashCode` for membership testing. Custom equality would only apply to notification decisions, which could be confusing.
 
 ```dart
-// ❌ SetNotifier doesn't have customEquality parameter
+// ❌️ SetNotifier doesn't have customEquality parameter
 // final items = SetNotifier<Product>(
 //   customEquality: (a, b) => a.id == b.id,  // NOT SUPPORTED
 // );
@@ -170,9 +170,9 @@ final items = SetNotifier<String>(
   notificationMode: CustomNotifierMode.normal,
 );
 
-items.add('item1');  // ❌ No notification (already exists)
+items.add('item1');  // ❌️ No notification (already exists)
 items.add('item2');  // ✅ Notifies (new element)
-items.remove('xyz'); // ❌ No notification (doesn't exist)
+items.remove('xyz'); // ❌️ No notification (doesn't exist)
 ```
 
 **Best for:** Optimizing performance when you have many duplicate add/remove attempts.
@@ -217,7 +217,7 @@ final items = SetNotifier<String>(data: {'a', 'b'});
 final immutableView = items.value;
 print(immutableView);  // {a, b}
 
-// ❌ Throws UnsupportedError
+// ❌️ Throws UnsupportedError
 // immutableView.add('c');
 
 // ✅ Mutate through the notifier
@@ -410,7 +410,7 @@ For very large sets (1000+ elements):
 - Consider `normal` mode if you have many duplicate operations
 
 ```dart
-// ❌ Bad: 1000 notifications
+// ❌️ Bad: 1000 notifications
 for (final item in items) {
   set.add(item);
 }
@@ -502,7 +502,7 @@ In `normal` mode, notifications are based on these return values.
 ### 1. Modifying the .value View
 
 ```dart
-// ❌ Don't try to modify the .value getter
+// ❌️ Don't try to modify the .value getter
 final view = items.value;
 view.add('item');  // Throws UnsupportedError!
 
@@ -513,7 +513,7 @@ items.add('item');
 ### 2. Forgetting Transactions
 
 ```dart
-// ❌ Many notifications
+// ❌️ Many notifications
 for (final item in newItems) {
   items.add(item);
 }
@@ -529,7 +529,7 @@ items.endTransAction();
 ### 3. Expecting Ordered Iteration
 
 ```dart
-// ❌ Sets don't guarantee order
+// ❌️ Sets don't guarantee order
 final items = SetNotifier<int>(data: {3, 1, 2});
 print(items.toList());  // Might be [1, 2, 3] or [3, 1, 2] or any order
 
@@ -540,7 +540,7 @@ final sorted = items.toList()..sort();
 ### 4. Not Overriding == and hashCode
 
 ```dart
-// ❌ Without proper equality, duplicates based on identity
+// ❌️ Without proper equality, duplicates based on identity
 class User {
   final String id;
   final String name;
@@ -584,16 +584,20 @@ users.add(User('1', 'John'));  // No duplicate (same id)
 | **Custom equality** | No (use == override) | Yes (customEquality param) |
 
 **Choose SetNotifier when:**
-- ✅ You need unique elements
-- ✅ You need fast membership testing (contains)
-- ✅ Order doesn't matter
-- ✅ Examples: selected IDs, active filters, user permissions
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need unique elements</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need fast membership testing (contains)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Order doesn't matter</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Examples: selected IDs, active filters, user permissions</li>
+</ul>
 
 **Choose ListNotifier when:**
-- ✅ Order matters
-- ✅ Duplicates are allowed
-- ✅ You need indexed access
-- ✅ Examples: todo lists, message history, search results
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Order matters</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Duplicates are allowed</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ You need indexed access</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Examples: todo lists, message history, search results</li>
+</ul>
 
 ## Next Steps
 

@@ -105,7 +105,7 @@ This error means you're trying to register the same type twice. Common causes:
 <strong>2. Registering inside build methods (hot reload issue)</strong>
 If you register services inside `build()` or `initState()`, hot reload will call it again.
 
-❌ <strong>Wrong:</strong>
+❌️ <strong>Wrong:</strong>
 
 <<< @/../code_samples/lib/get_it/my_app_example.dart#example
 
@@ -199,9 +199,9 @@ Circular dependencies often mean:
 - Logic should be in a third service that coordinates both
 
 <strong>What NOT to do:</strong>
-❌ Using `late` without proper initialization
-❌ Using global variables to break the cycle
-❌ Passing getIt instance around
+❌️ Using `late` without proper initialization
+❌️ Using global variables to break the cycle
+❌️ Passing getIt instance around
 :::
 
 ## Why do I get "This instance is not available in GetIt" when calling signalReady?
@@ -278,10 +278,10 @@ Split registrations into separate functions that encapsulate scope management:
 </ul>
 
 <strong>Don't:</strong>
-❌ Scatter registration calls throughout your app
-❌ Call registration methods from widget code
-❌ Mix registration with business logic
-❌ Duplicate registration code for different scopes
+❌️ Scatter registration calls throughout your app
+❌️ Call registration methods from widget code
+❌️ Mix registration with business logic
+❌️ Duplicate registration code for different scopes
 
 See [Scopes documentation](/documentation/get_it/scopes) for more on scope-based architecture.
 :::
@@ -296,7 +296,7 @@ Use <strong>scopes</strong> - they're designed for this exact use case:
 
 <<< @/../code_samples/lib/get_it/on_login_example.dart#example
 
-<strong>Without Scopes (Not recommended ❌):</strong>
+<strong>Without Scopes (Not recommended ❌️):</strong>
 
 <<< @/../code_samples/lib/get_it/on_login.dart#example
 
