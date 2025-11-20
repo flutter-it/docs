@@ -1,5 +1,9 @@
 # Command Builders
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 ## CommandBuilder, reducing boilerplate
 `command_it` includes a `CommandBuilder` widget which makes the code above a bit nicer:
 

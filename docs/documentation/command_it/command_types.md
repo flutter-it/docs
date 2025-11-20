@@ -1,5 +1,9 @@
 # Command Types
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 ## How to create Commands
 ´Command´ offers different static factory functions for the different function types you want to wrap:
 

@@ -1,5 +1,9 @@
 # Command Results
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 Deep dive into `CommandResult` - the comprehensive state object that combines execution state, result data, errors, and parameters in a single observable property.
 
 ## Overview

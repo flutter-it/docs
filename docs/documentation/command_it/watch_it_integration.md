@@ -1,5 +1,9 @@
 # Integration with watch_it
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 Use commands with watch_it for builder-free reactive UI. Observe command state without `ValueListenableBuilder` widgets.
 
 ## Overview

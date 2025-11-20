@@ -1,5 +1,9 @@
 # Command Properties
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 Commands expose multiple `ValueListenable` properties for different aspects of execution. Learn when and how to use each one.
 
 ## Overview

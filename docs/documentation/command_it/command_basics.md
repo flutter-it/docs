@@ -1,5 +1,9 @@
 # Command Basics
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 Learn how to create and run commands, the foundation of command_it.
 
 ## What is a Command?

@@ -1,5 +1,9 @@
 # Error Handling
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 ## Error Handling
 If the wrapped function inside a `Command` throws an `Exception` the `Command` catches it so your App won't crash.
 Instead it will wrap the caught error together with the value that was passed when the command was executed in a `CommandError` object and assign it to the `Command's` `errors` property which is a `ValueListenable<CommandError>`.

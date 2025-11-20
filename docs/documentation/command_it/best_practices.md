@@ -1,5 +1,9 @@
 # Best Practices
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 Production-ready patterns, anti-patterns, and guidelines for using command_it effectively.
 
 ## When to Use Commands

@@ -7,6 +7,10 @@
   <img src="/images/command_it.svg" alt="command_it logo" width="150" class="header-logo" />
 </div>
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 > Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ::: info Work In Progress

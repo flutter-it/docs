@@ -1,5 +1,9 @@
 # Testing Commands
 
+::: warning AI-Generated Content Under Review
+This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
+:::
+
 Learn how to write effective tests for commands, verify state transitions, and test error handling. command_it is designed to be highly testable.
 
 ## Why Commands Are Easy to Test
