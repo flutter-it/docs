@@ -86,9 +86,17 @@ export default defineConfig({
             collapsed: true,
             items: [
               { text: 'Getting started', link: '/documentation/command_it/getting_started.md' },
-              { text: 'Command types', link: '/documentation/command_it/command_types.md' },
-              { text: 'Command builders', link: '/documentation/command_it/command_builders.md' },
-              { text: 'Error handling', link: '/documentation/command_it/error_handling.md' }
+              { text: 'Command Basics', link: '/documentation/command_it/command_basics.md' },
+              { text: 'Command Types', link: '/documentation/command_it/command_types.md' },
+              { text: 'Command Properties', link: '/documentation/command_it/command_properties.md' },
+              { text: 'Command Results', link: '/documentation/command_it/command_results.md' },
+              { text: 'Command Builders', link: '/documentation/command_it/command_builders.md' },
+              { text: 'Error Handling', link: '/documentation/command_it/error_handling.md' },
+              { text: 'Error Filters', link: '/documentation/command_it/error_filters.md' },
+              { text: 'Restrictions', link: '/documentation/command_it/restrictions.md' },
+              { text: 'Testing', link: '/documentation/command_it/testing.md' },
+              { text: 'watch_it Integration', link: '/documentation/command_it/watch_it_integration.md' },
+              { text: 'Best Practices', link: '/documentation/command_it/best_practices.md' }
             ]
           },
           {
