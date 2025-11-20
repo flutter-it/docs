@@ -287,55 +287,6 @@ class MyWidget extends WatchingWidget {
 }
 ```
 
-### callOnce runs multiple times
-
-**Symptoms:**
-- `callOnce` callback executes more than once
-- Initialization happens repeatedly
-- Commands run multiple times unexpectedly
-
-**Cause:** Widget gets recreated (not rebuilt), creating new Element instances.
-
-**Example:**
-
-```dart
-// This creates NEW widget instances on every parent rebuild
-Widget build(BuildContext context) {
-  return MyWidget();  // New instance each time!
-}
-
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    callOnce((_) {
-      print('Init');  // Will print multiple times!
-    });
-    return Container();
-  }
-}
-```
-
-**Solution:** Use `const` constructors or cache widget instances:
-
-```dart
-// Option 1: const constructor
-Widget build(BuildContext context) {
-  return const MyWidget();  // Same instance reused
-}
-
-// Option 2: Cache the instance
-class ParentWidget extends StatelessWidget {
-  final child = MyWidget();  // Created once
-
-  @override
-  Widget build(BuildContext context) {
-    return child;  // Reuses same instance
-  }
-}
-```
-
-**Note:** This is normal Flutter behavior - `callOnce` runs once per widget Element, not per widget class. If you need initialization that survives widget recreation, use get_it registration or manager initialization.
-
 ### createOnce recreates on every build
 
 **Symptoms:**
