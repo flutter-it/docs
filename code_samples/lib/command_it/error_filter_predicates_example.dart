@@ -94,7 +94,6 @@ class _ErrorFilterWidgetState extends State<ErrorFilterWidget> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 16),
-
           if (lastError != null)
             Card(
               color: Colors.red.shade50,
@@ -110,13 +109,11 @@ class _ErrorFilterWidgetState extends State<ErrorFilterWidget> {
               ),
             ),
           SizedBox(height: 16),
-
           ElevatedButton(
             onPressed: service.loadDataCommand.run,
             child: Text('Load Data (attempt ${service.requestCount + 1})'),
           ),
           SizedBox(height: 8),
-
           Text(
             'Try loading multiple times to see different error types:\n'
             '1st: ValidationException (local)\n'

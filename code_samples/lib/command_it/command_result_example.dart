@@ -6,7 +6,8 @@ class WeatherManager {
   final api = ApiClient();
   bool shouldFail = false;
 
-  late final loadWeatherCommand = Command.createAsync<String, List<WeatherEntry>>(
+  late final loadWeatherCommand =
+      Command.createAsync<String, List<WeatherEntry>>(
     (city) async {
       await simulateDelay(1500);
       if (shouldFail) {

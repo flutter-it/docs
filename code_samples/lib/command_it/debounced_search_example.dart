@@ -18,7 +18,8 @@ class SearchManager {
       await simulateDelay();
       // Simulate search
       return fakeTodos
-          .where((todo) => todo.title.toLowerCase().contains(query.toLowerCase()))
+          .where(
+              (todo) => todo.title.toLowerCase().contains(query.toLowerCase()))
           .toList();
     },
     initialValue: [],

@@ -5,7 +5,8 @@ import '_shared/stubs.dart';
 class WeatherManager {
   final api = ApiClient();
 
-  late final loadWeatherCommand = Command.createAsync<String, List<WeatherEntry>>(
+  late final loadWeatherCommand =
+      Command.createAsync<String, List<WeatherEntry>>(
     (city) async {
       await simulateDelay(2000);
       return [

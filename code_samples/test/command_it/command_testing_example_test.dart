@@ -88,7 +88,8 @@ void main() {
       }
 
       expect(errorCollector.values?.length, 2); // null, then error
-      expect(errorCollector.values?.last?.error.toString(), contains('API Error'));
+      expect(
+          errorCollector.values?.last?.error.toString(), contains('API Error'));
     });
 
     test('Command prevents parallel execution', () async {

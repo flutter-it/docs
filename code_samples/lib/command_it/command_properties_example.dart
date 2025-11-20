@@ -25,7 +25,8 @@ class PropertiesDemo extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 1. value - Last successful result
-        Text('Command Properties Demo', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        Text('Command Properties Demo',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         SizedBox(height: 16),
 
         ValueListenableBuilder<List<Todo>>(
@@ -75,7 +76,8 @@ class PropertiesDemo extends StatelessWidget {
           builder: (context, error, _) {
             return Text(
               'errors: ${error?.error.toString() ?? 'none'}',
-              style: TextStyle(color: error != null ? Colors.red : Colors.black),
+              style:
+                  TextStyle(color: error != null ? Colors.red : Colors.black),
             );
           },
         ),
@@ -112,5 +114,8 @@ class PropertiesDemo extends StatelessWidget {
 // #endregion example
 
 void main() {
-  runApp(MaterialApp(home: Scaffold(body: Padding(padding: EdgeInsets.all(16), child: PropertiesDemo()))));
+  runApp(MaterialApp(
+      home: Scaffold(
+          body:
+              Padding(padding: EdgeInsets.all(16), child: PropertiesDemo()))));
 }

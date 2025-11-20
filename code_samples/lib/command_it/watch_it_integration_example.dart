@@ -36,7 +36,8 @@ class TodoListWidget extends WatchingWidget {
     final todos = watchValue((TodoService s) => s.loadTodosCommand);
 
     // Watch loading state
-    final isLoading = watchValue((TodoService s) => s.loadTodosCommand.isRunning);
+    final isLoading =
+        watchValue((TodoService s) => s.loadTodosCommand.isRunning);
 
     // Watch canRun for the add command
     final canAdd = watchValue((TodoService s) => s.addTodoCommand.canRun);
@@ -47,10 +48,7 @@ class TodoListWidget extends WatchingWidget {
       appBar: AppBar(title: Text('Todos')),
       body: Column(
         children: [
-          if (isLoading)
-            LinearProgressIndicator()
-          else
-            SizedBox(height: 4),
+          if (isLoading) LinearProgressIndicator() else SizedBox(height: 4),
           Expanded(
             child: ListView.builder(
               itemCount: todos.length,
@@ -70,7 +68,8 @@ class TodoListWidget extends WatchingWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: canAdd
-            ? () => service.addTodoCommand(Todo('${todos.length + 1}', 'New Todo', false))
+            ? () => service
+                .addTodoCommand(Todo('${todos.length + 1}', 'New Todo', false))
             : null,
         child: Icon(Icons.add),
       ),

@@ -45,7 +45,8 @@ class ChainedCommandsWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Command Chaining Example', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text('Command Chaining Example',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SizedBox(height: 16),
 
           // Load button
@@ -61,7 +62,8 @@ class ChainedCommandsWidget extends StatelessWidget {
                       SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
                       ),
                       SizedBox(width: 8),
                     ],
@@ -78,8 +80,11 @@ class ChainedCommandsWidget extends StatelessWidget {
             valueListenable: manager.saveCommand.canRun,
             builder: (context, canRun, _) {
               return ElevatedButton(
-                onPressed: canRun ? () => manager.saveCommand(Todo('1', 'Test Todo', false)) : null,
-                child: Text(canRun ? 'Save Todo' : 'Save (blocked while loading)'),
+                onPressed: canRun
+                    ? () => manager.saveCommand(Todo('1', 'Test Todo', false))
+                    : null,
+                child:
+                    Text(canRun ? 'Save Todo' : 'Save (blocked while loading)'),
               );
             },
           ),
@@ -90,8 +95,12 @@ class ChainedCommandsWidget extends StatelessWidget {
             valueListenable: manager.updateCommand.canRun,
             builder: (context, canRun, _) {
               return ElevatedButton(
-                onPressed: canRun ? () => manager.updateCommand(Todo('2', 'Updated Todo', false)) : null,
-                child: Text(canRun ? 'Update Todo' : 'Update (blocked while saving)'),
+                onPressed: canRun
+                    ? () =>
+                        manager.updateCommand(Todo('2', 'Updated Todo', false))
+                    : null,
+                child: Text(
+                    canRun ? 'Update Todo' : 'Update (blocked while saving)'),
               );
             },
           ),
