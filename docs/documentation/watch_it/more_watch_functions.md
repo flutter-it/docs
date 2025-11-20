@@ -2,7 +2,7 @@
 
 You've learned [`watchValue()`](/documentation/watch_it/your_first_watch_functions.md) for watching `ValueListenable` properties. Now let's explore the other watch functions.
 
-## watchIt - Watch Whole Object in get_it
+## watchIt - Watch Whole Object in `get_it`
 
 When your registered object IS a `Listenable`, use `watchIt()`:
 
@@ -38,7 +38,7 @@ final count = watch(di<CounterManager>().count).value;
 ```
 
 **Why use the convenience functions?**
-- `watchIt()` is cleaner for getting the whole object from get_it
+- `watchIt()` is cleaner for getting the whole object from `get_it`
 - `watchValue()` provides better type inference and cleaner syntax
 - Each is optimized for its specific use case
 :::
@@ -95,7 +95,7 @@ Or if performance is important, use `watchPropertyValue()` for selective updates
 
 <<< @/../code_samples/lib/watch_it/watch_comparison_snippets.dart#watchPropertyValue_usage
 
-**For local Listenables not registered in get_it:**
+**For local Listenables not registered in `get_it`:**
 
 Use `watch()`:
 
@@ -109,9 +109,9 @@ Mixing different watch functions:
 
 ## Key Takeaways
 
-✅ `watchValue()` - Watch `ValueListenable` properties from get_it (one or two properties)
-✅ `watchIt()` - Watch whole `Listenable` objects from get_it (many properties change)
-✅ `watchPropertyValue()` - Selective updates from `Listenable` in get_it (performance optimization)
+✅ `watchValue()` - Watch `ValueListenable` properties from `get_it` (one or two properties)
+✅ `watchIt()` - Watch whole `Listenable` objects from `get_it` (many properties change)
+✅ `watchPropertyValue()` - Selective updates from `Listenable` in `get_it` (performance optimization)
 ✅ `watch()` - Most flexible, any `Listenable` (local or parameter)
 ✅ Choose based on property count and update patterns
 ✅ Mix and match based on your needs

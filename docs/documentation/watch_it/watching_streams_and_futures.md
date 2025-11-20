@@ -41,7 +41,7 @@ Much more nested and verbose!
 
 #### Watching Local Streams (target parameter)
 
-If your stream isn't registered in get_it, use the `target` parameter:
+If your stream isn't registered in `get_it`, use the `target` parameter:
 
 <<< @/../code_samples/lib/watch_it/watch_stream_with_target.dart#example
 
@@ -88,7 +88,7 @@ AsyncSnapshot<R> watchStream<T extends Object, R>(
 
 **All parameters:**
 - `select` - Function to get Stream from registered object (optional if using `target`)
-- `target` - Direct stream to watch (optional, not from get_it)
+- `target` - Direct stream to watch (optional, not from `get_it`)
 - `initialValue` - Value shown before first stream event (makes `data` never null)
 - `preserveState` - Keep last value when stream changes (default: `true`)
 - `allowStreamChange` - Allow stream instance to change (default: `false`)
@@ -153,7 +153,7 @@ AsyncSnapshot<R> watchFuture<T extends Object, R>(
 
 **All parameters:**
 - `select` - Function to get Future from registered object (optional if using `target`)
-- `target` - Direct future to watch (optional, not from get_it)
+- `target` - Direct future to watch (optional, not from `get_it`)
 - `initialValue` - **Required**. Value shown before future completes (makes `data` never null)
 - `preserveState` - Keep last value when future changes (default: `true`)
 - `allowFutureChange` - Allow future instance to change (default: `false`)

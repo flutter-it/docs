@@ -35,8 +35,8 @@ There are various `watch` methods, for common types of data sources, including `
 | API  | Description  |
 |---|---|
 | `watch` | observes any Listenable you have access to |
-| `watchIt` | observes any Listenable registered in get_it |
-| `watchValue` | observes a ValueListenable property of an object registered in get_it |
+| `watchIt` | observes any Listenable registered in `get_it` |
+| `watchValue` | observes a ValueListenable property of an object registered in `get_it` |
 | `watchPropertyValue` | observes a property of a Listenable object and trigger a rebuild whenever the Listenable notifies a change and the value of the property changes |
 | `watchStream` | observes a Stream and triggers a rebuild whenever the Stream emits a new value |
 | `watchFuture` | observes a Future and triggers a rebuild whenever the Future completes |
@@ -123,7 +123,7 @@ If you want to know more about the reasons for this rule check out [How does it 
 T watch<T extends Listenable>(T target);
 ```
 
-That listenable is passed directly in as a parameter which means it could be  some local variable/property or also come from get_it. Like
+That listenable is passed directly in as a parameter which means it could be  some local variable/property or also come from `get_it`. Like
 
 ```dart
 final userName = watch(di<UserModel>()).name;
@@ -158,10 +158,10 @@ Widget build(BuildContext context) {
 
 ### Watching `Listenable` inside GetIt
 
-`watchIt` observes any Listenable registered with the type `T` in get_it and triggers a rebuild whenever it notifies a change. It's basically a shortcut for `watch(di<T>())`.
+`watchIt` observes any Listenable registered with the type `T` in `get_it` and triggers a rebuild whenever it notifies a change. It's basically a shortcut for `watch(di<T>())`.
 `instanceName` is the optional name of the instance if you registered it
-with a name in get_it.
-`getIt` is the optional instance of get_it to use if you don't want to use the
+with a name in `get_it`.
+`getIt` is the optional instance of `get_it` to use if you don't want to use the
 default one. 99% of the time you won't need this.
 
 ```dart
@@ -220,7 +220,7 @@ R watchValue<T extends Object, R>(ValueListenable<R> Function(T) selectProperty,
     {String? instanceName, GetIt? getIt}) {
 ```
 
-`watchValue` observes a `ValueListenable` (e.g. a `ValueNotifier`) property of an object registered in get_it.
+`watchValue` observes a `ValueListenable` (e.g. a `ValueNotifier`) property of an object registered in `get_it`.
 It triggers a rebuild whenever the `ValueListenable` notifies a change and returns its current value. It's basically a shortcut for `watchIt<T>().value`
 As this is a common scenario it allows us a type safe concise way to do this.
 
@@ -250,8 +250,8 @@ final userName = watchValue((UserManager user) => user.userName);
 ```
 
 `instanceName` is the optional name of the instance if you registered it
-with a name in get_it.
-`getIt` is the optional instance of get_it to use if you don't want to use the
+with a name in `get_it`.
+`getIt` is the optional instance of `get_it` to use if you don't want to use the
 default one. 99% of the time you won't need this.
 
 #### Watching a local ValueListenable/ValueNotifier

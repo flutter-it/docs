@@ -9,7 +9,7 @@ next:
   <h1 style="margin: 0;">Getting Started</h1>
 </div>
 
-<strong>`watch_it`</strong> makes your Flutter widgets automatically rebuild when data changes. No <code>setState</code>, no <code>StreamBuilder</code>, just simple reactive programming built on top of get_it.
+<strong>`watch_it`</strong> makes your Flutter widgets automatically rebuild when data changes. No <code>setState</code>, no <code>StreamBuilder</code>, just simple reactive programming built on top of `get_it`.
 
 <strong>Key benefits:</strong>
 <ul style="list-style: none; padding-left: 0;">
@@ -47,7 +47,7 @@ dependencies:
 
 ## Quick Example
 
-<strong>Step 1:</strong> Register your reactive objects with get_it:
+<strong>Step 1:</strong> Register your reactive objects with `get_it`:
 
 <<< @/../code_samples/lib/watch_it/counter_simple_example.dart#example
 

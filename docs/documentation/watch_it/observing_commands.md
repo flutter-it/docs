@@ -1,12 +1,12 @@
 # Observing Commands with `watch_it`
 
-One of the most powerful combinations in the flutter_it ecosystem is using `watch_it` to observe `command_it` commands. Commands are `ValueListenable` objects that expose their state (`isRunning`, `value`, `errors`) as `ValueListenable` properties, making them naturally observable by `watch_it`. This pattern provides reactive, declarative state management for async operations with automatic loading states, error handling, and result updates.
+One of the most powerful combinations in the `flutter_it` ecosystem is using `watch_it` to observe `command_it` commands. Commands are `ValueListenable` objects that expose their state (`isRunning`, `value`, `errors`) as `ValueListenable` properties, making them naturally observable by `watch_it`. This pattern provides reactive, declarative state management for async operations with automatic loading states, error handling, and result updates.
 
 ::: tip Learn about Commands First
 If you're new to `command_it`, start with the [command_it Getting Started](/documentation/command_it/getting_started.md) guide to understand how commands work.
 :::
 
-## Why `watch_it` + command_it?
+## Why `watch_it` + `command_it`?
 
 Commands encapsulate async operations and track their execution state (`isRunning`, `value`, `errors`). `watch_it` allows your widgets to reactively rebuild when these states change, creating a seamless user experience without manual state management.
 
@@ -129,13 +129,13 @@ Use handlers to chain commands together:
 
 <<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#dont_await_execute_bad
 
-**Why?** Commands handle async internally. Just call `run()` and let watch_it update the UI reactively.
+**Why?** Commands handle async internally. Just call `run()` and let `watch_it` update the UI reactively.
 
 ### 3. Watch Execution State for Loading
 
 <<< @/../code_samples/lib/watch_it/command_observing_patterns.dart#watch_execution_state_good
 
-**Avoid manual tracking:** Don't use `setState` and boolean flags. Let commands and watch_it handle state reactively.
+**Avoid manual tracking:** Don't use `setState` and boolean flags. Let commands and `watch_it` handle state reactively.
 
 ## Common Patterns
 

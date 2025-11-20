@@ -4,14 +4,14 @@ Watch functions are the core of `watch_it` - they make your widgets automaticall
 
 ## The Simplest Watch: watchValue
 
-The most common way to watch data is with `watchValue()`. It watches a `ValueListenable` property from an object registered in get_it.
+The most common way to watch data is with `watchValue()`. It watches a `ValueListenable` property from an object registered in `get_it`.
 
 ### Basic Counter Example
 
 <<< @/../code_samples/lib/watch_it/counter_simple_example.dart#example
 
 **What happens:**
-- `watchValue()` accesses `CounterManager` from get_it
+- `watchValue()` accesses `CounterManager` from `get_it`
 - Watches the `count` property
 - Widget rebuilds automatically when count changes
 - No manual listeners, no cleanup needed

@@ -78,8 +78,7 @@ export default defineConfig({
               { text: 'Accessing get_it Features', link: '/documentation/watch_it/advanced_integration.md' },
               { text: 'Best Practices', link: '/documentation/watch_it/best_practices.md' },
               { text: 'Debugging & Troubleshooting', link: '/documentation/watch_it/debugging_tracing.md' },
-              { text: 'How watch_it Works', link: '/documentation/watch_it/how_it_works.md' },
-              { text: 'Watch Functions Reference', link: '/documentation/watch_it/watch_functions.md' }
+              { text: 'How watch_it Works', link: '/documentation/watch_it/how_it_works.md' }
             ]
           },
           {

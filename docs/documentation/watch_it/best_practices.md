@@ -6,7 +6,7 @@ Production-ready patterns, performance tips, and testing strategies for `watch_i
 
 ### Self-Contained Widgets
 
-Widgets should access their dependencies directly from get_it, not via constructor parameters.
+Widgets should access their dependencies directly from `get_it`, not via constructor parameters.
 
 **❌️ Bad - Passing managers as parameters:**
 
@@ -17,7 +17,7 @@ Widgets should access their dependencies directly from get_it, not via construct
 <<< @/../code_samples/lib/watch_it/best_practices_patterns.dart#access_directly_good
 
 **Why?** Self-contained widgets are:
-- Easier to test (mock get_it, not constructor params)
+- Easier to test (mock `get_it`, not constructor params)
 - Easier to refactor
 - Don't expose internal dependencies
 - Can access multiple services without param explosion
@@ -34,7 +34,7 @@ Widgets should access their dependencies directly from get_it, not via construct
 
 ### Local Reactive State with createOnce
 
-For widget-local reactive state that doesn't need get_it registration, combine `createOnce` with `watch`:
+For widget-local reactive state that doesn't need `get_it` registration, combine `createOnce` with `watch`:
 
 <<< @/../code_samples/lib/watch_it/watch_create_once_local_state.dart#example
 
@@ -42,7 +42,7 @@ For widget-local reactive state that doesn't need get_it registration, combine `
 - Widget needs its own local reactive state
 - State should persist across rebuilds (not recreated)
 - State should be automatically disposed with widget
-- Don't want to register in get_it (truly local)
+- Don't want to register in `get_it` (truly local)
 
 **Key benefits:**
 - `createOnce` creates the notifier once and auto-disposes it
@@ -96,7 +96,7 @@ Don't watch everything in one giant widget. Split into smaller widgets that watc
 ### Const Constructors
 
 ::: tip Use const with your watching widgets
-Const constructors work with all watch_it widget types: `WatchingWidget`, `WatchingStatefulWidget`, and widgets using `WatchItMixin`. Flutter can optimize const widgets for better rebuild performance.
+Const constructors work with all `watch_it` widget types: `WatchingWidget`, `WatchingStatefulWidget`, and widgets using `WatchItMixin`. Flutter can optimize const widgets for better rebuild performance.
 :::
 
 ## Testing
@@ -151,10 +151,10 @@ testWidgets('TodoListWidget displays todos', (tester) async {
 **Key insights:**
 - **Register watched objects BEFORE `pumpWidget`** - the widget will try to access them during first build
 - Use `pushNewScope()` for test isolation instead of `reset()`
-- Widget accesses mocks via get_it automatically
+- Widget accesses mocks via `get_it` automatically
 - Self-contained widgets are easier to test - no constructor parameters needed
 
-For comprehensive testing strategies with get_it, see the [Testing Guide](/documentation/get_it/testing.md).
+For comprehensive testing strategies with `get_it`, see the [Testing Guide](/documentation/get_it/testing.md).
 
 ## Code Organization
 
@@ -164,7 +164,7 @@ For comprehensive testing strategies with get_it, see the [Testing Guide](/docum
 
 ## Anti-Patterns
 
-### ❌️ Don't Access get_it in Constructors
+### ❌️ Don't Access `get_it` in Constructors
 
 **❌️ Bad - Accessing in constructor:**
 
@@ -179,7 +179,7 @@ For comprehensive testing strategies with get_it, see the [Testing Guide](/docum
 ### ❌️ Don't Violate Watch Ordering Rules
 
 ::: warning Watch Ordering is Critical
-All `watch*`, `callOnce`, `createOnce`, and `registerHandler` calls must be in the same order on every build. This is a fundamental constraint of watch_it's design.
+All `watch*`, `callOnce`, `createOnce`, and `registerHandler` calls must be in the same order on every build. This is a fundamental constraint of `watch_it`'s design.
 
 See [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) for complete details and safe exceptions.
 :::
@@ -203,4 +203,4 @@ Enable tracing with `enableTracing()` or `WatchItSubTreeTraceControl` to underst
 - [Watch Ordering Rules](/documentation/watch_it/watch_ordering_rules.md) - CRITICAL constraints
 - [Debugging & Troubleshooting](/documentation/watch_it/debugging_tracing.md) - Common issues
 - [Observing Commands](/documentation/watch_it/observing_commands.md) - command_it integration
-- [Testing](/documentation/get_it/testing.md) - Testing with get_it
+- [Testing](/documentation/get_it/testing.md) - Testing with `get_it`
