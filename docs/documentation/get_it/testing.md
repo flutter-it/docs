@@ -23,14 +23,27 @@ Testing code that uses get_it requires different approaches depending on whether
 
 ## Unit Testing Patterns
 
-### Pattern 1: Scoped Test Doubles (Recommended)
+### Pattern 1: Scope-Based Testing (Recommended)
 
-Use scopes to inject mocks for specific services while keeping the rest of your dependency graph intact.
+Use scopes to inject mocks for specific services while keeping the rest of your dependency graph intact. Registering a different implementation in a scope works the same way - using the generic type parameter to shadow the original registration.
 
 
 <<< @/../code_samples/lib/get_it/main_example_2.dart#example
 
-### Pattern 2: Constructor Injection for Pure Unit Tests
+### Pattern 2: Conditional Registration (Alternative)
+
+Instead of using scopes, you can switch implementations at registration time using a flag:
+
+
+<<< @/../code_samples/lib/get_it/conditional_registration_example.dart#example
+
+This approach is simpler but less flexible than scopes - you must decide which implementation to use before registration, and can't easily switch during runtime.
+
+::: tip Type-Based Shadowing
+When you register `MockPaymentProcessor` as `<PaymentProcessor>`, get_it uses the **type parameter** as the lookup key, not the concrete class. This is what enables switching implementations—the same key retrieves different objects in different contexts.
+:::
+
+### Pattern 3: Constructor Injection for Pure Unit Tests
 
 For testing classes in complete isolation (without get_it), use optional constructor parameters.
 

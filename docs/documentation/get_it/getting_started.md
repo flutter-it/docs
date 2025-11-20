@@ -90,6 +90,21 @@ get_it offers three main registration types:
 
 ---
 
+## Accessing Services
+
+The generic type parameter you provide when registering is that one that is used when you access an object after it is registered. **If you don't provide that, Dart will infer it from the implementation type:**
+
+Get your registered services using `getIt<Type>()`:
+
+
+<<< @/../code_samples/lib/get_it/accessing_services_example.dart#example
+
+::: tip Shorthand Syntax
+`getIt<Type>()` is shorthand for `getIt.get<Type>()`. Both work the same - use whichever you prefer!
+:::
+
+---
+
 ## Registering Concrete Classes vs Interfaces
 
 <strong>Most of the time, register your concrete classes directly:</strong>
@@ -114,18 +129,24 @@ This is simpler and makes IDE navigation to implementation easier.
   <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Don't use "just because" - creates navigation friction in your IDE</li>
 </ul>
 
----
+```dart
+// Without type parameter - Dart infers StripePaymentProcessor
+getIt.registerSingleton(StripePaymentProcessor());
+getIt<PaymentProcessor>(); // ❌️ Error - not registered as PaymentProcessor
 
-## Accessing Services
+// With type parameter - explicitly register as PaymentProcessor
+getIt.registerSingleton<PaymentProcessor>(StripePaymentProcessor());
+getIt<PaymentProcessor>(); // ✅ Works - registered as PaymentProcessor
+```
 
-Get your registered services using `getIt<Type>()`:
+### Switching Implementations
+
+A common pattern is switching between real and mock implementations using conditional registration:
 
 
-<<< @/../code_samples/lib/get_it/code_sample_908a2d50.dart#example
+<<< @/../code_samples/lib/get_it/conditional_registration_example.dart#example
 
-::: tip Shorthand Syntax
-`getIt<Type>()` is shorthand for `getIt.get<Type>()`. Both work the same - use whichever you prefer!
-:::
+Because both implementations are registered as `<PaymentProcessor>`, the rest of your code remains unchanged - it always requests `getIt<PaymentProcessor>()` regardless of which implementation is registered.
 
 ---
 
