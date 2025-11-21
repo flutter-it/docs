@@ -42,6 +42,28 @@ create + [Sync|Async|Undoable] + [NoParam] + [NoResult]
 
 **Key insight:** If "NoParam" or "NoResult" appears in the name, that feature is ABSENT. If omitted, it's PRESENT.
 
+::: tip NoResult Commands Still Notify Listeners
+Even though NoResult commands return `void`, they still notify listeners when they complete successfully. This means you can watch them to trigger UI updates, navigation, or other side effects.
+
+```dart
+final saveCommand = Command.createAsyncNoResult<Data>(
+  (data) async => await api.save(data),
+);
+
+// You can still listen to completion
+saveCommand.listen((_, __) {
+  showSnackbar('Saved successfully!');
+});
+
+// Or use with watch_it
+watchValue(saveCommand, (_, __) {
+  // Called when save completes
+});
+```
+
+Commands are `ValueListenable<TResult>` where `TResult` is `void` for NoResult variants - the value doesn't change, but notifications still fire on execution.
+:::
+
 ## Parameter Reference
 
 Here's the complete signature of `createAsync<TParam, TResult>` - the most common factory function. All other factories share these same parameters (or a subset):
