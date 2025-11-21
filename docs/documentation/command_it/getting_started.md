@@ -70,6 +70,21 @@ Most real apps need async operations (HTTP calls, database queries, etc.). Comma
 
 This pattern eliminates the boilerplate of manually tracking loading states and nested builders → commands + watch_it handle everything for you.
 
+::: tip Commands Always Notify (By Default)
+Commands notify listeners on **every execution**, even if the result value is identical. This is intentional because:
+
+1. **User actions need feedback** - When clicking "Refresh", users expect loading indicators even if data hasn't changed
+2. **State changes during execution** - `isRunning`, `CommandResult`, and error states update during the async operation
+3. **The action matters, not just the result** - The command executed (API called, file saved), which is important regardless of return value
+
+**When to use `notifyOnlyWhenValueChanges: true`:**
+- Pure computation commands where only the result matters
+- High-frequency updates where identical results should be ignored
+- Performance optimization when listeners are expensive
+
+For most real-world scenarios with user actions and async operations, the default behavior is what you want.
+:::
+
 ## Key Concepts at a Glance
 
 command_it offers powerful features for production apps:
