@@ -106,7 +106,7 @@ command.errors.where((error) => error?.error is NetworkError).listen((error, _) 
 });
 ```
 
-For advanced scenarios, use **error filters** to route different error types at the command level. See [Error Handling](error_handling.md) and [Error Filters](error_filters.md) for details.
+For advanced scenarios, use **error filters** to route different error types at the command level. See [Error Handling](error_handling.md) for details.
 
 ### Restrictions
 
@@ -145,7 +145,7 @@ Follow the [Weather App Tutorial](/examples/command_it/weather_app_tutorial.md) 
 - Multiple commands working together
 
 ### 🛡️ I need robust error handling
-Check out [Error Handling](error_handling.md) and [Error Filters](error_filters.md):
+Check out [Error Handling](error_handling.md):
 - Capturing and displaying errors
 - Routing different error types to different handlers
 - Retry logic and fallback strategies
@@ -173,8 +173,7 @@ Head to [Testing](testing.md) for:
 | Observable properties (value, isRunning, etc.) | [Command Properties](command_properties.md) |
 | CommandResult (comprehensive state) | [Command Results](command_results.md) |
 | CommandBuilder widget | [Command Builders](command_builders.md) |
-| Error handling basics | [Error Handling](error_handling.md) |
-| Advanced error routing | [Error Filters](error_filters.md) |
+| Error handling and routing | [Error Handling](error_handling.md) |
 | Conditional execution | [Restrictions](restrictions.md) |
 | Testing patterns | [Testing](testing.md) |
 | Integration with watch_it | [watch_it Integration](watch_it_integration.md) |

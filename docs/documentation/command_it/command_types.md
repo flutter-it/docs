@@ -73,7 +73,7 @@ static Command<TParam, TResult> createAsync<TParam, TResult>(
 
 - **`includeLastResultInCommandResults`** - When `true`, keeps the last successful value visible in `CommandResult.data` during execution and error states. Default is `false`. See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for detailed explanation and use cases
 
-- **`errorFilter`/`errorFilterFn`** - Configure how errors are handled (local handler, global handler, or both). See [Error Handling](/documentation/command_it/error_handling) and [Error Filters](/documentation/command_it/error_filters)
+- **`errorFilter`/`errorFilterFn`** - Configure how errors are handled (local handler, global handler, or both). See [Error Handling](/documentation/command_it/error_handling)
 
 - **`notifyOnlyWhenValueChanges`** - When `true`, only notifies listeners if value actually changes. Default notifies on every execution
 
@@ -172,7 +172,7 @@ Most factory functions share these parameters:
 
 - **`ifRestrictedRunInstead`** - Callback executed when command is restricted (e.g., show login dialog when user isn't authenticated). See [Restrictions](/documentation/command_it/restrictions#ifrestrictedruninstead).
 
-- **`errorFilter`/`errorFilterFn`** - Configure error handling strategy. See [Error Handling](/documentation/command_it/error_handling) and [Error Filters](/documentation/command_it/error_filters).
+- **`errorFilter`/`errorFilterFn`** - Configure error handling strategy. See [Error Handling](/documentation/command_it/error_handling).
 
 - **`includeLastResultInCommandResults`** - When `true`, keeps previous result visible during execution and error states. See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for detailed explanation.
 

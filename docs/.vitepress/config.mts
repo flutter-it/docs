@@ -18,6 +18,70 @@ export default defineConfig({
     /\/documentation\/(watch_it|command_it)\/getting_started/
   ],
 
+  // Multi-language support
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en'
+    },
+    es: {
+      label: 'Español',
+      lang: 'es',
+      title: "flutter_it",
+      description: "Crea apps Flutter reactivas de forma sencilla - sin generación de código, sin repeticiones, solo código",
+      themeConfig: {
+        nav: [
+          { text: 'Inicio', link: '/es/' },
+          { text: 'Primeros Pasos', link: '/es/getting_started/what_to_do_with_which_package' },
+          { text: 'Documentación', link: '/es/documentation/overview' },
+          { text: 'Ejemplos', link: '/es/examples/overview' },
+          { text: 'Artículos', link: '/es/misc/articles' }
+        ],
+        sidebar: [
+          {
+            text: 'Primeros Pasos',
+            collapsed: false,
+            items: [
+              { text: 'Qué hacer con cada paquete', link: '/es/getting_started/what_to_do_with_which_package' },
+              { text: 'get_it', link: '/es/documentation/get_it/getting_started' }
+            ]
+          },
+          {
+            text: 'Documentación',
+            collapsed: false,
+            items: [
+              {
+                text: 'get_it',
+                collapsed: true,
+                items: [
+                  { text: 'Primeros pasos', link: '/es/documentation/get_it/getting_started' },
+                  { text: 'Registro de objetos', link: '/es/documentation/get_it/object_registration' },
+                  { text: 'Scopes', link: '/es/documentation/get_it/scopes' },
+                  { text: 'Objetos asíncronos', link: '/es/documentation/get_it/async_objects' },
+                  { text: 'Testing', link: '/es/documentation/get_it/testing' },
+                  { text: 'Preguntas frecuentes', link: '/es/documentation/get_it/faq' }
+                ]
+              }
+            ]
+          }
+        ],
+        socialLinks: [
+          { icon: 'github', link: 'https://github.com/flutter-it' },
+          { icon: 'discord', link: 'https://discord.com/invite/Nn6GkYjzW' },
+          { icon: 'twitter', link: 'https://x.com/ThomasBurkhartB' }
+        ],
+        footer: {
+          message: 'Publicado bajo la Licencia MIT.',
+          copyright: 'Copyright © 2024-presente flutter_it'
+        },
+        outline: {
+          level: [2, 3],
+          label: 'En esta página'
+        }
+      }
+    }
+  },
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -93,7 +157,6 @@ export default defineConfig({
               { text: 'Command Results', link: '/documentation/command_it/command_results.md' },
               { text: 'Command Builders', link: '/documentation/command_it/command_builders.md' },
               { text: 'Error Handling', link: '/documentation/command_it/error_handling.md' },
-              { text: 'Error Filters', link: '/documentation/command_it/error_filters.md' },
               { text: 'Restrictions', link: '/documentation/command_it/restrictions.md' },
               { text: 'Testing', link: '/documentation/command_it/testing.md' },
               { text: 'Without watch_it', link: '/documentation/command_it/without_watch_it.md' },

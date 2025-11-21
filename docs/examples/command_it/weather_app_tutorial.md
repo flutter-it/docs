@@ -332,7 +332,7 @@ This tutorial demonstrated:
 
 ## Next Steps
 
-- Add [error filters](/documentation/command_it/error_filters.md) to route different error types
+- Add [error filters](/documentation/command_it/error_handling.md#error-filters) to route different error types
 - Use [CommandResult](/documentation/command_it/command_results.md) for comprehensive state handling
 - Explore [command chaining](/documentation/command_it/watch_it_integration.md#chaining-commands) for multi-step workflows
 - Learn [testing patterns](/documentation/command_it/testing.md) for your commands
