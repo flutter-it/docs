@@ -71,7 +71,7 @@ static Command<TParam, TResult> createAsync<TParam, TResult>(
 
 - **`ifRestrictedRunInstead`** - Alternative function called when command is restricted (e.g., show login dialog). See [Restrictions](/documentation/command_it/restrictions)
 
-- **`includeLastResultInCommandResults`** - When `true`, keeps the last successful value visible in `CommandResult.data` during execution and error states. Default is `false` (data becomes `null` during these states). See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for detailed explanation and use cases
+- **`includeLastResultInCommandResults`** - When `true`, keeps the last successful value visible in `CommandResult.data` during execution and error states. Default is `false`. See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for detailed explanation and use cases
 
 - **`errorFilter`/`errorFilterFn`** - Configure how errors are handled (local handler, global handler, or both). See [Error Handling](/documentation/command_it/error_handling) and [Error Filters](/documentation/command_it/error_filters)
 
