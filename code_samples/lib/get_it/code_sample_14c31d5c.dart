@@ -1,3 +1,4 @@
+// ignore_for_file: unused_import
 import 'package:get_it/get_it.dart';
 import '_shared/stubs.dart';
 

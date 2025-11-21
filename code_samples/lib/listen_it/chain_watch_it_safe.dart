@@ -1,3 +1,4 @@
+// ignore_for_file: unused_element
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:watch_it/watch_it.dart';
