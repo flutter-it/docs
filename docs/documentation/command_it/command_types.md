@@ -140,7 +140,7 @@ static UndoableCommand<TParam, TResult, TUndoState> createUndoable<TParam, TResu
   ValueListenable<bool>? restriction,
   RunInsteadHandler<TParam>? ifRestrictedRunInstead,
   bool includeLastResultInCommandResults = false,
-  bool undoOnExecutionFailure = false,
+  bool undoOnExecutionFailure = true,
   ErrorFilter? errorFilter,
   ErrorFilterFn? errorFilterFn,
   bool notifyOnlyWhenValueChanges = false,
