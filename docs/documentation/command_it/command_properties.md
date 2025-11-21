@@ -8,12 +8,12 @@ Every command provides these observable properties:
 
 | Property | Type | Purpose |
 |----------|------|---------|
-| **value** | `TResult` | Last successful result |
-| **isRunning** | `ValueListenable<bool>` | Async execution state (async only) |
-| **isRunningSync** | `ValueListenable<bool>` | Sync execution state |
-| **canRun** | `ValueListenable<bool>` | Combined restriction + running |
-| **errors** | `ValueListenable<CommandError?>` | Error notifications |
-| **results** | `ValueListenable<CommandResult>` | All data combined |
+| [**value**](#value---the-command-itself) | `TResult` | Last successful result |
+| [**isRunning**](#isrunning---async-execution-state) | `ValueListenable<bool>` | Async execution state (async only) |
+| [**isRunningSync**](#isrunningsync---synchronous-state) | `ValueListenable<bool>` | Sync execution state |
+| [**canRun**](#canrun---combined-state) | `ValueListenable<bool>` | Combined restriction + running |
+| [**errors**](#errors---error-notifications) | `ValueListenable<CommandError?>` | Error notifications |
+| [**results**](#results---all-data-combined) | `ValueListenable<CommandResult>` | All data combined |
 
 ::: warning Sync Commands and isRunning
 **Accessing `.isRunning` on sync commands throws an assertion error.** Sync commands execute immediately without giving the UI time to react, so tracking execution state isn't meaningful.
