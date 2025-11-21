@@ -124,6 +124,30 @@ class MyWidget extends StatelessWidget {
 
 See [Command Results](command_results.md) for more details on using `CommandResult`.
 
+## Error Handling
+
+Commands notify errors through the `errors` property. Here's how to handle them without watch_it:
+
+<<< @/../code_samples/lib/command_it/error_handling_basic_example.dart#example
+
+**Filtering null values:**
+
+The `errors` property is set to `null` at the start of execution (without notification). To only handle actual errors:
+
+```dart
+command.errors.where((e) => e != null).listen((error, _) {
+  // Only called for actual errors, not null clears
+  showErrorDialog(error!.error.toString());
+});
+```
+
+**When to set up listeners:**
+- In `initState` of a `StatefulWidget`
+- Using `registerHandler` from listen_it
+- Prefer these over watching in `build()` to avoid recreating listeners
+
+For watch_it error handling patterns, see [Command Properties - Error Notifications](/documentation/command_it/command_properties#errors---error-notifications).
+
 ## Next Steps
 
 Ready to learn more?

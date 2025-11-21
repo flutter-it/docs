@@ -8,15 +8,18 @@ Deep dive into `CommandResult` - the comprehensive state object that combines ex
 
 ```dart
 class CommandResult<TParam, TResult> {
-  final TParam? paramData;   // Parameter passed to command
-  final TResult? data;        // Result value (null while running or on error)
-  final Object? error;        // Error if thrown
-  final bool isRunning;       // Current execution state
+  final TParam? paramData;             // Parameter passed to command
+  final TResult? data;                 // Result value
+  final bool isUndoValue;              // True if this is from an undo operation
+  final Object? error;                 // Error if thrown
+  final bool isRunning;                // Execution state
+  final ErrorReaction? errorReaction;  // How error was handled (if error occurred)
+  final StackTrace? stackTrace;        // Error stack trace (if error occurred)
 
   // Convenience getters
   bool get hasData => data != null;
-  bool get hasError => error != null;
-  bool get isSuccess => !hasError && !isRunning;
+  bool get hasError => error != null && !isUndoValue;  // Excludes undo errors
+  bool get isSuccess => !isRunning && !hasError;
 }
 ```
 

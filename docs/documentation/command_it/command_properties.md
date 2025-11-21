@@ -4,6 +4,8 @@ Commands expose multiple `ValueListenable` properties for different aspects of e
 
 ## Overview
 
+### Instance Properties
+
 Every command provides these observable properties:
 
 | Property | Type | Purpose |
@@ -17,6 +19,21 @@ Every command provides these observable properties:
 | [**errorsDynamic**](#errorsdynamic---dynamic-error-type) | `ValueListenable<CommandError<dynamic>?>` | Errors with dynamic type |
 | [**name**](#name---debug-identifier) | `String?` | Debug name identifier |
 | [**clearErrors()**](#clearerrors---clear-error-state) | `void` | Clear error state manually |
+
+### Global Configuration
+
+Static properties that affect all commands in the app:
+
+| Property | Type | Default | Purpose |
+|----------|------|---------|---------|
+| [**globalExceptionHandler**](#globalexceptionhandler) | `Function?` | `null` | Global error handler for all commands |
+| [**errorFilterDefault**](#errorfilterdefault) | `ErrorFilter` | `ErrorHandlerGlobalIfNoLocal()` | Default error filter |
+| [**assertionsAlwaysThrow**](#assertionsalwaysthrow) | `bool` | `true` | AssertionErrors bypass filters |
+| [**reportAllExceptions**](#reportallexceptions) | `bool` | `false` | Override filters, report all errors |
+| [**detailedStackTraces**](#detailedstacktraces) | `bool` | `true` | Enhanced stack traces |
+| [**loggingHandler**](#logginghandler) | `Function?` | `null` | Handler for all command executions |
+| [**reportErrorHandlerExceptionsToGlobalHandler**](#reporterrorhandlerexceptionstoglobalhandler) | `bool` | `true` | Report error handler exceptions |
+| [**useChainCapture**](#usechaincapture) | `bool` | `false` | Experimental detailed traces |
 
 ::: warning Sync Commands and isRunning
 **Accessing `.isRunning` on sync commands throws an assertion error.** Sync commands execute immediately without giving the UI time to react, so tracking execution state isn't meaningful.
@@ -167,26 +184,15 @@ ValueListenableBuilder<bool>(
 
 ## errors - Error Notifications
 
-Stream of errors that occur during execution:
-
-<<< @/../code_samples/lib/command_it/error_handling_basic_example.dart#example
+Notifies when errors occur during execution:
 
 **Behavior:**
-- Emits `null` at start of execution (clears previous error)
-- Emits `CommandError<TParam>` if function throws
+- Is set to `null` at start of execution (clears previous error without notification)
+- Notifies with `CommandError<TParam>` if function throws
 - `CommandError` contains:
   - `error`: The thrown exception
   - `paramData`: Parameter passed to command
-  - `stackTrace`: Stack trace (if enabled)
-
-**Filtering null values:**
-
-```dart
-command.errors.where((e) => e != null).listen((error, _) {
-  // Only called for actual errors, not null clears
-  showErrorDialog(error!.error.toString());
-});
-```
+  - `stackTrace`: Stack trace (enhanced if `Command.detailedStackTraces` is true)
 
 **When to use:**
 - Show error dialogs
@@ -194,65 +200,55 @@ command.errors.where((e) => e != null).listen((error, _) {
 - Log errors to analytics
 - Simple error handling without filters
 
-## results - All Data Combined
-
-Single property containing execution state, result, error, and parameter:
-
-<<< @/../code_samples/lib/command_it/command_result_example.dart#example
-
-**CommandResult properties:**
+**With watch_it:**
 
 ```dart
-class CommandResult<TParam, TResult> {
-  final TParam? paramData;             // Parameter passed to command
-  final TResult? data;                 // Result value
-  final bool isUndoValue;              // True if this is from an undo operation
-  final Object? error;                 // Error if thrown
-  final bool isRunning;                // Execution state
-  final ErrorReaction? errorReaction;  // How error was handled (if error occurred)
-  final StackTrace? stackTrace;        // Error stack trace (if error occurred)
+class SaveWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final error = watchValue((DataManager m) => m.saveCommand.errors);
 
-  // Convenience getters
-  bool get hasData => data != null;
-  bool get hasError => error != null && !isUndoValue;  // Excludes undo errors
-  bool get isSuccess => !isRunning && !hasError;
+    // Display error message if present
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: () => di<DataManager>().saveCommand(data),
+          child: Text('Save'),
+        ),
+        if (error != null)
+          ErrorBanner(
+            message: error.error.toString(),
+            onDismiss: () => di<DataManager>().saveCommand.clearErrors(),
+          ),
+      ],
+    );
+  }
 }
 ```
 
-**When to use:**
-- Single `ValueListenableBuilder` instead of multiple
-- Need parameter data for error messages
-- Want comprehensive state in one place
-- Using `CommandBuilder` widget
+**Without watch_it:** See [Using Commands without watch_it - Error Handling](/documentation/command_it/without_watch_it#error-handling)
 
-**Trade-off:** More updates (updates for running, success, error) vs convenience.
+## results - All Data Combined
 
-## includeLastResultInCommandResults
-
-By default, `results.data` is `null` while loading or on error. Set `includeLastResultInCommandResults: true` to keep showing last success:
+Combines execution state, result data, errors, and parameters in a single observable:
 
 ```dart
-Command.createAsyncNoParam<List<Todo>>(
-  () => api.fetchTodos(),
-  initialValue: [],
-  includeLastResultInCommandResults: true, // Keep showing old data
-);
+ValueListenableBuilder<CommandResult<TParam, TResult>>(
+  valueListenable: command.results,
+  builder: (context, result, _) {
+    if (result.isRunning) return CircularProgressIndicator();
+    if (result.hasError) return ErrorWidget(result.error);
+    return DataWidget(result.data);
+  },
+)
 ```
 
-**Behavior:**
-
-| State | `includeLastResultInCommandResults: false` | `includeLastResultInCommandResults: true` |
-|-------|-------------------------------------------|------------------------------------------|
-| Initial | `data = []` | `data = []` |
-| First load success | `data = [todos]` | `data = [todos]` |
-| Second load (running) | `data = null` | `data = [todos]` (keeps old) |
-| Second load error | `data = null` | `data = [todos]` (keeps old) |
-| Second load success | `data = [new todos]` | `data = [new todos]` |
-
 **When to use:**
-- Keep displaying old data while refreshing
-- Avoid empty screens during reload
-- Better UX for pull-to-refresh scenarios
+- Single `ValueListenableBuilder` instead of multiple nested builders
+- Need comprehensive state (running, data, error) in one place
+- Want parameter data for error messages or retry logic
+
+**See [Command Results](/documentation/command_it/command_results) for complete CommandResult structure, examples, and the `includeLastResultInCommandResults` parameter.**
 
 ## errorsDynamic - Dynamic Error Type
 
@@ -271,13 +267,13 @@ ValueListenable<CommandError<dynamic>?> get errorsDynamic => _errors;
 final saveCommand = Command.createAsync<Data, void>(...);
 final deleteCommand = Command.createAsync<String, void>(...);
 
-// Both can share the same error handler
-void handleError(CommandError<dynamic>? error, _) {
-  if (error != null) showErrorDialog(error.error.toString());
-}
-
-saveCommand.errorsDynamic.listen(handleError);
-deleteCommand.errorsDynamic.listen(handleError);
+// Merge errors into single stream using listen_it
+[saveCommand.errorsDynamic, deleteCommand.errorsDynamic]
+  .merge()
+  .where((error) => error != null)
+  .listen((error, _) {
+    showErrorDialog(error!.error.toString());
+  });
 ```
 
 ## clearErrors() - Clear Error State
@@ -291,24 +287,65 @@ void clearErrors()
 **Behavior:**
 - Sets `errors.value` to `null`
 - Explicitly calls `notifyListeners()` to update UI
-- Useful when dismissing error dialogs/messages
 
 **When to use:**
-- User dismisses an error message
-- Manually clearing error state before retry
-- Implementing custom error handling flows
+- You're watching errors in UI and want to hide error display without waiting for next execution
+- Implementing custom error recovery flows
 
 ```dart
-// Error handling with manual dismissal
+// Example: Dismissible error banner
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final error = watchValue((Manager m) => m.command.errors);
+
+    return Column(
+      children: [
+        if (error != null)
+          ErrorBanner(
+            error: error.error.toString(),
+            onDismiss: () => di<Manager>().command.clearErrors(),
+          ),
+        // ... rest of UI
+      ],
+    );
+  }
+}
+```
+
+::: tip Using listen/registerHandler - No Clear Needed
+If you use `.listen()` or `registerHandler()` to watch errors, they only get called when a new error appears (not when cleared to null). In this case, you typically don't need `clearErrors()` at all:
+
+**With `.listen()`:**
+```dart
+command.errors.listen((error, _) {
+  showSnackBar(error!.error.toString()); // Shows once per error, never null
+});
+```
+
+**With `registerHandler()` (watch_it):**
+```dart
+registerHandler((Manager m) => m.command.errors, (context, error, cancel) {
+  showSnackBar(error!.error.toString()); // Shows once per error, never null
+});
+```
+
+Since listeners only fire on actual errors (never null), each error is shown once and you don't need to manually clear.
+
+**Important:** If you DO call `clearErrors()` elsewhere in your code, handlers will receive `null` when the error is cleared. In that case, add a null check:
+
+```dart
 command.errors.listen((error, _) {
   if (error != null) {
-    showErrorDialog(
-      error.error.toString(),
-      onDismiss: () => command.clearErrors(),
-    );
+    showSnackBar(error.error.toString());
   }
 });
 ```
+
+**Use `clearErrors()` when:**
+- Watching errors with `watchValue` - rebuilds on every change, needs manual clear to hide UI
+- Conditionally showing error widgets based on error state
+:::
 
 ::: tip Clearing Errors Without Notification
 You can also set `command.errors.value = null` directly to clear the error WITHOUT triggering listeners. This is useful if you want to silently reset the error state.
@@ -317,8 +354,6 @@ You can also set `command.errors.value = null` directly to clear the error WITHO
 
 Use `clearErrors()` when you want UI updates (e.g., dismissing error messages). Use direct assignment when you don't.
 :::
-
-**Note:** Preferred error handling is via `registerHandler` or `listen` in `initState` of a `StatefulWidget`, but `clearErrors()` is especially useful with watch_it.
 
 ## name - Debug Identifier
 
@@ -372,29 +407,10 @@ command.errors.listen((error, _) => showError(error))
 ValueListenableBuilder(valueListenable: command.results, ...)
 ```
 
-## Watching Commands with watch_it
-
-If using watch_it, you can watch command properties without builders:
-
-```dart
-class TodoWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final todos = watchValue((TodoManager m) => m.loadCommand);
-    final isLoading = watchValue((TodoManager m) => m.loadCommand.isRunning);
-    final canRun = watchValue((TodoManager m) => m.loadCommand.canRun);
-
-    if (isLoading) return CircularProgressIndicator();
-    return TodoList(todos: todos);
-  }
-}
-```
-
-See [Integration with watch_it](/documentation/command_it/watch_it_integration) for details.
-
 ## See Also
 
 - [Command Basics](/documentation/command_it/command_basics) — Creating and running commands
 - [Command Results](/documentation/command_it/command_results) — Deep dive into CommandResult
+- [Global Configuration](/documentation/command_it/global_configuration) — Static properties reference
 - [Error Handling](/documentation/command_it/error_handling) — Handling errors
 - [Command Restrictions](/documentation/command_it/restrictions) — Conditional execution
