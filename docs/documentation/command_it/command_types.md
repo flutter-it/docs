@@ -185,24 +185,6 @@ All other parameters (`initialValue`, `restriction`, `errorFilter`, etc.) work t
 - [Best Practices - Undoable Commands](/documentation/command_it/best_practices#pattern-5-undoable-commands-with-automatic-rollback) for practical examples
 - [Error Handling - Auto-Undo on Failure](/documentation/command_it/error_handling#auto-undo-on-failure) for error recovery patterns
 
-## Common Parameters
-
-Most factory functions share these parameters:
-
-- **`initialValue`** (required for non-void returns) - Sets the command's initial `.value` before first execution. Widgets need this value on first build. See [Command Basics - Initial Values](/documentation/command_it/command_basics#initial-values) for details.
-
-- **`restriction`** - `ValueListenable<bool>` to dynamically enable/disable the command. When `true`, the command cannot execute. See [Restrictions](/documentation/command_it/restrictions) for patterns.
-
-- **`ifRestrictedRunInstead`** - Callback executed when command is restricted (e.g., show login dialog when user isn't authenticated). See [Restrictions](/documentation/command_it/restrictions#ifrestrictedruninstead).
-
-- **`errorFilter`/`errorFilterFn`** - Configure error handling strategy. See [Error Handling](/documentation/command_it/error_handling).
-
-- **`includeLastResultInCommandResults`** - When `true`, keeps previous result visible during execution and error states. See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for detailed explanation.
-
-- **`notifyOnlyWhenValueChanges`** - When `true`, only notifies listeners if the value actually changes. Default is to notify on every execution.
-
-- **`debugName`** - Optional identifier included in error logs and global exception handler callbacks.
-
 ## See Also
 
 - [Command Basics](/documentation/command_it/command_basics) - Detailed usage examples and patterns
