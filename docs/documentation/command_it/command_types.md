@@ -71,7 +71,7 @@ static Command<TParam, TResult> createAsync<TParam, TResult>(
 
 - **`ifRestrictedRunInstead`** - Alternative function called when command is restricted (e.g., show login dialog). See [Restrictions](/documentation/command_it/restrictions)
 
-- **`includeLastResultInCommandResults`** - When `true`, includes the last successful value in `CommandResult` during execution **and error states**. When `false` (default), `CommandResult.data` is `null` during execution and errors. Useful for refresh scenarios where you want old data to remain visible while loading new data or when errors occur
+- **`includeLastResultInCommandResults`** - When `true`, keeps the last successful value visible in `CommandResult.data` during execution and error states. Default is `false` (data becomes `null` during these states). See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for detailed explanation and use cases
 
 - **`errorFilter`/`errorFilterFn`** - Configure how errors are handled (local handler, global handler, or both). See [Error Handling](/documentation/command_it/error_handling) and [Error Filters](/documentation/command_it/error_filters)
 
@@ -174,7 +174,7 @@ Most factory functions share these parameters:
 
 - **`errorFilter`/`errorFilterFn`** - Configure error handling strategy. See [Error Handling](/documentation/command_it/error_handling) and [Error Filters](/documentation/command_it/error_filters).
 
-- **`includeLastResultInCommandResults`** - When `true`, keeps previous result visible during execution. Useful for "refresh" scenarios where old data should remain visible while loading new data.
+- **`includeLastResultInCommandResults`** - When `true`, keeps previous result visible during execution and error states. See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for detailed explanation.
 
 - **`notifyOnlyWhenValueChanges`** - When `true`, only notifies listeners if the value actually changes. Default is to notify on every execution.
 

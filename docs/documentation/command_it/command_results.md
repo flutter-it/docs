@@ -1,9 +1,5 @@
 # Command Results
 
-::: warning AI-Generated Content Under Review
-This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
-:::
-
 Deep dive into `CommandResult` - the comprehensive state object that combines execution state, result data, errors, and parameters in a single observable property.
 
 ## Overview
@@ -88,7 +84,7 @@ Error:      { data: null, error: Exception(), isRunning: false }
 
 ### includeLastResultInCommandResults
 
-Set `includeLastResultInCommandResults: true` to keep showing old data:
+By default, `CommandResult.data` becomes `null` during command execution and when errors occur. Set `includeLastResultInCommandResults: true` to keep the last successful value visible in both states:
 
 ```dart
 Command.createAsync<String, List<Todo>>(
@@ -97,6 +93,11 @@ Command.createAsync<String, List<Todo>>(
   includeLastResultInCommandResults: true, // Keep old data visible
 );
 ```
+
+**When this flag affects behavior:**
+
+1. **During execution** (`isRunning: true`) - Old data remains in `result.data` instead of becoming `null`
+2. **During error states** (`hasError: true`) - Old data remains in `result.data` instead of becoming `null`
 
 **Modified flow:**
 
@@ -113,7 +114,19 @@ Running:    { data: [old results], error: null, isRunning: true }  ← Still vis
 Error:      { data: [old results], error: Exception(), isRunning: false }  ← Still visible
 ```
 
-**Use case:** Pull-to-refresh, stale-while-revalidate pattern
+**Common use cases:**
+
+- **Pull-to-refresh** - Show stale data while loading fresh data
+- **Stale-while-revalidate** - Keep showing old content during updates
+- **Error recovery** - Display last known good data even when errors occur
+- **Optimistic UI** - Maintain UI stability during background refreshes
+
+**When to use:**
+- ✅ List/feed refresh scenarios where empty states look jarring
+- ✅ Search results that update incrementally
+- ✅ Data that's better stale than absent
+- ❌ Login/authentication where stale data is misleading
+- ❌ Critical data where showing old values during errors is unsafe
 
 ## Result Properties
 
