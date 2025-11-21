@@ -94,7 +94,7 @@ All 12 factory functions use the same parameter pattern above, with these variat
 
 **NoParam variants:**
 - Function signature has **no parameter**: `Future<TResult> Function()` instead of `Future<TResult> Function(TParam)`
-- **No `ifRestrictedRunInstead` parameter** (since there's no param to pass to it)
+- **`ifRestrictedRunInstead` has no parameter**: `void Function()` instead of `RunInsteadHandler<TParam>`
 
 **NoResult variants:**
 - Function returns `void`: `Future<void> Function(TParam)` instead of `Future<TResult> Function(TParam)`
