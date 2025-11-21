@@ -8,7 +8,7 @@ Every command provides these observable properties:
 
 | Property | Type | Purpose |
 |----------|------|---------|
-| **value** | `ValueListenable<TResult>` | Last successful result |
+| **value** | `TResult` | Last successful result |
 | **isRunning** | `ValueListenable<bool>` | Async execution state (async only) |
 | **isRunningSync** | `ValueListenable<bool>` | Sync execution state |
 | **canRun** | `ValueListenable<bool>` | Combined restriction + running |
