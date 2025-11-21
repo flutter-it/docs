@@ -12,10 +12,10 @@ title: Preguntas Frecuentes
 
 He investigado por qué necesitamos InheritedWidget, esto resuelve el problema de pasar datos. Sin embargo para eso tenemos un sistema de gestión de estado así que no necesitamos InheritedWidget en absoluto.
 
-He investigado get_it y por lo que entiendo si ya estamos usando un sistema de gestión de estado el único beneficio que tendríamos es la capacidad de encapsular los servicios/métodos relacionados con un grupo de widgets en un solo lugar. (inyección de dependencias)
+He investigado get_it y por lo que entiendo si ya estamos usando un sistema de gestión de estado el único beneficio que tendríamos es la capacidad de encapsular los servicios/métodos relacionados con un grupo de widgets en un solo lugar. (dependency injection)
 
 Por ejemplo si tenemos un mapa y un botón de localízame entonces podrían compartir el mismo servicio _locateMe.
-Para esto crearíamos una clase abstracta que define el método _locateMe y lo conectaríamos con la inyección de dependencias usando un locator.registerLazySingleton.
+Para esto crearíamos una clase abstracta que define el método _locateMe y lo conectaríamos con dependency injection usando un locator.registerLazySingleton.
 
 ¿Pero cuál es el punto? Puedo simplemente crear un archivo methods.dart con el método locateMe sin ninguna clase, podemos solo poner el método en methods.dart lo cual es más rápido y fácil y podemos accederlo desde cualquier lugar.
 No estoy seguro de cómo dart funciona internamente, lo que tiene sentido para mí es que registerLazySingleton removería el método _locateMe de la memoria después de que use el método _locateMe. Y si ponemos el método locateMe dentro de un archivo .dart normal sin clases ni nada más, estará siempre en memoria por lo tanto menos performante.
@@ -25,14 +25,14 @@ No estoy seguro de cómo dart funciona internamente, lo que tiene sentido para m
 
 <strong>Respuesta:</strong> Déjame explicarlo de esta manera, no estás completamente equivocado. Definitivamente puedes usar solo funciones globales y variables globales para hacer que el estado sea accesible a tu UI.
 
-El verdadero poder de la inyección de dependencias viene de usar clases de interfaz abstractas al registrar los tipos. Esto te permite cambiar implementaciones en un momento sin cambiar ninguna otra parte de tu código.
+El verdadero poder de dependency injection viene de usar clases de interfaz abstractas al registrar los tipos. Esto te permite cambiar implementaciones en un momento sin cambiar ninguna otra parte de tu código.
 Esto es especialmente útil cuando se trata de escribir pruebas unitarias o pruebas de UI para que puedas fácilmente inyectar objetos mock.
 
 Otro aspecto es el scoping de los objetos. Los inherited widgets así como get_it te permiten sobrescribir objetos registrados basándote en un scope actual. Para inherited widgets este scope está definido por tu posición actual en el árbol de widgets, en get_it puedes empujar y hacer pop de scopes de registros independiente del árbol de widgets.
 
 Los scopes te permiten sobrescribir comportamiento existente o gestionar fácilmente el tiempo de vida y disposal de objetos.
 
-La idea general de cualquier sistema de inyección de dependencias es que tienes un punto definido en tu código donde tienes toda tu configuración y setup.
+La idea general de cualquier sistema de dependency injection es que tienes un punto definido en tu código donde tienes toda tu configuración y setup.
 Además GetIt te ayuda a inicializar tus objetos de negocio síncronos mientras automáticamente se encarga de las dependencias entre tales objetos.
 
 Escribiste que ya estás usando algún tipo de solución de gestión de estado. Lo que probablemente significa que la solución ya ofrece algún tipo de localización de objetos. En este caso probablemente no necesitarás get_it.
@@ -334,7 +334,7 @@ Mira la [documentación de Scopes](/es/documentation/get_it/scopes) para más pa
 <ul style="list-style: none; padding-left: 0;">
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Apps grandes con muchos servicios (50+)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Prefieres código declarativo sobre imperativo</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Quieres que la inyección de dependencias sea más automática</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Quieres que dependency injection sea más automática</li>
 </ul>
 
 <strong>Cuándo el registro manual está bien:</strong>

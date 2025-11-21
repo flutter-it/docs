@@ -50,11 +50,35 @@ ValueListenableBuilder<List<Todo>>(
 
 **Note:** Only updates on successful completion. Doesn't update during execution or on errors.
 
+::: tip Setting .value Directly
+You can set `.value` directly to update or reset the command's result:
+
+```dart
+// Clear the command result
+loadCommand.value = [];
+
+// Set a specific value
+loadCommand.value = [Todo(id: 1, title: 'Default')];
+```
+
+**Behavior:**
+- Setting `.value` automatically triggers `notifyListeners()` and rebuilds UI
+- By default (without `notifyOnlyWhenValueChanges`), listeners are notified even if the new value equals the old value
+- With `notifyOnlyWhenValueChanges: true`, only notifies if the value actually changed
+
+**When to use:**
+- Reset command to initial/empty state
+- Set a cached or default value without running the command
+- Clear error state by setting a known good value
+
+**Note:** This bypasses the command function - use `.run()` if you want to execute the command logic.
+:::
+
 ## isRunning - Async Execution State
 
 Tracks whether an async command is currently executing:
 
-<<< @/../code_samples/lib/command_it/loading_state_example.dart#example
+<<< @/../code_samples/lib/command_it/loading_state_watch_it_example.dart#example
 
 **When to use:**
 - Show loading indicators
@@ -78,7 +102,9 @@ await Future.microtask(() {});
 print(command.isRunning.value); // Now true
 ```
 
-**Implication:** Don't rely on immediate state changes. Use `ValueListenableBuilder` which handles the async nature correctly.
+**Implication:**
+- Use `isRunning` whenever you want to update UI elements (it's designed for UI updates)
+- Use `isRunningSync` if you need immediate state changes for command restrictions or business logic
 
 ## isRunningSync - Synchronous State
 

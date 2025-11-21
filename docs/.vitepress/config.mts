@@ -62,11 +62,11 @@ export default defineConfig({
                   { text: 'Registro de objetos', link: '/es/documentation/get_it/object_registration' },
                   { text: 'Scopes', link: '/es/documentation/get_it/scopes' },
                   { text: 'Objetos asíncronos', link: '/es/documentation/get_it/async_objects' },
-                  { text: 'Registros múltiples', link: '/documentation/get_it/multiple_registrations' },
-                  { text: 'Avanzado', link: '/documentation/get_it/advanced' },
+                  { text: 'Registros múltiples', link: '/es/documentation/get_it/multiple_registrations' },
+                  { text: 'Avanzado', link: '/es/documentation/get_it/advanced' },
                   { text: 'Pruebas', link: '/es/documentation/get_it/testing' },
-                  { text: 'Extensión DevTools', link: '/documentation/get_it/devtools_extension' },
-                  { text: 'Flutter Previews', link: '/documentation/get_it/flutter_previews' },
+                  { text: 'Extensión DevTools', link: '/es/documentation/get_it/devtools_extension' },
+                  { text: 'Flutter Previews', link: '/es/documentation/get_it/flutter_previews' },
                   { text: 'Preguntas frecuentes', link: '/es/documentation/get_it/faq' }
                 ]
               },
@@ -111,12 +111,12 @@ export default defineConfig({
                 text: 'listen_it',
                 collapsed: true,
                 items: [
-                  { text: 'Listen', link: '/documentation/listen_it/listen_it' },
+                  { text: 'Listen', link: '/es/documentation/listen_it/listen_it' },
                   {
                     text: 'Operators',
                     collapsed: true,
                     items: [
-                      { text: 'Overview', link: '/documentation/listen_it/operators/overview' },
+                      { text: 'Descripción general', link: '/documentation/listen_it/operators/overview' },
                       { text: 'Transform (map, select)', link: '/documentation/listen_it/operators/transform' },
                       { text: 'Filter (where)', link: '/documentation/listen_it/operators/filter' },
                       { text: 'Combine (combineLatest, mergeWith)', link: '/documentation/listen_it/operators/combine' },
@@ -124,18 +124,18 @@ export default defineConfig({
                     ]
                   },
                   {
-                    text: 'Collections',
+                    text: 'Colecciones',
                     collapsed: true,
                     items: [
-                      { text: 'Introduction', link: '/documentation/listen_it/collections/introduction' },
+                      { text: 'Introducción', link: '/documentation/listen_it/collections/introduction' },
                       { text: 'ListNotifier', link: '/documentation/listen_it/collections/list_notifier' },
                       { text: 'MapNotifier', link: '/documentation/listen_it/collections/map_notifier' },
                       { text: 'SetNotifier', link: '/documentation/listen_it/collections/set_notifier' },
-                      { text: 'Notification Modes', link: '/documentation/listen_it/collections/notification_modes' },
-                      { text: 'Transactions', link: '/documentation/listen_it/collections/transactions' }
+                      { text: 'Modos de Notificación', link: '/documentation/listen_it/collections/notification_modes' },
+                      { text: 'Transacciones', link: '/documentation/listen_it/collections/transactions' }
                     ]
                   },
-                  { text: 'Best Practices', link: '/documentation/listen_it/best_practices' }
+                  { text: 'Mejores Prácticas', link: '/documentation/listen_it/best_practices' }
                 ]
               }
             ]
