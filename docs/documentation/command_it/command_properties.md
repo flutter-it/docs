@@ -1,9 +1,5 @@
 # Command Properties
 
-::: warning AI-Generated Content Under Review
-This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
-:::
-
 Commands expose multiple `ValueListenable` properties for different aspects of execution. Learn when and how to use each one.
 
 ## Overview
@@ -18,6 +14,12 @@ Every command provides these observable properties:
 | **canRun** | `ValueListenable<bool>` | Combined restriction + running |
 | **errors** | `ValueListenable<CommandError?>` | Error notifications |
 | **results** | `ValueListenable<CommandResult>` | All data combined |
+
+::: warning Sync Commands and isRunning
+**Accessing `.isRunning` on sync commands throws an assertion error.** Sync commands execute immediately without giving the UI time to react, so tracking execution state isn't meaningful.
+
+Use `.isRunningSync` instead if you need a boolean for restrictions or other purposes - it always returns `false` for sync commands and works for both sync and async.
+:::
 
 ## value - The Command Itself
 
@@ -66,7 +68,7 @@ Tracks whether an async command is currently executing:
 
 ### Why Async Updates?
 
-`isRunning` uses `scheduleMicrotask` to avoid race conditions. The update happens after the current frame:
+`isRunning` uses asynchronous notifications (via `asyncNotification: true` on `CustomValueNotifier`) to avoid race conditions. The update happens after a brief delay:
 
 ```dart
 command.run();
@@ -132,7 +134,7 @@ ValueListenableBuilder<bool>(
 - Single property instead of combining manually
 - Simpler than `isRunning` + `restriction` checks
 
-**Formula:** `canRun = !isRunning && !restriction`
+**Formula:** `canRun = !isRunning.value && !restriction.value`
 
 ## errors - Error Notifications
 
@@ -173,15 +175,18 @@ Single property containing execution state, result, error, and parameter:
 
 ```dart
 class CommandResult<TParam, TResult> {
-  final TParam? paramData;   // Parameter passed to command
-  final TResult? data;        // Result value
-  final Object? error;        // Error if thrown
-  final bool isRunning;       // Execution state
+  final TParam? paramData;             // Parameter passed to command
+  final TResult? data;                 // Result value
+  final bool isUndoValue;              // True if this is from an undo operation
+  final Object? error;                 // Error if thrown
+  final bool isRunning;                // Execution state
+  final ErrorReaction? errorReaction;  // How error was handled (if error occurred)
+  final StackTrace? stackTrace;        // Error stack trace (if error occurred)
 
   // Convenience getters
   bool get hasData => data != null;
-  bool get hasError => error != null;
-  bool get isSuccess => !hasError && !isRunning;
+  bool get hasError => error != null && !isUndoValue;  // Excludes undo errors
+  bool get isSuccess => !isRunning && !hasError;
 }
 ```
 
