@@ -4,22 +4,30 @@ title: command_it Examples
 
 # command_it Examples
 
-::: info Coming Soon
-Comprehensive command_it examples are currently being written. Check back soon for practical code samples and real-world usage patterns.
+Practical examples demonstrating command_it patterns in real-world scenarios.
 
-In the meantime, please refer to the [command_it documentation](/documentation/command_it/getting_started) for detailed information.
-:::
+## Tutorials
 
-## What Will Be Included
+### [Weather App Tutorial](weather_app_tutorial.md)
 
-- Basic command pattern setup
-- Sync vs Async commands
-- Commands with parameters
-- Loading state management
-- Error handling patterns
-- Command restrictions and validation
-- Integration with `watch_it`
-- Real-world application examples
+Build a complete weather search feature from scratch:
+- Async commands for API calls
+- Debouncing user input with listen_it
+- Loading states with `isRunning`
+- Command restrictions to enable/disable features
+- Error handling
+- Multiple commands working together
+
+**Perfect for:** Learning how to build a complete feature using command_it + watch_it + get_it
+
+## More Examples Coming Soon
+
+Additional examples covering:
+- Form validation with commands
+- Multi-step workflows
+- Command chaining patterns
+- Advanced error filtering
+- Testing strategies
 
 ---
 

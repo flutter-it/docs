@@ -1,372 +1,179 @@
-<div class="header-with-logo">
-  <div class="header-content">
-
-# Getting Started with command_it
-
-  </div>
-  <img src="/images/command_it.svg" alt="command_it logo" width="150" class="header-logo" />
+<div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+  <img src="/images/command_it.svg" alt="command_it logo" width="100" />
+  <h1 style="margin: 0;">Getting Started</h1>
 </div>
 
-::: warning AI-Generated Content Under Review
-This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
-:::
-
-> Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
-
-::: info Work In Progress
-This documentation is currently being restructured and will soon match the comprehensive style of the get_it documentation. Stay tuned for improvements!
-:::
-
-[![codecov](https://codecov.io/gh/escamoteur/command_it/branch/master/graph/badge.svg)](https://codecov.io/gh/escamoteur/command_it)
-
-command_it is a way to manage your state based on `ValueListenable` and the `Command` design pattern. Sounds scary uh? Ok lets try it a different way. A `Command` is an object that wraps a function that can be executed by calling the command, therefore decoupling your UI from the wrapped function.
+command_it is a way to manage your state based on `ValueListenable` and the `Command` design pattern. A `Command` is an object that wraps a function, making it callable while providing reactive state updates—perfect for bridging your UI and business logic.
 
 ![command_it Data Flow](/images/command-it-flow.svg)
 
-It's not that easy to define what exactly state management is (see https://medium.com/super-declarative/understanding-state-management-and-why-you-never-will-dd84b624d0e ). For me it's how the UI triggers processes in the model/business layer of your app and how to get back the results of these processes to display them. For both aspects `command_it` offers solution plus some nice extras. So in a way it offers the same that BLoC does but in a more logical way.
+## Installation
 
->This readme might seem very long, but it will guide you easily step by step through all features of `command_it`.
+Add to your `pubspec.yaml`:
 
-> **Breaking Change** A `Command` by default will always notify changes unlike, `ValueNotifier` which only notifies its liteners when the value it holds changes. For more details check this [section](#a-command-always-notifies-by-default).
-
-## Why Commands
-When I started Flutter the most often recommended way to manage your state was `BLoC`. What never appealed to me was that in order to execute a process in your model layer you had to push an object into a `StreamController` which just didn't feel right. For me triggering a process should feel like calling a function.
-Coming from the .Net world I was used to use Commands for this, which had an additional nice feature that the Button that triggered the command would automatically disable for the duration, the command was running and by this, preventing a double execution at the same time. I also learned to love a special breed of .Net commands called `ReactiveCommands` which emitted the result of the called function on their own Stream interface (the ReactiveUI community might oversee that I don't talk of Observables here.) As I wanted to have something similar I ported `ReactiveCommands` to Dart with my [rx_command](https://pub.dev/packages/rx_command). But somehow they did not get much attention because 1. I didn't call them state management and 2. they had to do with `Streams` and even had that scary `rx` in the name and probably the readme wasn't as good to start as I thought.
-
-Remi Rousselet talked to me about that `ValueNotifier` and how much easier they are than using Streams. So what you have here is my second attempt to warm the hearts of the Flutter community for the `Command` metaphor absolutely free of `Streams`
-
-
-## A first careful en*counter*
-
-Let's start with the (in)famous counter example but by using a `Command`. As said before a `Command` wraps a function and can publish the result in a way that can be consumed by the UI. It does this by implementing the `ValueListenable` interface which means a command behaves like `ValueNotifier`. A command has the type:
-
-```dart
-Command<TParam,TResult>
-```
-at which `TParam` is the type of the parameter which the wrapped function expects as argument and `TResult` is the type of the result of it, which means the `Command` behaves like a `ValueNotifier<TResult>`.
-
-### A Command always notifies (by default)
-A `Command` by default will always notify changes unlike, `ValueNotifier` which only notifies its listeners when the value it holds changes. This behavior is opted to enable the widgets to always rebuild whenever a command is executed. If you prefer the Command to behave exactly like a `ValueNotifier` then the default behaviour can be turned of by setting the `notifyOnlyWhenValueChanges` parameter to `true`.
-
-
-In the included project `counter_example` the command is defined as:
-```dart
-class _MyHomePageState extends State<MyHomePage> {
-  int counter = 0;
-  /// This command does not expect any parameters when called therefore TParam
-  /// is void and publishes its results as String
-  Command<void, String> _incrementCounterCommand;
-
-  _MyHomePageState() {
-    _incrementCounterCommand = Command.createSyncNoParam(() {
-      counter++;
-      return counter.toString();
-    }, '0');
-  }
+```yaml
+dependencies:
+  command_it: ^2.0.0
 ```
 
-To create a `Command` the `Command` class [offers](command_types.md) different static functions depending on the signature of the wrapped function. In this case we want to use a synchronous function without any parameters.
+For the recommended setup with watch_it and get_it, just import `flutter_it`:
 
-Our widget tree now looks like this:
+```yaml
+dependencies:
+  flutter_it: ^1.0.0
+```
+
+## Why Commands?
+
+When I started Flutter, the most recommended approach was `BLoC`. But pushing objects into a `StreamController` to trigger processes never felt right—it should feel like calling a function. Coming from the .NET world, I was used to Commands: callable objects that automatically disable their trigger button while running and emit results reactively.
+
+I ported this concept to Dart with [rx_command](https://pub.dev/packages/rx_command), but Streams felt heavy. After Remi Rousselet convinced me how much simpler `ValueNotifiers` are, I created command_it: all the power of the Command pattern, zero Streams, 100% `ValueListenable`.
+
+## Core Concept
+
+A `Command` is:
+1. **A function wrapper** - Encapsulates sync/async functions as callable objects
+2. **A ValueListenable** - Publishes results reactively so your UI can observe changes
+3. **Type-safe** - `Command<TParam, TResult>` where `TParam` is the input type and `TResult` is the output type
+
+Here's the simplest possible example using **watch_it** (the recommended approach):
+
+<<< @/../code_samples/lib/command_it/counter_watch_it.dart#example
+
+**Key points:**
+- Create with `Command.createSyncNoParam<TResult>()` (see [Command Types](command_types.md) for different signatures)
+- Command has a **`.run` method** - use it as tearoff for `onPressed`
+- Use **`watchValue`** to observe the command - auto-rebuilds when the value changes
+- Register your service with get_it (call setup in `main()`), extend `WatchingWidget` for watch_it functionality
+- Initial value is required so the UI has something to show immediately
+
+::: tip Using Commands without watch_it
+Commands also work with plain `ValueListenableBuilder` if you prefer not to use watch_it. See [Without watch_it](without_watch_it.md) for examples. For more about watch_it, see the [watch_it documentation](/documentation/watch_it/getting_started.md).
+:::
+
+## Real-World Example: Async Commands with Loading States
+
+Most real apps need async operations (HTTP calls, database queries, etc.). Commands make this trivial by tracking execution state automatically. Here's an example with **watch_it**:
+
+<<< @/../code_samples/lib/command_it/watch_it_simple.dart#example
+
+**What's happening:**
+1. `Command.createAsync<TParam, TResult>()` wraps an async function
+2. `watchValue` observes both the command result AND its `isRunning` property
+3. The UI automatically shows a loading indicator while the command executes
+4. No nested `ValueListenableBuilder` widgets - watch_it keeps the code clean
+5. The command parameter (`'London'`) is passed to the wrapped function
+
+This pattern eliminates the boilerplate of manually tracking loading states and nested builders → commands + watch_it handle everything for you.
+
+## Key Concepts at a Glance
+
+command_it offers powerful features for production apps:
+
+### Command Properties
+
+The **command itself** is a `ValueListenable<TResult>` that publishes the result. Commands also expose additional observable properties:
+- **`value`** - Property getter for the current result (not a ValueListenable, just the value)
+- **`isRunning`** - `ValueListenable<bool>` indicating if the command is currently executing (async commands only)
+- **`canRun`** - `ValueListenable<bool>` combining `!isRunning && !restriction` (see restrictions below)
+- **`errors`** - `ValueListenable<CommandError?>` of execution errors
+
+See [Command Properties](command_properties.md) for details.
+
+### CommandResult
+
+Instead of watching multiple properties separately, use `results` to get comprehensive state:
 
 ```dart
+command.results // ValueListenable<CommandResult<TParam, TResult>>
+```
 
-  body: Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-          'You have pushed the button this many times:',
-        ),
-        ValueListenableBuilder<String>(
-            valueListenable: _incrementCounterCommand,
-            builder: (context, val, _) {
-              return Text(
-                val,
-                style: Theme.of(context).textTheme.headline4,
-              );
-            }),
-      ],
-    ),
-  ),
-  floatingActionButton: FloatingActionButton(
-    onPressed: _incrementCounterCommand,
-    tooltip: 'Increment',
-    child: Icon(Icons.add),
-  ), // This trailing comma makes auto-formatting nicer for build methods.
+`CommandResult` combines `data`, `error`, `isRunning`, and `paramData` in one object. Perfect for comprehensive error/loading/success UI states.
+
+See [Command Results](command_results.md) for details.
+
+### Error Handling
+
+Commands capture exceptions automatically and publish them via the `errors` property. You can use **listen_it** operators to filter and handle specific error types:
+
+```dart
+command.errors.where((error) => error?.error is NetworkError).listen((error, _) {
+  showSnackbar('Network error: ${error!.error.message}');
+});
+```
+
+For advanced scenarios, use **error filters** to route different error types at the command level. See [Error Handling](error_handling.md) and [Error Filters](error_filters.md) for details.
+
+### Restrictions
+
+Control when a command can execute by passing a `ValueListenable<bool>` restriction:
+
+```dart
+final isOnline = ValueNotifier(true);
+
+final command = Command.createAsync(
+  fetchData,
+  initialValue: [],
+  restriction: isOnline, // Command only runs when isOnline.value == true
 );
 ```
 
-As `Command` is a [callable class](https://dart.dev/guides/language/language-tour#callable-classes), so we can pass it directly to the `onPressed` handler of the `FloatingActionButton` and it will execute the wrapped function. The result of the function will get assigned to the `Command.value` so that the `ValueListenableBuilder` updates automatically.
+Because it's a `ValueNotifier` passed to the constructor, a command can be enabled and disabled at any time by changing the notifier's value.
 
-**This is a very basic demo! In a real all you wouldn't place a command in a Widgets State**
+See [Restrictions](restrictions.md) for details.
 
-## Commands in full power mode
-So far the command did not do more than what you could do with BLoC, besides that you could call it like a function and didn't need a Stream. But `Command` can do more than that. It allows us to:
+## Next Steps
 
-* Update the UI based on if the `Command` is executing
-* React on Exceptions in the wrapped functions
-* Control when a `Command` can be executed
+Choose your learning path based on your goal:
 
-Let's explore this features by examining the included `example` app which queries an open weather service and displays a list of cities with the current weather.
+### 📚 I want to learn the fundamentals
+Start with [Command Basics](command_basics.md) to understand:
+- All command factory methods (sync/async, with/without parameters)
+- How to run commands programmatically vs. with UI triggers
+- Return values and initial values
 
-![](https://github.com/escamoteur/command_it/blob/master/misc/screen_shot_example.png)
+### ⚡ I want to build a real feature
+Follow the [Weather App Tutorial](/examples/command_it/weather_app_tutorial.md) to build a complete feature:
+- Async commands with real API calls
+- Debouncing user input
+- Loading states and error handling
+- Command restrictions
+- Multiple commands working together
 
-The app uses a `WeatherManager` which contains the `Command` to update the `ListView` by making a REST call:
+### 🛡️ I need robust error handling
+Check out [Error Handling](error_handling.md) and [Error Filters](error_filters.md):
+- Capturing and displaying errors
+- Routing different error types to different handlers
+- Retry logic and fallback strategies
 
-```dart
-Command<String, List<WeatherEntry>> updateWeatherCommand;
-```
-The `updateWeatherCommand` expects a search term and will return a list of `WeatherEntry`.
-The `Command` gets initialized in the constructor of the `WeatherManager`:
+### 🎯 I want production-ready patterns
+See [Best Practices](best_practices.md) for:
+- When to use commands vs. other patterns
+- Avoiding common pitfalls
+- Performance optimization
+- Architecture recommendations
 
+### 🧪 I need to write tests
+Head to [Testing](testing.md) for:
+- Unit testing commands in isolation
+- Widget testing with commands
+- Mocking command responses
+- Testing error scenarios
 
-```dart
-updateWeatherCommand = Command.createAsync<String, List<WeatherEntry>>(
-    update, // Wrapped function
-    [],     // Initial value
-    restriction: setExecutionStateCommand, //please ignore for the moment
-)
-```
+## Quick Reference
 
-`update` is the asynchronous function that queries the weather service, therefore we create an async version of `Command` using the `createAsync` constructor.
+| Topic | Link |
+|-------|------|
+| Creating commands (all factory methods) | [Command Basics](command_basics.md) |
+| Command types (signatures) | [Command Types](command_types.md) |
+| Observable properties (value, isRunning, etc.) | [Command Properties](command_properties.md) |
+| CommandResult (comprehensive state) | [Command Results](command_results.md) |
+| CommandBuilder widget | [Command Builders](command_builders.md) |
+| Error handling basics | [Error Handling](error_handling.md) |
+| Advanced error routing | [Error Filters](error_filters.md) |
+| Conditional execution | [Restrictions](restrictions.md) |
+| Testing patterns | [Testing](testing.md) |
+| Integration with watch_it | [watch_it Integration](watch_it_integration.md) |
+| Production patterns | [Best Practices](best_practices.md) |
 
-### Updating the ListView
-In `listview.dart`:
-
-```dart
-class WeatherListView extends StatelessWidget {
-  WeatherListView();
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<List<WeatherEntry>>(
-      valueListenable: weatherManager.updateWeatherCommand,
-      builder: (BuildContext context, List<WeatherEntry> data, _) {
-        // only if we get data
-        return ListView.builder(
-          itemCount: data.length,
-    ....
-```
-
-### Reacting on changes of the function execution state
-`Command` has a property
-
-```dart
-ValueListenable<bool> isRunning;
-```
-that has the value of `false` while the wrapped function isn't executed and `true` when it is.
-So we use this in the UI in `homepage.dart` to display a progress indicator while the app waits for the result of the REST call:
-
-```dart
-child: ValueListenableBuilder<bool>(
-    valueListenable:
-        weatherManager.updateWeatherCommand.isRunning,
-    builder: (BuildContext context, bool isRunning, _) {
-    // if true we show a buys Spinner otherwise the ListView
-    if (isRunning == true) {
-        return Center(
-        child: SizedBox(
-            width: 50.0,
-            height: 50.0,
-            child: CircularProgressIndicator(),
-          ),
-        );
-    } else {
-        return WeatherListView();
-    }
-  },
-),
-```
-
-> :triangular_flag_on_post: As it's not possible to update the UI while a synchronous function is being executed `Commands` that wrap a synchronous function don't support `isRunning` and will throw an assertion if you try to access it.
-
-### Update the UI on change of the search field
-As we don't want to send a new HTTP request on every keypress in the search field we don't directly wire the `onChanged` event to the `updateWeatherCommand`. Instead we use a second `Command` to convert the `onChanged` event to a `ValueListenable` so that we can use the `debounce` and `listen` function of my extension function package `listen_it`:
-
-For this a synchronous `Command` is sufficient:
-
-```dart
-// in weather_viewmodel.dart:
-Command<String, String> textChangedCommand;
-// and in the constructor:
-
-// Will be called on every change of the searchfield
-textChangedCommand = Command.createSync((s) => s, '');
-
-//
-// make sure we start processing only if the user make a short pause typing
-textChangedCommand.debounce(Duration(milliseconds: 500)).listen(
-    (filterText, _) {
-    // I could omit the run because Command is a callable
-    // class  but here it makes the intention clearer
-    updateWeatherCommand.run(filterText);
-    },
-);
-```
-In the `homepage.dart`:
-```dart
-child: TextField(
-    /// I omitted some properties from the example here
-    onChanged: weatherManager.textChangedCommand,
-),
-```
-
-### Restricting command execution
-Sometimes it is desirable to make the execution of a `Command` depending on some other state. For this you can pass a `ValueListenable<bool>` as `restriction` parameter, when you create a command. If you do so the command will only be executed if the value of the passed listenable is `false`.
-In the example app we can restrict the execution by changing the state of a `Switch`. To handle changes of the `Switch` we use..., you guessed it, another command in the `WeatherManager`:
-
-```dart
-WeatherManager() {
-    // Command expects a bool value when executed and sets it as its own value
-    setExecutionStateCommand = Command.createSync<bool, bool>((b) => b, true);
-
-    // We pass the result of switchChangedCommand as restriction to the updateWeatherCommand
-    updateWeatherCommand = Command.createAsync<String, List<WeatherEntry>>(
-    update, // Wrapped function
-    [], // Initial value
-      /// as the switch is on when the command can be executed we need to invert the value
-      /// to make the command disabled when the switch is off
-      restriction: setExecutionStateCommand.map((switchState) => !switchState),
-  );
-...
-```
-To update the `Switch` we use again a `ValueListenableBuilder`:
-```dart
-ValueListenableBuilder<bool>(
-    valueListenable:
-        weatherManager.setExecutionStateCommand,
-    builder: (context, value, _) {
-        return Switch(
-        value: value,
-        onChanged:
-            weatherManager.setExecutionStateCommand,
-        );
-    })
-```
-
-### Disabling the update button while another update is in progress
-The update button should not be active while an update is running or when the
-`Switch` deactivates it. We could achieve this, again by using the `isRunning` property of `Command` but we would have to somehow combine it with the value of `setExecutionStateCommand` which is cumbersome. Luckily `Command` has another property `canRun` which reflects a combined value of `!isRunning && !restriction`.
-
-So we can easily solve this requirement with another....wait for it...`ValueListenableBuilder`
-
-```dart
-child: ValueListenableBuilder<bool>(
-  valueListenable: weatherManager
-      .updateWeatherCommand
-      .canRun,
-  builder: (BuildContext context, bool canRun, _) {
-    // Depending on the value of canRun we set or clear the handler
-    final handler = canRun
-        ? weatherManager.updateWeatherCommand
-        : null;
-    return RaisedButton(
-      child: Text("Update"),
-      color: Color.fromARGB(255, 33, 150, 243),
-      textColor: Color.fromARGB(255, 255, 255, 255),
-      onPressed: handler,
-    );
-  },
-),
-```
-
-## Getting all data at once
-`isRunning` and `errors` are great properties but what if you don't want to use separate `ValueListenableBuilders` for each of them plus one for the data?
-`Command` got you covered with the `results` property that is an `ValueListenable<CommandResult>` which combines all needed data and is updated several times during a `Command` execution.
-
-```dart
-/// Combined execution state of an `Command`
-/// Will be updated for any state change of any of the fields
-/// 1. If the command was just newly created `results.value` has the value:
-///    `param data,null, null, false` (paramData,data, error, isRunning)
-/// 2. When calling run: `param data, null, null, true`
-/// 3. When execution finishes: `param data, the result, null, false`
-/// If an error occurs: `param data, null, error, false`
-/// `param data` is the data that you pass as parameter when calling the command
-class CommandResult<TParam, TResult> {
-  final TParam paramData;
-  final TResult data;
-  final Object error;
-  final bool isRunning;
-
-  bool get isSuccsess => !hasError && !isRunning;
-  bool get hasData => data != null;
-  bool get hasError => error != null;
-
-
-  /// This is a stripped down version of the class. Please see the source
-}
-```
-
-You can find a Version of the Weather app that uses this approach in `example_command_results`. There the `homepage.dart` looks like:
-
-```dart
-child: ValueListenableBuilder<
-    CommandResult<String, List<WeatherEntry>>>(
-  valueListenable:
-      weatherManager.updateWeatherCommand.results,
-  builder: (BuildContext context, result, _) {
-    if (result.isRunning) {
-      return Center(
-        child: SizedBox(
-          width: 50.0,
-          height: 50.0,
-          child: CircularProgressIndicator(),
-        ),
-      );
-    } else if (result.hasData) {
-      return WeatherListView(result.data);
-    } else {
-      assert(result.hasError);
-      return Column(
-        children: [
-          Text('An Error has occurred!'),
-          Text(result.error.toString()),
-          if (result.error != null)
-            Text('For search term: ${result.paramData}')
-        ],
-      );
-    }
-  },
-),
-```
-Even if you use `results` the other properties are updated as before, so you can mix both approaches as you need it. For instance use `results` as above but additionally listening to `errors` for logging.
-
-If you want to be able to always display data (while loading or in case of an error) you can pass `includeLastResultInCommandResults=true`, the last successful result will be included as `data` unless a new result is available.
-
-## Reacting on Functions with no results
-  Even if your wrapped function doesn't return a value, you can react on the end of the function execution by registering a listener to the `Command`. The command Value will be void but your handler is ensured to be called.
-
-## Restricting Commands in Detail
-As described above you can pass in a `ValueListenable<bool>` named `restriction` this allows to control the executability of a Command from the outside. Typical example would be if a user is logged in. To allow you to declarative describe what should happen if the user tries to executed a restricted Command you can pass in an optional `ifRestrictedRunInstead` handler function that get the parameter of the command passed in if the command expects a parameter.
-This can be nicely used to push a login screen in the case described above.
-
-## Logging
-If you are not sure what's going on in your App you can register an handler function to
-
-```dart
-static void Function(String commandName, CommandResult result) loggingHandler;
-```
-It will get executed on every `Command` execution in your App. `commandName` is the optional `debugName` that you can pass when creating a command.
-
-## Awaiting Commands
-In general you shouldn't await a command as it goes against the reactive philosophy. Your UI should react to the result of the command by "listening" to one of its `ValueListenable` interfaces.
-In case you really need to await the completion of a command you can use the `runAsync()` function of the Command. `runAsync` starts the execution of the Command and returns a `Future<T>` that completes when the function that it wraps.
-
-The main reason that this function exists is that you can use `RefreshIndicator` directly with a command like:
-
-```dart
-return RefreshIndicator(
-  onRefresh: () => updateMovieCmd.runAsync(),
-  child: GridView.extent(
-    maxCrossAxisExtent: 200,
-    crossAxisSpacing: 12,
-    mainAxisSpacing: 12,
-    childAspectRatio: 0.7,
-    children: movies.data.map((movie) => _MovieBox(movie: movie)).toList(),
-  ),
-);
-```
-
-## Commands and the get_it_mixin
-If you want to use Commands as comfortable as possible, check out the [get_it_mixin](https://pub.dev/packages/get_it_mixin) with its `watchX` function. With it you can use Commands without any Builders in a very intuitive way.
+Ready to dive deeper? Pick a topic from the [Quick Reference](#quick-reference) above or follow one of the [Next Steps](#next-steps) learning paths!

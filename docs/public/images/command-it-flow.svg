@@ -5,17 +5,17 @@
     </marker>
   </defs>
 
-  <!-- Step 1: Execute -->
+  <!-- Step 1: Run -->
   <rect x="20" y="90" width="120" height="70" rx="8" fill="#ff3f42" stroke="#C62828" stroke-width="2"/>
-  <text x="80" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Execute</text>
+  <text x="80" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Run</text>
   <text x="80" y="135" text-anchor="middle" font-size="11" fill="white">Button Click</text>
 
   <!-- Arrow -->
   <line x1="140" y1="125" x2="170" y2="125" stroke="#C62828" stroke-width="2" marker-end="url(#arrow-red)"/>
 
-  <!-- Step 2: isExecuting -->
+  <!-- Step 2: isRunning -->
   <rect x="170" y="90" width="120" height="70" rx="8" fill="#ff5856" stroke="#C62828" stroke-width="2"/>
-  <text x="230" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="white">isExecuting</text>
+  <text x="230" y="115" text-anchor="middle" font-size="13" font-weight="bold" fill="white">isRunning</text>
   <text x="230" y="135" text-anchor="middle" font-size="11" fill="white">Show Spinner</text>
 
   <!-- Arrow -->
