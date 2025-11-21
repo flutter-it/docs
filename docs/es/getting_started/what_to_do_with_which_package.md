@@ -130,7 +130,7 @@ Una buena arquitectura Flutter sigue principios clave: **separación de responsa
 
 ## Combinaciones Comunes de Paquetes
 
-### Configuración Mínima: get_it + `watch_it`
+### Configuración Mínima: [get_it](/es/documentation/get_it/getting_started) + [`watch_it`](/documentation/watch_it/getting_started)
 Perfecto para apps que necesitan dependency injection y UI reactiva. Cubre el 90% de las necesidades típicas de una app.
 
 **Ejemplo**: La mayoría de apps CRUD, apps de dashboard, apps con muchos formularios.
@@ -144,9 +144,9 @@ Arquitectura reactiva completa con dependency injection, UI reactiva, patrón Co
 
 Cada paquete funciona de forma independiente:
 
-- **Solo get_it**: Dependency injection simple sin reactividad
-- **Solo listen_it**: Operadores/colecciones reactivas sin dependency injection
-- **Solo command_it**: Patrón Command para encapsular acciones
+- **Solo [get_it](/es/documentation/get_it/getting_started)**: Dependency injection simple sin reactividad
+- **Solo [listen_it](/documentation/listen_it/listen_it)**: Operadores/colecciones reactivas sin dependency injection
+- **Solo [command_it](/documentation/command_it/getting_started)**: Patrón Command para encapsular acciones
 
 ---
 
@@ -159,10 +159,10 @@ Los paquetes flutter_it permiten arquitectura limpia resolviendo problemas espec
 **El Objetivo**: Mantener la lógica de negocio separada de la UI, mantener una única fuente de verdad, hacer todo testeable.
 
 **El Desafío**: Una vez que mueves los datos fuera de los widgets, necesitas:
-1. Una forma de acceder a esos datos desde cualquier lugar → **get_it** resuelve esto
-2. Una forma de actualizar la UI cuando los datos cambian → **`watch_it`** resuelve esto
-3. Una forma de manejar operaciones asíncronas limpiamente → **command_it** resuelve esto
-4. Una forma de transformar y combinar datos reactivos → **listen_it** resuelve esto
+1. Una forma de acceder a esos datos desde cualquier lugar → **[get_it](/es/documentation/get_it/getting_started)** resuelve esto
+2. Una forma de actualizar la UI cuando los datos cambian → **[`watch_it`](/documentation/watch_it/getting_started)** resuelve esto
+3. Una forma de manejar operaciones asíncronas limpiamente → **[command_it](/documentation/command_it/getting_started)** resuelve esto
+4. Una forma de transformar y combinar datos reactivos → **[listen_it](/documentation/listen_it/listen_it)** resuelve esto
 
 ### Separación de responsabilidades
 

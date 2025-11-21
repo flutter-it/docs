@@ -130,7 +130,7 @@ Good Flutter architecture follows key principles: **separation of concerns**, **
 
 ## Common Package Combinations
 
-### Minimal Setup: get_it + `watch_it`
+### Minimal Setup: [get_it](/documentation/get_it/getting_started) + [`watch_it`](/documentation/watch_it/getting_started)
 Perfect for apps that need dependency injection and reactive UI. Covers 90% of typical app needs.
 
 **Example**: Most CRUD apps, dashboard apps, form-heavy apps.
@@ -144,9 +144,9 @@ Complete reactive architecture with dependency injection, reactive UI, command p
 
 Each package works independently:
 
-- **Just get_it**: Simple dependency injection without reactivity
-- **Just listen_it**: Reactive operators/collections without dependency injection
-- **Just command_it**: Command pattern for encapsulating actions
+- **Just [get_it](/documentation/get_it/getting_started)**: Simple dependency injection without reactivity
+- **Just [listen_it](/documentation/listen_it/listen_it)**: Reactive operators/collections without dependency injection
+- **Just [command_it](/documentation/command_it/getting_started)**: Command pattern for encapsulating actions
 
 ---
 
@@ -159,10 +159,10 @@ flutter_it packages enable clean architecture by solving specific problems that 
 **The Goal**: Keep business logic separate from UI, maintain a single source of truth, make everything testable.
 
 **The Challenge**: Once you move data out of widgets, you need:
-1. A way to access that data from anywhere → **get_it** solves this
-2. A way to update UI when data changes → **`watch_it`** solves this
-3. A way to handle async operations cleanly → **command_it** solves this
-4. A way to transform and combine reactive data → **listen_it** solves this
+1. A way to access that data from anywhere → **[get_it](/documentation/get_it/getting_started)** solves this
+2. A way to update UI when data changes → **[`watch_it`](/documentation/watch_it/getting_started)** solves this
+3. A way to handle async operations cleanly → **[command_it](/documentation/command_it/getting_started)** solves this
+4. A way to transform and combine reactive data → **[listen_it](/documentation/listen_it/listen_it)** solves this
 
 ### Separation of concerns
 
