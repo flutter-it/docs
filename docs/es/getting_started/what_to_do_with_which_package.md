@@ -50,10 +50,10 @@ Una buena arquitectura Flutter sigue principios clave: **separación de responsa
 
 **Problema**: ¿Cómo accedo a servicios, lógica de negocio y datos compartidos sin pasarlos a través del árbol de widgets?
 
-**Solución**: Patrón service locator - registra una vez, accede desde cualquier lugar sin BuildContext.
+**Solución**: Patrón Service Locator - registra una vez, accede desde cualquier lugar sin BuildContext.
 
 **Úsalo cuando**:
-- Necesites inyección de dependencias sin el árbol de widgets
+- Necesites dependency injection sin el árbol de widgets
 - Quieras compartir servicios a través de tu app
 - Necesites control sobre el ciclo de vida de objetos (singletons, factories, scopes)
 - Quieras probar tu lógica de negocio de forma independiente
@@ -131,12 +131,12 @@ Una buena arquitectura Flutter sigue principios clave: **separación de responsa
 ## Combinaciones Comunes de Paquetes
 
 ### Configuración Mínima: get_it + `watch_it`
-Perfecto para apps que necesitan inyección de dependencias y UI reactiva. Cubre el 90% de las necesidades típicas de una app.
+Perfecto para apps que necesitan dependency injection y UI reactiva. Cubre el 90% de las necesidades típicas de una app.
 
 **Ejemplo**: La mayoría de apps CRUD, apps de dashboard, apps con muchos formularios.
 
 ### Stack Completo: Los 4 paquetes
-Arquitectura reactiva completa con inyección de dependencias, UI reactiva, patrón command y transformaciones de datos.
+Arquitectura reactiva completa con dependency injection, UI reactiva, patrón Command y transformaciones de datos.
 
 **Ejemplo**: Apps complejas con integración de API, actualizaciones en tiempo real y transformaciones de estado sofisticadas.
 
@@ -144,9 +144,9 @@ Arquitectura reactiva completa con inyección de dependencias, UI reactiva, patr
 
 Cada paquete funciona de forma independiente:
 
-- **Solo get_it**: Inyección de dependencias simple sin reactividad
-- **Solo listen_it**: Operadores/colecciones reactivas sin inyección de dependencias
-- **Solo command_it**: Patrón command para encapsular acciones
+- **Solo get_it**: Dependency injection simple sin reactividad
+- **Solo listen_it**: Operadores/colecciones reactivas sin dependency injection
+- **Solo command_it**: Patrón Command para encapsular acciones
 
 ---
 

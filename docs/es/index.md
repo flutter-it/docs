@@ -61,9 +61,9 @@ Sin setState(), sin código repetitivo de Provider, sin generación de código. 
 
 ### <img src="/images/get_it.svg" alt="get_it" width="50" style="vertical-align: middle; margin-right: 0.5rem; display: inline-block;" />get_it
 
-**Inyección de dependencias sin el framework**
+**Dependency injection sin el framework**
 
-Localizador de servicios simple que funciona en cualquier parte de tu app—sin BuildContext, sin árboles de InheritedWidget, solo acceso limpio a dependencias.
+Service Locator simple que funciona en cualquier parte de tu app—sin BuildContext, sin árboles de InheritedWidget, solo acceso limpio a dependencias.
 
 [Comienza →](/es/documentation/get_it/getting_started) | [Ejemplos →](/examples/get_it/get_it)
 

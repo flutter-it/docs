@@ -365,7 +365,7 @@ Mira la [documentación de Registro de Objetos](/es/documentation/get_it/object_
 
 <strong>Importante:</strong> get_it y Provider sirven <strong>propósitos diferentes</strong>, aunque a menudo se confunden.
 
-<strong>get_it</strong> es un <strong>localizador de servicios</strong> para inyección de dependencias:
+<strong>get_it</strong> es un <strong>Service Locator</strong> para dependency injection:
 - Gestiona instancias de servicio/repositorio
 - No específicamente para gestión de estado de UI
 - Desacopla interfaz de implementación

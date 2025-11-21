@@ -13,7 +13,7 @@ next:
   <h1 style="margin: 0;">Primeros Pasos</h1>
 </div>
 
-<strong>get_it</strong> es un localizador de servicios simple y rápido para Dart y Flutter que te permite acceder a cualquier objeto que registres desde cualquier parte de tu app sin necesitar `BuildContext` o árboles de widgets complejos.
+<strong>get_it</strong> es un Service Locator simple y rápido para Dart y Flutter que te permite acceder a cualquier objeto que registres desde cualquier parte de tu app sin necesitar `BuildContext` o árboles de widgets complejos.
 
 <strong>Beneficios clave:</strong>
 <ul style="list-style: none; padding-left: 0;">
