@@ -116,26 +116,26 @@ export default defineConfig({
                     text: 'Operators',
                     collapsed: true,
                     items: [
-                      { text: 'Descripción general', link: '/documentation/listen_it/operators/overview' },
-                      { text: 'Transform (map, select)', link: '/documentation/listen_it/operators/transform' },
-                      { text: 'Filter (where)', link: '/documentation/listen_it/operators/filter' },
-                      { text: 'Combine (combineLatest, mergeWith)', link: '/documentation/listen_it/operators/combine' },
-                      { text: 'Time (debounce)', link: '/documentation/listen_it/operators/time' }
+                      { text: 'Descripción general', link: '/es/documentation/listen_it/operators/overview' },
+                      { text: 'Transform (map, select)', link: '/es/documentation/listen_it/operators/transform' },
+                      { text: 'Filter (where)', link: '/es/documentation/listen_it/operators/filter' },
+                      { text: 'Combine (combineLatest, mergeWith)', link: '/es/documentation/listen_it/operators/combine' },
+                      { text: 'Time (debounce)', link: '/es/documentation/listen_it/operators/time' }
                     ]
                   },
                   {
                     text: 'Colecciones',
                     collapsed: true,
                     items: [
-                      { text: 'Introducción', link: '/documentation/listen_it/collections/introduction' },
-                      { text: 'ListNotifier', link: '/documentation/listen_it/collections/list_notifier' },
-                      { text: 'MapNotifier', link: '/documentation/listen_it/collections/map_notifier' },
-                      { text: 'SetNotifier', link: '/documentation/listen_it/collections/set_notifier' },
-                      { text: 'Modos de Notificación', link: '/documentation/listen_it/collections/notification_modes' },
-                      { text: 'Transacciones', link: '/documentation/listen_it/collections/transactions' }
+                      { text: 'Introducción', link: '/es/documentation/listen_it/collections/introduction' },
+                      { text: 'ListNotifier', link: '/es/documentation/listen_it/collections/list_notifier' },
+                      { text: 'MapNotifier', link: '/es/documentation/listen_it/collections/map_notifier' },
+                      { text: 'SetNotifier', link: '/es/documentation/listen_it/collections/set_notifier' },
+                      { text: 'Modos de Notificación', link: '/es/documentation/listen_it/collections/notification_modes' },
+                      { text: 'Transacciones', link: '/es/documentation/listen_it/collections/transactions' }
                     ]
                   },
-                  { text: 'Mejores Prácticas', link: '/documentation/listen_it/best_practices' }
+                  { text: 'Mejores Prácticas', link: '/es/documentation/listen_it/best_practices' }
                 ]
               }
             ]

@@ -14,6 +14,9 @@ Every command provides these observable properties:
 | [**canRun**](#canrun---combined-state) | `ValueListenable<bool>` | Combined restriction + running |
 | [**errors**](#errors---error-notifications) | `ValueListenable<CommandError?>` | Error notifications |
 | [**results**](#results---all-data-combined) | `ValueListenable<CommandResult>` | All data combined |
+| [**errorsDynamic**](#errorsdynamic---dynamic-error-type) | `ValueListenable<CommandError<dynamic>?>` | Errors with dynamic type |
+| [**name**](#name---debug-identifier) | `String?` | Debug name identifier |
+| [**clearErrors()**](#clearerrors---clear-error-state) | `void` | Clear error state manually |
 
 ::: warning Sync Commands and isRunning
 **Accessing `.isRunning` on sync commands throws an assertion error.** Sync commands execute immediately without giving the UI time to react, so tracking execution state isn't meaningful.
@@ -117,7 +120,7 @@ print(command.isRunningSync.value); // Immediately true
 
 **When to use:**
 - **As restriction for other commands** (prevents race conditions)
-- When you need immediate state (not for UI)
+- When you need immediate state for business logic (not for UI)
 
 ```dart
 final saveCommand = Command.createAsync<Data, void>(
@@ -127,7 +130,7 @@ final saveCommand = Command.createAsync<Data, void>(
 ```
 
 **Why not for UI?**
-In UI, you want async updates via `ValueListenableBuilder`. `isRunningSync` is for logic, not display.
+`isRunningSync` updates immediately when a command runs. If a button triggers a command, `isRunningSync` changes synchronously, which triggers a rebuild during the build phase and throws a Flutter exception. Use `isRunning` for UI updates - its async notifications prevent this issue.
 
 ## canRun - Combined State
 
@@ -250,6 +253,97 @@ Command.createAsyncNoParam<List<Todo>>(
 - Keep displaying old data while refreshing
 - Avoid empty screens during reload
 - Better UX for pull-to-refresh scenarios
+
+## errorsDynamic - Dynamic Error Type
+
+Same as `errors` but with dynamic error type:
+
+```dart
+ValueListenable<CommandError<dynamic>?> get errorsDynamic => _errors;
+```
+
+**When to use:**
+- Merging error listeners from commands with different parameter types
+- Shared error handling across multiple commands
+
+```dart
+// Combine errors from different command types
+final saveCommand = Command.createAsync<Data, void>(...);
+final deleteCommand = Command.createAsync<String, void>(...);
+
+// Both can share the same error handler
+void handleError(CommandError<dynamic>? error, _) {
+  if (error != null) showErrorDialog(error.error.toString());
+}
+
+saveCommand.errorsDynamic.listen(handleError);
+deleteCommand.errorsDynamic.listen(handleError);
+```
+
+## clearErrors() - Clear Error State
+
+Manually clears the error state and triggers listeners:
+
+```dart
+void clearErrors()
+```
+
+**Behavior:**
+- Sets `errors.value` to `null`
+- Explicitly calls `notifyListeners()` to update UI
+- Useful when dismissing error dialogs/messages
+
+**When to use:**
+- User dismisses an error message
+- Manually clearing error state before retry
+- Implementing custom error handling flows
+
+```dart
+// Error handling with manual dismissal
+command.errors.listen((error, _) {
+  if (error != null) {
+    showErrorDialog(
+      error.error.toString(),
+      onDismiss: () => command.clearErrors(),
+    );
+  }
+});
+```
+
+::: tip Clearing Errors Without Notification
+You can also set `command.errors.value = null` directly to clear the error WITHOUT triggering listeners. This is useful if you want to silently reset the error state.
+
+**Why manual mode?** The `errors` notifier uses `CustomNotifierMode.manual` because commands automatically set it to `null` at the start of every execution (to clear previous errors). This shouldn't trigger listeners - only actual errors should notify.
+
+Use `clearErrors()` when you want UI updates (e.g., dismissing error messages). Use direct assignment when you don't.
+:::
+
+**Note:** Preferred error handling is via `registerHandler` or `listen` in `initState` of a `StatefulWidget`, but `clearErrors()` is especially useful with watch_it.
+
+## name - Debug Identifier
+
+Returns the debug name set via `debugName` parameter:
+
+```dart
+String? get name
+```
+
+**When to use:**
+- Logging and debugging
+- Identifying which command triggered an error
+- Available in `CommandError.commandName` and logging handlers
+
+```dart
+final saveCommand = Command.createAsync<Data, void>(
+  (data) => api.save(data),
+  debugName: 'SaveUserData',
+);
+
+Command.globalExceptionHandler = (error, stackTrace) {
+  print('Command ${error.commandName} failed: ${error.error}');
+  // Output: "Command SaveUserData failed: ..."
+};
+```
 
 ## Choosing the Right Property
 
