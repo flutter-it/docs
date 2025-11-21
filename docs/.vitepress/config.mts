@@ -96,7 +96,6 @@ export default defineConfig({
               { text: 'Error Filters', link: '/documentation/command_it/error_filters.md' },
               { text: 'Restrictions', link: '/documentation/command_it/restrictions.md' },
               { text: 'Testing', link: '/documentation/command_it/testing.md' },
-              { text: 'watch_it Integration', link: '/documentation/command_it/watch_it_integration.md' },
               { text: 'Without watch_it', link: '/documentation/command_it/without_watch_it.md' },
               { text: 'Best Practices', link: '/documentation/command_it/best_practices.md' }
             ]

@@ -396,6 +396,107 @@ test('Command handles API errors', () async {
 });
 ```
 
+### Using MockCommand
+
+For testing code that depends on commands, use the built-in `MockCommand` class instead of creating real commands:
+
+```dart
+import 'package:command_it/command_it.dart';
+
+test('Service uses command correctly', () async {
+  // Create a mock command
+  final mockLoadCommand = MockCommand<void, List<String>>(
+    initialValue: [],
+  );
+
+  // Queue results for the next execution
+  mockLoadCommand.queueResultsForNextExecuteCall([
+    'Item 1',
+    'Item 2',
+    'Item 3',
+  ]);
+
+  // Inject into service
+  final service = DataService(loadCommand: mockLoadCommand);
+
+  // Trigger the command
+  service.loadData();
+
+  // Verify the command was called
+  expect(mockLoadCommand.executionCount, 1);
+
+  // Verify the result
+  expect(mockLoadCommand.value, ['Item 1', 'Item 2', 'Item 3']);
+});
+```
+
+**Key MockCommand methods:**
+
+- **`queueResultsForNextExecuteCall(List<TResult>)`** - Queue multiple results to be returned in sequence
+- **`startExecuting()`** - Manually trigger the running state
+- **`endExecutionWithData(TResult data)`** - Complete execution with a result
+- **`endExecutionNoData()`** - Complete execution without a result (void commands)
+- **`endExecutionWithError(Exception error)`** - Complete execution with an error
+- **`executionCount`** - Track how many times the command was executed
+
+**Testing loading states:**
+
+```dart
+test('UI shows loading indicator', () async {
+  final mockCommand = MockCommand<void, String>(
+    initialValue: '',
+  );
+
+  final loadingStates = <bool>[];
+  mockCommand.isRunning.listen((running, _) => loadingStates.add(running));
+
+  // Start execution manually
+  mockCommand.startExecuting();
+  expect(mockCommand.isRunning.value, true);
+
+  // Complete execution
+  mockCommand.endExecutionWithData('loaded data');
+  expect(mockCommand.isRunning.value, false);
+
+  expect(loadingStates, [false, true, false]);
+});
+```
+
+**Testing error scenarios:**
+
+```dart
+test('UI shows error message', () {
+  final mockCommand = MockCommand<void, String>(
+    initialValue: '',
+  );
+
+  CommandError? capturedError;
+  mockCommand.errors.listen((error, _) => capturedError = error);
+
+  // Simulate error
+  mockCommand.startExecuting();
+  mockCommand.endExecutionWithError(Exception('Network error'));
+
+  expect(capturedError?.error.toString(), contains('Network error'));
+});
+```
+
+**Benefits of MockCommand:**
+
+- ✅ No async delays - tests run faster
+- ✅ Full control over execution state
+- ✅ Verify execution count
+- ✅ Queue multiple results for sequential calls
+- ✅ Test loading, success, and error states independently
+- ✅ No need for real business logic in tests
+
+**When to use MockCommand:**
+
+- Testing widgets that observe commands
+- Testing services that coordinate multiple commands
+- Unit testing command-dependent code
+- When you need precise control over command state transitions
+
 ## Testing with fake_async
 
 For precise timing control, use `fake_async`:

@@ -86,5 +86,66 @@ This documentation was generated with AI assistance and is currently under revie
     bool notifyOnlyWhenValueChanges = false,
     String? debugName,
   })
+
+  /// and for Undoable async commands:
+  static UndoableCommand<void, void, TUndoState> createUndoableNoParamNoResult<TUndoState>(
+    Future Function(TUndoState) action,
+    UndoHandler<void, TUndoState> undo, {
+    ValueListenable<bool>? restriction,
+    void Function()? ifRestrictedRunInstead,
+    bool undoOnExecutionFailure = false,
+    bool? catchAlways,
+    bool notifyOnlyWhenValueChanges = false,
+    String? debugName,
+  })
+  static UndoableCommand<TParam, void, TUndoState> createUndoableNoResult<TParam, TUndoState>(
+    Future Function(TParam, TUndoState) action,
+    UndoHandler<TParam, TUndoState> undo, {
+    ValueListenable<bool>? restriction,
+    ExecuteInsteadHandler<TParam>? ifRestrictedRunInstead,
+    bool undoOnExecutionFailure = false,
+    bool? catchAlways,
+    bool notifyOnlyWhenValueChanges = false,
+    String? debugName,
+  })
+  static UndoableCommand<void, TResult, TUndoState> createUndoableNoParam<TResult, TUndoState>(
+    Future<TResult> Function(TUndoState) func,
+    UndoHandler<void, TUndoState> undo,
+    TResult initialValue, {
+    ValueListenable<bool>? restriction,
+    void Function()? ifRestrictedRunInstead,
+    bool includeLastResultInCommandResults = false,
+    bool undoOnExecutionFailure = false,
+    bool? catchAlways,
+    bool notifyOnlyWhenValueChanges = false,
+    String? debugName,
+  })
+  static UndoableCommand<TParam, TResult, TUndoState> createUndoable<TParam, TResult, TUndoState>(
+    Future<TResult> Function(TParam, TUndoState) func,
+    UndoHandler<TParam, TUndoState> undo,
+    TResult initialValue, {
+    ValueListenable<bool>? restriction,
+    ExecuteInsteadHandler<TParam>? ifRestrictedRunInstead,
+    bool includeLastResultInCommandResults = false,
+    bool undoOnExecutionFailure = false,
+    bool? catchAlways,
+    bool notifyOnlyWhenValueChanges = false,
+    String? debugName,
+  })
   ```
-  For detailed information on the parameters of these functions consult the API docs or the source code documentation.
+
+## Undoable Commands
+
+Undoable commands extend async commands with undo capability. They maintain an `UndoStack<TUndoState>` that stores state snapshots, allowing you to undo operations.
+
+**Key parameters:**
+- **`action`/`func`** - Your async function that receives the undo state as an additional parameter
+- **`undo`** - Handler function that returns the state snapshot needed to undo the operation
+- **`undoOnExecutionFailure`** - When `true`, automatically calls `undo()` if the command fails
+
+**Type parameters:**
+- **`TUndoState`** - The type of state snapshot needed to undo the operation
+
+See [Best Practices - Undoable Commands](/documentation/command_it/best_practices#undoable-commands-with-automatic-rollback) for practical examples and [Error Handling - Auto-Undo on Failure](/documentation/command_it/error_handling#auto-undo-on-failure) for error recovery patterns.
+
+For detailed information on the parameters of these functions consult the API docs or the source code documentation.

@@ -43,3 +43,54 @@ If you assign a handler function to it, it will be called for all Exceptions thr
 The overall work flow of exception handling in command_it is depicted in the following diagram.
 
  ![](https://github.com/escamoteur/command_it/blob/master/misc/exception_handling.png)
+
+## Auto-Undo on Failure
+
+For operations that modify state optimistically, `UndoableCommand` can automatically rollback changes when an error occurs. This is perfect for implementing optimistic updates with automatic error recovery.
+
+```dart
+class TodoService {
+  final todos = ValueNotifier<List<Todo>>([]);
+
+  late final deleteTodoCommand = Command.createUndoableNoResult<String, List<Todo>>(
+    (id, previousTodos) async {
+      // Make optimistic update
+      todos.value = todos.value.where((t) => t.id != id).toList();
+
+      // Try to delete on server
+      await api.deleteTodo(id);
+      // If this throws an exception, the undo handler is called automatically
+    },
+    undo: (id) {
+      // Capture state snapshot before execution
+      return todos.value;
+    },
+    undoOnExecutionFailure: true, // Automatically rollback on error
+  );
+}
+```
+
+**How it works:**
+
+1. **Before execution**: The `undo` handler is called to capture the current state
+2. **During execution**: Your function runs (e.g., optimistic UI update + API call)
+3. **On success**: State snapshot is pushed to the undo stack
+4. **On failure** (when `undoOnExecutionFailure: true`):
+   - The command automatically calls the undo handler
+   - State is restored to the pre-execution snapshot
+   - Error is still propagated to error handlers
+
+**Benefits:**
+
+- ✅ Automatic rollback on errors - no manual try/catch needed
+- ✅ Clean separation: business logic in command, error recovery is automatic
+- ✅ Consistent error recovery across your app
+- ✅ Also enables manual undo/redo for user actions
+
+**When to use:**
+
+- Optimistic updates (delete items, toggle states, edit data)
+- Multi-step operations where partial failure needs full rollback
+- Any operation where you want automatic "if this fails, undo what I just did"
+
+See [Command Types - Undoable Commands](/documentation/command_it/command_types#undoable-commands) for all factory methods and [Best Practices - Undoable Commands](/documentation/command_it/best_practices#pattern-5-undoable-commands-with-automatic-rollback) for more patterns.

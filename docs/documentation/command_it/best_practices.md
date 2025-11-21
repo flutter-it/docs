@@ -246,6 +246,142 @@ class DataService {
 }
 ```
 
+## When to Use runAsync()
+
+As explained in [Command Basics](/documentation/command_it/command_basics), the core command pattern is **fire-and-forget**: call `run()` and let your UI observe state changes reactively. However, there are legitimate cases where using `runAsync()` is appropriate and more expressive than alternatives.
+
+### ✅ Use runAsync() For Sequential Command Execution
+
+When multiple commands need to execute in sequence as part of business logic:
+
+```dart
+class OnboardingService {
+  late final createAccountCommand = Command.createAsync<AccountData, User>(
+    (data) => api.createAccount(data),
+    initialValue: User.empty(),
+  );
+
+  late final setupProfileCommand = Command.createAsync<ProfileData, void>(
+    (profile) => api.setupProfile(profile),
+  );
+
+  late final sendWelcomeEmailCommand = Command.createAsyncNoParam<void>(
+    () => api.sendWelcomeEmail(),
+  );
+
+  // Sequential execution: Each step depends on the previous
+  Future<void> completeOnboarding(AccountData account, ProfileData profile) async {
+    // Create account first
+    final user = await createAccountCommand.runAsync(account);
+
+    // Then setup profile (needs user ID from previous step)
+    await setupProfileCommand.runAsync(profile.copyWith(userId: user.id));
+
+    // Finally send email
+    await sendWelcomeEmailCommand.runAsync();
+  }
+}
+```
+
+**Why not `.listen()`?** While you could chain these with listeners, `runAsync()` makes the sequential flow obvious and easier to reason about.
+
+### ✅ Use runAsync() Inside Async Functions
+
+When a command is part of a larger async operation:
+
+```dart
+class PaymentService {
+  late final validatePaymentCommand = Command.createAsync<PaymentInfo, bool>(
+    (info) => api.validatePayment(info),
+    initialValue: false,
+  );
+
+  late final processPaymentCommand = Command.createAsync<PaymentInfo, Receipt>(
+    (info) => api.processPayment(info),
+    initialValue: Receipt.empty(),
+  );
+
+  // Complex async workflow
+  Future<Receipt> completeCheckout(Cart cart, PaymentInfo payment) async {
+    // Step 1: Validate inventory (not a command, just async call)
+    final available = await api.checkInventory(cart.items);
+    if (!available) throw InsufficientInventoryException();
+
+    // Step 2: Validate payment (command)
+    final isValid = await validatePaymentCommand.runAsync(payment);
+    if (!isValid) throw InvalidPaymentException();
+
+    // Step 3: Process payment (command)
+    final receipt = await processPaymentCommand.runAsync(payment);
+
+    // Step 4: Update inventory (not a command)
+    await api.updateInventory(cart.items);
+
+    return receipt;
+  }
+}
+```
+
+**Why `runAsync()` here?** The command is part of a larger async function that mixes command execution with regular async calls. Using `runAsync()` keeps the code linear and readable.
+
+### ✅ Use runAsync() For APIs Requiring Futures
+
+When interfacing with APIs that require a `Future`:
+
+```dart
+// RefreshIndicator requires Future<void>
+RefreshIndicator(
+  onRefresh: () => updateCommand.runAsync(),
+  child: ListView(...),
+)
+
+// Navigator.push with async result
+final result = await Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => ConfirmationScreen(
+      onConfirm: () => confirmCommand.runAsync(),
+    ),
+  ),
+);
+```
+
+### ❌️ Don't Use runAsync() for Simple UI Updates
+
+```dart
+// ❌️️ BAD: Blocking UI thread waiting for result
+ElevatedButton(
+  onPressed: () async {
+    final result = await loadDataCommand.runAsync();
+    // Do nothing with result - just waiting
+  },
+  child: Text('Load'),
+)
+
+// ✅ GOOD: Fire and forget, let UI observe
+ElevatedButton(
+  onPressed: loadDataCommand.run,
+  child: Text('Load'),
+)
+
+// UI automatically reacts to state changes
+final isLoading = watchValue((Service s) => s.loadDataCommand.isRunning);
+if (isLoading) CircularProgressIndicator()
+```
+
+### Summary
+
+**Use `runAsync()` when:**
+- ✅ Executing commands sequentially where each depends on the previous result
+- ✅ Commands are part of a larger async function/workflow
+- ✅ An API requires a Future to be returned
+- ✅ The sequential flow is clearer with `await` than with `.listen()`
+
+**Don't use `runAsync()` when:**
+- ❌️ Triggering commands from UI interactions (use `run()`)
+- ❌️ You just want to observe results (use `watchValue()` or `ValueListenableBuilder`)
+- ❌️ The async/await adds no value over fire-and-forget
+
 ## Performance Best Practices
 
 ### Use Appropriate Initial Values
@@ -655,6 +791,54 @@ class SearchService {
   );
 }
 ```
+
+### Pattern 5: Undoable Commands with Automatic Rollback
+
+For operations that need undo capability, use `UndoableCommand`. It automatically maintains an undo stack and can rollback on failure:
+
+```dart
+class TodoService {
+  final todos = ValueNotifier<List<Todo>>([]);
+
+  // Undoable command with automatic rollback on failure
+  late final deleteTodoCommand = Command.createUndoableNoResult<String, List<Todo>>(
+    (id, previousTodos) async {
+      // Optimistic update
+      todos.value = todos.value.where((t) => t.id != id).toList();
+
+      // Try to delete on server
+      await api.deleteTodo(id);
+      // If this throws, undo is called automatically
+    },
+    undo: (id) {
+      // Return the state snapshot needed to undo
+      return todos.value;
+    },
+    undoOnExecutionFailure: true, // Auto-rollback on error
+  );
+
+  // Manual undo
+  void undoLastDelete() {
+    if (deleteTodoCommand.canUndo) {
+      deleteTodoCommand.undo();
+    }
+  }
+}
+```
+
+**Compared to Pattern 2 (manual optimistic updates):**
+- ✅ Automatic undo stack management
+- ✅ Built-in `canUndo` / `canRedo` tracking
+- ✅ Auto-rollback on failure via `undoOnExecutionFailure`
+- ✅ Support for redo operations
+- ✅ Less boilerplate code
+
+**Use undoable commands when:**
+- Users can explicitly undo/redo actions (text editors, drawing apps)
+- Complex workflows need multi-step rollback
+- You want automatic error recovery with state restoration
+
+See [Command Types - Undoable Commands](/documentation/command_it/command_types#undoable-commands) for factory methods and [Error Handling - Auto-Undo](/documentation/command_it/error_handling#auto-undo-on-failure) for error recovery patterns.
 
 ## See Also
 

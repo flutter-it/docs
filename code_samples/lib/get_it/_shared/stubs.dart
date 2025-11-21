@@ -1,10 +1,11 @@
-// ignore_for_file: unused_element, use_super_parameters
+// ignore_for_file: unused_element, use_super_parameters, depend_on_referenced_packages
 // Stub classes for get_it code samples
 // These provide minimal implementations to make examples compile
 
 import 'dart:async';
 import 'package:flutter/material.dart';
 export 'package:flutter/material.dart' show Key, ChangeNotifier;
+// ignore: unused_import
 import 'package:test/test.dart' hide Matcher, Description;
 export 'package:test/test.dart'
     show
@@ -17,7 +18,6 @@ export 'package:test/test.dart'
         group,
         isNotNull,
         throwsStateError;
-import 'package:flutter_test/flutter_test.dart' as flutter_test;
 export 'package:flutter_test/flutter_test.dart'
     show
         testWidgets,
@@ -28,7 +28,6 @@ export 'package:flutter_test/flutter_test.dart'
         findsNothing;
 
 // Import real get_it classes instead of stubbing
-import 'package:get_it/get_it.dart';
 export 'package:get_it/get_it.dart'
     show
         FactoryFunc,
@@ -41,7 +40,6 @@ export 'package:get_it/get_it.dart'
         Disposable;
 
 // Import real watch_it classes instead of stubbing
-import 'package:watch_it/watch_it.dart';
 export 'package:watch_it/watch_it.dart'
     show
         WatchingWidget,

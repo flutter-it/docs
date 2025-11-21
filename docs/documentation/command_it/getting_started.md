@@ -36,6 +36,10 @@ A `Command` is:
 2. **A ValueListenable** - Publishes results reactively so your UI can observe changes
 3. **Type-safe** - `Command<TParam, TResult>` where `TParam` is the input type and `TResult` is the output type
 
+::: tip The Command Pattern
+The core philosophy: **Start commands with `run()` (fire and forget), then your app/UI observes and reacts to their state changes**. This reactive pattern keeps your UI responsive with no blocking—you trigger the action and let your UI automatically respond to loading states, results, and errors.
+:::
+
 Here's the simplest possible example using **watch_it** (the recommended approach):
 
 <<< @/../code_samples/lib/command_it/counter_watch_it.dart#example

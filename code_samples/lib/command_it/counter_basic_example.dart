@@ -1,9 +1,11 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:watch_it/watch_it.dart';
 
 // #region example
-// 1. Create a command that wraps your async function
-class CounterManager {
+// 1. Create a service with a command
+class CounterService {
   int _counter = 0;
 
   late final incrementCommand = Command.createAsyncNoParam<String>(
@@ -16,30 +18,31 @@ class CounterManager {
   );
 }
 
-// 2. Use it in your UI - command is a ValueListenable
-class CounterWidget extends StatelessWidget {
-  CounterWidget({super.key});
+// Register with get_it (call this in main())
+void setup() {
+  GetIt.instance.registerSingleton(CounterService());
+}
 
-  final manager = CounterManager();
+// 2. Use watch_it to observe the command
+class CounterWidget extends WatchingWidget {
+  const CounterWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Watch the command value
+    final count = watchValue((CounterService s) => s.incrementCommand);
+
+    // Watch the loading state
+    final isRunning =
+        watchValue((CounterService s) => s.incrementCommand.isRunning);
+
     return Column(
       children: [
         // Shows loading indicator automatically while command runs
-        ValueListenableBuilder<bool>(
-          valueListenable: manager.incrementCommand.isRunning,
-          builder: (context, isRunning, _) {
-            if (isRunning) return CircularProgressIndicator();
-
-            return ValueListenableBuilder<String>(
-              valueListenable: manager.incrementCommand,
-              builder: (context, value, _) => Text('Count: $value'),
-            );
-          },
-        ),
+        if (isRunning) CircularProgressIndicator() else Text('Count: $count'),
+        SizedBox(height: 16),
         ElevatedButton(
-          onPressed: manager.incrementCommand.run,
+          onPressed: GetIt.instance<CounterService>().incrementCommand.run,
           child: Text('Increment'),
         ),
       ],
