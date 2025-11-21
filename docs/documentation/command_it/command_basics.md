@@ -265,7 +265,7 @@ class _MyWidgetState extends State<MyWidget> {
 }
 ```
 
-**With get_it:** Register as singleton and dispose on app shutdown or use scopes for automatic cleanup. **With watch_it:** Use [`createOnce()`](/documentation/watch_it/lifecycle_functions#createonce) for automatic lifecycle management.
+**With get_it:** Register as singleton and dispose on app shutdown or use scopes for automatic cleanup. **With watch_it:** Use [`createOnce()`](/documentation/watch_it/lifecycle#createonce) for automatic lifecycle management.
 
 ## See Also
 
