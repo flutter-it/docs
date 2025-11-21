@@ -134,8 +134,8 @@ Undoable commands extend async commands with undo capability. They maintain an `
 
 ```dart
 static UndoableCommand<TParam, TResult, TUndoState> createUndoable<TParam, TResult, TUndoState>(
-  Future<TResult> Function(TParam param, TUndoState undoState) func,
-  UndoHandler<TParam, TUndoState> undo,
+  Future<TResult> Function(TParam param, UndoStack<TUndoState> undoStack) func,
+  UndoFn<TUndoState, TResult> undo,
   TResult initialValue, {
   ValueListenable<bool>? restriction,
   RunInsteadHandler<TParam>? ifRestrictedRunInstead,
@@ -150,13 +150,16 @@ static UndoableCommand<TParam, TResult, TUndoState> createUndoable<TParam, TResu
 
 **Undoable-specific parameters:**
 
-- **`func`** - Your async function that receives **TWO parameters**: the command parameter (`TParam`) AND the undo state (`TUndoState`) returned by the undo handler
+- **`func`** - Your async function that receives **TWO parameters**: the command parameter (`TParam`) AND the undo stack (`UndoStack<TUndoState>`) where you push state snapshots
 
-- **`undo`** - Handler function called before execution to capture the state snapshot:
+- **`undo`** - Handler function called to perform the undo operation:
   ```dart
-  typedef UndoHandler<TParam, TUndoState> = TUndoState Function(TParam? param)
+  typedef UndoFn<TUndoState, TResult> = FutureOr<TResult> Function(
+    UndoStack<TUndoState> undoStack,
+    Object? reason
+  )
   ```
-  Return the state needed to undo this operation (e.g., the old value before modification)
+  Pop state from the stack and restore it. Called when user manually undos or when `undoOnExecutionFailure: true` and execution fails
 
 - **`undoOnExecutionFailure`** - When `true`, automatically calls the undo handler and restores state if the command fails. Perfect for optimistic updates that need rollback on error
 
