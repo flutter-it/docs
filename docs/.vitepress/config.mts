@@ -28,7 +28,7 @@ export default defineConfig({
       label: 'Español',
       lang: 'es',
       title: "flutter_it",
-      description: "Crea apps Flutter reactivas de forma sencilla - sin generación de código, sin repeticiones, solo código",
+      description: "Crea apps Flutter reactivas de forma sencilla - sin generación de código, sin código repetitivo, solo código",
       themeConfig: {
         nav: [
           { text: 'Inicio', link: '/es/' },
@@ -43,13 +43,17 @@ export default defineConfig({
             collapsed: false,
             items: [
               { text: 'Qué hacer con cada paquete', link: '/es/getting_started/what_to_do_with_which_package' },
-              { text: 'get_it', link: '/es/documentation/get_it/getting_started' }
+              { text: 'get_it', link: '/es/documentation/get_it/getting_started' },
+              { text: 'watch_it', link: '/es/documentation/watch_it/getting_started' },
+              { text: 'command_it', link: '/es/documentation/command_it/getting_started' },
+              { text: 'listen_it', link: '/es/documentation/listen_it/listen_it' }
             ]
           },
           {
             text: 'Documentación',
             collapsed: false,
             items: [
+              { text: 'Descripción general', link: '/es/documentation/overview' },
               {
                 text: 'get_it',
                 collapsed: true,
@@ -58,10 +62,102 @@ export default defineConfig({
                   { text: 'Registro de objetos', link: '/es/documentation/get_it/object_registration' },
                   { text: 'Scopes', link: '/es/documentation/get_it/scopes' },
                   { text: 'Objetos asíncronos', link: '/es/documentation/get_it/async_objects' },
-                  { text: 'Testing', link: '/es/documentation/get_it/testing' },
+                  { text: 'Registros múltiples', link: '/documentation/get_it/multiple_registrations' },
+                  { text: 'Avanzado', link: '/documentation/get_it/advanced' },
+                  { text: 'Pruebas', link: '/es/documentation/get_it/testing' },
+                  { text: 'Extensión DevTools', link: '/documentation/get_it/devtools_extension' },
+                  { text: 'Flutter Previews', link: '/documentation/get_it/flutter_previews' },
                   { text: 'Preguntas frecuentes', link: '/es/documentation/get_it/faq' }
                 ]
+              },
+              {
+                text: 'watch_it',
+                collapsed: true,
+                items: [
+                  { text: 'Getting started', link: '/documentation/watch_it/getting_started' },
+                  { text: 'Your First Watch Functions', link: '/documentation/watch_it/your_first_watch_functions' },
+                  { text: 'More Watch Functions', link: '/documentation/watch_it/more_watch_functions' },
+                  { text: 'Watching Multiple Values', link: '/documentation/watch_it/watching_multiple_values' },
+                  { text: 'Watching Streams & Futures', link: '/documentation/watch_it/watching_streams_and_futures' },
+                  { text: 'Watch Ordering Rules', link: '/documentation/watch_it/watch_ordering_rules' },
+                  { text: 'Side Effects with Handlers', link: '/documentation/watch_it/handlers' },
+                  { text: 'Lifecycle Functions', link: '/documentation/watch_it/lifecycle' },
+                  { text: 'WatchingWidgets', link: '/documentation/watch_it/watching_widgets' },
+                  { text: 'Observing Commands', link: '/documentation/watch_it/observing_commands' },
+                  { text: 'Accessing get_it Features', link: '/documentation/watch_it/advanced_integration' },
+                  { text: 'Best Practices', link: '/documentation/watch_it/best_practices' },
+                  { text: 'Debugging & Troubleshooting', link: '/documentation/watch_it/debugging_tracing' },
+                  { text: 'How watch_it Works', link: '/documentation/watch_it/how_it_works' }
+                ]
+              },
+              {
+                text: 'command_it',
+                collapsed: true,
+                items: [
+                  { text: 'Getting started', link: '/documentation/command_it/getting_started' },
+                  { text: 'Command Basics', link: '/documentation/command_it/command_basics' },
+                  { text: 'Command Types', link: '/documentation/command_it/command_types' },
+                  { text: 'Command Properties', link: '/documentation/command_it/command_properties' },
+                  { text: 'Command Results', link: '/documentation/command_it/command_results' },
+                  { text: 'Command Builders', link: '/documentation/command_it/command_builders' },
+                  { text: 'Error Handling', link: '/documentation/command_it/error_handling' },
+                  { text: 'Restrictions', link: '/documentation/command_it/restrictions' },
+                  { text: 'Testing', link: '/documentation/command_it/testing' },
+                  { text: 'Without watch_it', link: '/documentation/command_it/without_watch_it' },
+                  { text: 'Best Practices', link: '/documentation/command_it/best_practices' }
+                ]
+              },
+              {
+                text: 'listen_it',
+                collapsed: true,
+                items: [
+                  { text: 'Listen', link: '/documentation/listen_it/listen_it' },
+                  {
+                    text: 'Operators',
+                    collapsed: true,
+                    items: [
+                      { text: 'Overview', link: '/documentation/listen_it/operators/overview' },
+                      { text: 'Transform (map, select)', link: '/documentation/listen_it/operators/transform' },
+                      { text: 'Filter (where)', link: '/documentation/listen_it/operators/filter' },
+                      { text: 'Combine (combineLatest, mergeWith)', link: '/documentation/listen_it/operators/combine' },
+                      { text: 'Time (debounce)', link: '/documentation/listen_it/operators/time' }
+                    ]
+                  },
+                  {
+                    text: 'Collections',
+                    collapsed: true,
+                    items: [
+                      { text: 'Introduction', link: '/documentation/listen_it/collections/introduction' },
+                      { text: 'ListNotifier', link: '/documentation/listen_it/collections/list_notifier' },
+                      { text: 'MapNotifier', link: '/documentation/listen_it/collections/map_notifier' },
+                      { text: 'SetNotifier', link: '/documentation/listen_it/collections/set_notifier' },
+                      { text: 'Notification Modes', link: '/documentation/listen_it/collections/notification_modes' },
+                      { text: 'Transactions', link: '/documentation/listen_it/collections/transactions' }
+                    ]
+                  },
+                  { text: 'Best Practices', link: '/documentation/listen_it/best_practices' }
+                ]
               }
+            ]
+          },
+          {
+            text: 'Ejemplos',
+            collapsed: true,
+            items: [
+              { text: 'Descripción general', link: '/es/examples/overview' },
+              { text: 'get_it', link: '/examples/get_it/get_it' },
+              { text: 'watch_it', link: '/examples/watch_it/watch_it' },
+              { text: 'command_it', link: '/examples/command_it/command_it' },
+              { text: 'listen_it', link: '/examples/listen_it/listen_it' },
+              { text: 'advanced', link: '/examples/advanced/advanced' }
+            ]
+          },
+          {
+            text: 'Misc.',
+            collapsed: false,
+            items: [
+              { text: 'Artículos y Videos', link: '/es/misc/articles' },
+              { text: 'How to contribute', link: '/misc/contribute' }
             ]
           }
         ],
