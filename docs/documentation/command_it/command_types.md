@@ -179,13 +179,7 @@ All other parameters (`initialValue`, `restriction`, `errorFilter`, etc.) work t
 
 **Additional methods:**
 
-Undoable commands provide undo/redo functionality:
-
-- **`undo()`** - Undo the last operation
-- **`redo()`** - Redo the last undone operation
-- **`canUndo`** - `ValueListenable<bool>` indicating if undo is available
-- **`canRedo`** - `ValueListenable<bool>` indicating if redo is available
-- **`clearStack()`** - Clear the entire undo/redo stack
+- **`undo()`** - Manually undo the last operation by calling the undo handler. The undo handler receives the `UndoStack` and can pop state to restore previous values
 
 **See also:**
 - [Best Practices - Undoable Commands](/documentation/command_it/best_practices#pattern-5-undoable-commands-with-automatic-rollback) for practical examples
