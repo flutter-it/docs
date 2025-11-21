@@ -70,8 +70,8 @@ Here's the complete signature of `createAsync<TParam, TResult>` - the most commo
 
 ```dart
 static Command<TParam, TResult> createAsync<TParam, TResult>(
-  Future<TResult> Function(TParam x) func,
-  TResult initialValue, {
+  Future<TResult> Function(TParam x) func, {
+  required TResult initialValue,
   ValueListenable<bool>? restriction,
   RunInsteadHandler<TParam>? ifRestrictedRunInstead,
   bool includeLastResultInCommandResults = false,
@@ -84,8 +84,8 @@ static Command<TParam, TResult> createAsync<TParam, TResult>(
 
 **Required parameters:**
 
-- **`func`** - The async function to wrap. Takes a parameter of type `TParam` and returns `Future<TResult>`
-- **`initialValue`** - The command's initial value before first execution. Required for commands with return values because commands are `ValueListenable<TResult>` and need a value immediately. **Not available for void commands** (see NoResult variants below)
+- **`func`** - The async function to wrap (positional parameter). Takes a parameter of type `TParam` and returns `Future<TResult>`
+- **`initialValue`** - The command's initial value before first execution (required named parameter). Commands are `ValueListenable<TResult>` and need a value immediately. **Not available for void commands** (see NoResult variants below)
 
 **Optional parameters:**
 
@@ -133,14 +133,14 @@ Undoable commands extend async commands with undo capability. They maintain an `
 **Complete signature:**
 
 ```dart
-static UndoableCommand<TParam, TResult, TUndoState> createUndoable<TParam, TResult, TUndoState>(
-  Future<TResult> Function(TParam param, UndoStack<TUndoState> undoStack) func,
-  UndoFn<TUndoState, TResult> undo,
-  TResult initialValue, {
+static Command<TParam, TResult> createUndoable<TParam, TResult, TUndoState>(
+  Future<TResult> Function(TParam, UndoStack<TUndoState>) func, {
+  required TResult initialValue,
+  required UndoFn<TUndoState, TResult> undo,
+  bool undoOnExecutionFailure = true,
   ValueListenable<bool>? restriction,
   RunInsteadHandler<TParam>? ifRestrictedRunInstead,
   bool includeLastResultInCommandResults = false,
-  bool undoOnExecutionFailure = true,
   ErrorFilter? errorFilter,
   ErrorFilterFn? errorFilterFn,
   bool notifyOnlyWhenValueChanges = false,
@@ -148,11 +148,13 @@ static UndoableCommand<TParam, TResult, TUndoState> createUndoable<TParam, TResu
 })
 ```
 
-**Undoable-specific parameters:**
+**Required parameters:**
 
-- **`func`** - Your async function that receives **TWO parameters**: the command parameter (`TParam`) AND the undo stack (`UndoStack<TUndoState>`) where you push state snapshots
+- **`func`** - Your async function that receives **TWO parameters**: the command parameter (`TParam`) AND the undo stack (`UndoStack<TUndoState>`) where you push state snapshots (positional parameter)
 
-- **`undo`** - Handler function called to perform the undo operation:
+- **`initialValue`** - The command's initial value before first execution (required named parameter)
+
+- **`undo`** - Handler function called to perform the undo operation (required named parameter):
   ```dart
   typedef UndoFn<TUndoState, TResult> = FutureOr<TResult> Function(
     UndoStack<TUndoState> undoStack,
@@ -161,7 +163,9 @@ static UndoableCommand<TParam, TResult, TUndoState> createUndoable<TParam, TResu
   ```
   Pop state from the stack and restore it. Called when user manually undos or when `undoOnExecutionFailure: true` and execution fails
 
-- **`undoOnExecutionFailure`** - When `true`, automatically calls the undo handler and restores state if the command fails. Perfect for optimistic updates that need rollback on error
+**Optional parameters:**
+
+- **`undoOnExecutionFailure`** - When `true` (default), automatically calls the undo handler and restores state if the command fails. Perfect for optimistic updates that need rollback on error
 
 **Type parameters:**
 
