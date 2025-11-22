@@ -733,7 +733,7 @@ testWidgets('CommandBuilder widget test', (tester) async {
 
   await tester.pumpWidget(
     MaterialApp(
-      home: CommandBuilder<void, String>(
+      home: CommandBuilder(
         command: command,
         whileRunning: (context, _, __) => CircularProgressIndicator(),
         onData: (context, data, _) => Text(data),

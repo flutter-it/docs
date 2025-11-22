@@ -16,15 +16,18 @@ class CounterManager {
 
 // #region example
 class CounterWidgetWithBuilder extends StatelessWidget {
-  CounterWidgetWithBuilder({super.key});
+  const CounterWidgetWithBuilder({
+    super.key,
+    required this.manager,
+  });
 
-  final manager = CounterManager();
+  final CounterManager manager;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CommandBuilder<void, String>(
+        CommandBuilder(
           command: manager.incrementCommand,
           whileRunning: (context, _, __) => CircularProgressIndicator(),
           onData: (context, value, _) => Text('Count: $value'),
@@ -41,6 +44,8 @@ class CounterWidgetWithBuilder extends StatelessWidget {
 // #endregion example
 
 void main() {
+  final manager = CounterManager();
   runApp(MaterialApp(
-      home: Scaffold(body: Center(child: CounterWidgetWithBuilder()))));
+      home: Scaffold(
+          body: Center(child: CounterWidgetWithBuilder(manager: manager)))));
 }

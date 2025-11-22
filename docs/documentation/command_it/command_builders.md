@@ -18,7 +18,7 @@ ValueListenableBuilder<CommandResult<void, String>>(
 )
 
 // Use this:
-CommandBuilder<void, String>(
+CommandBuilder(
   command: command,
   whileRunning: (context, _, __) => CircularProgressIndicator(),
   onError: (context, error, _, __) => Text('Error: $error'),
@@ -40,6 +40,10 @@ CommandBuilder<void, String>(
 
 All parameters are optional except `command`:
 
+**Generic Types:**
+- `TParam` - The parameter that was passed when the command was called (e.g., the search query)
+- `TResult` - The return value from the command's execution
+
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | **command** | `Command<TParam, TResult>` | Required. The command to observe |
@@ -48,12 +52,14 @@ All parameters are optional except `command`:
 | **onNullData** | `Widget Function(BuildContext, TParam?)` | Builder when command returns null |
 | **whileRunning** | `Widget Function(BuildContext, TResult?, TParam?)` | Builder while command is executing |
 | **onError** | `Widget Function(BuildContext, Object, TResult?, TParam?)` | Builder when command throws error |
+| **runCommandOnFirstBuild** | `bool` | If true, executes command in initState (default: false) |
+| **initialParam** | `TParam?` | Parameter to pass when runCommandOnFirstBuild is true |
 
 ### When to Use Each Builder
 
 **onData** - Commands with return values:
 ```dart
-CommandBuilder<String, List<Item>>(
+CommandBuilder(
   command: searchCommand,
   onData: (context, items, query) => ItemList(items),  // ✅ Use items
 )
@@ -61,7 +67,7 @@ CommandBuilder<String, List<Item>>(
 
 **onSuccess** - Void commands or when you don't need the result:
 ```dart
-CommandBuilder<Item, void>(
+CommandBuilder(
   command: deleteCommand,
   onSuccess: (context, deletedItem) => Text('Deleted: ${deletedItem?.name}'),
 )
@@ -69,7 +75,7 @@ CommandBuilder<Item, void>(
 
 **onNullData** - Handle null results explicitly:
 ```dart
-CommandBuilder<void, Data?>(
+CommandBuilder(
   command: fetchCommand,
   onData: (context, data, _) => DataWidget(data),
   onNullData: (context, _) => Text('No data available'),
@@ -95,12 +101,16 @@ onError: (context, error, lastValue, param) => ErrorWidget(
 )
 ```
 
+::: tip
+The `lastValue` parameter in `whileRunning` and `onError` will only contain data if the command was created with `includeLastResultInCommandResults: true`. Otherwise, it will always be `null`. See [includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults).
+:::
+
 ## Showing Parameter in UI
 
 Access the command parameter in any builder:
 
 ```dart
-CommandBuilder<String, List<Item>>(
+CommandBuilder(
   command: searchCommand,
   whileRunning: (context, _, query) => Text('Searching for: $query'),
   onData: (context, items, query) => Column(
@@ -113,45 +123,176 @@ CommandBuilder<String, List<Item>>(
 )
 ```
 
-## toWidget() Extension Method
+## Auto-Running Commands on Mount
 
-For use with `get_it_mixin`, `provider`, or `flutter_hooks` where you already have access to `CommandResult`:
+CommandBuilder can automatically execute a command when the widget is first built using the `runCommandOnFirstBuild` parameter. This is particularly useful when not using watch_it (which provides `callOnce` for this purpose).
+
+### Basic Usage (No Parameter)
 
 ```dart
-class MyWidget extends StatelessWidget with GetItStatefulWidgetMixin {
+CommandBuilder(
+  command: loadTodosCommand,
+  runCommandOnFirstBuild: true, // Executes command in initState
+  whileRunning: (context, _, __) => CircularProgressIndicator(),
+  onData: (context, todos, _) => TodoList(todos),
+  onError: (context, error, _, __) => ErrorWidget(error),
+)
+```
+
+**What happens:**
+1. Widget builds
+2. Command executes automatically in `initState`
+3. UI shows loading state → data/error state
+4. Command only runs **once** - not on rebuilds
+
+### With Parameters
+
+Use `initialParam` to pass a parameter to the command:
+
+```dart
+CommandBuilder(
+  command: searchCommand,
+  runCommandOnFirstBuild: true,
+  initialParam: 'flutter', // Parameter to pass
+  whileRunning: (context, _, query) => Text('Searching for: $query'),
+  onData: (context, items, query) => ItemList(items),
+  onError: (context, error, _, query) => Text('Search failed: $error'),
+)
+```
+
+### When to Use
+
+**✅ Use runCommandOnFirstBuild when:**
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Not using watch_it (no access to `callOnce`)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Widget should load its own data on mount</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Want self-contained data-loading widgets</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Simple data fetching scenarios</li>
+</ul>
+
+**❌️ Don't use when:**
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Using watch_it - prefer `callOnce` instead (clearer separation)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Command is already running elsewhere</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Need conditional logic before running</li>
+</ul>
+
+### Comparison with watch_it's callOnce
+
+**With watch_it (recommended if using watch_it):**
+```dart
+class TodoWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    final result = watchX((Manager m) => m.command.results);
+    callOnce((Manager m) => m.loadTodos()); // Explicit trigger
 
-    return result.toWidget(
-      whileRunning: (lastValue, param) => CircularProgressIndicator(),
-      onResult: (data, param) => DataWidget(data),
-      onError: (error, lastValue, param) => ErrorWidget(error),
+    return CommandBuilder(
+      command: getIt<Manager>().loadTodos,
+      onData: (context, todos, _) => TodoList(todos),
     );
   }
 }
 ```
 
+**Without watch_it (use runCommandOnFirstBuild):**
+```dart
+class TodoWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CommandBuilder(
+      command: getIt<Manager>().loadTodos,
+      runCommandOnFirstBuild: true, // Built-in trigger
+      onData: (context, todos, _) => TodoList(todos),
+    );
+  }
+}
+```
+
+## Builder Precedence Rules
+
+Both `CommandBuilder` and `CommandResult.toWidget()` use the same precedence rules when determining which builder to call:
+
+**Full precedence order:**
+1. **`if (error != null)`** → call `onError`
+2. **`if (isRunning)`** → call `whileRunning`
+3. **`if (onSuccess != null)`** → call `onSuccess` ⚠️ **Takes priority over onData!**
+4. **`if (data != null)`** → call `onData`
+5. **`else`** → call `onNullData`
+
+::: tip onData vs onSuccess
+**When command completes successfully:**
+1. If `onSuccess` provided → call it (doesn't check if data is null)
+2. Else if data != null → call `onData`
+3. Else → call `onNullData`
+
+**Choose `onSuccess` when:**
+- Command returns void (e.g., `Command.createAsyncNoResult`)
+- You only need to show confirmation/success message
+- Result data is irrelevant to the UI
+
+**Choose `onData` when:**
+- Command returns data you need to display/use
+- You want to handle non-null data differently from null data
+:::
+
+## toWidget() Extension Method
+
+The `.toWidget()` extension method on `CommandResult` provides the same declarative builder pattern as `CommandBuilder`, but for use when you already have access to a `CommandResult` (e.g., via `watch_it`, `provider`, or `flutter_hooks`).
+
+<<< @/../code_samples/lib/command_it/command_result_towidget_example.dart#example
+
+**Parameters:**
+
+You must provide **at least one** of these two:
+
+- **`onData`** - `Widget Function(TResult result, TParam? param)?`
+  - Called when command has **non-null data** (only if `onSuccess` not provided)
+  - Receives both the result data and parameter
+  - Use for commands that return data you need to display
+
+- **`onSuccess`** - `Widget Function(TParam? param)?`
+  - Called on successful completion (no error, not running)
+  - Does **NOT** receive result data, only the parameter
+  - **Takes priority** over `onData` if both provided
+  - Use for void-returning commands or when you don't need the result value
+
+Optional builders:
+
+- **`whileRunning`** - `Widget Function(TResult? lastResult, TParam? param)?`
+  - Called while command executes
+  - Receives last result (if `includeLastResultInCommandResults: true`) and parameter
+
+- **`onError`** - `Widget Function(Object error, TResult? lastResult, TParam? param)?`
+  - Called when error occurs
+  - Receives error, last result, and parameter
+
+- **`onNullData`** - `Widget Function(TParam? param)?`
+  - Called when data is null (only if neither `onSuccess` nor `onData` handle it)
+  - Receives only the parameter
+
 **Key differences from CommandBuilder:**
 
 | Feature | CommandBuilder | toWidget() |
 |---------|---------------|-----------|
-| Access to BuildContext | ✅ Yes | ❌ No |
-| Requires CommandResult | ❌ No (takes Command) | ✅ Yes |
+| BuildContext in builders | ✅ Yes (as parameter) | ❌️ No (access from enclosing build) |
+| Requires CommandResult | ❌️ No (takes Command) | ✅ Yes |
 | Use case | Direct Command usage | Already watching results |
+| Builder precedence | Same as toWidget() | Same as CommandBuilder |
 
 ## When to Use What
 
 **Use CommandBuilder when:**
 - Building UI directly from a Command
-- Need access to BuildContext in builders
 - Prefer declarative widget composition
 - Don't use state management that exposes results
+- Want BuildContext passed to builder functions
 
 **Use toWidget() when:**
-- Already watching `command.results` via get_it_mixin/provider/hooks
-- Don't need BuildContext in builders
-- Want slightly less boilerplate
+- Already watching `command.results` via watch_it/provider/hooks
+- Want simpler builder signatures (no BuildContext parameter)
+- Prefer less boilerplate when already subscribed to results
 
 **Use ValueListenableBuilder when:**
 - Need complete control over rendering logic
@@ -164,8 +305,19 @@ class MyWidget extends StatelessWidget with GetItStatefulWidgetMixin {
 
 Show stale data while loading fresh data:
 
+::: warning Required Configuration
+This pattern requires the command to be created with `includeLastResultInCommandResults: true`. Without this option, `lastItems` will always be `null` during execution. See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults) for details.
+:::
+
 ```dart
-CommandBuilder<String, List<Item>>(
+// Command must be created with this option:
+final searchCommand = Command.createAsync<String, List<Item>>(
+  searchApi,
+  [],
+  includeLastResultInCommandResults: true, // Required for pattern below
+);
+
+CommandBuilder(
   command: searchCommand,
   whileRunning: (context, lastItems, query) => Column(
     children: [
@@ -179,6 +331,10 @@ CommandBuilder<String, List<Item>>(
 ```
 
 ### Error with Retry
+
+::: warning Required Configuration
+To display the last successful value (line 7), the command must be created with `includeLastResultInCommandResults: true`. See [Command Results - includeLastResultInCommandResults](/documentation/command_it/command_results#includelastresultincommandresults).
+:::
 
 ```dart
 onError: (context, error, lastValue, param) => Column(
@@ -199,13 +355,13 @@ Not all builders are required - only provide what you need:
 
 ```dart
 // Minimal: only show data
-CommandBuilder<void, String>(
+CommandBuilder(
   command: command,
   onData: (context, data, _) => Text(data),
 )
 
 // No loading indicator needed
-CommandBuilder<void, String>(
+CommandBuilder(
   command: command,
   onData: (context, data, _) => Text(data),
   onError: (context, error, _, __) => Text('Error: $error'),

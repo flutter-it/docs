@@ -149,70 +149,14 @@ Same logic using `ValueListenableBuilder` for users who prefer not to use watch_
 
 ## Using .toWidget() with CommandResult
 
-The `.toWidget()` extension method from command_it provides a declarative way to build UI from CommandResult by providing separate builders for each state:
+The `.toWidget()` extension method provides a declarative way to build UI from CommandResult. For complete documentation on how to use `.toWidget()`, including:
 
-<<< @/../code_samples/lib/command_it/command_result_towidget_example.dart#example
+- Builder parameters and precedence rules
+- Differences between `onData` and `onSuccess`
+- When to use `.toWidget()` vs manual state checks
+- Examples and common patterns
 
-**Benefits of `.toWidget()`:**
-- Declarative approach - separate builder for each state
-- No need for manual `if` checks on state
-- Clear separation of concerns
-- Compiler ensures all states are handled
-
-**Parameters:**
-
-You must provide **at least one** of these two:
-
-- **`onData`** - <code>Widget Function(TResult result, TParam? param)?</code>
-  - Called when command has **non-null data** (only if `onSuccess` not provided)
-  - Receives both the result data and parameter
-  - Use for commands that return data you need to display
-
-- **`onSuccess`** - <code>Widget Function(TParam? param)?</code>
-  - Called on successful completion (no error, not running)
-  - Does **NOT** receive result data, only the parameter
-  - **Takes priority** over `onData` if both provided
-  - Use for void-returning commands or when you don't need the result value
-
-Optional builders:
-
-- **`whileRunning`** - <code>Widget Function(TResult? lastResult, TParam? param)?</code>
-  - Called while command executes
-  - Receives last result (if `includeLastResultInCommandResults: true`) and parameter
-
-- **`onError`** - <code>Widget Function(Object error, TResult? lastResult, TParam? param)?</code>
-  - Called when error occurs
-  - Receives error, last result, and parameter
-
-- **`onNullData`** - <code>Widget Function(TParam? param)?</code>
-  - Called when data is null (only if neither `onSuccess` nor `onData` handle it)
-  - Receives only the parameter
-
-::: tip onData vs onSuccess
-**Execution priority:** If command completes successfully, `.toWidget()` checks in this order:
-1. If `onSuccess` provided → call it (doesn't check if data is null)
-2. Else if data != null → call `onData`
-3. Else → call `onNullData`
-
-**Choose `onSuccess` when:**
-- Command returns void (e.g., <code>Command.createAsyncNoResult</code>)
-- You only need to show confirmation/success message
-- Result data is irrelevant to the UI
-
-**Choose `onData` when:**
-- Command returns data you need to display/use
-- You want to handle non-null data differently from null data
-:::
-
-**When to use `.toWidget()`:**
-- Prefer declarative builder pattern over imperative state checks
-- Want clear separation between different states
-- Each state maps to exactly one UI representation
-
-**When to use manual state checks instead:**
-- Need to display multiple states simultaneously (e.g., show data with loading indicator on top)
-- Need complex conditional logic combining multiple states
-- Prefer imperative style with `if` statements
+See **[Command Builders - toWidget() Extension Method](/documentation/command_it/command_builders#towidget-extension-method)**
 
 ## Result Properties
 

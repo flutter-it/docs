@@ -12,4 +12,4 @@ The newly created Scope gets a unique name so that it is ensured the right Scope
 
 ## Find out more!
 
-To learn more about GetIt, watch the presentation: [GetIt in action By Thomas Burkhart](https://youtu.be/YJ52kSfSMyM), in there the predecessor of this package called ´get_it_mixin´ is described but the video should still be helpful for the GetIt part.
+To learn more about GetIt, watch the presentation: [GetIt in action By Thomas Burkhart](https://youtu.be/YJ52kSfSMyM), in there the predecessor of this package called `get_it_mixin` is described but the video should still be helpful for the GetIt part.
