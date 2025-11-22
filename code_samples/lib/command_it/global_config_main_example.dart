@@ -12,8 +12,8 @@ void main() {
     debugPrint('Command: ${error.command}');
     debugPrint('Parameter: ${error.paramData}');
 
-    // In production, send to crash reporting
-    // crashReporting.recordError(error.error, stackTrace);
+    // In production, send to Sentry
+    // Sentry.captureException(error.error, stackTrace: stackTrace);
   };
 
   // 2. Default error filter - determines error handling strategy

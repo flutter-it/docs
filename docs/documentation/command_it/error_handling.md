@@ -144,18 +144,20 @@ void setupErrorMonitoring() {
 }
 ```
 
-**3. Crash Reporting Integration**
+**3. Sentry Integration**
 
 ```dart
-void setupCrashReporting() {
+void setupSentryIntegration() {
   Command.globalErrors.listen((error) {
-    crashReporting.recordError(
+    Sentry.captureException(
       error.error,
-      error.stackTrace,
-      context: {
-        'command': error.commandName ?? 'unknown',
-        'parameter': error.paramData?.toString(),
-        'error_reaction': error.errorReaction.toString(),
+      stackTrace: error.stackTrace,
+      withScope: (scope) {
+        scope.setTag('command', error.commandName ?? 'unknown');
+        scope.setContexts('command_context', {
+          'parameter': error.paramData?.toString(),
+          'error_reaction': error.errorReaction.toString(),
+        });
       },
     );
   });
@@ -183,9 +185,9 @@ Both receive the same errors, but serve different purposes:
 
 **Typical pattern: Use both together**
 ```dart
-// Handler for crash reporting
+// Handler for Sentry
 Command.globalExceptionHandler = (error, stackTrace) {
-  crashReporting.recordError(error.error, stackTrace);
+  Sentry.captureException(error.error, stackTrace: stackTrace);
 };
 
 // Stream for UI notifications

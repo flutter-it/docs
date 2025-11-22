@@ -1,32 +1,35 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart' hide di;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-// Mock services for demonstration
+// Mock analytics service for demonstration
 class Analytics {
   void logError(String command, String error) {
     debugPrint('Analytics: Command "$command" failed with: $error');
   }
 }
 
-class CrashReporter {
-  void report(Object error, StackTrace? stackTrace) {
-    debugPrint('Crash report: $error\n$stackTrace');
-  }
-}
-
 final analytics = Analytics();
-final crashReporter = CrashReporter();
 
 // #region example
 void setupGlobalErrorMonitoring() {
-  // Direct stream listener for analytics and crash reporting
+  // Direct stream listener for analytics and Sentry
   Command.globalErrors.listen((error) {
     // Send to analytics
     analytics.logError(error.commandName ?? 'unknown', error.error.toString());
 
-    // Send to crash reporting
-    crashReporter.report(error.error, error.stackTrace);
+    // Send to Sentry with command context
+    Sentry.captureException(
+      error.error,
+      stackTrace: error.stackTrace,
+      withScope: (scope) {
+        scope.setTag('command', error.commandName ?? 'unknown');
+        scope.setContexts('command_context', {
+          'parameter': error.paramData?.toString(),
+        });
+      },
+    );
   });
 }
 

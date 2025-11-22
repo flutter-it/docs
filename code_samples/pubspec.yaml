@@ -18,6 +18,7 @@ dependencies:
   command_it: ^9.0.1
   listen_it:
     path: ../../listen_it
+  sentry_flutter: ^8.0.0
 
 # Override to use local versions when needed during development
 dependency_overrides:

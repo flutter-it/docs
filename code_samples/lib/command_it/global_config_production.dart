@@ -1,15 +1,6 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
-
-// Mock crash reporting service
-class CrashReporting {
-  void recordError(Object error, StackTrace? stackTrace,
-      {Map<String, dynamic>? context}) {
-    // Send to Firebase Crashlytics, Sentry, etc.
-  }
-}
-
-final crashReporting = CrashReporting();
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 // Mock analytics service
 class Analytics {
@@ -33,15 +24,17 @@ void configureProductionMode() {
   // Assertions should throw - catch critical bugs
   Command.assertionsAlwaysThrow = true;
 
-  // Global error handler - send to crash reporting
+  // Global error handler - send to Sentry
   Command.globalExceptionHandler = (error, stackTrace) {
-    crashReporting.recordError(
+    Sentry.captureException(
       error.error,
-      stackTrace,
-      context: {
-        'command': error.command,
-        'parameter': error.paramData?.toString(),
-        'error_reaction': error.errorReaction.toString(),
+      stackTrace: stackTrace,
+      withScope: (scope) {
+        scope.setTag('command', error.command ?? 'unknown');
+        scope.setContexts('command_context', {
+          'parameter': error.paramData?.toString(),
+          'error_reaction': error.errorReaction.toString(),
+        });
       },
     );
   };

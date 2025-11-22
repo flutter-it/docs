@@ -37,7 +37,7 @@ Set this once in your `main()` function to handle errors globally:
 void main() {
   Command.globalExceptionHandler = (error, stackTrace) {
     loggingService.logError(error.error, stackTrace);
-    crashReporter.report(error.error, stackTrace);
+    Sentry.captureException(error.error, stackTrace: stackTrace);
   };
 
   runApp(MyApp());
@@ -427,22 +427,24 @@ Command.reportAllExceptions = kDebugMode;
 ```dart
 // WRONG: Only using the error object
 Command.globalExceptionHandler = (commandError, stackTrace) {
-  crashReporting.recordError(commandError.error, stackTrace);
+  Sentry.captureException(commandError.error, stackTrace: stackTrace);
   // Missing valuable context!
 };
 ```
 
 **Solution:**
 ```dart
-// ✅ Use full CommandError context
+// ✅ Use full CommandError context with Sentry
 Command.globalExceptionHandler = (commandError, stackTrace) {
-  crashReporting.recordError(
+  Sentry.captureException(
     commandError.error,
-    stackTrace,
-    context: {
-      'command': commandError.command,
-      'parameter': commandError.paramData?.toString(),
-      'error_reaction': commandError.errorReaction.toString(),
+    stackTrace: stackTrace,
+    withScope: (scope) {
+      scope.setTag('command', commandError.command ?? 'unknown');
+      scope.setContexts('command_context', {
+        'parameter': commandError.paramData?.toString(),
+        'error_reaction': commandError.errorReaction.toString(),
+      });
     },
   );
 };

@@ -1,16 +1,6 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/foundation.dart';
-
-// Mock crash reporting service
-class CrashReporting {
-  void recordError(Object error, StackTrace? stackTrace,
-      {Map<String, dynamic>? context}) {
-    debugPrint('Crash report: $error');
-    debugPrint('Context: $context');
-  }
-}
-
-final crashReporting = CrashReporting();
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 // #region example
 void setupGlobalExceptionHandler() {
@@ -21,15 +11,21 @@ void setupGlobalExceptionHandler() {
     final param = commandError.paramData; // Parameter passed to command
     final reaction = commandError.errorReaction; // How error was handled
 
-    // Send to crash reporting with rich context
-    crashReporting.recordError(
+    // Send to Sentry with rich context
+    Sentry.captureException(
       error,
-      stackTrace,
-      context: {
-        'command_name': command,
-        'command_parameter': param?.toString(),
-        'error_reaction': reaction.toString(),
-        'error_type': error.runtimeType.toString(),
+      stackTrace: stackTrace,
+      withScope: (scope) {
+        // Add tags for filtering in Sentry UI
+        scope.setTag('command', command ?? 'unknown');
+        scope.setTag('error_type', error.runtimeType.toString());
+
+        // Add context for debugging
+        scope.setContexts('command_context', {
+          'command_name': command,
+          'command_parameter': param?.toString(),
+          'error_reaction': reaction.toString(),
+        });
       },
     );
 
