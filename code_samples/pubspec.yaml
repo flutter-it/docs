@@ -28,8 +28,8 @@ dependency_overrides:
   listen_it:
     path: ../../listen_it
   # Uncomment to test unreleased versions
-  # command_it:
-  #   path: ../../command_it
+  command_it:
+    path: ../../command_it
 
 dev_dependencies:
   flutter_test:

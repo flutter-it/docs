@@ -20,6 +20,16 @@
       ]
     },
     {
+      "name": "command_it",
+      "version": "9.0.2",
+      "dependencies": [
+        "flutter",
+        "listen_it",
+        "quiver",
+        "stack_trace"
+      ]
+    },
+    {
       "name": "listen_it",
       "version": "5.3.3",
       "dependencies": [
@@ -29,7 +39,7 @@
     },
     {
       "name": "watch_it",
-      "version": "2.2.0",
+      "version": "2.3.0",
       "dependencies": [
         "flutter",
         "get_it",
@@ -38,7 +48,7 @@
     },
     {
       "name": "get_it",
-      "version": "9.0.5",
+      "version": "9.1.0",
       "dependencies": [
         "async",
         "collection",
@@ -103,16 +113,6 @@
       ]
     },
     {
-      "name": "command_it",
-      "version": "9.0.1",
-      "dependencies": [
-        "flutter",
-        "listen_it",
-        "quiver",
-        "stack_trace"
-      ]
-    },
-    {
       "name": "flutter",
       "version": "0.0.0",
       "dependencies": [
@@ -122,6 +122,20 @@
         "meta",
         "sky_engine",
         "vector_math"
+      ]
+    },
+    {
+      "name": "quiver",
+      "version": "3.2.2",
+      "dependencies": [
+        "matcher"
+      ]
+    },
+    {
+      "name": "stack_trace",
+      "version": "1.12.1",
+      "dependencies": [
+        "path"
       ]
     },
     {
@@ -228,13 +242,6 @@
       "version": "2.1.4",
       "dependencies": [
         "async"
-      ]
-    },
-    {
-      "name": "stack_trace",
-      "version": "1.12.1",
-      "dependencies": [
-        "path"
       ]
     },
     {
@@ -414,13 +421,6 @@
       "dependencies": [
         "clock",
         "collection"
-      ]
-    },
-    {
-      "name": "quiver",
-      "version": "3.2.2",
-      "dependencies": [
-        "matcher"
       ]
     },
     {

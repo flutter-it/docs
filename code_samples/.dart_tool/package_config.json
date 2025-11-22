@@ -57,7 +57,7 @@
     },
     {
       "name": "command_it",
-      "rootUri": "file:///home/escamoteur/.pub-cache/hosted/pub.dev/command_it-9.0.1",
+      "rootUri": "../../../command_it",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
