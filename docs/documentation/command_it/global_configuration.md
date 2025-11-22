@@ -8,7 +8,7 @@ Static properties that configure behavior for all commands in your app. Set thes
 |----------|------|---------|---------|
 | [**globalExceptionHandler**](#globalexceptionhandler) | `Function?` | `null` | Global error handler for all commands |
 | [**globalErrors**](#globalerrors) | `Stream` | N/A | Observable stream of all globally-routed errors |
-| [**errorFilterDefault**](#errorfilterdefault) | `ErrorFilter` | `GlobalErrorFilter()` | Default error filter |
+| [**errorFilterDefault**](#errorfilterdefault) | `ErrorFilter` | `GlobalIfNoLocalErrorFilter()` | Default error filter |
 | [**assertionsAlwaysThrow**](#assertionsalwaysthrow) | `bool` | `true` | AssertionErrors bypass filters |
 | [**reportAllExceptions**](#reportallexceptions) | `bool` | `false` | Override filters, report all errors |
 | [**detailedStackTraces**](#detailedstacktraces) | `bool` | `true` | Enhanced stack traces |
@@ -24,33 +24,31 @@ Here's a typical setup configuring multiple global properties:
 
 ## globalExceptionHandler
 
-Global error handler called for all command errors (based on ErrorFilter configuration):
+Global error handler called for all command errors:
 
 ```dart
 static void Function(CommandError<dynamic> error, StackTrace stackTrace)?
   globalExceptionHandler;
 ```
 
-### Usage with Crash Reporting
+Set this once in your `main()` function to handle errors globally:
 
-<<< @/../code_samples/lib/command_it/global_config_error_handler_example.dart#example
+```dart
+void main() {
+  Command.globalExceptionHandler = (error, stackTrace) {
+    loggingService.logError(error.error, stackTrace);
+    crashReporter.report(error.error, stackTrace);
+  };
 
-### When It's Called
+  runApp(MyApp());
+}
+```
 
-Depends on ErrorFilter configuration:
-- Default (`GlobalErrorFilter`): Called when no local error handler is present
-- With `LocalErrorFilter`: Never called
-- With `ErrorHandlerGlobal`: Always called
-- When `reportAllExceptions: true`: Always called (bypasses filters)
+**When it's called:**
+- Depends on ErrorFilter configuration (default: when no local listeners exist)
+- Always called when `reportAllExceptions: true`
 
-### Access to Error Context
-
-`CommandError<TParam>` provides rich context:
-- `.error` - The actual exception thrown
-- `.command` - Command name/identifier
-- `.paramData` - Parameter passed to command
-- `.stackTrace` - Full stack trace
-- `.errorReaction` - How the error was handled
+**See:** [Error Handling - Global Error Handler](/documentation/command_it/error_handling#global-error-handler) for complete documentation including usage examples, error context details, and patterns.
 
 ## globalErrors
 
@@ -60,26 +58,10 @@ Observable stream of all command errors routed to the global handler:
 static Stream<CommandError<dynamic>> get globalErrors
 ```
 
-### Overview
-
-A broadcast stream that emits `CommandError<dynamic>` for every error that would trigger `globalExceptionHandler`. Perfect for centralized error monitoring, analytics, crash reporting, and global UI notifications.
-
-### Stream Behavior
-
-**Emits when:**
-- ✅ `ErrorFilter` routes error to global handler (based on filter configuration)
-- ✅ Error handler itself throws an exception (if `reportErrorHandlerExceptionsToGlobalHandler` is `true`)
-
-**Does NOT emit when:**
-- ❌ `reportAllExceptions` is used (debug-only feature, not for production UI)
-- ❌ Error is handled purely locally (`LocalErrorFilter` with local listeners)
-- ❌ Error filter returns `ErrorReaction.none` or `ErrorReaction.throwException`
-
-### Use Cases
-
-**1. Global Error Toasts (watch_it integration)**
+Perfect for reactive error monitoring, analytics, crash reporting, and global UI notifications:
 
 ```dart
+// Example: Global error toast in root widget
 class MyApp extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
@@ -87,9 +69,8 @@ class MyApp extends WatchingWidget {
       target: Command.globalErrors,
       handler: (context, snapshot, cancel) {
         if (snapshot.hasData) {
-          final error = snapshot.data!;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${error.error}')),
+            SnackBar(content: Text('Error: ${snapshot.data!.error}')),
           );
         }
       },
@@ -99,89 +80,27 @@ class MyApp extends WatchingWidget {
 }
 ```
 
-**2. Centralized Logging and Analytics**
+**Key points:**
+- Broadcast stream (multiple listeners supported)
+- Emits when ErrorFilter routes errors to global handler
+- Does NOT emit for debug-only `reportAllExceptions`
+- Use with `globalExceptionHandler` for comprehensive error handling
 
-```dart
-void setupErrorMonitoring() {
-  Command.globalErrors.listen((error) {
-    // Send to analytics
-    analytics.logEvent('command_error', parameters: {
-      'command': error.commandName ?? 'unknown',
-      'error_type': error.error.runtimeType.toString(),
-      'has_param': error.paramData != null,
-    });
-
-    // Log to console in development
-    if (kDebugMode) {
-      debugPrint('Command error: ${error.commandName} - ${error.error}');
-    }
-  });
-}
-```
-
-**3. Crash Reporting Integration**
-
-```dart
-void setupCrashReporting() {
-  Command.globalErrors.listen((error) {
-    crashReporting.recordError(
-      error.error,
-      error.stackTrace,
-      context: {
-        'command': error.commandName ?? 'unknown',
-        'parameter': error.paramData?.toString(),
-        'error_reaction': error.errorReaction.toString(),
-      },
-    );
-  });
-}
-```
-
-### Key Characteristics
-
-- **Broadcast stream**: Multiple listeners supported
-- **Cannot be closed**: Stream is managed by command_it, not user code
-- **Production-focused**: Debug-only errors from `reportAllExceptions` are excluded
-- **No null resets**: Unlike `ValueListenable<CommandError?>`, stream only emits actual errors
-
-### Relationship with globalExceptionHandler
-
-Both receive the same errors, but serve different purposes:
-
-| Feature | `globalExceptionHandler` | `globalErrors` |
-|---------|-------------------------|----------------|
-| Type | Callback function | Stream |
-| Purpose | Immediate error handling | Reactive error monitoring |
-| Multiple handlers | No (single handler) | Yes (multiple listeners) |
-| watch_it integration | No | Yes (`registerStreamHandler`) |
-| Best for | Crash reporting, logging | UI notifications, analytics |
-
-**Typical pattern: Use both together**
-```dart
-// Handler for crash reporting
-Command.globalExceptionHandler = (error, stackTrace) {
-  crashReporting.recordError(error.error, stackTrace);
-};
-
-// Stream for UI notifications
-Command.globalErrors.listen((error) {
-  showErrorToast(error.error.toString());
-});
-```
+**See:** [Error Handling - Global Errors Stream](/documentation/command_it/error_handling#global-errors-stream) for complete documentation including use cases, stream behavior, and integration patterns.
 
 ## errorFilterDefault
 
 Default ErrorFilter used when no individual filter is specified per command:
 
 ```dart
-static ErrorFilter errorFilterDefault = const GlobalErrorFilter();
+static ErrorFilter errorFilterDefault = const GlobalIfNoLocalErrorFilter();
 ```
 
 ### Built-in Error Filters
 
-- `GlobalErrorFilter()` (default) - Try local handlers first, fallback to global
+- `GlobalIfNoLocalErrorFilter()` (default) - Try local handlers first, fallback to global
 - `LocalErrorFilter()` - Only call local handlers (`.errors` or `.results` listeners)
-- `ErrorHandlerGlobal()` - Only call global exception handler
+- `GlobalErrorFilter()` - Only call global exception handler
 - `LocalAndGlobalErrorFilter()` - Call both local and global handlers
 
 ### Example
@@ -374,7 +293,7 @@ Error handlers can have bugs too. This prevents error handling code from crashin
 
 ## useChainCapture
 
-**Experimental:** Enhanced async stack trace capture:
+**Experimental:** Preserve stack traces across async boundaries to show where commands were called:
 
 ```dart
 static bool useChainCapture = false;
@@ -382,9 +301,29 @@ static bool useChainCapture = false;
 
 **Default:** `false`
 
+**What it does:**
+
+When enabled, preserves the call stack from where the command was invoked, even when the exception happens inside an async function. Without this, you often get an "async gap" - losing the stack trace context showing which code called the command.
+
+Uses Dart's `Chain.capture()` mechanism to maintain the full stack trace across async boundaries.
+
+**Example without useChainCapture:**
+```
+#0  ApiClient.fetch (api_client.dart:42)
+#1  <async gap>
+```
+
+**Example with useChainCapture:**
+```
+#0  ApiClient.fetch (api_client.dart:42)
+#1  _fetchDataCommand.run (data_manager.dart:156)
+#2  DataScreen.build.<anonymous> (data_screen.dart:89)
+#3  ... (full call chain preserved)
+```
+
 **Status:** Experimental feature that may change or be removed in future versions.
 
-**Not recommended for production use.**
+**Not recommended for production use** - may have performance implications.
 
 ## Common Configuration Patterns
 
@@ -409,8 +348,8 @@ For production with crash reporting integration:
 **Characteristics:**
 - Respect error filters (don't report everything)
 - Send errors to crash reporting service
-- Minimal logging (only metrics)
 - Detailed stack traces for debugging production issues
+- No verbose logging (keep production lean)
 
 ### Testing Mode
 
@@ -467,30 +406,6 @@ Command.globalExceptionHandler = (error, stackTrace) {
 ```
 
 ## Common Mistakes
-
-### ❌️ Setting Global Handler After Creating Commands
-
-```dart
-// WRONG: Commands created before handler is set
-final command = Command.createAsync(fetchData, []);
-
-Command.globalExceptionHandler = (error, stackTrace) {
-  print('This works for future commands, but...');
-};
-```
-
-**Problem:** Global handlers should be set in `main()` before creating any commands.
-
-**Solution:**
-```dart
-void main() {
-  // ✅ Set global configuration FIRST
-  Command.globalExceptionHandler = (error, stackTrace) { ... };
-  Command.errorFilterDefault = const GlobalErrorFilter();
-
-  runApp(MyApp()); // Now create commands
-}
-```
 
 ### ❌️ Forgetting kDebugMode for reportAllExceptions
 

@@ -43,75 +43,156 @@ See [Command Results](/documentation/command_it/command_results) for details.
 
 ## Global Error Handler
 
-Set a global handler for errors that aren't handled locally:
+Global error handler called for all command errors (based on ErrorFilter configuration):
 
 ```dart
-void main() {
-  Command.globalExceptionHandler = (error, stackTrace) {
-    // Log to service
-    loggingService.logError(error, stackTrace);
-
-    // Report to crash analytics
-    crashReporter.report(error, stackTrace);
-  };
-
-  runApp(MyApp());
-}
+static void Function(CommandError<dynamic> error, StackTrace stackTrace)?
+  globalExceptionHandler;
 ```
 
-**When the global handler is called:**
-- No listeners on `.errors` or `.results` AND error filter allows it
-- ErrorFilter returns `ErrorReaction.globalHandler`
-- ErrorFilter returns `firstLocalThenGlobalHandler` with no local listeners
-- `Command.reportAllExceptions = true` (overrides filters)
+### Usage with Crash Reporting
+
+<<< @/../code_samples/lib/command_it/global_config_error_handler_example.dart#example
+
+### When It's Called
+
+Depends on ErrorFilter configuration:
+- Default (`GlobalIfNoLocalErrorFilter`): Called when no local error handler is present
+- With `LocalErrorFilter`: Never called
+- With `GlobalErrorFilter`: Always called
+- When `reportAllExceptions: true`: Always called (bypasses filters)
+
+### Access to Error Context
+
+`CommandError<TParam>` provides rich context:
+- `.error` - The actual exception thrown
+- `.command` - Command name/identifier
+- `.paramData` - Parameter passed to command
+- `.stackTrace` - Full stack trace
+- `.errorReaction` - How the error was handled
 
 ## Global Errors Stream
 
-For reactive error monitoring, use `Command.globalErrors` - a stream that emits all globally-routed errors:
+Observable stream of all command errors routed to the global handler:
 
 ```dart
-void setupGlobalErrorMonitoring() {
-  // Option 1: Direct stream listener
-  Command.globalErrors.listen((error) {
-    analytics.logError(error.commandName ?? 'unknown', error.error.toString());
-    crashReporter.report(error.error, error.stackTrace);
-  });
+static Stream<CommandError<dynamic>> get globalErrors
+```
 
-  // Option 2: watch_it integration for UI notifications
-  // (in root WatchingWidget)
-  registerStreamHandler<Stream<CommandError>, CommandError>(
-    target: Command.globalErrors,
-    handler: (context, snapshot, cancel) {
-      if (snapshot.hasData) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${snapshot.data!.error}')),
-        );
-      }
-    },
-  );
+### Overview
+
+A broadcast stream that emits `CommandError<dynamic>` for every error that would trigger `globalExceptionHandler`. Perfect for centralized error monitoring, analytics, crash reporting, and global UI notifications.
+
+### Stream Behavior
+
+**Emits when:**
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ <code>ErrorFilter</code> routes error to global handler (based on filter configuration)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Error handler itself throws an exception (if <code>reportErrorHandlerExceptionsToGlobalHandler</code> is <code>true</code>)</li>
+</ul>
+
+**Does NOT emit when:**
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ <code>reportAllExceptions</code> is used (debug-only feature, not for production UI)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Error is handled purely locally (<code>LocalErrorFilter</code> with local listeners)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Error filter returns <code>ErrorReaction.none</code> or <code>ErrorReaction.throwException</code></li>
+</ul>
+
+### Use Cases
+
+**1. Global Error Toasts (watch_it integration)**
+
+```dart
+class MyApp extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    registerStreamHandler<Stream<CommandError>, CommandError>(
+      target: Command.globalErrors,
+      handler: (context, snapshot, cancel) {
+        if (snapshot.hasData) {
+          final error = snapshot.data!;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${error.error}')),
+          );
+        }
+      },
+    );
+    return MaterialApp(home: HomePage());
+  }
 }
 ```
 
-**Stream behavior:**
-- Emits for the same errors that trigger `globalExceptionHandler`
-- Does NOT emit for `reportAllExceptions` (debug-only feature)
-- Broadcast stream (multiple listeners supported)
-- Perfect for analytics, monitoring, and global UI notifications
+**2. Centralized Logging and Analytics**
 
-**Typical pattern:**
 ```dart
-// Use globalExceptionHandler for crash reporting
+void setupErrorMonitoring() {
+  Command.globalErrors.listen((error) {
+    // Send to analytics
+    analytics.logEvent('command_error', parameters: {
+      'command': error.commandName ?? 'unknown',
+      'error_type': error.error.runtimeType.toString(),
+      'has_param': error.paramData != null,
+    });
+
+    // Log to console in development
+    if (kDebugMode) {
+      debugPrint('Command error: ${error.commandName} - ${error.error}');
+    }
+  });
+}
+```
+
+**3. Crash Reporting Integration**
+
+```dart
+void setupCrashReporting() {
+  Command.globalErrors.listen((error) {
+    crashReporting.recordError(
+      error.error,
+      error.stackTrace,
+      context: {
+        'command': error.commandName ?? 'unknown',
+        'parameter': error.paramData?.toString(),
+        'error_reaction': error.errorReaction.toString(),
+      },
+    );
+  });
+}
+```
+
+### Key Characteristics
+
+- **Broadcast stream**: Multiple listeners supported
+- **Cannot be closed**: Stream is managed by command_it, not user code
+- **Production-focused**: Debug-only errors from `reportAllExceptions` are excluded
+- **No null resets**: Unlike `ValueListenable<CommandError?>`, stream only emits actual errors
+
+### Relationship with globalExceptionHandler
+
+Both receive the same errors, but serve different purposes:
+
+| Feature | `globalExceptionHandler` | `globalErrors` |
+|---------|-------------------------|----------------|
+| Type | Callback function | Stream |
+| Purpose | Immediate error handling | Reactive error monitoring |
+| Multiple handlers | No (single handler) | Yes (multiple listeners) |
+| watch_it integration | No | Yes (`registerStreamHandler`) |
+| Best for | Crash reporting, logging | UI notifications, analytics |
+
+**Typical pattern: Use both together**
+```dart
+// Handler for crash reporting
 Command.globalExceptionHandler = (error, stackTrace) {
   crashReporting.recordError(error.error, stackTrace);
 };
 
-// Use globalErrors stream for UI toasts
+// Stream for UI notifications
 Command.globalErrors.listen((error) {
   showErrorToast(error.error.toString());
 });
 ```
-
-See [Global Configuration](/documentation/command_it/global_configuration#globalerrors) for complete details.
 
 ## Catch Always Mechanism
 
@@ -240,9 +321,9 @@ errorFilter: TableErrorFilter({
 
 ### Built-in Filters
 
-**GlobalErrorFilter** — Default behavior:
+**GlobalIfNoLocalErrorFilter** — Default behavior:
 ```dart
-Command.errorFilterDefault = const GlobalErrorFilter();
+Command.errorFilterDefault = const GlobalIfNoLocalErrorFilter();
 // Try local handler, fallback to global
 ```
 
@@ -421,7 +502,7 @@ Configure error handling behavior globally:
 ```dart
 void main() {
   // Default filter for all commands
-  Command.errorFilterDefault = const GlobalErrorFilter();
+  Command.errorFilterDefault = const GlobalIfNoLocalErrorFilter();
 
   // Global handler
   Command.globalExceptionHandler = (error, stackTrace) {
@@ -446,7 +527,7 @@ void main() {
 
 **Configuration properties:**
 
-- **`errorFilterDefault`** - Default ErrorFilter for all commands (default: `GlobalErrorFilter`)
+- **`errorFilterDefault`** - Default ErrorFilter for all commands (default: `GlobalIfNoLocalErrorFilter`)
 - **`globalExceptionHandler`** - Handler called for unhandled errors
 - **`catchAlwaysDefault`** - Default catch behavior (default: implementation-specific)
 - **`assertionsAlwaysThrow`** - AssertionErrors bypass filters (default: `true`)

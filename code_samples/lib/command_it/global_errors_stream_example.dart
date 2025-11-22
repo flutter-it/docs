@@ -68,8 +68,8 @@ class _HomePageState extends State<HomePage> {
       await Future.delayed(const Duration(milliseconds: 500));
       throw Exception('Simulated API failure');
     },
-    // Use GlobalErrorFilter to route to global handler
-    errorFilter: const GlobalErrorFilter(),
+    // Use GlobalIfNoLocalErrorFilter to route to global handler
+    errorFilter: const GlobalIfNoLocalErrorFilter(),
   );
 
   @override

@@ -22,7 +22,7 @@ final analytics = Analytics();
 
 // #region example
 void configureProductionMode() {
-  // Production: minimal logging, crash reporting integration
+  // Production: crash reporting only, respect error filters
 
   // Don't report all exceptions - respect error filters
   Command.reportAllExceptions = false;
@@ -32,16 +32,6 @@ void configureProductionMode() {
 
   // Assertions should throw - catch critical bugs
   Command.assertionsAlwaysThrow = true;
-
-  // Minimal logging - only track command execution metrics
-  Command.loggingHandler = (commandName, result) {
-    // Log metrics to analytics
-    if (result.hasError) {
-      analytics.logEvent('command_error', parameters: {
-        'has_param': result.paramData != null,
-      });
-    }
-  };
 
   // Global error handler - send to crash reporting
   Command.globalExceptionHandler = (error, stackTrace) {
@@ -57,7 +47,7 @@ void configureProductionMode() {
   };
 
   // Default filter: local errors stay local, unhandled go global
-  Command.errorFilterDefault = const GlobalErrorFilter();
+  Command.errorFilterDefault = const GlobalIfNoLocalErrorFilter();
 
   // If error handler itself throws, report to global handler
   Command.reportErrorHandlerExceptionsToGlobalHandler = true;

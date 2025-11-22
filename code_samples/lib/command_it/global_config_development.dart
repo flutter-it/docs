@@ -42,7 +42,7 @@ void configureDevelopmentMode() {
   };
 
   // Default filter: try local, fallback to global
-  Command.errorFilterDefault = const GlobalErrorFilter();
+  Command.errorFilterDefault = const GlobalIfNoLocalErrorFilter();
 }
 // #endregion example
 

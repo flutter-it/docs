@@ -17,7 +17,7 @@ void main() {
   };
 
   // 2. Default error filter - determines error handling strategy
-  Command.errorFilterDefault = const GlobalErrorFilter();
+  Command.errorFilterDefault = const GlobalIfNoLocalErrorFilter();
 
   // 3. Logging handler - log all command executions
   Command.loggingHandler = (commandName, result) {
