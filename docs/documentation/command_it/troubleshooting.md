@@ -368,9 +368,10 @@ class MyWidget extends WatchingWidget {
 **Solution 1:** Call in event handlers only
 
 ```dart
+// Call command only when button is pressed
 ElevatedButton(
-  onPressed: () => command('query'), // ✅ Only on button press
-  child: Text('Search'),
+  onPressed: () => command('query'),
+  child: const Text('Search'),
 )
 ```
 
@@ -538,7 +539,7 @@ ValueListenableBuilder(
 ### Cannot convert TResult to expected type
 
 **Symptoms:**
-- Type error: "type 'Null' is not a subtype of type 'List<Item>'"
+- Type error: "type 'Null' is not a subtype of type `List<Item>`"
 - Compiler errors about incompatible types
 
 **Diagnosis:**
