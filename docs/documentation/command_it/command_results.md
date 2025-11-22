@@ -4,7 +4,7 @@ Deep dive into `CommandResult` - the comprehensive state object that combines ex
 
 ## Overview
 
-`CommandResult<TParam, TResult>` is a value class containing all command execution information:
+The `.results` property is a `ValueListenable<CommandResult<TParam, TResult>>` that provides all command execution information in a single value class. This property updates on every state change of the command (running, success, error):
 
 ```dart
 class CommandResult<TParam, TResult> {
@@ -46,39 +46,32 @@ ValueListenableBuilder<CommandResult<String, List<Todo>>>(
 </ul>
 
 **Use individual properties when:**
-- Just need the data: Use command itself (`ValueListenable<TResult>`)
-- Just need loading state: Use `.isRunning`
-- Just need errors: Use `.errors`
 
-## Complete Example
-
-<<< @/../code_samples/lib/command_it/command_result_example.dart#example
-
-**How it works:**
-1. Single `ValueListenableBuilder` observes `.results`
-2. Check `result.isRunning` first → show loading
-3. Check `result.hasError` next → show error (with param data)
-4. Check `result.hasData` → show data
-5. Fallback → initial state
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">Just need the data: Use command itself (<code>ValueListenable&lt;TResult&gt;</code>)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">Just need loading state: Use `.isRunning`</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">Just need errors: Use `.errors`</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">Want to avoid rebuilds on every state change (individual properties only update for their specific state)</li>
+</ul>
 
 ## Result State Transitions
 
 ### Normal Flow (Success)
 
 ```
-Initial:    { data: [], error: null, isRunning: false }
+Initial:    { data: null, error: null, isRunning: false }
             ↓ command.run('query')
 Running:    { data: null, error: null, isRunning: true }
             ↓ async operation completes
 Success:    { data: [results], error: null, isRunning: false }
 ```
 
-**Note:** `data` becomes `null` during execution by default.
+**Note:** Initial `data` is `null` unless you set an `initialValue` parameter when creating the command.
 
 ### Error Flow
 
 ```
-Initial:    { data: [], error: null, isRunning: false }
+Initial:    { data: null, error: null, isRunning: false }
             ↓ command.run('query')
 Running:    { data: null, error: null, isRunning: true }
             ↓ exception thrown
@@ -102,7 +95,7 @@ Command.createAsync<String, List<Todo>>(
 1. **During execution** (`isRunning: true`) - Old data remains in `result.data` instead of becoming `null`
 2. **During error states** (`hasError: true`) - Old data remains in `result.data` instead of becoming `null`
 
-**Modified flow:**
+**Modified flow (with `initialValue: []`):**
 
 ```
 Initial:    { data: [], error: null, isRunning: false }
@@ -125,11 +118,101 @@ Error:      { data: [old results], error: Exception(), isRunning: false }  ← S
 - **Optimistic UI** - Maintain UI stability during background refreshes
 
 **When to use:**
-- ✅ List/feed refresh scenarios where empty states look jarring
-- ✅ Search results that update incrementally
-- ✅ Data that's better stale than absent
-- ❌ Login/authentication where stale data is misleading
-- ❌ Critical data where showing old values during errors is unsafe
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ List/feed refresh scenarios where empty states look jarring</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Search results that update incrementally</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Data that's better stale than absent</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Login/authentication where stale data is misleading</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Critical data where showing old values during errors is unsafe</li>
+</ul>
+
+## Complete Example
+
+### With watch_it (Recommended)
+
+<<< @/../code_samples/lib/command_it/command_result_watch_it_example.dart#example
+
+**How it works:**
+1. `watchValue` observes `.results` property
+2. Widget rebuilds automatically when state changes
+3. Check `result.isRunning` first → show loading
+4. Check `result.hasError` next → show error (with param data)
+5. Check `result.hasData` → show data
+6. Fallback → initial state
+
+### Without watch_it
+
+<<< @/../code_samples/lib/command_it/command_result_example.dart#example
+
+Same logic using `ValueListenableBuilder` for users who prefer not to use watch_it.
+
+## Using .toWidget() with CommandResult
+
+The `.toWidget()` extension method from command_it provides a declarative way to build UI from CommandResult by providing separate builders for each state:
+
+<<< @/../code_samples/lib/command_it/command_result_towidget_example.dart#example
+
+**Benefits of `.toWidget()`:**
+- Declarative approach - separate builder for each state
+- No need for manual `if` checks on state
+- Clear separation of concerns
+- Compiler ensures all states are handled
+
+**Parameters:**
+
+You must provide **at least one** of these two:
+
+- **`onData`** - <code>Widget Function(TResult result, TParam? param)?</code>
+  - Called when command has **non-null data** (only if `onSuccess` not provided)
+  - Receives both the result data and parameter
+  - Use for commands that return data you need to display
+
+- **`onSuccess`** - <code>Widget Function(TParam? param)?</code>
+  - Called on successful completion (no error, not running)
+  - Does **NOT** receive result data, only the parameter
+  - **Takes priority** over `onData` if both provided
+  - Use for void-returning commands or when you don't need the result value
+
+Optional builders:
+
+- **`whileRunning`** - <code>Widget Function(TResult? lastResult, TParam? param)?</code>
+  - Called while command executes
+  - Receives last result (if `includeLastResultInCommandResults: true`) and parameter
+
+- **`onError`** - <code>Widget Function(Object error, TResult? lastResult, TParam? param)?</code>
+  - Called when error occurs
+  - Receives error, last result, and parameter
+
+- **`onNullData`** - <code>Widget Function(TParam? param)?</code>
+  - Called when data is null (only if neither `onSuccess` nor `onData` handle it)
+  - Receives only the parameter
+
+::: tip onData vs onSuccess
+**Execution priority:** If command completes successfully, `.toWidget()` checks in this order:
+1. If `onSuccess` provided → call it (doesn't check if data is null)
+2. Else if data != null → call `onData`
+3. Else → call `onNullData`
+
+**Choose `onSuccess` when:**
+- Command returns void (e.g., <code>Command.createAsyncNoResult</code>)
+- You only need to show confirmation/success message
+- Result data is irrelevant to the UI
+
+**Choose `onData` when:**
+- Command returns data you need to display/use
+- You want to handle non-null data differently from null data
+:::
+
+**When to use `.toWidget()`:**
+- Prefer declarative builder pattern over imperative state checks
+- Want clear separation between different states
+- Each state maps to exactly one UI representation
+
+**When to use manual state checks instead:**
+- Need to display multiple states simultaneously (e.g., show data with loading indicator on top)
+- Need complex conditional logic combining multiple states
+- Prefer imperative style with `if` statements
 
 ## Result Properties
 
@@ -173,6 +256,14 @@ if (result.hasError) {
 - Cleared to `null` when command runs again
 - Type is `Object?` (any throwable)
 
+::: tip CommandResult.error vs Command.errors Property
+**Important distinction:**
+- `CommandResult.error` contains the **raw/pure error object** (type `Object?`)
+- The command's `.errors` property contains `CommandError<TParam>?` which **wraps** the error with additional context (parameter data, command name, stack trace, error reaction)
+
+When using `CommandResult`, you get direct access to the thrown error. When using the `.errors` property, you get the error wrapped with metadata.
+:::
+
 **Error types:**
 ```dart
 if (result.hasError) {
@@ -185,6 +276,10 @@ if (result.hasError) {
   }
 }
 ```
+
+::: tip UI Error Handling vs Error Filters
+The above pattern is recommended for **displaying different UI based on error type**. For more sophisticated error handling strategies (routing errors to different handlers, logging, rethrowing, silencing specific errors, etc.), use **[Error Filters](/documentation/command_it/error_handling)** which offer much richer possibilities for controlling error reactions.
+:::
 
 ### isRunning - Execution State
 
@@ -289,6 +384,41 @@ if (result.isSuccess && result.hasData) {
 
 ### Pattern 1: Progressive States
 
+**With watch_it:**
+
+```dart
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final result = watchValue((Manager m) => m.command.results);
+
+    // 1. Loading
+    if (result.isRunning) {
+      return LoadingState(query: result.paramData);
+    }
+
+    // 2. Error
+    if (result.hasError) {
+      return ErrorState(
+        error: result.error!,
+        query: result.paramData,
+        onRetry: () => di<Manager>().command(result.paramData),
+      );
+    }
+
+    // 3. Success
+    if (result.hasData) {
+      return DataState(data: result.data!);
+    }
+
+    // 4. Initial (no data, no error, not running)
+    return InitialState();
+  }
+}
+```
+
+**Without watch_it:**
+
 ```dart
 ValueListenableBuilder<CommandResult<String, Data>>(
   valueListenable: command.results,
@@ -320,14 +450,51 @@ ValueListenableBuilder<CommandResult<String, Data>>(
 
 ### Pattern 2: Optimistic UI with Stale Data
 
+**Setup:**
+
 ```dart
 Command.createAsync<String, List<Item>>(
   (query) => api.search(query),
   initialValue: [],
   includeLastResultInCommandResults: true, // Keep old data
 );
+```
 
-// UI shows old results while loading new ones
+**With watch_it:**
+
+```dart
+class SearchWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final result = watchValue((SearchManager m) => m.searchCommand.results);
+
+    return Stack(
+      children: [
+        // Always show data (old or new)
+        if (result.hasData)
+          ItemList(items: result.data!),
+
+        // Overlay loading indicator
+        if (result.isRunning)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: LinearProgressIndicator(),
+          ),
+
+        // Show error banner
+        if (result.hasError)
+          ErrorBanner(error: result.error),
+      ],
+    );
+  }
+}
+```
+
+**Without watch_it:**
+
+```dart
 ValueListenableBuilder<CommandResult<String, List<Item>>>(
   valueListenable: searchCommand.results,
   builder: (context, result, _) {
@@ -372,121 +539,76 @@ if (result.hasError) {
 
 ### Pattern 4: Logging with Context
 
+Use the `.errors` property for logging - it provides richer context than `CommandResult.error`:
+
 ```dart
-command.results.listen((result, _) {
-  if (result.hasError) {
+command.errors.listen((commandError, _) {
+  if (commandError != null) {
     logger.error(
-      'Command failed',
-      error: result.error,
-      param: result.paramData,
-      hadPreviousData: result.data != null,
+      'Command failed: ${commandError.command}',
+      error: commandError.error,
+      stackTrace: commandError.stackTrace,
+      param: commandError.paramData,
+      errorReaction: commandError.errorReaction,
     );
   }
 });
 ```
 
+**Why `.errors` is better for logging:**
+- Includes `stackTrace` automatically captured
+- Provides `command` name for identifying which command failed
+- Contains `errorReaction` showing how the error was handled
+- All context bundled in `CommandError<TParam>` wrapper
+
 ## CommandResult vs Individual Properties
 
-### Using individual properties (multiple builders)
+### Using individual properties (multiple watchers)
 
 ```dart
-// Nested builders - verbose
-ValueListenableBuilder<bool>(
-  valueListenable: command.isRunning,
-  builder: (context, isRunning, _) {
+// With watch_it - only rebuilds for properties you watch
+class TodoWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final isRunning = watchValue((TodoManager m) => m.loadTodos.isRunning);
+    final todos = watchValue((TodoManager m) => m.loadTodos);
+
     if (isRunning) return CircularProgressIndicator();
-
-    return ValueListenableBuilder<CommandError?>(
-      valueListenable: command.errors,
-      builder: (context, error, _) {
-        if (error != null) return ErrorWidget(error.error);
-
-        return ValueListenableBuilder<List<Todo>>(
-          valueListenable: command,
-          builder: (context, data, _) {
-            return TodoList(todos: data);
-          },
-        );
-      },
-    );
-  },
-)
+    return TodoList(todos: todos);
+  }
+}
 ```
 
-### Using CommandResult (single builder)
+**Benefits:**
+- Each property only updates when its value changes
+- No `if` checks needed when watching 1-2 properties
+- Fewer rebuilds - only when watched properties change
+
+### Using CommandResult (single watcher)
 
 ```dart
-// Single builder - clean
-ValueListenableBuilder<CommandResult<void, List<Todo>>>(
-  valueListenable: command.results,
-  builder: (context, result, _) {
+// Single property with if checks
+class TodoWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final result = watchValue((TodoManager m) => m.loadTodos.results);
+
     if (result.isRunning) return CircularProgressIndicator();
     if (result.hasError) return ErrorWidget(result.error);
     return TodoList(todos: result.data ?? []);
-  },
-)
+  }
+}
 ```
 
-**Trade-off:**
-- **More updates**: `.results` updates on running, success, error
-- **Simpler code**: Single builder, all state in one place
-- **Better for**: Complex UIs with multiple states
+**Trade-offs:**
+- **More rebuilds**: Updates on every state change (running, success, error)
+- **Requires `if` checks**: Must check state properties
+- **Single watcher**: All state in one place
+- **Better for**: When you need 3+ properties or all state information
 
-## CommandResult and CommandBuilder
-
-`CommandBuilder` widget internally uses `CommandResult`:
-
-```dart
-CommandBuilder<String, List<Todo>>(
-  command: searchCommand,
-  whileRunning: (context, lastValue, _) => CircularProgressIndicator(),
-  onData: (context, data, _) => TodoList(todos: data),
-  onError: (context, error, lastValue, param) => ErrorView(
-    error: error,
-    query: param,
-  ),
-)
-```
-
-The widget automatically handles `CommandResult` state transitions.
-
-## Debugging CommandResult
-
-**Log all state changes:**
-
-```dart
-command.results.listen((result, _) {
-  debugPrint('''
-    CommandResult Update:
-    - isRunning: ${result.isRunning}
-    - hasData: ${result.hasData}
-    - hasError: ${result.hasError}
-    - paramData: ${result.paramData}
-  ''');
-});
-```
-
-**Visualize in DevTools:**
-
-```dart
-// Add to your debug widget tree
-if (kDebugMode)
-  ValueListenableBuilder<CommandResult>(
-    valueListenable: command.results,
-    builder: (context, result, _) {
-      return Container(
-        color: Colors.black87,
-        padding: EdgeInsets.all(8),
-        child: Text(
-          'Running: ${result.isRunning}, '
-          'Data: ${result.hasData}, '
-          'Error: ${result.hasError}',
-          style: TextStyle(color: Colors.white, fontSize: 10),
-        ),
-      );
-    },
-  )
-```
+**Recommendation:**
+- **Need only 1-2 properties** (e.g., just data + isRunning): Use individual properties
+- **Need 3+ properties** or complete state: Use CommandResult
 
 ## Common Mistakes
 

@@ -74,20 +74,20 @@ export default defineConfig({
                 text: 'watch_it',
                 collapsed: true,
                 items: [
-                  { text: 'Getting started', link: '/documentation/watch_it/getting_started' },
-                  { text: 'Your First Watch Functions', link: '/documentation/watch_it/your_first_watch_functions' },
-                  { text: 'More Watch Functions', link: '/documentation/watch_it/more_watch_functions' },
-                  { text: 'Watching Multiple Values', link: '/documentation/watch_it/watching_multiple_values' },
-                  { text: 'Watching Streams & Futures', link: '/documentation/watch_it/watching_streams_and_futures' },
-                  { text: 'Watch Ordering Rules', link: '/documentation/watch_it/watch_ordering_rules' },
-                  { text: 'Side Effects with Handlers', link: '/documentation/watch_it/handlers' },
-                  { text: 'Lifecycle Functions', link: '/documentation/watch_it/lifecycle' },
-                  { text: 'WatchingWidgets', link: '/documentation/watch_it/watching_widgets' },
-                  { text: 'Observing Commands', link: '/documentation/watch_it/observing_commands' },
-                  { text: 'Accessing get_it Features', link: '/documentation/watch_it/advanced_integration' },
-                  { text: 'Best Practices', link: '/documentation/watch_it/best_practices' },
-                  { text: 'Debugging & Troubleshooting', link: '/documentation/watch_it/debugging_tracing' },
-                  { text: 'How watch_it Works', link: '/documentation/watch_it/how_it_works' }
+                  { text: 'Getting started', link: '/es/documentation/watch_it/getting_started' },
+                  { text: 'Your First Watch Functions', link: '/es/documentation/watch_it/your_first_watch_functions' },
+                  { text: 'More Watch Functions', link: '/es/documentation/watch_it/more_watch_functions' },
+                  { text: 'Watching Multiple Values', link: '/es/documentation/watch_it/watching_multiple_values' },
+                  { text: 'Watching Streams & Futures', link: '/es/documentation/watch_it/watching_streams_and_futures' },
+                  { text: 'Watch Ordering Rules', link: '/es/documentation/watch_it/watch_ordering_rules' },
+                  { text: 'Side Effects with Handlers', link: '/es/documentation/watch_it/handlers' },
+                  { text: 'Lifecycle Functions', link: '/es/documentation/watch_it/lifecycle' },
+                  { text: 'WatchingWidgets', link: '/es/documentation/watch_it/watching_widgets' },
+                  { text: 'Observing Commands', link: '/es/documentation/watch_it/observing_commands' },
+                  { text: 'Accessing get_it Features', link: '/es/documentation/watch_it/advanced_integration' },
+                  { text: 'Best Practices', link: '/es/documentation/watch_it/best_practices' },
+                  { text: 'Debugging & Troubleshooting', link: '/es/documentation/watch_it/debugging_tracing' },
+                  { text: 'How watch_it Works', link: '/es/documentation/watch_it/how_it_works' }
                 ]
               },
               {
@@ -105,7 +105,8 @@ export default defineConfig({
                   { text: 'Restrictions', link: '/documentation/command_it/restrictions' },
                   { text: 'Testing', link: '/documentation/command_it/testing' },
                   { text: 'Without watch_it', link: '/documentation/command_it/without_watch_it' },
-                  { text: 'Best Practices', link: '/documentation/command_it/best_practices' }
+                  { text: 'Best Practices', link: '/documentation/command_it/best_practices' },
+                  { text: 'Troubleshooting', link: '/documentation/command_it/troubleshooting' }
                 ]
               },
               {
@@ -258,7 +259,8 @@ export default defineConfig({
               { text: 'Restrictions', link: '/documentation/command_it/restrictions.md' },
               { text: 'Testing', link: '/documentation/command_it/testing.md' },
               { text: 'Without watch_it', link: '/documentation/command_it/without_watch_it.md' },
-              { text: 'Best Practices', link: '/documentation/command_it/best_practices.md' }
+              { text: 'Best Practices', link: '/documentation/command_it/best_practices.md' },
+              { text: 'Troubleshooting', link: '/documentation/command_it/troubleshooting.md' }
             ]
           },
           {
