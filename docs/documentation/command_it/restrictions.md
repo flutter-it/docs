@@ -24,6 +24,10 @@ Command.createAsyncNoParam<List<Todo>>(
 
 Any change of restriction is reflected in the `canRun` property of the command with this formula: `canRun = !isRunning && !restriction`
 
+::: tip UI Integration
+Because `canRun` automatically reflects both execution state and restrictions, it's ideal for enabling/disabling UI elements. Just watch `canRun` and your buttons automatically enable/disable as conditions change - no manual state tracking needed.
+:::
+
 ## Basic Restriction with ValueNotifier
 
 The most common pattern is restricting based on application state:
