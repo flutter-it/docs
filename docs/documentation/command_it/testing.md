@@ -44,10 +44,15 @@ expect(resultCollector.values, ['initial', 'loaded data']);
 ```
 
 **Why this pattern?**
-- Captures all emitted values
-- Verifies state transitions
-- Easy to reset between tests
-- Works with any `ValueListenable`
+
+Commands are designed to work **asynchronously without being awaited** - they're meant to be **observed**, not awaited. This is the core architectural principle of command_it:
+
+- Commands emit state changes via `ValueListenable` (results, errors, isRunning)
+- UI observes commands reactively, not via `await`
+- Tests need to verify the **sequence** of emitted values
+- Collector accumulates all emissions so you can assert on complete state transitions
+
+While `runAsync()` exists for convenience in tests, the Collector pattern tests commands the way they're actually used in production: fire-and-forget with observation.
 
 ## Testing Async Commands
 
