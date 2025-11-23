@@ -1,9 +1,5 @@
 # Testing Commands
 
-::: warning AI-Generated Content Under Review
-This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
-:::
-
 Learn how to write effective tests for commands, verify state transitions, and test error handling. command_it is designed to be highly testable.
 
 ## Why Commands Are Easy to Test
@@ -411,9 +407,7 @@ test('Service uses command correctly', () async {
 
   // Queue results for the next execution
   mockLoadCommand.queueResultsForNextExecuteCall([
-    'Item 1',
-    'Item 2',
-    'Item 3',
+    CommandResult<void, List<String>>(null, ['Item 1', 'Item 2', 'Item 3'], null, false),
   ]);
 
   // Inject into service
@@ -432,11 +426,11 @@ test('Service uses command correctly', () async {
 
 **Key MockCommand methods:**
 
-- **`queueResultsForNextExecuteCall(List<TResult>)`** - Queue multiple results to be returned in sequence
-- **`startExecuting()`** - Manually trigger the running state
+- **<code>queueResultsForNextExecuteCall(List&lt;CommandResult&lt;TParam, TResult&gt;&gt;)</code>** - Queue multiple results to be returned in sequence
+- **`startExecution()`** - Manually trigger the running state
 - **`endExecutionWithData(TResult data)`** - Complete execution with a result
 - **`endExecutionNoData()`** - Complete execution without a result (void commands)
-- **`endExecutionWithError(Exception error)`** - Complete execution with an error
+- **`endExecutionWithError(String message)`** - Complete execution with an error
 - **`executionCount`** - Track how many times the command was executed
 
 **Testing loading states:**
@@ -451,7 +445,7 @@ test('UI shows loading indicator', () async {
   mockCommand.isRunning.listen((running, _) => loadingStates.add(running));
 
   // Start execution manually
-  mockCommand.startExecuting();
+  mockCommand.startExecution();
   expect(mockCommand.isRunning.value, true);
 
   // Complete execution
@@ -474,8 +468,8 @@ test('UI shows error message', () {
   mockCommand.errors.listen((error, _) => capturedError = error);
 
   // Simulate error
-  mockCommand.startExecuting();
-  mockCommand.endExecutionWithError(Exception('Network error'));
+  mockCommand.startExecution();
+  mockCommand.endExecutionWithError('Network error');
 
   expect(capturedError?.error.toString(), contains('Network error'));
 });
@@ -749,25 +743,27 @@ testWidgets('CommandBuilder widget test', (tester) async {
 
 ## Best Practices
 
-<ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ **Do:**</li>
-</ul>
-- Use `Collector` pattern for state verification
-- Test both success and error paths
-- Verify state transitions with `CommandResult`
-- Use `runAsync()` to await results in tests
-- Mock external dependencies
-- Test restriction behavior
-- Verify disposal
+**✅ Do:**
 
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️️ **Don't:**</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Use <code>Collector</code> pattern for state verification</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Test both success and error paths</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Verify state transitions with <code>CommandResult</code></li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Use <code>runAsync()</code> to await results in tests</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Mock external dependencies</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Test restriction behavior</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Verify disposal</li>
 </ul>
-- Access `isRunning` on sync commands
-- Forget to dispose commands in tearDown
-- Test UI and business logic together
-- Rely on timing without `fake_async`
-- Ignore error handling tests
+
+**❌️ Don't:**
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Access <code>isRunning</code> on sync commands</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Forget to dispose commands in tearDown</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Test UI and business logic together</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Rely on timing without <code>fake_async</code></li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Ignore error handling tests</li>
+</ul>
 
 ## See Also
 
