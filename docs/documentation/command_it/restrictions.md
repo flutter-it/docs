@@ -57,7 +57,7 @@ Prevent commands from running while other commands execute:
 5. Demonstrates combining multiple restrictions with listen_it operators
 
 **Why isRunningSync?**
-- `isRunning` updates asynchronously (via microtask)
+- `isRunning` updates asynchronously to avoid race conditions in UI rebuilding
 - `isRunningSync` updates immediately
 - Prevents race conditions in restrictions
 - Use `isRunning` for UI, `isRunningSync` for restrictions
@@ -154,6 +154,10 @@ class DataManager {
 }
 ```
 
+::: tip Even More Elegant
+If you implement `sync()` as a command too, you can use its `isRunningSync` directly as the restriction - no need to manually manage `isSyncing`. See the [Chaining Commands](#chaining-commands-via-isrunningsync) example above.
+:::
+
 ## Restriction vs Manual Checks
 
 **❌️ Without restrictions (manual checks):**
@@ -193,24 +197,6 @@ class SaveWidget extends WatchingWidget {
 - No manual checks needed
 - Centralized logic
 - Reactive to state changes
-
-## Restrictions vs Error Handling
-
-**Restrictions prevent execution** — the command never runs.
-**Error handling deals with failures** — the command runs but throws.
-
-```dart
-// Restriction: prevent execution when offline
-restriction: isOnline.map((online) => !online)
-
-// Error handling: handle failures when network fails during execution
-errorFilter: PredicatesErrorFilter({
-  NetworkException: (error, _) => showRetryDialog(error),
-})
-```
-
-Use restrictions for **known conditions** (auth, validation, state).
-Use error handling for **runtime failures** (network, API errors).
 
 ## Common Mistakes
 

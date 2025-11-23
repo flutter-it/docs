@@ -5,6 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:command_it/command_it.dart';
 import 'package:get_it/get_it.dart';
+import 'package:watch_it/watch_it.dart';
+
+// Export di from watch_it for watch_it samples
+export 'package:watch_it/watch_it.dart' show di;
 
 // ============================================================================
 // Models
@@ -658,39 +662,41 @@ class TodoDeletedEvent extends AppEvent {
 // Utilities
 // ============================================================================
 
-final di = GetIt.instance;
+final getIt = GetIt.instance;
 
 void setupDependencyInjection() {
-  if (di.isRegistered<ApiClient>()) {
+  if (getIt.isRegistered<ApiClient>()) {
     return; // Already set up
   }
 
   // Core services
-  di.registerLazySingleton<ApiClient>(() => ApiClient());
-  di.registerLazySingleton<AuthService>(() => AuthService());
-  di.registerLazySingleton<DataService>(() => DataService(di<ApiClient>()));
+  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+  getIt.registerLazySingleton<AuthService>(() => AuthService());
+  getIt.registerLazySingleton<DataService>(
+      () => DataService(getIt<ApiClient>()));
 
   // Complex managers (with commands)
-  di.registerLazySingleton<TodoManager>(() => TodoManager(di<DataService>()));
-  di.registerLazySingleton<UserManager>(
-    () => UserManager(di<AuthService>(), di<ApiClient>()),
+  getIt.registerLazySingleton<TodoManager>(
+      () => TodoManager(getIt<DataService>()));
+  getIt.registerLazySingleton<UserManager>(
+    () => UserManager(getIt<AuthService>(), getIt<ApiClient>()),
   );
-  di.registerLazySingleton<WeatherManager>(
-    () => WeatherManager(di<DataService>()),
+  getIt.registerLazySingleton<WeatherManager>(
+    () => WeatherManager(getIt<DataService>()),
   );
 
   // Simple managers (for tutorial examples) - use registerSingleton for simplicity
-  di.registerSingleton<CounterManager>(CounterManager());
-  di.registerSingleton<DataManager>(DataManager());
-  di.registerSingleton<SimpleUserManager>(SimpleUserManager());
+  getIt.registerSingleton<CounterManager>(CounterManager());
+  getIt.registerSingleton<DataManager>(DataManager());
+  getIt.registerSingleton<SimpleUserManager>(SimpleUserManager());
 
   // Stream/Future services (for async examples)
-  di.registerSingleton<ChatService>(ChatService());
-  di.registerSingleton<UserService>(UserService());
-  di.registerSingleton<AppService>(AppService());
-  di.registerSingleton<MessageService>(MessageService());
-  di.registerSingleton<NotificationService>(NotificationService());
+  getIt.registerSingleton<ChatService>(ChatService());
+  getIt.registerSingleton<UserService>(UserService());
+  getIt.registerSingleton<AppService>(AppService());
+  getIt.registerSingleton<MessageService>(MessageService());
+  getIt.registerSingleton<NotificationService>(NotificationService());
 
   // Event bus
-  di.registerLazySingleton<EventBus>(() => EventBus());
+  getIt.registerLazySingleton<EventBus>(() => EventBus());
 }

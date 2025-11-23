@@ -1,6 +1,7 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
 import 'package:listen_it/listen_it.dart';
+import 'package:watch_it/watch_it.dart';
 import '_shared/stubs.dart';
 
 // #region example
@@ -37,13 +38,17 @@ class DataManager {
   );
 }
 
-class ChainedCommandsWidget extends StatelessWidget {
-  ChainedCommandsWidget({super.key});
-
-  final manager = DataManager();
+class ChainedCommandsWidget extends WatchingWidget {
+  const ChainedCommandsWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Watch all canRun states
+    final canRunLoad = watchValue((DataManager m) => m.loadCommand.canRun);
+    final canRunSave = watchValue((DataManager m) => m.saveCommand.canRun);
+    final canRunUpdate = watchValue((DataManager m) => m.updateCommand.canRun);
+    final todos = watchValue((DataManager m) => m.loadCommand);
+
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -54,70 +59,51 @@ class ChainedCommandsWidget extends StatelessWidget {
           SizedBox(height: 16),
 
           // Load button
-          ValueListenableBuilder<bool>(
-            valueListenable: manager.loadCommand.canRun,
-            builder: (context, canRun, _) {
-              return ElevatedButton(
-                onPressed: canRun ? manager.loadCommand.run : null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (!canRun) ...[
-                      SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      ),
-                      SizedBox(width: 8),
-                    ],
-                    Text('Load Data'),
-                  ],
-                ),
-              );
-            },
+          ElevatedButton(
+            onPressed: canRunLoad ? di<DataManager>().loadCommand.run : null,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (!canRunLoad) ...[
+                  SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white),
+                  ),
+                  SizedBox(width: 8),
+                ],
+                Text('Load Data'),
+              ],
+            ),
           ),
           SizedBox(height: 8),
 
           // Save button - disabled while loading
-          ValueListenableBuilder<bool>(
-            valueListenable: manager.saveCommand.canRun,
-            builder: (context, canRun, _) {
-              return ElevatedButton(
-                onPressed: canRun
-                    ? () => manager.saveCommand(Todo('1', 'Test Todo', false))
-                    : null,
-                child:
-                    Text(canRun ? 'Save Todo' : 'Save (blocked while loading)'),
-              );
-            },
+          ElevatedButton(
+            onPressed: canRunSave
+                ? () =>
+                    di<DataManager>().saveCommand(Todo('1', 'Test Todo', false))
+                : null,
+            child:
+                Text(canRunSave ? 'Save Todo' : 'Save (blocked while loading)'),
           ),
           SizedBox(height: 8),
 
           // Update button - disabled while loading OR saving
-          ValueListenableBuilder<bool>(
-            valueListenable: manager.updateCommand.canRun,
-            builder: (context, canRun, _) {
-              return ElevatedButton(
-                onPressed: canRun
-                    ? () =>
-                        manager.updateCommand(Todo('2', 'Updated Todo', false))
-                    : null,
-                child: Text(canRun
-                    ? 'Update Todo'
-                    : 'Update (blocked while loading/saving)'),
-              );
-            },
+          ElevatedButton(
+            onPressed: canRunUpdate
+                ? () => di<DataManager>()
+                    .updateCommand(Todo('2', 'Updated Todo', false))
+                : null,
+            child: Text(canRunUpdate
+                ? 'Update Todo'
+                : 'Update (blocked while loading/saving)'),
           ),
           SizedBox(height: 16),
 
           // Status display
-          ValueListenableBuilder<List<Todo>>(
-            valueListenable: manager.loadCommand,
-            builder: (context, todos, _) {
-              return Text('Loaded ${todos.length} todos');
-            },
-          ),
+          Text('Loaded ${todos.length} todos'),
         ],
       ),
     );
@@ -126,5 +112,6 @@ class ChainedCommandsWidget extends StatelessWidget {
 // #endregion example
 
 void main() {
+  di.registerSingleton(DataManager());
   runApp(MaterialApp(home: Scaffold(body: ChainedCommandsWidget())));
 }
