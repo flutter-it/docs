@@ -70,7 +70,7 @@ This example shows a `Post` model with an embedded bookmark command:
 
 ### Delete Pattern
 
-For deletions, capture the item before removing it. This example uses [`MapNotifier`](/documentation/listen_it/reactive_collections#mapnotifier) to store todos by ID:
+For deletions, capture the item before removing it. This example uses [`MapNotifier`](/documentation/listen_it/collections/map_notifier) to store todos by ID:
 
 <<< @/../code_samples/lib/command_it/optimistic_simple_delete_example.dart#example
 
