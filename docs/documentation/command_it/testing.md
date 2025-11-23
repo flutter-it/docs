@@ -52,7 +52,7 @@ Commands are designed to work **asynchronously without being awaited** - they're
 - Tests need to verify the **sequence** of emitted values
 - Collector accumulates all emissions so you can assert on complete state transitions
 
-While `runAsync()` exists for convenience in tests, the Collector pattern tests commands the way they're actually used in production: fire-and-forget with observation.
+While `runAsync()` is useful when you need to await a result (like with `RefreshIndicator`), the Collector pattern tests commands the way they're typically used: fire-and-forget with observation.
 
 ## Testing Async Commands
 
@@ -72,29 +72,6 @@ test('Async command executes successfully', () async {
   final result = await command.runAsync();
 
   expect(result, 'result');
-});
-```
-
-### Verifying isRunning State
-
-```dart
-test('isRunning state transitions', () async {
-  final collector = Collector<bool>();
-
-  final command = Command.createAsyncNoParam<String>(
-    () async {
-      await Future.delayed(Duration(milliseconds: 50));
-      return 'done';
-    },
-    initialValue: '',
-  );
-
-  command.isRunning.listen((running, _) => collector(running));
-
-  await command.runAsync();
-
-  expect(collector.values, [false, true, false]);
-  // false (initial) → true (started) → false (completed)
 });
 ```
 
