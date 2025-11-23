@@ -52,8 +52,9 @@ Prevent commands from running while other commands execute:
 **How it works:**
 1. `saveCommand` uses `loadCommand.isRunningSync` as restriction
 2. While loading, `saveCommand` cannot run
-3. `updateCommand` uses `saveCommand.isRunningSync`
-4. Creates a dependency chain: load → save → update
+3. `updateCommand` uses `combineLatest` to combine both running states
+4. Update is disabled if EITHER load OR save is running
+5. Demonstrates combining multiple restrictions with listen_it operators
 
 **Why isRunningSync?**
 - `isRunning` updates asynchronously (via microtask)

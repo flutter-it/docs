@@ -1,5 +1,6 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
+import 'package:listen_it/listen_it.dart';
 import '_shared/stubs.dart';
 
 // #region example
@@ -22,14 +23,17 @@ class DataManager {
     restriction: loadCommand.isRunningSync,
   );
 
-  // Third command: can't update while saving
+  // Third command: can't update while loading OR saving
   late final updateCommand = Command.createAsyncNoResult<Todo>(
     (todo) async {
       await simulateDelay(500);
       // Update logic here
     },
-    // Can't update while save is running
-    restriction: saveCommand.isRunningSync,
+    // Combine multiple restrictions: disabled if EITHER command is running
+    restriction: loadCommand.isRunningSync.combineLatest(
+      saveCommand.isRunningSync,
+      (isLoading, isSaving) => isLoading || isSaving,
+    ),
   );
 }
 
@@ -90,7 +94,7 @@ class ChainedCommandsWidget extends StatelessWidget {
           ),
           SizedBox(height: 8),
 
-          // Update button - disabled while saving
+          // Update button - disabled while loading OR saving
           ValueListenableBuilder<bool>(
             valueListenable: manager.updateCommand.canRun,
             builder: (context, canRun, _) {
@@ -99,8 +103,9 @@ class ChainedCommandsWidget extends StatelessWidget {
                     ? () =>
                         manager.updateCommand(Todo('2', 'Updated Todo', false))
                     : null,
-                child: Text(
-                    canRun ? 'Update Todo' : 'Update (blocked while saving)'),
+                child: Text(canRun
+                    ? 'Update Todo'
+                    : 'Update (blocked while loading/saving)'),
               );
             },
           ),
