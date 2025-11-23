@@ -158,6 +158,32 @@ class DataManager {
 If you implement `sync()` as a command too, you can use its `isRunningSync` directly as the restriction - no need to manually manage `isSyncing`. See the [Chaining Commands](#chaining-commands-via-isrunningsync) example above.
 :::
 
+## Alternative Actions with ifRestrictedRunInstead
+
+When a command is restricted, you may want to take an alternative action instead of silently doing nothing. The `ifRestrictedRunInstead` parameter provides a fallback handler that executes when the command is restricted.
+
+**Common use cases:**
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Show login dialog when user needs authentication</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Display error messages explaining why action can't be performed</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Log analytics events for restricted attempts</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Navigate to a different screen or show a modal</li>
+</ul>
+
+<<< @/../code_samples/lib/command_it/restriction_run_instead_example.dart#example
+
+**How it works:**
+
+1. The handler receives the parameter that was passed to the command
+2. Called only when `restriction` is `true` (command is disabled)
+3. The original wrapped function is NOT executed
+4. Use it for user feedback or alternative flows
+
+::: tip Access to Parameters
+The `ifRestrictedRunInstead` handler receives the same parameter that would have been passed to the wrapped function. This allows you to provide context-aware feedback (e.g., "Please log in to search for '{query}'").
+:::
+
 ## Restriction vs Manual Checks
 
 **❌️ Without restrictions (manual checks):**

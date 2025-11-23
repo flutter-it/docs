@@ -158,6 +158,15 @@ extension ApiClientCommandExtensions on ApiClient {
   Future<void> saveContent(String content) async {
     await simulateDelay();
   }
+
+  Future<List<String>> searchData(String query) async {
+    await simulateDelay();
+    return [
+      'Result 1 for $query',
+      'Result 2 for $query',
+      'Result 3 for $query'
+    ];
+  }
 }
 
 // Global helper for showing snackbars in examples
