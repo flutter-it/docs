@@ -22,7 +22,7 @@ Command.createAsyncNoParam<List<Todo>>(
 );
 ```
 
-**The `canRun` property** implements this formula: `canRun = !isRunning && !restriction`
+Any change of restriction is reflected in the `canRun` property of the command with this formula: `canRun = !isRunning && !restriction`
 
 ## Basic Restriction with ValueNotifier
 
