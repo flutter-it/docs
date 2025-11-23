@@ -38,7 +38,8 @@ The most common pattern is restricting based on application state:
 1. Create a `ValueNotifier<bool>` to track state (`isLoggedIn`)
 2. Map it to restriction logic: `!logged` means "restrict when NOT logged in"
 3. Command automatically updates `canRun` property
-4. UI disables buttons when `canRun` is false
+4. Use `watchValue()` to observe `canRun` in your widget
+5. Button automatically disables when `canRun` is false
 
 **Important:** The restriction parameter expects `ValueListenable<bool>` where `true` means "disabled". Because it's a `ValueListenable`, the restriction can change at any time - the command automatically reacts and updates `canRun` accordingly.
 
@@ -65,15 +66,17 @@ Prevent commands from running while other commands execute:
 `canRun` automatically combines running state and restrictions:
 
 ```dart
-ValueListenableBuilder<bool>(
-  valueListenable: command.canRun,
-  builder: (context, canRun, _) {
+class MyWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final canRun = watchValue((MyManager m) => m.command.canRun);
+
     return ElevatedButton(
-      onPressed: canRun ? command.run : null,
+      onPressed: canRun ? di<MyManager>().command.run : null,
       child: Text('Execute'),
     );
-  },
-)
+  }
+}
 ```
 
 **canRun is true when:**
@@ -171,15 +174,17 @@ late final command = Command.createAsync<Data, void>(
 );
 
 // UI automatically disables when restricted
-ValueListenableBuilder<bool>(
-  valueListenable: command.canRun,
-  builder: (context, canRun, _) {
+class SaveWidget extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    final canRun = watchValue((MyManager m) => m.command.canRun);
+
     return ElevatedButton(
-      onPressed: canRun ? () => command(data) : null,
+      onPressed: canRun ? () => di<MyManager>().command(data) : null,
       child: Text('Save'),
     );
-  },
-)
+  }
+}
 ```
 
 **Benefits:**

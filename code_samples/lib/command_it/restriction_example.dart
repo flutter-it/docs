@@ -1,5 +1,6 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
+import 'package:watch_it/watch_it.dart';
 import '_shared/stubs.dart';
 
 // #region example
@@ -25,53 +26,43 @@ class AuthManager {
   }
 }
 
-class RestrictedWidget extends StatelessWidget {
-  RestrictedWidget({super.key});
-
-  final manager = AuthManager();
+class RestrictedWidget extends WatchingWidget {
+  const RestrictedWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Watch login status
+    final isLoggedIn = watchValue((AuthManager m) => m.isLoggedIn);
+
+    // Watch if command can run
+    final canRun = watchValue((AuthManager m) => m.loadDataCommand.canRun);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Show login status
-        ValueListenableBuilder<bool>(
-          valueListenable: manager.isLoggedIn,
-          builder: (context, isLoggedIn, _) {
-            return Text(
-              isLoggedIn ? 'Logged In' : 'Not Logged In',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isLoggedIn ? Colors.green : Colors.red,
-              ),
-            );
-          },
+        Text(
+          isLoggedIn ? 'Logged In' : 'Not Logged In',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: isLoggedIn ? Colors.green : Colors.red,
+          ),
         ),
         SizedBox(height: 16),
 
         // Login/Logout buttons
-        ValueListenableBuilder<bool>(
-          valueListenable: manager.isLoggedIn,
-          builder: (context, isLoggedIn, _) {
-            return ElevatedButton(
-              onPressed: isLoggedIn ? manager.logout : manager.login,
-              child: Text(isLoggedIn ? 'Logout' : 'Login'),
-            );
-          },
+        ElevatedButton(
+          onPressed:
+              isLoggedIn ? di<AuthManager>().logout : di<AuthManager>().login,
+          child: Text(isLoggedIn ? 'Logout' : 'Login'),
         ),
         SizedBox(height: 16),
 
-        // Load data button - disabled when not logged in
-        ValueListenableBuilder<bool>(
-          valueListenable: manager.loadDataCommand.canRun,
-          builder: (context, canRun, _) {
-            return ElevatedButton(
-              onPressed: canRun ? manager.loadDataCommand.run : null,
-              child: Text('Load Data'),
-            );
-          },
+        // Load data button - automatically disabled when not logged in
+        ElevatedButton(
+          onPressed: canRun ? di<AuthManager>().loadDataCommand.run : null,
+          child: Text('Load Data'),
         ),
       ],
     );
@@ -80,5 +71,6 @@ class RestrictedWidget extends StatelessWidget {
 // #endregion example
 
 void main() {
+  di.registerSingleton(AuthManager());
   runApp(MaterialApp(home: Scaffold(body: Center(child: RestrictedWidget()))));
 }
