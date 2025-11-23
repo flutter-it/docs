@@ -30,23 +30,20 @@ class DataService {
 /// Mock service for testing - overrides command with MockCommand
 class MockDataService implements DataService {
   @override
-  late final loadCommand = _mockCommand;
-
-  final _mockCommand = MockCommand<String, List<Item>>(
+  late final loadCommand = MockCommand<String, List<Item>>(
     initialValue: [],
   );
 
   // Control methods make tests readable and maintainable
-  void simulateLoading() {
-    _mockCommand.startExecution();
-  }
-
-  void simulateSuccess(List<Item> data) {
-    _mockCommand.endExecutionWithData(data);
+  void queueSuccess(String query, List<Item> data) {
+    (loadCommand as MockCommand<String, List<Item>>)
+        .queueResultsForNextExecuteCall([
+      CommandResult<String, List<Item>>(query, data, null, false),
+    ]);
   }
 
   void simulateError(String message) {
-    _mockCommand.endExecutionWithError(message);
+    (loadCommand as MockCommand).endExecutionWithError(message);
   }
 }
 
@@ -85,9 +82,7 @@ void main() {
       final testData = [Item('1', 'Test Item')];
 
       // Queue result for the next execution
-      mockService._mockCommand.queueResultsForNextExecuteCall([
-        CommandResult<String, List<Item>>('test', testData, null, false),
-      ]);
+      mockService.queueSuccess('test', testData);
 
       // Execute the command through the manager
       await manager.loadData('test');
