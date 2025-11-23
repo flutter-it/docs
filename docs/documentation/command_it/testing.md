@@ -137,59 +137,7 @@ test('ErrorFilter routes errors correctly', () async {
 });
 ```
 
-## Mocking Dependencies
-
-### Using Mock Classes
-
-```dart
-class MockApi {
-  bool shouldFail = false;
-  int callCount = 0;
-
-  Future<String> fetchData() async {
-    callCount++;
-
-    if (shouldFail) {
-      throw Exception('API Error');
-    }
-
-    return 'Data $callCount';
-  }
-}
-
-test('Command with mocked dependency', () async {
-  final mockApi = MockApi();
-
-  final command = Command.createAsyncNoParam<String>(
-    () => mockApi.fetchData(),
-    initialValue: '',
-  );
-
-  final result = await command.runAsync();
-
-  expect(result, 'Data 1');
-  expect(mockApi.callCount, 1);
-});
-```
-
-### Testing Error Scenarios with Mocks
-
-```dart
-test('Command handles API errors', () async {
-  final mockApi = MockApi();
-  mockApi.shouldFail = true;
-
-  final command = Command.createAsyncNoParam<String>(
-    () => mockApi.fetchData(),
-    initialValue: '',
-  );
-
-  expect(
-    () => command.runAsync(),
-    throwsA(isA<Exception>()),
-  );
-});
-```
+## MockCommand
 
 ### Using MockCommand
 
