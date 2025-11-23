@@ -75,33 +75,6 @@ test('Async command executes successfully', () async {
 });
 ```
 
-### Testing Parallel Execution Prevention
-
-```dart
-test('Prevents parallel execution', () async {
-  var executionCount = 0;
-
-  final command = Command.createAsyncNoParam<int>(
-    () async {
-      executionCount++;
-      await Future.delayed(Duration(milliseconds: 50));
-      return executionCount;
-    },
-    initialValue: 0,
-  );
-
-  // Try to run multiple times rapidly
-  command.run();
-  command.run();
-  command.run();
-
-  await Future.delayed(Duration(milliseconds: 100));
-
-  // Only one execution occurred
-  expect(executionCount, 1);
-});
-```
-
 ## Testing Sync Commands
 
 Sync commands execute immediately, simplifying tests:
