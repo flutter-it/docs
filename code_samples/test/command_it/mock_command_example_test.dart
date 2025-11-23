@@ -1,113 +1,150 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
+
+final getIt = GetIt.instance;
+
+// Stub for example
+class Item {
+  final String id;
+  final String name;
+  Item(this.id, this.name);
+}
+
+class ApiClient {
+  Future<List<Item>> search(String query) async {
+    await Future.delayed(Duration(milliseconds: 100));
+    return [Item('1', 'Result for $query')];
+  }
+}
 
 // #region example
-/// Example service that uses a command (for dependency injection in tests)
+/// Real service with actual command
 class DataService {
-  final Command<void, List<String>> loadCommand;
+  late final loadCommand = Command.createAsync<String, List<Item>>(
+    (query) => getIt<ApiClient>().search(query),
+    initialValue: [],
+  );
+}
 
-  DataService({required this.loadCommand});
+/// Mock service for testing - overrides command with MockCommand
+class MockDataService implements DataService {
+  @override
+  late final loadCommand = _mockCommand;
 
-  void loadData() {
-    loadCommand.run();
+  final _mockCommand = MockCommand<String, List<Item>>(
+    initialValue: [],
+  );
+
+  // Control methods make tests readable and maintainable
+  void simulateLoading() {
+    _mockCommand.startExecution();
+  }
+
+  void simulateSuccess(List<Item> data) {
+    _mockCommand.endExecutionWithData(data);
+  }
+
+  void simulateError(String message) {
+    _mockCommand.endExecutionWithError(message);
+  }
+}
+
+// Code that depends on DataService
+class DataManager {
+  DataManager() {
+    // Listen to service command and update local state
+    getIt<DataService>().loadCommand.isRunning.listen((running, _) {
+      _isLoading = running;
+    });
+
+    getIt<DataService>().loadCommand.listen((data, _) {
+      _currentData = data;
+    });
+  }
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  List<Item> _currentData = [];
+  List<Item> get currentData => _currentData;
+
+  Future<void> loadData(String query) async {
+    getIt<DataService>().loadCommand(query);
   }
 }
 
 void main() {
-  group('MockCommand Examples', () {
-    test('Queue results with CommandResult', () async {
-      final mockLoadCommand = MockCommand<void, List<String>>(
-        initialValue: [],
-      );
+  group('MockCommand Pattern', () {
+    test('Test manager with mock service - success state', () async {
+      final mockService = MockDataService();
+      getIt.registerSingleton<DataService>(mockService);
 
-      // Queue results for the next execution using CommandResult
-      mockLoadCommand.queueResultsForNextExecuteCall([
-        CommandResult<void, List<String>>(
-            null, ['Item 1', 'Item 2', 'Item 3'], null, false),
+      final manager = DataManager();
+
+      final testData = [Item('1', 'Test Item')];
+
+      // Queue result for the next execution
+      mockService._mockCommand.queueResultsForNextExecuteCall([
+        CommandResult<String, List<Item>>('test', testData, null, false),
       ]);
 
-      // Inject into service
-      final service = DataService(loadCommand: mockLoadCommand);
+      // Execute the command through the manager
+      await manager.loadData('test');
 
-      // Trigger the command
-      service.loadData();
+      // Wait for listener to fire
+      await Future.delayed(Duration.zero);
 
-      // Verify the command was called
-      expect(mockLoadCommand.executionCount, 1);
+      // Verify success state
+      expect(manager.isLoading, false);
+      expect(manager.currentData, testData);
 
-      // Verify the result
-      expect(mockLoadCommand.value, ['Item 1', 'Item 2', 'Item 3']);
+      // Cleanup
+      await getIt.reset();
     });
 
-    test('Manually control execution states', () {
-      final mockCommand = MockCommand<void, String>(
-        initialValue: '',
-      );
+    test('Test manager with mock service - error state', () async {
+      final mockService = MockDataService();
+      getIt.registerSingleton<DataService>(mockService);
 
-      // Initially not running
-      expect(mockCommand.isRunning.value, false);
-
-      // Start execution manually
-      mockCommand.startExecution();
-      expect(mockCommand.isRunning.value, true);
-
-      // Complete execution with data
-      mockCommand.endExecutionWithData('loaded data');
-      expect(mockCommand.isRunning.value, false);
-      expect(mockCommand.value, 'loaded data');
-    });
-
-    test('Simulate error scenarios', () {
-      final mockCommand = MockCommand<void, String>(
-        initialValue: '',
-      );
+      final manager = DataManager();
 
       CommandError? capturedError;
-      mockCommand.errors.listen((error, _) => capturedError = error);
-
-      // Simulate error with String message (not Exception)
-      mockCommand.startExecution();
-      mockCommand.endExecutionWithError('Network error');
-
-      expect(capturedError?.error.toString(), contains('Network error'));
-      expect(mockCommand.isRunning.value, false);
-    });
-
-    test('Complete execution without data (void commands)', () {
-      final mockCommand = MockCommand<void, void>(
-        initialValue: null,
-        noReturnValue: true,
-      );
-
-      var executionCompleted = false;
-      mockCommand.results.listen((result, _) {
-        if (!result.isRunning && !result.hasError) {
-          executionCompleted = true;
-        }
+      mockService.loadCommand.errors.listen((error, _) {
+        capturedError = error;
       });
 
-      mockCommand.startExecution();
-      mockCommand.endExecutionNoData();
+      // Simulate error without using loadData
+      mockService.simulateError('Network error');
 
-      expect(executionCompleted, true);
-      expect(mockCommand.isRunning.value, false);
+      // Wait for listener to fire
+      await Future.delayed(Duration.zero);
+
+      // Verify error state
+      expect(manager.isLoading, false);
+      expect(capturedError?.error.toString(), contains('Network error'));
+
+      // Cleanup
+      await getIt.reset();
     });
 
-    test('Track execution count', () {
-      final mockCommand = MockCommand<String, void>(
-        initialValue: null,
-        noReturnValue: true,
-      );
+    test('Real service works as expected', () async {
+      // Register real dependencies
+      getIt.registerSingleton<ApiClient>(ApiClient());
+      getIt.registerSingleton<DataService>(DataService());
 
-      expect(mockCommand.executionCount, 0);
+      final manager = DataManager();
 
-      mockCommand.run('test1');
-      expect(mockCommand.executionCount, 1);
-      expect(mockCommand.lastPassedValueToExecute, 'test1');
+      // Test with real service
+      await manager.loadData('flutter');
 
-      mockCommand.run('test2');
-      expect(mockCommand.executionCount, 2);
-      expect(mockCommand.lastPassedValueToExecute, 'test2');
+      await Future.delayed(Duration(milliseconds: 150));
+
+      expect(manager.currentData.isNotEmpty, true);
+      expect(manager.currentData.first.name, contains('flutter'));
+
+      // Cleanup
+      await getIt.reset();
     });
   });
 }

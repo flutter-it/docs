@@ -139,37 +139,9 @@ test('ErrorFilter routes errors correctly', () async {
 
 ## MockCommand
 
-### Using MockCommand
+For testing code that depends on commands, use the built-in `MockCommand` class to create controlled test environments. The pattern below shows how to create a real manager with actual commands, then a mock version for testing.
 
-For testing code that depends on commands, use the built-in `MockCommand` class instead of creating real commands:
-
-```dart
-import 'package:command_it/command_it.dart';
-
-test('Service uses command correctly', () async {
-  // Create a mock command
-  final mockLoadCommand = MockCommand<void, List<String>>(
-    initialValue: [],
-  );
-
-  // Queue results for the next execution
-  mockLoadCommand.queueResultsForNextExecuteCall([
-    CommandResult<void, List<String>>(null, ['Item 1', 'Item 2', 'Item 3'], null, false),
-  ]);
-
-  // Inject into service
-  final service = DataService(loadCommand: mockLoadCommand);
-
-  // Trigger the command
-  service.loadData();
-
-  // Verify the command was called
-  expect(mockLoadCommand.executionCount, 1);
-
-  // Verify the result
-  expect(mockLoadCommand.value, ['Item 1', 'Item 2', 'Item 3']);
-});
-```
+<<< @/../code_samples/test/command_it/mock_command_example_test.dart#example
 
 **Key MockCommand methods:**
 
@@ -180,62 +152,22 @@ test('Service uses command correctly', () async {
 - **`endExecutionWithError(String message)`** - Complete execution with an error
 - **`executionCount`** - Track how many times the command was executed
 
-**Testing loading states:**
+**This pattern demonstrates:**
 
-```dart
-test('UI shows loading indicator', () async {
-  final mockCommand = MockCommand<void, String>(
-    initialValue: '',
-  );
-
-  final loadingStates = <bool>[];
-  mockCommand.isRunning.listen((running, _) => loadingStates.add(running));
-
-  // Start execution manually
-  mockCommand.startExecution();
-  expect(mockCommand.isRunning.value, true);
-
-  // Complete execution
-  mockCommand.endExecutionWithData('loaded data');
-  expect(mockCommand.isRunning.value, false);
-
-  expect(loadingStates, [false, true, false]);
-});
-```
-
-**Testing error scenarios:**
-
-```dart
-test('UI shows error message', () {
-  final mockCommand = MockCommand<void, String>(
-    initialValue: '',
-  );
-
-  CommandError? capturedError;
-  mockCommand.errors.listen((error, _) => capturedError = error);
-
-  // Simulate error
-  mockCommand.startExecution();
-  mockCommand.endExecutionWithError('Network error');
-
-  expect(capturedError?.error.toString(), contains('Network error'));
-});
-```
-
-**Benefits of MockCommand:**
-
-- ✅ No async delays - tests run faster
-- ✅ Full control over execution state
-- ✅ Verify execution count
-- ✅ Queue multiple results for sequential calls
-- ✅ Test loading, success, and error states independently
-- ✅ No need for real business logic in tests
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Real service with actual command using get_it for dependencies</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Mock service implements real service and overrides command with MockCommand</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Control methods make test code readable and maintainable</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Manager uses get_it to access service (full dependency injection)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Tests register mock service to control command behavior</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ No async delays - tests run instantly</li>
+</ul>
 
 **When to use MockCommand:**
 
-- Testing widgets that observe commands
-- Testing services that coordinate multiple commands
-- Unit testing command-dependent code
+- Testing code that depends on commands without async delays
+- Testing loading, success, and error state handling
+- Unit testing services that coordinate commands
 - When you need precise control over command state transitions
 
 ## See Also
