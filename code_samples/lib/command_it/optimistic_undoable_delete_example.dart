@@ -4,6 +4,7 @@ import '_shared/stubs.dart';
 
 // #region example
 class TodoManager {
+  // MapNotifier is a reactive map - widgets watching it will automatically rebuild on any data change
   final todos = MapNotifier<String, Todo>();
 
   late final deleteTodoCommand = Command.createUndoableNoResult<Todo, Todo>(
