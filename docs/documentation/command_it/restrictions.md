@@ -1,10 +1,12 @@
 # Command Restrictions
 
-::: warning AI-Generated Content Under Review
-This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
-:::
+Control when commands can execute using reactive conditions. Restrictions enable **declarative connection of command behavior** - connect commands to application state or to each other, and they automatically enable/disable based on those conditions.
 
-Control when commands can execute using reactive conditions. Restrictions integrate with `canRun` to automatically disable commands based on application state.
+**Key benefits:**
+- **Reactive coordination** - Commands respond to state changes automatically
+- **Declarative dependencies** - Chain commands together without manual orchestration
+- **Automatic UI updates** - `canRun` reflects restrictions instantly
+- **Centralized logic** - No scattered `if` checks throughout your code
 
 ## Overview
 
@@ -146,7 +148,7 @@ class DataManager {
 
 ## Restriction vs Manual Checks
 
-**❌️️ Without restrictions (manual checks):**
+**❌️ Without restrictions (manual checks):**
 
 ```dart
 void handleSave() {
@@ -202,7 +204,7 @@ Use error handling for **runtime failures** (network, API errors).
 
 ## Common Mistakes
 
-### ❌️️ Inverting the restriction logic
+### ❌️ Inverting the restriction logic
 
 ```dart
 // WRONG: restriction expects true = disabled
@@ -214,7 +216,7 @@ restriction: isLoggedIn, // disabled when logged in (backwards!)
 restriction: isLoggedIn.map((logged) => !logged), // disabled when NOT logged in
 ```
 
-### ❌️️ Using isRunning for restrictions
+### ❌️ Using isRunning for restrictions
 
 ```dart
 // WRONG: async update can cause race conditions
@@ -226,7 +228,7 @@ restriction: otherCommand.isRunning,
 restriction: otherCommand.isRunningSync,
 ```
 
-### ❌️️ Forgetting to dispose restriction sources
+### ❌️ Forgetting to dispose restriction sources
 
 ```dart
 class Manager {
