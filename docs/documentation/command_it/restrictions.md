@@ -10,9 +10,9 @@ Control when commands can execute using reactive conditions. Restrictions enable
 
 ## Overview
 
-Commands can be conditionally enabled or disabled using the `restriction` parameter. When a restriction is active (evaluates to `true`), the command cannot run.
+Commands can be conditionally enabled or disabled using the `restriction` parameter, which accepts a `ValueListenable<bool>`. This allows restrictions to **change dynamically** after the command is created - the command automatically responds to state changes.
 
-**Key concept:** `restriction: true` = command is **disabled**
+**Key concept:** When the restriction's current value is `true`, the command is **disabled**
 
 ```dart
 Command.createAsyncNoParam<List<Todo>>(
@@ -36,7 +36,7 @@ The most common pattern is restricting based on application state:
 3. Command automatically updates `canRun` property
 4. UI disables buttons when `canRun` is false
 
-**Important:** The restriction parameter expects `ValueListenable<bool>` where `true` means "disabled".
+**Important:** The restriction parameter expects `ValueListenable<bool>` where `true` means "disabled". Because it's a `ValueListenable`, the restriction can change at any time - the command automatically reacts and updates `canRun` accordingly.
 
 ## Chaining Commands via isRunningSync
 
