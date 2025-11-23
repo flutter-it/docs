@@ -88,6 +88,14 @@ class Todo {
   final bool completed;
 
   Todo(this.id, this.title, [this.completed = false]);
+
+  Todo copyWith({String? id, String? title, bool? completed}) {
+    return Todo(
+      id ?? this.id,
+      title ?? this.title,
+      completed ?? this.completed,
+    );
+  }
 }
 
 class LoginCredentials {
@@ -138,4 +146,21 @@ extension ApiClientCommandExtensions on ApiClient {
   Future<void> deleteTodo(String id) async {
     await simulateDelay();
   }
+
+  Future<void> toggleTodo(String id, bool completed) async {
+    await simulateDelay();
+  }
+
+  Future<void> updateBookmark(String postId, bool isBookmarked) async {
+    await simulateDelay();
+  }
+
+  Future<void> saveContent(String content) async {
+    await simulateDelay();
+  }
+}
+
+// Global helper for showing snackbars in examples
+void showSnackBar(String message) {
+  debugPrint('SnackBar: $message');
 }
