@@ -17,7 +17,7 @@ void setupGlobalExceptionHandler() {
       stackTrace: stackTrace,
       withScope: (scope) {
         // Add tags for filtering in Sentry UI
-        scope.setTag('command', command ?? 'unknown');
+        scope.setTag('command', command?.toString() ?? 'unknown');
         scope.setTag('error_type', error.runtimeType.toString());
 
         // Add context for debugging

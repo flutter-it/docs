@@ -1,6 +1,7 @@
 import 'package:command_it/command_it.dart';
 import 'package:flutter/material.dart';
-import '_shared/stubs.dart';
+import 'package:watch_it/watch_it.dart';
+import '_shared/stubs.dart' hide di;
 
 class DataManager {
   final api = ApiClient();
@@ -19,60 +20,43 @@ class DataManager {
 }
 
 // #region example
-class DataWidget extends StatefulWidget {
+class DataWidget extends WatchingWidget {
   const DataWidget({super.key});
 
   @override
-  State<DataWidget> createState() => _DataWidgetState();
-}
-
-class _DataWidgetState extends State<DataWidget> {
-  final manager = DataManager();
-  String? errorMessage;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Listen to errors
-    manager.loadDataCommand.errors.listen((error, _) {
-      if (error != null) {
-        setState(() {
-          errorMessage = error.error.toString();
-        });
-
-        // Show error dialog
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text(error.error.toString()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      } else {
-        // Error cleared (command started again)
-        setState(() {
-          errorMessage = null;
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final manager = di<DataManager>();
+    final error = watchValue((DataManager m) => m.loadDataCommand.errors);
+
+    // Register handler for errors to show dialog
+    registerHandler(
+      select: (DataManager m) => m.loadDataCommand.errors,
+      handler: (context, error, cancel) {
+        if (error != null) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Error'),
+              content: Text(error.error.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      },
+    );
+
     return Column(
       children: [
-        if (errorMessage != null)
+        if (error != null)
           Padding(
             padding: EdgeInsets.all(8),
             child: Text(
-              errorMessage!,
+              error.error.toString(),
               style: TextStyle(color: Colors.red),
             ),
           ),
@@ -95,5 +79,6 @@ class _DataWidgetState extends State<DataWidget> {
 // #endregion example
 
 void main() {
+  di.registerSingleton<DataManager>(DataManager());
   runApp(MaterialApp(home: Scaffold(body: Center(child: DataWidget()))));
 }

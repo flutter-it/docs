@@ -30,7 +30,7 @@ void configureProductionMode() {
       error.error,
       stackTrace: stackTrace,
       withScope: (scope) {
-        scope.setTag('command', error.command ?? 'unknown');
+        scope.setTag('command', error.commandName ?? 'unknown');
         scope.setContexts('command_context', {
           'parameter': error.paramData?.toString(),
           'error_reaction': error.errorReaction.toString(),

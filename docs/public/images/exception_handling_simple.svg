@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 700" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
+  <defs>
+    <style>
+      .box { fill: #E5F2FF; stroke: #0066CC; stroke-width: 2; }
+      .mandatory { fill: #FFE5E5; stroke: #CC0000; stroke-width: 2; }
+      .filter { fill: #E5F2FF; stroke: #0066CC; stroke-width: 2; }
+      .execution { fill: #E5FFE5; stroke: #00CC00; stroke-width: 2; }
+      .end { fill: #E5E5E5; stroke: #666666; stroke-width: 2; }
+      .text { fill: #000; font-size: 14px; text-anchor: middle; }
+      .small-text { fill: #333; font-size: 12px; text-anchor: middle; }
+      .arrow { fill: none; stroke: #666; stroke-width: 2; marker-end: url(#arrowhead); }
+      .label { fill: #666; font-size: 11px; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666" />
+    </marker>
+  </defs>
+
+
+  <!-- Entry Point -->
+  <ellipse cx="400" cy="80" rx="150" ry="30" class="box"/>
+  <text x="400" y="85" class="text">Exception Thrown</text>
+
+  <!-- Arrow -->
+  <path d="M 400 110 L 400 140" class="arrow"/>
+
+  <!-- Phase 1: Mandatory Checks -->
+  <rect x="250" y="140" width="300" height="80" rx="10" class="mandatory"/>
+  <text x="400" y="165" class="text" style="font-weight: bold;">Phase 1: Mandatory Checks</text>
+  <text x="400" y="185" class="small-text">• AssertionError? → Rethrow</text>
+  <text x="400" y="203" class="small-text">• debugErrorsThrowAlways? → Rethrow</text>
+
+  <!-- Arrow -->
+  <path d="M 400 220 L 400 250" class="arrow"/>
+
+  <!-- Phase 2: ErrorFilter -->
+  <rect x="250" y="250" width="300" height="100" rx="10" class="filter"/>
+  <text x="400" y="275" class="text" style="font-weight: bold;">Phase 2: Error Filtering</text>
+  <text x="400" y="295" class="small-text">ErrorFilter determines ErrorReaction:</text>
+  <text x="400" y="313" class="small-text">• none, throwException</text>
+  <text x="400" y="331" class="small-text">• localHandler, globalHandler</text>
+
+  <!-- Arrow -->
+  <path d="M 400 350 L 400 380" class="arrow"/>
+
+  <!-- Phase 3: Execute Reaction -->
+  <rect x="250" y="380" width="300" height="140" rx="10" class="execution"/>
+  <text x="400" y="405" class="text" style="font-weight: bold;">Phase 3: Execute Reaction</text>
+
+  <!-- Three paths -->
+  <g>
+    <!-- Local Handler -->
+    <rect x="270" y="420" width="120" height="50" rx="5" style="fill: #CCF5CC; stroke: #00AA00; stroke-width: 1.5;"/>
+    <text x="330" y="438" class="small-text" style="font-size: 11px;">Local Handler</text>
+    <text x="330" y="453" class="small-text" style="font-size: 10px;">.errors listeners</text>
+
+    <!-- Global Handler -->
+    <rect x="410" y="420" width="120" height="50" rx="5" style="fill: #FFE5CC; stroke: #CC6600; stroke-width: 1.5;"/>
+    <text x="470" y="438" class="small-text" style="font-size: 11px;">Global Handler</text>
+    <text x="470" y="453" class="small-text" style="font-size: 10px;">Stream + callback</text>
+
+    <!-- Rethrow -->
+    <rect x="340" y="480" width="120" height="30" rx="5" style="fill: #FFCCCC; stroke: #CC0000; stroke-width: 1.5;"/>
+    <text x="400" y="500" class="small-text" style="font-size: 11px;">Rethrow Exception</text>
+  </g>
+
+  <!-- Arrows to end -->
+  <path d="M 330 470 L 330 540 L 400 540" class="arrow"/>
+  <path d="M 470 470 L 470 540 L 400 540" class="arrow"/>
+  <path d="M 400 510 L 400 540" class="arrow"/>
+
+  <!-- End -->
+  <ellipse cx="400" cy="570" rx="100" ry="30" class="end"/>
+  <text x="400" y="575" class="text">End</text>
+
+  <!-- Legend -->
+  <rect x="20" y="150" width="200" height="170" rx="5" style="fill: #F9F9F9; stroke: #999; stroke-width: 1;"/>
+  <text x="120" y="170" class="small-text" style="font-weight: bold;">ErrorReaction Values</text>
+  <text x="30" y="190" class="small-text" style="text-anchor: start; font-size: 10px;">• none - Suppress error</text>
+  <text x="30" y="205" class="small-text" style="text-anchor: start; font-size: 10px;">• throwException - Rethrow</text>
+  <text x="30" y="220" class="small-text" style="text-anchor: start; font-size: 10px;">• localHandler - Local only</text>
+  <text x="30" y="235" class="small-text" style="text-anchor: start; font-size: 10px;">• globalHandler - Global only</text>
+  <text x="30" y="250" class="small-text" style="text-anchor: start; font-size: 10px;">• localAndGlobalHandler</text>
+  <text x="30" y="265" class="small-text" style="text-anchor: start; font-size: 10px;">• firstLocalThenGlobalHandler</text>
+  <text x="30" y="280" class="small-text" style="text-anchor: start; font-size: 10px;">  (default)</text>
+  <text x="30" y="295" class="small-text" style="text-anchor: start; font-size: 10px;">• throwIfNoLocalHandler</text>
+  <text x="30" y="310" class="small-text" style="text-anchor: start; font-size: 10px;">• noHandlersThrowException</text>
+</svg>

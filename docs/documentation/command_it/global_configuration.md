@@ -96,21 +96,9 @@ Default ErrorFilter used when no individual filter is specified per command:
 static ErrorFilter errorFilterDefault = const GlobalIfNoLocalErrorFilter();
 ```
 
-### Built-in Error Filters
+**Default:** `GlobalIfNoLocalErrorFilter()` - Smart routing that tries local handlers first, falls back to global
 
-- `GlobalIfNoLocalErrorFilter()` (default) - Try local handlers first, fallback to global
-- `LocalErrorFilter()` - Only call local handlers (`.errors` or `.results` listeners)
-- `GlobalErrorFilter()` - Only call global exception handler
-- `LocalAndGlobalErrorFilter()` - Call both local and global handlers
-
-### Example
-
-```dart
-// Change default behavior for all commands
-Command.errorFilterDefault = const LocalErrorFilter();
-```
-
-**See:** [Error Handling](/documentation/command_it/error_handling) for complete ErrorFilter documentation and custom filters.
+**See:** [Error Handling - Global Error Configuration](/documentation/command_it/error_handling#global-error-configuration) for complete details on built-in filters, custom filters, and configuration.
 
 ## assertionsAlwaysThrow
 
@@ -120,24 +108,13 @@ AssertionErrors bypass ErrorFilters and are always rethrown:
 static bool assertionsAlwaysThrow = true;
 ```
 
-**Default:** `true` (recommended)
+**Default:** `true` (recommended) - AssertionErrors indicate programming mistakes and should crash immediately during development
 
-### Why This Exists
-
-AssertionErrors indicate programming mistakes (like `assert(condition)` failures). They should be caught immediately during development, not silently swallowed by error filters.
-
-### Example
-
-```dart
-// Treat assertions like any other error (not recommended)
-Command.assertionsAlwaysThrow = false;
-```
-
-**Recommendation:** Keep this `true` to catch bugs early in development.
+**See:** [Error Handling - Global Error Configuration](/documentation/command_it/error_handling#assertionsalwaysthrow) for complete details.
 
 ## reportAllExceptions
 
-Ensure every error calls globalExceptionHandler for debugging:
+Ensure every error calls globalExceptionHandler, regardless of ErrorFilter configuration:
 
 ```dart
 static bool reportAllExceptions = false;
@@ -145,47 +122,15 @@ static bool reportAllExceptions = false;
 
 **Default:** `false`
 
-### How It Works
-
-When `true`, **every error** calls `globalExceptionHandler` immediately, **in addition to** normal ErrorFilter processing.
-
-**Execution flow:**
-1. Error occurs in command
-2. `globalExceptionHandler` is called (if `reportAllExceptions: true`)
-3. ErrorFilter runs normally (determines local/global handling)
-4. `globalExceptionHandler` **may be called again** (if ErrorFilter says to)
-
-**Result:** ErrorFilters are **NOT bypassed** - they still control local handlers and can trigger a second global handler call.
-
-### Common Pattern: Debug vs Production
-
+**Common pattern:**
 ```dart
 // In main.dart
 Command.reportAllExceptions = kDebugMode;
 ```
 
-**What this does:**
-- Development (`kDebugMode = true`): ALL errors reach global handler for visibility
-- Production (`kDebugMode = false`): Only errors routed by ErrorFilter reach global handler
+**When to use:** Debugging error handling, development mode, verifying crash reporting
 
-### When to Use
-
-- **Debugging error handling** - Ensure no errors are silently swallowed
-- **Development mode** - See all errors regardless of ErrorFilter configuration
-- **Verifying crash reporting** - Confirm all errors reach your analytics/crash reporting
-
-### Important: Potential Duplicate Calls
-
-```dart
-Command.reportAllExceptions = true;
-Command.errorFilterDefault = const ErrorHandlerGlobal(); // Also calls global handler
-
-// Result: globalExceptionHandler called TWICE for each error!
-// 1. From reportAllExceptions
-// 2. From ErrorFilter
-```
-
-**Solution:** In production, use either `reportAllExceptions` OR ErrorFilters that call global, not both
+**See:** [Error Handling - Global Error Configuration](/documentation/command_it/error_handling#reportallexceptions) for complete details on how it works, execution flow, and avoiding duplicate calls.
 
 ## detailedStackTraces
 
@@ -197,40 +142,11 @@ static bool detailedStackTraces = true;
 
 **Default:** `true` (recommended)
 
-### What It Does
+**What it does:** Uses the `stack_trace` package to filter and simplify stack traces, removing Zone-related frames and framework internals
 
-Uses the `stack_trace` package to filter and simplify stack traces.
+**Performance:** Minimal overhead. Only disable if profiling shows it's a bottleneck (rare)
 
-**Without detailedStackTraces** (`false`) - raw stack trace:
-```
-#0      Object._throw (dart:core-patch/object_patch.dart:51)
-#1      _Future._propagateToListeners (dart:async/future_impl.dart)
-#2      _Future._completeError (dart:async/future_impl.dart)
-#3      Zone.run (dart:async/zone.dart:1518)
-#4      _rootRun (dart:async/zone.dart:1426)
-... [50+ lines of framework internals]
-#42     my_file.dart:42  ← Your actual code buried deep
-```
-
-**With detailedStackTraces** (`true`) - filtered and simplified:
-```
-#0      my_file.dart:42
-#1      manager.dart:156
-#2      widget.dart:89
-... [Only relevant frames, framework noise removed]
-```
-
-**What gets filtered:**
-- `stack_trace` package internal frames
-- Zone-related frames (async framework)
-- `_rootRun` and similar async framework calls
-- `command_it` internal `_run` method frames
-
-The result is also "tersed" - duplicate/redundant frames are removed.
-
-### Performance
-
-Stack trace processing has minimal overhead. Only disable if profiling shows it's a bottleneck (rare).
+**See:** [Error Handling - Global Error Configuration](/documentation/command_it/error_handling#detailedstacktraces) for complete details on what gets filtered and examples.
 
 ## loggingHandler
 
@@ -273,23 +189,11 @@ static bool reportErrorHandlerExceptionsToGlobalHandler = true;
 
 **Default:** `true` (recommended)
 
-### What This Catches
+**What it does:** When error handlers throw, catch the exception and send it to `globalExceptionHandler` with the original error stored in `CommandError.originalError`
 
-```dart
-command.errors.listen((error, _) {
-  // Local error handler
-  throw Exception('Oops, error handler has a bug!'); // ← This gets caught
-});
-```
+**Why this matters:** Error handlers can have bugs too. This prevents error handling code from crashing your app.
 
-**With `reportErrorHandlerExceptionsToGlobalHandler: true`:**
-- Exception thrown in error handler is caught
-- Sent to `globalExceptionHandler`
-- Original error is stored in `CommandError.originalError`
-
-### Why This Matters
-
-Error handlers can have bugs too. This prevents error handling code from crashing your app.
+**See:** [Error Handling - When Error Handlers Throw Exceptions](/documentation/command_it/error_handling#when-error-handlers-throw-exceptions) and [Global Error Configuration](/documentation/command_it/error_handling#reporterrorhandlerexceptionstoglobalhandler) for complete details and examples.
 
 ## useChainCapture
 

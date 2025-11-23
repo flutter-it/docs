@@ -1,0 +1,275 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2100" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
+  <defs>
+    <style>
+      .process { fill: #E5F2FF; stroke: #0066CC; stroke-width: 2; }
+      .decision { fill: #FFFFCC; stroke: #CC9900; stroke-width: 2; }
+      .mandatory { fill: #FFE5E5; stroke: #CC0000; stroke-width: 2; }
+      .local { fill: #E5FFE5; stroke: #00CC00; stroke-width: 2; }
+      .global { fill: #FFE5CC; stroke: #CC6600; stroke-width: 2; }
+      .handler-error { fill: #F0E5FF; stroke: #9933CC; stroke-width: 2; }
+      .end { fill: #FFCCCC; stroke: #CC0000; stroke-width: 2; }
+      .terminate { fill: #E5E5E5; stroke: #666666; stroke-width: 2; }
+      .text { fill: #000; font-size: 13px; text-anchor: middle; }
+      .small { fill: #333; font-size: 11px; text-anchor: middle; }
+      .tiny { fill: #666; font-size: 10px; text-anchor: middle; }
+      .arrow { fill: none; stroke: #666; stroke-width: 2; marker-end: url(#arrowhead); }
+      .yes { fill: #00AA00; font-size: 11px; font-weight: bold; }
+      .no { fill: #CC0000; font-size: 11px; font-weight: bold; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#666" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="30" class="text" style="font-size: 20px; font-weight: bold;">Exception Handling Flow (Complete Technical)</text>
+
+  <!-- Entry -->
+  <ellipse cx="700" cy="70" rx="180" ry="30" class="process"/>
+  <text x="700" y="75" class="text">Exception Thrown in Wrapped Function</text>
+
+  <path d="M 700 100 L 700 130" class="arrow"/>
+
+  <!-- Mandatory Error Handling Box -->
+  <rect x="550" y="130" width="300" height="40" rx="5" class="mandatory"/>
+  <text x="700" y="155" class="text" style="font-weight: bold;">_mandatoryErrorHandling</text>
+
+  <path d="M 700 170 L 700 200" class="arrow"/>
+
+  <!-- Decision 1: AssertionError -->
+  <path d="M 700 200 L 800 250 L 700 300 L 600 250 Z" class="decision"/>
+  <text x="700" y="245" class="small">AssertionError &amp;&amp;</text>
+  <text x="700" y="260" class="small">assertionsAlwaysThrow?</text>
+
+  <!-- YES path to RETHROW -->
+  <path d="M 800 250 L 950 250" class="arrow"/>
+  <text x="870" y="245" class="yes">YES</text>
+  <rect x="950" y="230" width="120" height="40" rx="5" class="end"/>
+  <text x="1010" y="255" class="text">RETHROW</text>
+
+  <!-- NO path down -->
+  <path d="M 700 300 L 700 330" class="arrow"/>
+  <text x="720" y="320" class="no">NO</text>
+
+  <!-- Decision 2: debugErrorsThrowAlways -->
+  <path d="M 700 330 L 800 380 L 700 430 L 600 380 Z" class="decision"/>
+  <text x="700" y="375" class="small">kDebugMode &amp;&amp;</text>
+  <text x="700" y="390" class="small">debugErrorsThrowAlways?</text>
+
+  <!-- YES to RETHROW -->
+  <path d="M 800 380 L 950 380" class="arrow"/>
+  <text x="870" y="375" class="yes">YES</text>
+  <rect x="950" y="360" width="120" height="40" rx="5" class="end"/>
+  <text x="1010" y="385" class="text">RETHROW</text>
+
+  <!-- NO down -->
+  <path d="M 700 430 L 700 460" class="arrow"/>
+  <text x="720" y="450" class="no">NO</text>
+
+  <!-- Decision 3: reportAllExceptions -->
+  <path d="M 700 460 L 800 510 L 700 560 L 600 510 Z" class="decision"/>
+  <text x="700" y="510" class="small">reportAllExceptions?</text>
+
+  <!-- YES to side handler -->
+  <path d="M 800 510 L 950 510" class="arrow"/>
+  <text x="870" y="505" class="yes">YES</text>
+  <rect x="950" y="490" width="180" height="40" rx="5" class="global"/>
+  <text x="1040" y="515" class="small">Call globalExceptionHandler</text>
+  <!-- Continue down from handler -->
+  <path d="M 1040 530 L 1040 590 L 700 590" class="arrow"/>
+
+  <!-- NO down -->
+  <path d="M 700 560 L 700 590" class="arrow"/>
+  <text x="720" y="580" class="no">NO</text>
+
+  <!-- ErrorFilter Processing -->
+  <rect x="550" y="590" width="300" height="60" rx="5" class="process"/>
+  <text x="700" y="615" class="text" style="font-weight: bold;">Get ErrorReaction from ErrorFilter</text>
+  <text x="700" y="635" class="small">If defaulErrorFilter → use errorFilterDefault</text>
+
+  <path d="M 700 650 L 700 680" class="arrow"/>
+
+  <!-- ErrorReaction Decision Hub -->
+  <path d="M 700 680 L 800 730 L 700 780 L 600 730 Z" class="decision"/>
+  <text x="700" y="735" class="text" style="font-weight: bold;">ErrorReaction?</text>
+
+  <!-- Branch 1: none -->
+  <path d="M 600 730 L 400 730" class="arrow"/>
+  <text x="500" y="725" class="small">none</text>
+  <rect x="250" y="710" width="150" height="40" rx="5" class="end"/>
+  <text x="325" y="735" class="small">Return (suppress)</text>
+
+  <!-- Branch 2: throwException -->
+  <path d="M 800 730 L 1000 730" class="arrow"/>
+  <text x="900" y="725" class="small">throwException</text>
+  <rect x="1000" y="710" width="120" height="40" rx="5" class="end"/>
+  <text x="1060" y="735" class="text">RETHROW</text>
+
+  <!-- Main path: Continue down -->
+  <path d="M 700 780 L 700 820" class="arrow"/>
+  <text x="750" y="800" class="tiny" style="text-anchor: start;">All others...</text>
+
+  <!-- throwIfNoLocalHandler or noHandlersThrowException check -->
+  <path d="M 700 820 L 800 870 L 700 920 L 600 870 Z" class="decision"/>
+  <text x="700" y="865" class="tiny">throwIfNoLocalHandler or</text>
+  <text x="700" y="880" class="tiny">noHandlersThrowException?</text>
+
+  <!-- YES: Check handlers -->
+  <path d="M 800 870 L 1050 870" class="arrow"/>
+  <text x="920" y="865" class="yes">YES</text>
+  <path d="M 1050 870 L 1150 920 L 1050 970 L 950 920 Z" class="decision"/>
+  <text x="1050" y="920" class="tiny">Missing required handlers?</text>
+  <!-- Missing handlers: throw -->
+  <path d="M 1150 920 L 1250 920" class="arrow"/>
+  <text x="1195" y="915" class="yes">YES</text>
+  <rect x="1250" y="900" width="120" height="40" rx="5" class="end"/>
+  <text x="1310" y="925" class="text">RETHROW</text>
+  <!-- Has handlers: continue -->
+  <path d="M 1050 970 L 1050 990 L 700 990 L 700 960" class="arrow"/>
+  <text x="1070" y="985" class="no">NO</text>
+
+  <!-- NO: Continue -->
+  <path d="M 700 920 L 700 960" class="arrow"/>
+  <text x="720" y="945" class="no">NO</text>
+
+  <!-- firstLocalThenGlobal check -->
+  <path d="M 700 960 L 800 1010 L 700 1060 L 600 1010 Z" class="decision"/>
+  <text x="700" y="1005" class="tiny">firstLocalThenGlobal?</text>
+  <text x="700" y="1020" class="tiny">Check hasLocalErrorHandler</text>
+
+  <!-- YES: Check if has local handlers -->
+  <path d="M 800 1010 L 1050 1010" class="arrow"/>
+  <text x="920" y="1005" class="yes">YES</text>
+  <path d="M 1050 1010 L 1150 1060 L 1050 1110 L 950 1060 Z" class="decision"/>
+  <text x="1050" y="1060" class="tiny">Has local listeners?</text>
+  <!-- Has listeners: set local -->
+  <path d="M 1150 1060 L 1250 1060 L 1250 1140 L 550 1140" class="arrow"/>
+  <text x="1195" y="1055" class="yes">YES</text>
+  <text x="1255" y="1100" class="tiny" style="text-anchor: start;">Local only</text>
+  <!-- No listeners: set global -->
+  <path d="M 1050 1110 L 1050 1120 L 550 1120" class="arrow"/>
+  <text x="1070" y="1135" class="no">NO</text>
+  <text x="1070" y="1115" class="tiny" style="text-anchor: start;">callGlobal</text>
+
+  <!-- NO: Other reactions -->
+  <path d="M 700 1060 L 700 1100" class="arrow"/>
+  <text x="720" y="1085" class="no">NO</text>
+
+  <!-- Update CommandResult -->
+  <rect x="550" y="1100" width="300" height="70" rx="5" class="process"/>
+  <text x="700" y="1130" class="text">Push to _commandResult.value</text>
+  <text x="700" y="1150" class="small">(error, errorReaction, stackTrace)</text>
+
+  <path d="M 700 1170 L 700 1200" class="arrow"/>
+
+  <!-- Split Decision -->
+  <rect x="550" y="1200" width="300" height="40" rx="5" class="decision"/>
+  <text x="700" y="1225" class="text">Route based on ErrorReaction flags</text>
+
+  <!-- Split into two paths -->
+  <path d="M 550 1240 L 350 1270" class="arrow"/>
+  <text x="440" y="1260" class="small">shouldCallLocalHandler</text>
+
+  <path d="M 850 1240 L 1050 1270" class="arrow"/>
+  <text x="960" y="1260" class="small">callGlobal</text>
+
+  <!-- LEFT PATH: Local Handler -->
+  <rect x="200" y="1270" width="300" height="50" rx="5" class="local"/>
+  <text x="350" y="1280" class="text" style="font-weight: bold;">Local Handler Path</text>
+  <text x="350" y="1300" class="small">Reactive subscription (from constructor)</text>
+
+  <path d="M 350 1310 L 350 1340" class="arrow"/>
+
+  <rect x="200" y="1340" width="300" height="40" rx="5" class="local"/>
+  <text x="350" y="1365" class="small">Set _errors.value = CommandError</text>
+
+  <path d="M 350 1380 L 350 1410" class="arrow"/>
+
+  <rect x="200" y="1410" width="300" height="40" rx="5" class="local"/>
+  <text x="350" y="1435" class="small">Call _errors.notifyListeners()</text>
+
+  <path d="M 350 1450 L 350 1480" class="arrow"/>
+
+  <rect x="200" y="1480" width="300" height="40" rx="5" class="local"/>
+  <text x="350" y="1505" class="small">Local listeners (.errors, .results) invoked</text>
+
+  <path d="M 350 1520 L 350 1570" class="arrow"/>
+
+  <!-- Listener throws decision -->
+  <path d="M 350 1570 L 450 1620 L 350 1670 L 250 1620 Z" class="handler-error"/>
+  <text x="350" y="1625" class="small">Listener throws?</text>
+
+  <!-- NO path - goes down -->
+  <path d="M 350 1670 L 350 1980 L 700 1980" class="arrow"/>
+  <text x="370" y="1700" class="no">NO</text>
+
+  <!-- YES path - goes right -->
+  <path d="M 450 1620 L 550 1620" class="arrow"/>
+  <text x="495" y="1615" class="yes">YES</text>
+
+  <!-- reportErrorHandlerExceptions decision - to the right -->
+  <path d="M 550 1620 L 650 1720 L 550 1820 L 450 1720 Z" class="handler-error"/>
+  <text x="550" y="1715" class="tiny">reportErrorHandler</text>
+  <text x="550" y="1730" class="tiny">ExceptionsToGlobalHandler?</text>
+
+  <!-- NO path - goes down -->
+  <path d="M 550 1820 L 550 1900" class="arrow"/>
+  <text x="520" y="1850" class="no">NO</text>
+  <text x="560" y="1920" class="tiny" style="text-anchor: start;">Flutter logs only</text>
+  <path d="M 550 1900 L 550 1980 L 700 1980" class="arrow"/>
+
+  <!-- YES path - connects to Global Handler path -->
+  <path d="M 650 1720 L 800 1720 L 800 1360 L 900 1360" class="arrow"/>
+  <text x="720" y="1715" class="yes">YES</text>
+  <text x="810" y="1600" class="tiny" style="text-anchor: start;">(originalError set)</text>
+
+  <!-- RIGHT PATH: Global Handler -->
+  <rect x="900" y="1260" width="300" height="50" rx="5" class="global"/>
+  <text x="1050" y="1280" class="text" style="font-weight: bold;">Global Handler Path</text>
+  <text x="1050" y="1300" class="small">_internalGlobalErrorHandler</text>
+
+  <path d="M 1050 1310 L 1050 1340" class="arrow"/>
+
+  <rect x="900" y="1340" width="300" height="40" rx="5" class="global"/>
+  <text x="1050" y="1365" class="small">1. Emit to globalErrors stream</text>
+
+  <path d="M 1050 1380 L 1050 1410" class="arrow"/>
+
+  <rect x="900" y="1410" width="300" height="40" rx="5" class="global"/>
+  <text x="1050" y="1435" class="small">2. Call globalExceptionHandler</text>
+
+  <!-- To end -->
+  <path d="M 1050 1450 L 1050 1980 L 700 1980" class="arrow"/>
+
+  <!-- All paths converge -->
+  <path d="M 700 1980 L 700 2010" class="arrow"/>
+
+  <!-- End -->
+  <ellipse cx="700" cy="2040" rx="100" ry="30" class="terminate"/>
+  <text x="700" y="2045" class="text">End</text>
+
+  <!-- Legend -->
+  <rect x="20" y="20" width="250" height="200" rx="5" style="fill: #FAFAFA; stroke: #999; stroke-width: 1.5;"/>
+  <text x="145" y="40" class="text" style="font-weight: bold;">Color Legend</text>
+
+  <rect x="30" y="50" width="80" height="20" rx="3" class="mandatory"/>
+  <text x="120" y="64" class="small" style="text-anchor: start;">Mandatory checks</text>
+
+  <rect x="30" y="75" width="80" height="20" rx="3" class="decision"/>
+  <text x="120" y="89" class="small" style="text-anchor: start;">Decision points</text>
+
+  <rect x="30" y="100" width="80" height="20" rx="3" class="process"/>
+  <text x="120" y="114" class="small" style="text-anchor: start;">Processing</text>
+
+  <rect x="30" y="125" width="80" height="20" rx="3" class="local"/>
+  <text x="120" y="139" class="small" style="text-anchor: start;">Local handler</text>
+
+  <rect x="30" y="150" width="80" height="20" rx="3" class="global"/>
+  <text x="120" y="164" class="small" style="text-anchor: start;">Global handler</text>
+
+  <rect x="30" y="175" width="80" height="20" rx="3" class="handler-error"/>
+  <text x="120" y="189" class="small" style="text-anchor: start;">Handler exceptions</text>
+
+  <rect x="30" y="200" width="80" height="20" rx="3" class="end"/>
+  <text x="120" y="214" class="small" style="text-anchor: start;">Rethrow/Return</text>
+</svg>
