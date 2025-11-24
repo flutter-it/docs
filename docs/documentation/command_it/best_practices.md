@@ -845,4 +845,4 @@ See [Command Types - Undoable Commands](/documentation/command_it/command_types#
 - [Command Basics](/documentation/command_it/command_basics) — Getting started
 - [Error Handling](/documentation/command_it/error_handling) — Error management
 - [Testing](/documentation/command_it/testing) — Testing patterns
-- [Integration with watch_it](/documentation/command_it/watch_it_integration) — Reactive UI patterns
+- [Observing Commands with watch_it](/documentation/watch_it/observing_commands) — Reactive UI patterns

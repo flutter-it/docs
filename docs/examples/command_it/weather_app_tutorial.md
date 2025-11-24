@@ -334,12 +334,12 @@ This tutorial demonstrated:
 
 - Add [error filters](/documentation/command_it/error_handling.md#error-filters) to route different error types
 - Use [CommandResult](/documentation/command_it/command_results.md) for comprehensive state handling
-- Explore [command chaining](/documentation/command_it/watch_it_integration.md#chaining-commands) for multi-step workflows
+- Explore [command chaining](/documentation/command_it/restrictions.md#chaining-commands-via-isrunningsync) for multi-step workflows
 - Learn [testing patterns](/documentation/command_it/testing.md) for your commands
 
 ## See Also
 
 - [Command Basics](/documentation/command_it/command_basics.md) - All command creation methods
-- [watch_it Integration](/documentation/command_it/watch_it_integration.md) - Advanced patterns
+- [Observing Commands with watch_it](/documentation/watch_it/observing_commands) - Advanced patterns
 - [Restrictions](/documentation/command_it/restrictions.md) - Deep dive on command restrictions
 - [Best Practices](/documentation/command_it/best_practices.md) - Production-ready patterns

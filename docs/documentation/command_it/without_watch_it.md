@@ -10,7 +10,7 @@ Consider using `ValueListenableBuilder` instead of watch_it when:
 - You prefer explicit builder patterns over implicit observation
 - You're working on a project that doesn't use get_it
 
-For production apps, we still recommend [watch_it](watch_it_integration.md) for cleaner, more maintainable code.
+For production apps, we still recommend [watch_it](/documentation/watch_it/observing_commands) for cleaner, more maintainable code.
 
 ## Simple Counter Example
 
@@ -38,6 +38,8 @@ Here's the weather example showing async commands with loading indicators:
 
 ## Comparing the Approaches
 
+For watch_it examples, see [Observing Commands with watch_it](/documentation/watch_it/observing_commands).
+
 | Aspect | watch_it | ValueListenableBuilder |
 |--------|----------|------------------------|
 | **Dependencies** | Requires get_it + watch_it | No additional dependencies |
@@ -46,50 +48,6 @@ Here's the weather example showing async commands with loading indicators:
 | **Multiple Properties** | Clean - separate `watchValue` calls | Nested builders required |
 | **Boilerplate** | Minimal | More verbose |
 | **Recommended For** | Production apps | Learning, prototyping |
-
-## Observing Multiple Properties
-
-When you need to observe both the command result AND its state (like `isRunning`), the difference becomes more apparent:
-
-### With watch_it (Recommended)
-
-```dart
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final data = watchValue((Service s) => s.command);
-    final isLoading = watchValue((Service s) => s.command.isRunning);
-
-    if (isLoading) return CircularProgressIndicator();
-    return Text(data);
-  }
-}
-```
-
-### With ValueListenableBuilder
-
-```dart
-class MyWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: command.isRunning,
-      builder: (context, isLoading, _) {
-        if (isLoading) return CircularProgressIndicator();
-
-        return ValueListenableBuilder<String>(
-          valueListenable: command,
-          builder: (context, data, _) {
-            return Text(data);
-          },
-        );
-      },
-    );
-  }
-}
-```
-
-Notice the nesting required with `ValueListenableBuilder` versus the clean, flat structure with watch_it.
 
 ## Using CommandResult
 
@@ -150,7 +108,7 @@ Here's how to handle errors and show dialogs using StatefulWidget:
 **Important:** Always cancel subscriptions in `dispose()` to prevent memory leaks!
 
 ::: tip Want Automatic Cleanup?
-For automatic subscription cleanup, consider using watch_it's `registerHandler` - see [watch_it Integration](watch_it_integration.md) for patterns that eliminate manual subscription management.
+For automatic subscription cleanup, consider using watch_it's `registerHandler` - see [Observing Commands with watch_it](/documentation/watch_it/observing_commands) for patterns that eliminate manual subscription management.
 :::
 
 For more error handling patterns, see [Command Properties - Error Notifications](/documentation/command_it/command_properties#errors---error-notifications).
@@ -166,21 +124,6 @@ The `canRun` property automatically combines the command's restriction state and
 - Perfect for button `onPressed` - automatically disables during execution
 - Cleaner than manually checking both `isRunning` and restriction state
 - Updates automatically when either state changes
-
-## Command Restrictions
-
-Commands can be conditionally disabled using the `restriction` parameter. Here's how to use restrictions with ValueListenableBuilder:
-
-<<< @/../code_samples/lib/command_it/restriction_example.dart#example
-
-**Key points:**
-- `restriction` accepts a `ValueListenable<bool>` where `true` = disabled
-- Use `.map()` to invert logic if needed (e.g., `isLoggedIn.map((v) => !v)`)
-- `ifRestrictedRunInstead` callback called when user tries to run while restricted
-- `canRun` automatically reflects both restriction and execution state
-- No need to manually check restriction - use `canRun` for button state
-
-See [Command Restrictions](restrictions.md) for more details on restriction patterns.
 
 ## Choosing Your Approach
 
@@ -260,14 +203,14 @@ class _MyWidgetState extends State<MyWidget> {
 4. Want simplest approach? → CommandResult
 
 ::: tip Want Even Cleaner Code?
-watch_it's `registerHandler` provides automatic subscription cleanup. See [watch_it Integration](watch_it_integration.md) if you want to eliminate manual subscription management entirely.
+watch_it's `registerHandler` provides automatic subscription cleanup. See [Observing Commands with watch_it](/documentation/watch_it/observing_commands) if you want to eliminate manual subscription management entirely.
 :::
 
 ## Next Steps
 
 Ready to learn more?
 
-- **Want to use watch_it?** See [watch_it Integration](watch_it_integration.md) for comprehensive patterns
+- **Want to use watch_it?** See [Observing Commands with watch_it](/documentation/watch_it/observing_commands) for comprehensive patterns
 - **Need more command features?** Check out [Command Properties](command_properties.md), [Error Handling](error_handling.md), and [Restrictions](restrictions.md)
 - **Building production apps?** Read [Best Practices](best_practices.md) for architecture guidance
 

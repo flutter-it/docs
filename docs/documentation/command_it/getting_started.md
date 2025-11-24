@@ -191,7 +191,7 @@ Head to [Testing](testing.md) for:
 | Error handling and routing | [Error Handling](error_handling.md) |
 | Conditional execution | [Restrictions](restrictions.md) |
 | Testing patterns | [Testing](testing.md) |
-| Integration with watch_it | [watch_it Integration](watch_it_integration.md) |
+| Integration with watch_it | [Observing Commands with watch_it](/documentation/watch_it/observing_commands) |
 | Production patterns | [Best Practices](best_practices.md) |
 
 Ready to dive deeper? Pick a topic from the [Quick Reference](#quick-reference) above or follow one of the [Next Steps](#next-steps) learning paths!

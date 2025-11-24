@@ -374,4 +374,4 @@ CommandBuilder(
 - [Command Results](/documentation/command_it/command_results) - Understanding CommandResult structure
 - [Command Basics](/documentation/command_it/command_basics) - Creating and running commands
 - [Command Properties](/documentation/command_it/command_properties) - The `.results` property
-- [Integration with watch_it](/documentation/command_it/watch_it_integration) - Using with reactive state management
+- [Observing Commands with watch_it](/documentation/watch_it/observing_commands) - Using with reactive state management

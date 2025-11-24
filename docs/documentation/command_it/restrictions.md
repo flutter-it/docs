@@ -182,6 +182,8 @@ When a command is restricted, you may want to take an alternative action instead
 
 ::: tip Access to Parameters
 The `ifRestrictedRunInstead` handler receives the same parameter that would have been passed to the wrapped function. This allows you to provide context-aware feedback (e.g., "Please log in to search for '{query}'").
+
+**NoParam commands:** For NoParam commands (`createAsyncNoParam`, `createSyncNoParam`), the `ifRestrictedRunInstead` handler has no parameter: `void Function()` instead of `RunInsteadHandler<TParam>`.
 :::
 
 ## Restriction vs Manual Checks
