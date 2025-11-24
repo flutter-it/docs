@@ -4,7 +4,6 @@ import '_shared/stubs.dart';
 
 class DataManager {
   final api = ApiClient();
-  final isLoggedIn = ValueNotifier<bool>(false);
 
   late final loadDataCommand = Command.createAsyncNoParam<List<Todo>>(
     () async {
@@ -12,17 +11,10 @@ class DataManager {
       return fakeTodos;
     },
     initialValue: [],
-    restriction:
-        isLoggedIn.map((value) => !value), // Disabled when not logged in
-    ifRestrictedRunInstead: () {
-      // Called when user tries to run while restricted
-      print('Please log in first');
-    },
   );
 
   void dispose() {
     loadDataCommand.dispose();
-    isLoggedIn.dispose();
   }
 }
 
@@ -37,27 +29,7 @@ class DataWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Observe login state
-        ValueListenableBuilder<bool>(
-          valueListenable: manager.isLoggedIn,
-          builder: (context, isLoggedIn, _) {
-            return Column(
-              children: [
-                Text(
-                  isLoggedIn ? 'Logged In' : 'Not Logged In',
-                  style: const TextStyle(fontSize: 18),
-                ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: () => manager.isLoggedIn.value = !isLoggedIn,
-                  child: Text(isLoggedIn ? 'Log Out' : 'Log In'),
-                ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-        // Observe canRun - automatically reflects restriction + isRunning
+        // Observe canRun to enable/disable button
         ValueListenableBuilder<bool>(
           valueListenable: manager.loadDataCommand.canRun,
           builder: (context, canRun, _) {
@@ -68,7 +40,7 @@ class DataWidget extends StatelessWidget {
           },
         ),
         const SizedBox(height: 16),
-        // Observe results
+        // Observe results to show data/loading/error
         ValueListenableBuilder<CommandResult<void, List<Todo>>>(
           valueListenable: manager.loadDataCommand.results,
           builder: (context, result, _) {
@@ -81,10 +53,6 @@ class DataWidget extends StatelessWidget {
                 'Error: ${result.error}',
                 style: const TextStyle(color: Colors.red),
               );
-            }
-
-            if (result.data?.isEmpty ?? true) {
-              return const Text('No data loaded');
             }
 
             return Text('Loaded ${result.data?.length ?? 0} todos');

@@ -124,29 +124,144 @@ class MyWidget extends StatelessWidget {
 
 See [Command Results](command_results.md) for more details on using `CommandResult`.
 
-## Error Handling
+## StatefulWidget Patterns
 
-Commands notify errors through the `errors` property. Here's how to handle them without watch_it:
+When you need to react to command events (like errors or state changes) without rebuilding the UI, use a `StatefulWidget` with `.listen()` subscriptions in `initState`.
 
-<<< @/../code_samples/lib/command_it/error_handling_basic_example.dart#example
+### Error Handling with .listen()
 
-**Filtering null values:**
+Here's how to handle errors and show dialogs using StatefulWidget:
 
-The `errors` property is set to `null` at the start of execution (without notification). To only handle actual errors:
+<<< @/../code_samples/lib/command_it/error_handling_stateful_example.dart#example
+
+**Key points:**
+- Subscribe to `.errors` in `initState` - runs once, not on every build
+- Use `.where((e) => e != null)` to filter out null values (emitted at execution start)
+- **CRITICAL:** Cancel subscriptions in `dispose()` to prevent memory leaks
+- Store `StreamSubscription` to cancel later
+- Check `mounted` before showing dialogs to avoid errors on disposed widgets
+- Dispose the command in `dispose()` to clean up resources
+
+**When to use StatefulWidget + .listen():**
+- Need to react to events (errors, state changes) with side effects
+- Want to show dialogs, trigger navigation, or log events
+- Prefer explicit subscription management
+
+**Important:** Always cancel subscriptions in `dispose()` to prevent memory leaks!
+
+::: tip Want Automatic Cleanup?
+For automatic subscription cleanup, consider using watch_it's `registerHandler` - see [watch_it Integration](watch_it_integration.md) for patterns that eliminate manual subscription management.
+:::
+
+For more error handling patterns, see [Command Properties - Error Notifications](/documentation/command_it/command_properties#errors---error-notifications).
+
+## Observing canRun
+
+The `canRun` property automatically combines the command's restriction state and execution state, making it perfect for enabling/disabling UI elements:
+
+<<< @/../code_samples/lib/command_it/can_run_example.dart#example
+
+**Key points:**
+- `canRun` is `false` when command is running OR restricted
+- Perfect for button `onPressed` - automatically disables during execution
+- Cleaner than manually checking both `isRunning` and restriction state
+- Updates automatically when either state changes
+
+## Command Restrictions
+
+Commands can be conditionally disabled using the `restriction` parameter. Here's how to use restrictions with ValueListenableBuilder:
+
+<<< @/../code_samples/lib/command_it/restriction_example.dart#example
+
+**Key points:**
+- `restriction` accepts a `ValueListenable<bool>` where `true` = disabled
+- Use `.map()` to invert logic if needed (e.g., `isLoggedIn.map((v) => !v)`)
+- `ifRestrictedRunInstead` callback called when user tries to run while restricted
+- `canRun` automatically reflects both restriction and execution state
+- No need to manually check restriction - use `canRun` for button state
+
+See [Command Restrictions](restrictions.md) for more details on restriction patterns.
+
+## Choosing Your Approach
+
+When using commands without watch_it, you have several options:
+
+### ValueListenableBuilder with CommandResult (Recommended)
+
+**Best for:** Most cases - single builder handles all states
 
 ```dart
-command.errors.where((e) => e != null).listen((error, _) {
-  // Only called for actual errors, not null clears
-  showErrorDialog(error!.error.toString());
-});
+ValueListenableBuilder<CommandResult<TParam, TResult>>(
+  valueListenable: command.results,
+  builder: (context, result, _) {
+    if (result.isRunning) return LoadingWidget();
+    if (result.hasError) return ErrorWidget(result.error);
+    return DataWidget(result.data);
+  },
+)
 ```
 
-**When to set up listeners:**
-- In `initState` of a `StatefulWidget`
-- Using `registerHandler` from listen_it
-- Prefer these over watching in `build()` to avoid recreating listeners
+**Pros:** Clean, all state in one place, no nesting
+**Cons:** Rebuilds UI on every state change
 
-For watch_it error handling patterns, see [Command Properties - Error Notifications](/documentation/command_it/command_properties#errors---error-notifications).
+### Nested ValueListenableBuilders
+
+**Best for:** When you need different rebuild granularity
+
+```dart
+ValueListenableBuilder<bool>(
+  valueListenable: command.isRunning,
+  builder: (context, isRunning, _) {
+    if (isRunning) return LoadingWidget();
+    return ValueListenableBuilder<TResult>(
+      valueListenable: command,
+      builder: (context, data, _) => DataWidget(data),
+    );
+  },
+)
+```
+
+**Pros:** Fine-grained control over rebuilds
+**Cons:** Nesting can get complex with multiple properties
+
+### StatefulWidget + .listen()
+
+**Best for:** Side effects (dialogs, navigation, logging)
+
+```dart
+class _MyWidgetState extends State<MyWidget> {
+  ListenableSubscription? _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _subscription = command.errors
+      .where((e) => e != null)
+      .listen((error, _) {
+        if (mounted) showDialog(...);
+      });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();  // CRITICAL: Prevent memory leaks
+    super.dispose();
+  }
+}
+```
+
+**Pros:** Separate side effects from UI, runs once, full control
+**Cons:** Must manage subscriptions manually, more boilerplate
+
+**Decision tree:**
+1. Need side effects (dialogs, navigation)? → StatefulWidget + .listen()
+2. Observing multiple states? → CommandResult
+3. Need fine-grained rebuilds? → Nested builders
+4. Want simplest approach? → CommandResult
+
+::: tip Want Even Cleaner Code?
+watch_it's `registerHandler` provides automatic subscription cleanup. See [watch_it Integration](watch_it_integration.md) if you want to eliminate manual subscription management entirely.
+:::
 
 ## Next Steps
 
