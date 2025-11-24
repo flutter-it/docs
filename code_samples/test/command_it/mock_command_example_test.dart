@@ -37,13 +37,13 @@ class MockDataService implements DataService {
   // Control methods make tests readable and maintainable
   void queueSuccess(String query, List<Item> data) {
     (loadCommand as MockCommand<String, List<Item>>)
-        .queueResultsForNextExecuteCall([
+        .queueResultsForNextRunCall([
       CommandResult<String, List<Item>>(query, data, null, false),
     ]);
   }
 
   void simulateError(String message) {
-    (loadCommand as MockCommand).endExecutionWithError(message);
+    (loadCommand as MockCommand).endRunWithError(message);
   }
 }
 

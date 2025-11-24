@@ -145,12 +145,12 @@ For testing code that depends on commands, use the built-in `MockCommand` class 
 
 **Key MockCommand methods:**
 
-- **<code>queueResultsForNextExecuteCall(List&lt;CommandResult&lt;TParam, TResult&gt;&gt;)</code>** - Queue multiple results to be returned in sequence
-- **`startExecution()`** - Manually trigger the running state
-- **`endExecutionWithData(TResult data)`** - Complete execution with a result
-- **`endExecutionNoData()`** - Complete execution without a result (void commands)
-- **`endExecutionWithError(String message)`** - Complete execution with an error
-- **`executionCount`** - Track how many times the command was executed
+- **<code>queueResultsForNextRunCall(List&lt;CommandResult&lt;TParam, TResult&gt;&gt;)</code>** - Queue multiple results to be returned in sequence
+- **`startRun()`** - Manually trigger the running state
+- **`endRunWithData(TResult data)`** - Complete execution with a result
+- **`endRunNoData()`** - Complete execution without a result (void commands)
+- **`endRunWithError(String message)`** - Complete execution with an error
+- **`runCount`** - Track how many times the command was run
 
 **This pattern demonstrates:**
 
