@@ -43,86 +43,13 @@ Use the `WithProgress` factory variants to create commands that receive a `Progr
 
 ### Async Commands with Progress
 
-```dart
-// Full signature: parameter + result
-final processCommand = Command.createAsyncWithProgress<int, String>(
-  (count, handle) async {
-    for (int i = 0; i < count; i++) {
-      if (handle.isCanceled.value) return 'Canceled';
-
-      await processItem(i);
-      handle.updateProgress((i + 1) / count);
-      handle.updateStatusMessage('Processing item ${i + 1} of $count');
-    }
-    return 'Processed $count items';
-  },
-  initialValue: '',
-);
-
-// No parameter
-final syncCommand = Command.createAsyncNoParamWithProgress<String>(
-  (handle) async {
-    handle.updateStatusMessage('Syncing...');
-    handle.updateProgress(0.5);
-    await syncData();
-    handle.updateProgress(1.0);
-    return 'Synced';
-  },
-  initialValue: '',
-);
-
-// No result (void)
-final deleteCommand = Command.createAsyncNoResultWithProgress<int>(
-  (itemId, handle) async {
-    handle.updateStatusMessage('Deleting item $itemId...');
-    await api.delete(itemId);
-    handle.updateProgress(1.0);
-  },
-);
-
-// No parameter, no result
-final refreshCommand = Command.createAsyncNoParamNoResultWithProgress(
-  (handle) async {
-    handle.updateStatusMessage('Refreshing...');
-    await api.refresh();
-    handle.updateProgress(1.0);
-  },
-);
-```
+<<< @/../code_samples/lib/command_it/progress_factory_variants.dart#example
 
 ### Undoable Commands with Progress
 
 Combine undo capability with progress tracking:
 
-```dart
-final uploadCommand = Command.createUndoableWithProgress<File, String, UploadState>(
-  (file, handle, undoStack) async {
-    handle.updateStatusMessage('Starting upload...');
-    final uploadId = await api.startUpload(file);
-    undoStack.push(UploadState(uploadId));
-
-    final chunks = calculateChunks(file);
-    for (int i = 0; i < chunks; i++) {
-      if (handle.isCanceled.value) {
-        await api.cancelUpload(uploadId);
-        return 'Canceled';
-      }
-
-      await uploadChunk(file, i);
-      handle.updateProgress((i + 1) / chunks);
-      handle.updateStatusMessage('Uploaded ${i + 1}/$chunks chunks');
-    }
-
-    return 'Upload complete';
-  },
-  undo: (undoStack, reason) async {
-    final state = undoStack.pop();
-    await api.deleteUpload(state.uploadId);
-    return 'Upload deleted';
-  },
-  initialValue: '',
-);
-```
+<<< @/../code_samples/lib/command_it/progress_undoable.dart#example
 
 All four undoable variants are available:
 - `createUndoableWithProgress<TParam, TResult, TUndoState>()`
@@ -280,43 +207,7 @@ Text('${(progress * 100).toInt()}% complete')
 
 The `isCanceled` property is a `ValueListenable`, allowing you to forward cancellation to external libraries like Dio:
 
-```dart
-final downloadCommand = Command.createAsyncWithProgress<String, File>(
-  (url, handle) async {
-    final dio = Dio();
-    final cancelToken = CancelToken();
-
-    // Forward command cancellation to Dio
-    handle.isCanceled.listen((canceled, _) {
-      if (canceled) cancelToken.cancel('User canceled');
-    });
-
-    try {
-      final response = await dio.download(
-        url,
-        '/downloads/file.zip',
-        cancelToken: cancelToken,
-        onReceiveProgress: (received, total) {
-          if (total != -1) {
-            handle.updateProgress(received / total);
-            handle.updateStatusMessage(
-              'Downloaded ${(received / 1024 / 1024).toStringAsFixed(1)} MB '
-              'of ${(total / 1024 / 1024).toStringAsFixed(1)} MB'
-            );
-          }
-        },
-      );
-      return File('/downloads/file.zip');
-    } on DioException catch (e) {
-      if (CancelToken.isCancel(e)) {
-        return File('');  // Handle cancellation
-      }
-      rethrow;
-    }
-  },
-  initialValue: File(''),
-);
-```
+<<< @/../code_samples/lib/command_it/progress_dio_integration.dart#example
 
 ### With CommandBuilder
 
