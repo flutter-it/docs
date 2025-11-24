@@ -152,6 +152,60 @@ For testing code that depends on commands, use the built-in `MockCommand` class 
 - **`endRunWithError(String message)`** - Complete execution with an error
 - **`runCount`** - Track how many times the command was run
 
+### Automatic vs Manual State Control
+
+**Important:** MockCommand's `run()` method **automatically toggles `isRunning`**, but it happens **synchronously**:
+
+```dart
+// When you call run():
+mockCommand.run('param');
+// isRunning goes: false → true → false (instantly)
+```
+
+This synchronous toggle means you typically won't catch the `true` state in tests. For testing state transitions, use the **manual control methods**:
+
+**Manual Control (Recommended for Testing):**
+
+```dart
+final mockCommand = MockCommand<String, String>(initialValue: '');
+
+// You control when state changes
+mockCommand.startRun('param');              // isRunning = true
+expect(mockCommand.isRunning.value, true);  // ✅ Can verify loading state
+
+// Later, complete the operation
+mockCommand.endRunWithData('result');       // isRunning = false
+expect(mockCommand.isRunning.value, false); // ✅ Can verify completed state
+```
+
+**Automatic via run() (Quick Fire-and-Forget):**
+
+```dart
+final mockCommand = MockCommand<String, String>(initialValue: '');
+
+// Queue results first
+mockCommand.queueResultsForNextRunCall([
+  CommandResult('param', 'result', null, false),
+]);
+
+// Then run - isRunning briefly true, then immediately false
+mockCommand.run('param');
+
+// isRunning is already false by now (synchronous)
+expect(mockCommand.isRunning.value, false);
+```
+
+**Use manual control methods when:**
+- Testing loading/running state UI
+- Verifying state transitions in sequence
+- Testing error state handling
+- Simulating long-running operations
+
+**Use `run()` + `queueResultsForNextRunCall()` when:**
+- You only care about the final result
+- Testing simple success/error outcomes
+- You don't need to verify intermediate states
+
 **This pattern demonstrates:**
 
 <ul style="list-style: none; padding-left: 0;">
