@@ -5,18 +5,26 @@ import '_shared/stubs.dart';
 final batchCommand = Command.createAsyncWithProgress<List<Item>, String>(
   (items, handle) async {
     final total = items.length;
-    int processed = 0;
+    int current = 0;
 
     for (final item in items) {
       if (handle.isCanceled.value) {
-        return 'Canceled ($processed/$total processed)';
+        return 'Canceled ($current/$total processed)';
       }
 
-      await processItem(item);
-      processed++;
+      current++;
+      handle.updateStatusMessage('Processing item $current of $total');
 
-      handle.updateProgress(processed / total);
-      handle.updateStatusMessage('Processed $processed of $total items');
+      // Process item with per-item progress
+      const steps = 10;
+      for (int step = 0; step <= steps; step++) {
+        if (handle.isCanceled.value) {
+          return 'Canceled ($current/$total processed)';
+        }
+
+        handle.updateProgress(step / steps);
+        await simulateDelay(50); // Simulate work step
+      }
     }
 
     return 'Processed $total items';

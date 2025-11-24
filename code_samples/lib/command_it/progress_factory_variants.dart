@@ -1,6 +1,23 @@
 import 'package:command_it/command_it.dart';
 import '_shared/stubs.dart';
 
+// #region main
+// Full signature: parameter + result
+final processCommand = Command.createAsyncWithProgress<int, String>(
+  (count, handle) async {
+    for (int i = 0; i < count; i++) {
+      if (handle.isCanceled.value) return 'Canceled';
+
+      await processItem(Item());
+      handle.updateProgress((i + 1) / count);
+      handle.updateStatusMessage('Processing item ${i + 1} of $count');
+    }
+    return 'Processed $count items';
+  },
+  initialValue: '',
+);
+// #endregion main
+
 // #region example
 // Full signature: parameter + result
 final processCommand = Command.createAsyncWithProgress<int, String>(

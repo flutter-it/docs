@@ -43,7 +43,16 @@ Use the `WithProgress` factory variants to create commands that receive a `Progr
 
 ### Async Commands with Progress
 
-<<< @/../code_samples/lib/command_it/progress_factory_variants.dart#example
+<<< @/../code_samples/lib/command_it/progress_factory_variants.dart#main
+
+All four async variants are available:
+
+| Factory Method | Function Signature |
+|---------------|-------------------|
+| `createAsyncWithProgress` | `(param, handle) async => TResult` |
+| `createAsyncNoParamWithProgress` | `(handle) async => TResult` |
+| `createAsyncNoResultWithProgress` | `(param, handle) async => void` |
+| `createAsyncNoParamNoResultWithProgress` | `(handle) async => void` |
 
 ### Undoable Commands with Progress
 
@@ -137,7 +146,13 @@ if (isCanceled) Text('Operation canceled')
 
 ### cancel()
 
-Request cooperative cancellation of the operation:
+Request cooperative cancellation of the operation. This method:
+
+- Sets `isCanceled` to `true`
+- Clears `progress` to `0.0`
+- Clears `statusMessage` to `null`
+
+This immediately clears progress state from the UI, providing instant visual feedback that the operation was canceled.
 
 ```dart
 // In UI:
@@ -185,7 +200,7 @@ if (command.progress.value == 1.0) {
 - Reset progress between manual executions
 - Prepare command state for testing
 
-**Note:** Progress is automatically reset at the start of each `run()` execution, so manual resets are typically only needed for UI cleanup or resuming operations.
+**Note:** Progress is automatically reset at the start of each `run()` execution, so manual resets are typically only needed for UI cleanup or resuming operations. Additionally, calling `cancel()` also clears progress and statusMessage to provide immediate visual feedback.
 
 ## Integration Patterns
 
@@ -209,33 +224,6 @@ The `isCanceled` property is a `ValueListenable`, allowing you to forward cancel
 
 <<< @/../code_samples/lib/command_it/progress_dio_integration.dart#example
 
-### With CommandBuilder
-
-CommandBuilder automatically exposes progress properties for easy UI integration:
-
-```dart
-CommandBuilder<File, String>(
-  command: uploadCommand,
-  whileRunning: (context, lastResult, param) {
-    final progress = uploadCommand.progress.value;
-    final status = uploadCommand.statusMessage.value;
-
-    return Column(
-      children: [
-        LinearProgressIndicator(value: progress),
-        SizedBox(height: 8),
-        Text(status ?? 'Processing...'),
-        TextButton(
-          onPressed: uploadCommand.cancel,
-          child: Text('Cancel'),
-        ),
-      ],
-    );
-  },
-  onData: (context, result, param) => Text('Result: $result'),
-)
-```
-
 ## Commands Without Progress
 
 Commands created with regular factories (without `WithProgress`) still have progress properties, but they return default values:
@@ -250,13 +238,16 @@ final command = Command.createAsync<void, String>(
 command.progress.value        // Always 0.0
 command.statusMessage.value   // Always null
 command.isCanceled.value      // Always false
-command.cancel()              // Does nothing
+command.cancel()              // No effect (no progress handle)
 ```
 
 This zero-overhead design means:
-- <ul style="list-style: none; padding-left: 0;"><li style="padding-left: 1.5em; text-indent: -1.5em;">✅ UI code can always access progress properties without null checks</li></ul>
-- <ul style="list-style: none; padding-left: 0;"><li style="padding-left: 1.5em; text-indent: -1.5em;">✅ No memory cost for commands that don't need progress</li></ul>
-- <ul style="list-style: none; padding-left: 0;"><li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Easy to add progress to existing commands later (just change factory)</li></ul>
+
+<ul style="list-style: none; padding-left: 0;">
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ UI code can always access progress properties without null checks</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ No memory cost for commands that don't need progress</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Easy to add progress to existing commands later (just change factory)</li>
+</ul>
 
 ## Testing with MockCommand
 
@@ -293,53 +284,6 @@ for (final item in items) {
 if (handle.isCanceled.value) return 'Canceled';
 for (final item in items) {
   await processItem(item);  // Can't cancel during processing
-}
-```
-
-### DO: Provide meaningful status messages
-
-```dart
-// ✅ Good - specific, actionable information
-handle.updateStatusMessage('Uploading file 3 of 10...');
-handle.updateStatusMessage('Processing image (1.2 MB)...');
-handle.updateStatusMessage('Verifying upload integrity...');
-```
-
-### DON'T: Use vague status messages
-
-```dart
-// ❌ Bad - not helpful to users
-handle.updateStatusMessage('Working...');
-handle.updateStatusMessage('Please wait...');
-```
-
-### DO: Update progress accurately
-
-```dart
-// ✅ Good - progress matches actual work done
-final total = items.length;
-for (int i = 0; i < total; i++) {
-  await processItem(items[i]);
-  handle.updateProgress((i + 1) / total);  // Accurate progress
-}
-```
-
-### DON'T: Set progress to 1.0 prematurely
-
-```dart
-// ❌ Bad - progress at 100% but still working
-handle.updateProgress(1.0);
-await finalizeOperation();  // Still working after "100%"
-```
-
-### DO: Clean up on cancellation
-
-```dart
-// ✅ Good - cleanup resources on cancel
-if (handle.isCanceled.value) {
-  await cleanupPartialUpload(uploadId);
-  await deleteTemporaryFiles();
-  return 'Canceled';
 }
 ```
 

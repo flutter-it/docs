@@ -36,12 +36,18 @@ final downloadCommand = Command.createAsyncWithProgress<String, File>(
     final cancelToken = CancelToken();
 
     // Forward command cancellation to Dio
-    handle.isCanceled.listen((canceled, _) {
-      if (canceled) cancelToken.cancel('User canceled');
-    });
+    late final subscription;
+    subscription = handle.isCanceled.listen(
+      (canceled, _) {
+        if (canceled) {
+          cancelToken.cancel('User canceled');
+          subscription.cancel();
+        }
+      },
+    );
 
     try {
-      final response = await dio.download(
+      await dio.download(
         url,
         '/downloads/file.zip',
         cancelToken: cancelToken,
@@ -56,11 +62,8 @@ final downloadCommand = Command.createAsyncWithProgress<String, File>(
         },
       );
       return File('/downloads/file.zip');
-    } on DioException catch (e) {
-      if (CancelToken.isCancel(e)) {
-        return File(''); // Handle cancellation
-      }
-      rethrow;
+    } finally {
+      subscription.cancel();
     }
   },
   initialValue: File(''),
