@@ -1,6 +1,18 @@
 # Using Commands without watch_it
 
-All the examples in [Getting Started](getting_started.md) use **watch_it**, which is our recommended approach for production apps. However, commands work perfectly with plain `ValueListenableBuilder` if you prefer not to use watch_it or get_it.
+All the examples in [Getting Started](getting_started.md) use **watch_it**, which is our recommended approach for production apps. However, commands work perfectly with plain `ValueListenableBuilder` or any state management solution that can observe a `Listenable` (like Provider or Riverpod).
+
+## Quick Navigation
+
+| Approach | Best For |
+|----------|----------|
+| [ValueListenableBuilder](#when-to-use-valuelistenablebuilder) | Learning, prototyping, no DI needed |
+| [CommandBuilder](#commandbuilder-easiest) | Simplest approach with state-aware builders |
+| [CommandResult](#using-commandresult) | Single builder for all command states |
+| [StatefulWidget + .listen()](#statefulwidget-patterns) | Side effects (dialogs, navigation) |
+| [Provider](#provider-integration) | Existing Provider apps |
+| [Riverpod](#riverpod-integration) | Existing Riverpod apps |
+| [flutter_hooks](#flutter_hooks-integration) | Direct watch-style calls (similar to watch_it!) |
 
 ## When to Use ValueListenableBuilder
 
@@ -11,6 +23,10 @@ Consider using `ValueListenableBuilder` instead of watch_it when:
 - You're working on a project that doesn't use get_it
 
 For production apps, we still recommend [watch_it](/documentation/watch_it/observing_commands) for cleaner, more maintainable code.
+
+::: tip Easiest Approach: CommandBuilder
+If you want the simplest way to use commands without watch_it, consider `CommandBuilder` - a widget that handles all command states with minimal boilerplate. It's cleaner than manual `ValueListenableBuilder` patterns. Jump to [CommandBuilder example](#commandbuilder-easiest) or see [Command Builders](command_builders.md) for complete documentation.
+:::
 
 ## Simple Counter Example
 
@@ -129,7 +145,27 @@ The `canRun` property automatically combines the command's restriction state and
 
 When using commands without watch_it, you have several options:
 
-### ValueListenableBuilder with CommandResult (Recommended)
+### CommandBuilder (Easiest)
+
+**Best for:** Simplest approach with dedicated builders for each state
+
+```dart
+CommandBuilder(
+  command: loadDataCommand,
+  whileRunning: (context, _, __) => CircularProgressIndicator(),
+  onError: (context, error, _, __) => Text('Error: $error'),
+  onData: (context, data, _) => ListView(
+    children: data.map((item) => ListTile(title: Text(item))).toList(),
+  ),
+)
+```
+
+**Pros:** Cleanest code, separate builders for each state, no manual state checking
+**Cons:** Additional widget in tree
+
+See [Command Builders](command_builders.md) for complete documentation.
+
+### ValueListenableBuilder with CommandResult
 
 **Best for:** Most cases - single builder handles all states
 
@@ -197,14 +233,87 @@ class _MyWidgetState extends State<MyWidget> {
 **Cons:** Must manage subscriptions manually, more boilerplate
 
 **Decision tree:**
-1. Need side effects (dialogs, navigation)? → StatefulWidget + .listen()
-2. Observing multiple states? → CommandResult
-3. Need fine-grained rebuilds? → Nested builders
-4. Want simplest approach? → CommandResult
+1. Want simplest approach? → CommandBuilder
+2. Need side effects (dialogs, navigation)? → StatefulWidget + .listen()
+3. Observing multiple states? → CommandResult
+4. Need fine-grained rebuilds? → Nested builders
 
 ::: tip Want Even Cleaner Code?
 watch_it's `registerHandler` provides automatic subscription cleanup. See [Observing Commands with watch_it](/documentation/watch_it/observing_commands) if you want to eliminate manual subscription management entirely.
 :::
+
+## Integration with Other State Management Solutions
+
+Commands integrate well with other state management solutions (watch_it is ours). Since each command property (`isRunning`, `errors`, `results`, etc.) is itself a `ValueListenable`, any solution that can observe a `Listenable` can watch them with granular rebuilds.
+
+### Provider Integration
+
+Use `ListenableProvider` to watch specific command properties:
+
+<<< @/../code_samples/lib/command_it/provider_integration.dart#manager
+
+**Setup with ChangeNotifierProvider:**
+
+<<< @/../code_samples/lib/command_it/provider_integration.dart#setup
+
+**Granular observation with ListenableProvider:**
+
+<<< @/../code_samples/lib/command_it/provider_integration.dart#granular
+
+**Key points:**
+- Use `context.read<Manager>()` to get the manager without listening
+- Use `ListenableProvider.value()` to provide specific command properties
+- Each property (`isRunning`, `results`, etc.) is a separate `Listenable`
+- Only the widgets watching that specific property rebuild when it changes
+
+### Riverpod Integration
+
+With Riverpod's `@riverpod` annotation, create providers for specific command properties:
+
+<<< @/../code_samples/lib/command_it/riverpod_integration.dart#providers
+
+**In your widget:**
+
+<<< @/../code_samples/lib/command_it/riverpod_integration.dart#widget
+
+**Key points:**
+- Use `Raw<T>` wrapper to prevent Riverpod from auto-disposing the notifiers
+- Use `ref.onDispose()` to clean up commands when the provider is disposed
+- Create separate providers for each command property you want to observe
+- Requires `riverpod_annotation` package and code generation (`build_runner`)
+
+### flutter_hooks Integration
+
+flutter_hooks provides a direct watch-style pattern very similar to watch_it! Use `useValueListenable` for clean, declarative observation:
+
+**Manager setup:**
+
+<<< @/../code_samples/lib/command_it/flutter_hooks_integration.dart#manager
+
+**In your widget:**
+
+<<< @/../code_samples/lib/command_it/flutter_hooks_integration.dart#widget
+
+**Key points:**
+- `useValueListenable` provides direct watch-style calls - no nested builders!
+- Pattern is very similar to watch_it's `watchValue`
+- Each `useValueListenable` call observes a specific property for granular rebuilds
+- Requires `flutter_hooks` package
+
+### About Bloc/Cubit
+
+Commands and Bloc/Cubit solve the same problem - managing async operation state. Using both creates redundancy:
+
+| Feature | command_it | Bloc/Cubit |
+|---------|-----------|------------|
+| Loading state | `command.isRunning` | `LoadingState()` |
+| Error handling | `command.errors` | `ErrorState(error)` |
+| Result/Data | `command.value` | `LoadedState(data)` |
+| Execution | `command.run()` | `emit()` / `add(Event)` |
+| Restrictions | `command.canRun` | Manual logic |
+| Progress tracking | `command.progress` | Manual implementation |
+
+**Recommendation:** Choose one approach. If you're already using Bloc/Cubit for async operations, you don't need commands for those operations. If you want to use commands, they replace the need for Bloc/Cubit in async state management.
 
 ## Next Steps
 

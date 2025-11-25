@@ -19,6 +19,10 @@ dependencies:
   listen_it:
     path: ../../listen_it
   sentry_flutter: ^8.0.0
+  provider: ^6.0.0
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  flutter_hooks: ^0.21.2
 
 # Override to use local versions when needed during development
 dependency_overrides:
@@ -37,3 +41,5 @@ dev_dependencies:
     sdk: flutter
   test: ^1.25.0
   flutter_lints: ^5.0.0
+  riverpod_generator: ^2.6.3
+  build_runner: ^2.4.0
