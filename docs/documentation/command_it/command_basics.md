@@ -2,8 +2,8 @@
 
 Learn how to create and run commands, the foundation of command_it.
 
-::: tip Examples Use watch_it
-All examples use **watch_it** for observing commands. See [Without watch_it](/documentation/command_it/without_watch_it.md) if you prefer `ValueListenableBuilder`.
+::: tip Examples Use `watch_it`
+All examples use **`watch_it`** for observing commands. See [Without `watch_it`](/documentation/command_it/without_watch_it.md) if you prefer `ValueListenableBuilder`.
 :::
 
 ## What is a Command?

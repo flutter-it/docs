@@ -109,8 +109,8 @@ These patterns are referred to as **local error handling** because they handle e
 The `.errors` property normally never notifies with a `null` value unless you explicitly call `clearErrors()`. You normally never need to call `clearErrors()` - and if you don't, you don't need to add `if (error != null)` checks in your error handlers. See [clearErrors](/documentation/command_it/command_properties#clearerrors-clear-error-state) for details.
 :::
 
-::: tip Without watch_it
-For StatefulWidget patterns using `.listen()` in `initState`, see [Without watch_it](/documentation/command_it/without_watch_it) for patterns.
+::: tip Without `watch_it`
+For StatefulWidget patterns using `.listen()` in `initState`, see [Without `watch_it`](/documentation/command_it/without_watch_it) for patterns.
 :::
 
 ### Using CommandResult
@@ -417,6 +417,53 @@ errorFilter: TableErrorFilter({
 - No inheritance hierarchies
 :::
 
+## Error Behavior with runAsync()
+
+When using `runAsync()` and the command throws an exception, **both** things happen:
+
+1. **Error handlers are called** - `.errors` listeners and `globalExceptionHandler` receive the error (based on ErrorFilter)
+2. **The Future completes with error** - The exception is rethrown to the caller
+
+**Important:** You MUST wrap `runAsync()` in try/catch to prevent app crashes:
+
+```dart
+// ✅ GOOD: Catch the rethrown exception
+try {
+  final result = await loadCommand.runAsync();
+  // Use result...
+} catch (e) {
+  // Handle the error - show UI feedback, log, etc.
+  showErrorToast(e.toString());
+}
+
+// ❌ BAD: Unhandled exception will crash the app
+await loadCommand.runAsync(); // If this throws, app crashes!
+```
+
+**Using both try/catch and .errors listener:**
+
+If you have an `.errors` listener for reactive UI updates, you still need try/catch but the catch block can be empty:
+
+```dart
+// Set up error listener for reactive UI
+loadCommand.errors.listen((error, _) {
+  if (error != null) showErrorToast(error.error);
+});
+
+// Still need try/catch to prevent crash
+try {
+  final result = await loadCommand.runAsync();
+  // Use result...
+} catch (e) {
+  // Error already handled by .errors listener above
+  // Empty catch just prevents the crash
+}
+```
+
+::: warning ErrorReaction.none Not Allowed
+Using `ErrorReaction.none` with `runAsync()` will trigger an assertion error. Since the error would be swallowed, there's no value to complete the Future with.
+:::
+
 ## When Error Handlers Throw Exceptions
 
 Error handlers are regular Dart code - they can fail too. When your error handler makes async API calls or processes data, those operations can throw exceptions.
@@ -504,7 +551,7 @@ A broadcast stream that emits `CommandError<dynamic>` for every error that would
 
 ### Use Cases
 
-**1. Global Error Toasts (watch_it integration)**
+**1. Global Error Toasts (`watch_it` integration)**
 
 ```dart
 class MyApp extends WatchingWidget {
@@ -577,11 +624,11 @@ Both receive the same errors, but serve different purposes:
 | Type | Callback function | Stream |
 | Purpose | Immediate error handling | Reactive error monitoring |
 | Multiple handlers | No (single handler) | Yes (multiple listeners) |
-| watch_it integration | No | Yes (`registerStreamHandler`, `watchStream`) |
+| `watch_it` integration | No | Yes (`registerStreamHandler`, `watchStream`) |
 | Best for | Crash reporting, logging | UI notifications, analytics |
 
 ::: tip Typical Pattern: Use Both Together
-Use `globalExceptionHandler` for immediate side effects like crash reporting and logging, while `globalErrors` stream is perfect for reactive UI updates using watch_it (`registerStreamHandler` or `watchStream`). This separation keeps your error handling clean and focused.
+Use `globalExceptionHandler` for immediate side effects like crash reporting and logging, while `globalErrors` stream is perfect for reactive UI updates using `watch_it` (`registerStreamHandler` or `watchStream`). This separation keeps your error handling clean and focused.
 :::
 
 ## Exception Handling Workflow

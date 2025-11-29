@@ -125,7 +125,7 @@ CommandBuilder(
 
 ## Auto-Running Commands on Mount
 
-CommandBuilder can automatically execute a command when the widget is first built using the `runCommandOnFirstBuild` parameter. This is particularly useful when not using watch_it (which provides `callOnce` for this purpose).
+CommandBuilder can automatically execute a command when the widget is first built using the `runCommandOnFirstBuild` parameter. This is particularly useful when not using `watch_it` (which provides `callOnce` for this purpose).
 
 ### Basic Usage (No Parameter)
 
@@ -165,7 +165,7 @@ CommandBuilder(
 **✅ Use runCommandOnFirstBuild when:**
 
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Not using watch_it (no access to `callOnce`)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Not using <code>watch_it</code> (no access to <code>callOnce</code>)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Widget should load its own data on mount</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Want self-contained data-loading widgets</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Simple data fetching scenarios</li>
@@ -174,14 +174,14 @@ CommandBuilder(
 **❌️ Don't use when:**
 
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Using watch_it - prefer `callOnce` instead (clearer separation)</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Command is already running elsewhere</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Using <code>watch_it</code> - prefer <code>callOnce</code> instead (clearer separation)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ <code>Command</code> is already running elsewhere</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">❌️ Need conditional logic before running</li>
 </ul>
 
-### Comparison with watch_it's callOnce
+### Comparison with `watch_it`'s callOnce
 
-**With watch_it (recommended if using watch_it):**
+**With `watch_it` (recommended if using `watch_it`):**
 ```dart
 class TodoWidget extends WatchingWidget {
   @override
@@ -196,7 +196,7 @@ class TodoWidget extends WatchingWidget {
 }
 ```
 
-**Without watch_it (use runCommandOnFirstBuild):**
+**Without `watch_it` (use runCommandOnFirstBuild):**
 ```dart
 class TodoWidget extends StatelessWidget {
   @override

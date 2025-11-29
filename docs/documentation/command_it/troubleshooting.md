@@ -11,91 +11,31 @@ This guide is organized by **symptoms** you observe. Find your issue, diagnose t
 ### Command completes but UI doesn't rebuild
 
 **Symptoms:**
-- Command executes successfully
-- Data changes but screen doesn't update
-- No errors in console
+- Command executes but UI doesn't update
+- Data seems unchanged
+- No errors visible
 
-**Diagnosis:**
+**Diagnosis 1:** Command threw an exception
 
-Check if you're watching the command property:
+The command might have failed silently. Check if you're listening to errors:
 
-```dart
-class MyWidget extends StatelessWidget { // ❌️ Not a WatchingWidget
-  @override
-  Widget build(BuildContext context) {
-    final data = watchValue((Manager m) => m.command); // Won't work!
-    return Text('$data');
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_ui_not_updating.dart#diagnosis1_bad
 
-**Solution:**
+**Solution:** Listen to errors or check `.results`:
 
-Extend `WatchingWidget` or `WatchingStatefulWidget`:
+<<< @/../code_samples/lib/command_it/troubleshooting_ui_not_updating.dart#diagnosis1_good
 
-```dart
-class MyWidget extends WatchingWidget { // ✅ Correct
-  @override
-  Widget build(BuildContext context) {
-    final data = watchValue((Manager m) => m.command);
-    return Text('$data');
-  }
-}
-```
+**Diagnosis 2:** Not watching the command at all
 
-**Alternative with ValueListenableBuilder:**
+Check if you're actually observing the command's value:
 
-```dart
-class MyWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final manager = GetIt.I<Manager>();
-    return ValueListenableBuilder(
-      valueListenable: manager.command,
-      builder: (context, data, _) => Text('$data'),
-    );
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_ui_not_updating.dart#diagnosis2_bad
 
-**See also:** [watch_it documentation](/documentation/watch_it/getting_started)
+**Solution:** Use `ValueListenableBuilder` or `watch_it`:
 
----
+<<< @/../code_samples/lib/command_it/troubleshooting_ui_not_updating.dart#diagnosis2_good
 
-### UI updates but shows stale data
-
-**Symptoms:**
-- UI rebuilds when command executes
-- But shows old data instead of new results
-
-**Diagnosis:**
-
-Check if you're watching the command itself vs a derived value:
-
-```dart
-// ❌️ Creates new list on every build - watch_it sees different instance
-final items = watchValue((Manager m) => m.command.value.where((x) => x.isActive).toList());
-```
-
-**Solution:**
-
-Watch the command, then transform in the widget:
-
-```dart
-// ✅ Watch the command, transform in build
-final allItems = watchValue((Manager m) => m.command);
-final items = allItems.where((x) => x.isActive).toList();
-```
-
-Or use listen_it operators:
-
-```dart
-// ✅ Create filtered command once in your manager
-late final activeItems = command.where((items) => items.where((x) => x.isActive).toList());
-
-// Then watch it
-final items = watchValue((Manager m) => m.activeItems);
-```
+**See also:** [Error Handling](/documentation/command_it/error_handling), [`watch_it` documentation](/documentation/watch_it/getting_started)
 
 ---
 
@@ -111,35 +51,15 @@ final items = watchValue((Manager m) => m.activeItems);
 
 Check if command is restricted:
 
-```dart
-final command = Command.createAsync(
-  fetchData,
-  [],
-  restriction: someValueNotifier, // Is this true?
-);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_execution_issues.dart#restriction_diagnosis
 
 **Solution 1:** Check restriction value
 
-```dart
-// Debug: print restriction state
-print('Can run: ${command.canRun.value}');
-print('Is restricted: ${restriction.value}'); // Should be false to run
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_execution_issues.dart#restriction_debug
 
 **Solution 2:** Handle restricted execution
 
-```dart
-final command = Command.createAsync(
-  fetchData,
-  [],
-  restriction: isLoggedOut,
-  ifRestrictedRunInstead: (param) {
-    // Show login dialog
-    showLoginDialog();
-  },
-);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_execution_issues.dart#restriction_handler
 
 **See also:** [Command Properties - Restrictions](/documentation/command_it/command_properties#restriction)
 
@@ -156,54 +76,21 @@ final command = Command.createAsync(
 
 Check if async function completes:
 
-```dart
-Command.createAsync((param) async {
-  await fetchData(); // Does this ever complete?
-  // Missing return statement?
-}, []);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_execution_issues.dart#stuck_diagnosis
 
-**Common causes:**
+**Cause:** Async function never completes
 
-1. **Async function never completes:**
-   ```dart
-   // ❌️ Waiting for something that never happens
-   (param) async {
-     await neverCompletingFuture;
-   }
-   ```
-
-2. **Unhandled error in async function:**
-   ```dart
-   // ❌️ Error thrown but not caught
-   (param) async {
-     throw Exception('Oops'); // Command catches this, but might not be configured to handle it
-   }
-   ```
-
-3. **Missing return statement:**
-   ```dart
-   // ❌️ Function body doesn't return
-   Command.createAsync<String, List<Item>>((query) async {
-     final items = await api.search(query);
-     // Missing: return items;
-   }, []);
-   ```
+<<< @/../code_samples/lib/command_it/troubleshooting_execution_issues.dart#stuck_cause
 
 **Solution:**
 
-Add timeout and error handling:
+Add a timeout to catch hanging operations:
 
-```dart
-Command.createAsync((param) async {
-  try {
-    return await fetchData().timeout(Duration(seconds: 30));
-  } catch (e) {
-    print('Command failed: $e');
-    rethrow; // Let command's error handling deal with it
-  }
-}, []);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_execution_issues.dart#stuck_solution
+
+::: tip Errors Don't Cause Stuck State
+If your async function throws an exception, the command catches it and resets `isRunning` to `false`. Errors won't cause a stuck running state - only futures that never complete will.
+:::
 
 ---
 
@@ -213,89 +100,21 @@ Command.createAsync((param) async {
 
 **Symptoms:**
 - Command fails but UI doesn't show error state
-- Errors logged to console but not displayed
+- Errors logged to crash reporter but not displayed in UI
 
 **Diagnosis:**
 
-Check error filter configuration:
+Check if error filter only routes to global handler:
 
-```dart
-// Is error being swallowed?
-final command = Command.createAsync(
-  fetchData,
-  [],
-  errorFilter: const ErrorHandlerNone(), // ❌️ Swallows all errors!
-);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_error_handling.dart#global_only_bad
 
-**Solution 1:** Use appropriate error filter
+With `globalHandler`, errors go to `Command.globalExceptionHandler` but `.errors` and `.results` listeners are not notified.
 
-```dart
-final command = Command.createAsync(
-  fetchData,
-  [],
-  errorFilter: const ErrorHandlerLocal(), // ✅ Notifies .errors property
-);
-```
+**Solution:** Use a filter that includes local handler
 
-**Solution 2:** Watch the errors property
+<<< @/../code_samples/lib/command_it/troubleshooting_error_handling.dart#local_filter_good
 
-```dart
-final error = watchValue((Manager m) => m.command.errors);
-if (error != null) {
-  return ErrorWidget(error.error);
-}
-```
-
-**Solution 3:** Use CommandResult
-
-```dart
-final result = watchValue((Manager m) => m.command.results);
-if (result.hasError) {
-  return ErrorWidget(result.error);
-}
-```
-
-**See also:** [Error Handling](/documentation/command_it/error_handling)
-
----
-
-### Errors appear briefly then disappear
-
-**Symptoms:**
-- Error shows for a moment
-- Then vanishes when you retry
-
-**Diagnosis:**
-
-This is **expected behavior** - errors are cleared when command runs again:
-
-```dart
-command('query'); // Error occurs
-// error.value = CommandError(...)
-
-command('new query'); // Run again
-// error.value = null  ← Error cleared!
-```
-
-**Solution:**
-
-If you need to keep error history, listen and store them:
-
-```dart
-class Manager {
-  final errorHistory = <CommandError>[];
-
-  late final command = Command.createAsync(
-    fetchData,
-    [],
-  )..errors.listen((error, _) {
-    if (error != null) {
-      errorHistory.add(error);
-    }
-  });
-}
-```
+**See also:** [Error Handling - Error Filters](/documentation/command_it/error_handling#error-filters)
 
 ---
 
@@ -304,43 +123,22 @@ class Manager {
 ### Too many rebuilds / UI laggy
 
 **Symptoms:**
-- UI rebuilds constantly
-- Scrolling is janky
-- Performance issues
+- UI rebuilds on every command execution
+- Even when result is identical
 
 **Diagnosis:**
 
-Check if you're watching `.results` unnecessarily:
+By default, commands notify listeners on every successful execution, even if the result is identical. This is intentional - a non-updating UI after a refresh action is often more confusing to users.
 
-```dart
-// ❌️ Rebuilds on EVERY state change (running, success, error)
-final result = watchValue((Manager m) => m.command.results);
-return Text('${result.data}');
-```
+**Solution:** Use `notifyOnlyWhenValueChanges: true`
 
-**Solution:**
+If your command frequently returns identical results and rebuilds are causing performance issues:
 
-Watch only the data you need:
+<<< @/../code_samples/lib/command_it/troubleshooting_performance.dart#notify_only_when_changes
 
-```dart
-// ✅ Only rebuilds when data changes
-final data = watchValue((Manager m) => m.command);
-return Text('$data');
-```
-
-**Or watch specific properties:**
-
-```dart
-// ✅ Only rebuilds when isRunning changes
-final isRunning = watchValue((Manager m) => m.command.isRunning);
-if (isRunning) return CircularProgressIndicator();
-
-// ✅ Only rebuilds when data changes
-final data = watchValue((Manager m) => m.command);
-return DataWidget(data);
-```
-
-**See also:** [CommandResult vs Individual Properties](/documentation/command_it/command_results#commandresult-vs-individual-properties)
+::: tip When to Use This
+Use `notifyOnlyWhenValueChanges: true` for polling/refresh commands where identical results are common. Keep the default (`false`) for user-triggered actions where feedback is expected.
+:::
 
 ---
 
@@ -355,51 +153,19 @@ return DataWidget(data);
 
 Check if you're calling the command in build:
 
-```dart
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    command('query'); // ❌️ Called on every build!
-    return SomeWidget();
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_command_executes_often.dart#diagnosis_bad
 
 **Solution 1:** Call in event handlers only
 
-```dart
-// Call command only when button is pressed
-ElevatedButton(
-  onPressed: () => command('query'),
-  child: const Text('Search'),
-)
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_command_executes_often.dart#solution1
 
 **Solution 2:** Use `callOnce` for initialization
 
-```dart
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    callOnce((Manager m) => m.command('initial'));
-    return SomeWidget();
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_command_executes_often.dart#solution2
 
 **Solution 3:** Debounce rapid calls
 
-```dart
-// In your manager
-late final debouncedSearch = Command.createSync<String, String>(
-  (query) => query,
-  '',
-);
-
-debouncedSearch.debounce(Duration(milliseconds: 500)).listen((query, _) {
-  actualSearchCommand(query);
-});
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_command_executes_often.dart#solution3
 
 ---
 
@@ -416,75 +182,41 @@ debouncedSearch.debounce(Duration(milliseconds: 500)).listen((query, _) {
 
 Check if you're disposing commands:
 
-```dart
-class Manager {
-  late final command = Command.createAsync(fetchData, []);
-
-  // ❌️ Missing dispose!
-}
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_memory_leaks.dart#diagnosis_bad
 
 **Solution:**
 
 Always dispose commands in `dispose()` or `onDispose()`:
 
-```dart
-class Manager extends DisposableObject {
-  late final command = Command.createAsync(fetchData, []);
+<<< @/../code_samples/lib/command_it/troubleshooting_memory_leaks.dart#solution
 
-  @override
-  void onDispose() {
-    command.dispose(); // ✅ Clean up
-  }
-}
-```
+**For `get_it` singletons:**
 
-**For get_it singletons:**
-
-```dart
-getIt.registerSingleton<Manager>(
-  Manager(),
-  dispose: (manager) => manager.dispose(),
-);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_memory_leaks.dart#get_it_dispose
 
 ---
 
 ## Integration Issues
 
-### watch_it not finding command
+### `watch_it` not finding command
 
 **Symptoms:**
 - `watchValue` throws error: "No registered instance found"
-- Command works with direct access but not with watch_it
+- Command works with direct access but not with `watch_it`
 
 **Diagnosis:**
 
-Check if manager is registered in get_it:
+Check if manager is registered in `get_it`:
 
-```dart
-// ❌️ Manager not registered
-class MyWidget extends WatchingWidget {
-  @override
-  Widget build(BuildContext context) {
-    final data = watchValue((Manager m) => m.command); // Fails!
-    return Text('$data');
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_integration.dart#watch_it_not_registered
 
 **Solution:**
 
-Register manager in get_it before using watch_it:
+Register manager in `get_it` before using `watch_it`:
 
-```dart
-void main() {
-  GetIt.I.registerSingleton<Manager>(Manager()); // ✅ Register first
-  runApp(MyApp());
-}
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_integration.dart#register_first
 
-**See also:** [get_it documentation](/documentation/get_it/getting_started)
+**See also:** [`get_it` documentation](/documentation/get_it/getting_started)
 
 ---
 
@@ -496,87 +228,46 @@ void main() {
 
 **Diagnosis:**
 
-Check if you're passing the right `ValueListenable`:
+Common mistake - creating new instance on every build:
 
-```dart
-// ❌️ Passing the command object, not a ValueListenable
-ValueListenableBuilder(
-  valueListenable: manager.command, // This IS a ValueListenable, should work
-  builder: (context, value, _) => Text('$value'),
-)
-```
-
-**Common mistake - not watching changes:**
-
-```dart
-// ❌️ Creating new instance on every build
-ValueListenableBuilder(
-  valueListenable: Command.createAsync(fetch, []), // New command each build!
-  builder: (context, value, _) => Text('$value'),
-)
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_integration.dart#vlb_new_instance_bad
 
 **Solution:**
 
 Command must be created once and reused:
 
-```dart
-class Manager {
-  late final command = Command.createAsync(fetch, []); // ✅ Created once
-}
-
-// In widget:
-ValueListenableBuilder(
-  valueListenable: manager.command, // ✅ Same instance
-  builder: (context, value, _) => Text('$value'),
-)
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_integration.dart#vlb_reuse_good
 
 ---
 
 ## Type Issues
 
-### Cannot convert TResult to expected type
+### CommandResult doesn't have data during loading/error
 
 **Symptoms:**
-- Type error: "type 'Null' is not a subtype of type `List<Item>`"
-- Compiler errors about incompatible types
+- Accessing `result.data` returns null unexpectedly
+- Data disappears while command is running
+- Previous data gone after an error
 
 **Diagnosis:**
 
-Check if you're handling null data:
+By default, `CommandResult.data` is only available after successful completion. During loading or after an error, `.data` is null:
 
-```dart
-// ❌️ data might be null initially
-final result = watchValue((Manager m) => m.command.results);
-return ListView.builder(
-  itemCount: result.data.length, // Crash if data is null!
-  ...
-);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_commandresult_data.dart#diagnosis
 
-**Solution:**
+**Solution 1:** Use `includeLastResultInCommandResults: true`
 
-Always check for null or provide default:
+This preserves the last successful result during loading and error states:
 
-```dart
-final result = watchValue((Manager m) => m.command.results);
-if (!result.hasData) return EmptyState();
+<<< @/../code_samples/lib/command_it/troubleshooting_commandresult_data.dart#solution1
 
-return ListView.builder(
-  itemCount: result.data!.length, // ✅ Safe - checked above
-  ...
-);
-```
+**Solution 2:** Check state before accessing data
 
-**Or use null-aware operators:**
+<<< @/../code_samples/lib/command_it/troubleshooting_commandresult_data.dart#solution2
 
-```dart
-return ListView.builder(
-  itemCount: result.data?.length ?? 0, // ✅ Default to 0
-  ...
-);
-```
+**Solution 3:** Use the command directly (always has data)
+
+<<< @/../code_samples/lib/command_it/troubleshooting_commandresult_data.dart#solution3
 
 ---
 
@@ -590,25 +281,13 @@ return ListView.builder(
 
 Command created without explicit types:
 
-```dart
-// ❌️ Dart can't infer types from context
-final command = Command.createAsync(
-  (param) async => await fetchData(param),
-  [],
-);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_type_issues.dart#inference_bad
 
 **Solution:**
 
 Specify generic types explicitly:
 
-```dart
-// ✅ Explicit types
-final command = Command.createAsync<String, List<Item>>(
-  (query) async => await fetchData(query),
-  [],
-);
-```
+<<< @/../code_samples/lib/command_it/troubleshooting_type_issues.dart#inference_good
 
 ---
 

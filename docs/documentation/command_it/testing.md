@@ -209,10 +209,10 @@ expect(mockCommand.isRunning.value, false);
 **This pattern demonstrates:**
 
 <ul style="list-style: none; padding-left: 0;">
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Real service with actual command using get_it for dependencies</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Real service with actual command using <code>get_it</code> for dependencies</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Mock service implements real service and overrides command with MockCommand</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Control methods make test code readable and maintainable</li>
-  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Manager uses get_it to access service (full dependency injection)</li>
+  <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Manager uses <code>get_it</code> to access service (full dependency injection)</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ Tests register mock service to control command behavior</li>
   <li style="padding-left: 1.5em; text-indent: -1.5em;">✅ No async delays - tests run instantly</li>
 </ul>

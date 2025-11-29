@@ -16,7 +16,7 @@ dependencies:
   command_it: ^2.0.0
 ```
 
-For the recommended setup with watch_it and get_it, just import `flutter_it`:
+For the recommended setup with `watch_it` and `get_it`, just import `flutter_it`:
 
 ```yaml
 dependencies:
@@ -40,7 +40,7 @@ A `Command` is:
 The core philosophy: **Start commands with `run()` (fire and forget), then your app/UI observes and reacts to their state changes**. This reactive pattern keeps your UI responsive with no blocking—you trigger the action and let your UI automatically respond to loading states, results, and errors.
 :::
 
-Here's the simplest possible example using **watch_it** (the recommended approach):
+Here's the simplest possible example using **`watch_it`** (the recommended approach):
 
 <<< @/../code_samples/lib/command_it/counter_watch_it.dart#example
 
@@ -48,16 +48,16 @@ Here's the simplest possible example using **watch_it** (the recommended approac
 - Create with `Command.createSyncNoParam<TResult>()` (see [Command Types](command_types.md) for different signatures)
 - Command has a **`.run` method** - use it as tearoff for `onPressed`
 - Use **`watchValue`** to observe the command - auto-rebuilds when the value changes
-- Register your service with get_it (call setup in `main()`), extend `WatchingWidget` for watch_it functionality
+- Register your service with `get_it` (call setup in `main()`), extend `WatchingWidget` for `watch_it` functionality
 - Initial value is required so the UI has something to show immediately
 
-::: tip Using Commands without watch_it
-Commands also work with plain `ValueListenableBuilder` if you prefer not to use watch_it. See [Without watch_it](without_watch_it.md) for examples. For more about watch_it, see the [watch_it documentation](/documentation/watch_it/getting_started.md).
+::: tip Using Commands without `watch_it`
+Commands also work with plain `ValueListenableBuilder` if you prefer not to use `watch_it`. See [Without `watch_it`](without_watch_it.md) for examples. For more about `watch_it`, see the [`watch_it` documentation](/documentation/watch_it/getting_started.md).
 :::
 
 ## Real-World Example: Async Commands with Loading States
 
-Most real apps need async operations (HTTP calls, database queries, etc.). Commands make this trivial by tracking execution state automatically. Here's an example with **watch_it**:
+Most real apps need async operations (HTTP calls, database queries, etc.). Commands make this trivial by tracking execution state automatically. Here's an example with **`watch_it`**:
 
 <<< @/../code_samples/lib/command_it/watch_it_simple.dart#example
 
@@ -65,10 +65,10 @@ Most real apps need async operations (HTTP calls, database queries, etc.). Comma
 1. `Command.createAsync<TParam, TResult>()` wraps an async function
 2. `watchValue` observes both the command result AND its `isRunning` property
 3. The UI automatically shows a loading indicator while the command executes
-4. No nested `ValueListenableBuilder` widgets - watch_it keeps the code clean
+4. No nested `ValueListenableBuilder` widgets - `watch_it` keeps the code clean
 5. The command parameter (`'London'`) is passed to the wrapped function
 
-This pattern eliminates the boilerplate of manually tracking loading states and nested builders → commands + watch_it handle everything for you.
+This pattern eliminates the boilerplate of manually tracking loading states and nested builders → commands + `watch_it` handle everything for you.
 
 ::: tip Commands Always Notify (By Default)
 Commands notify listeners on **every execution**, even if the result value is identical. This is intentional because:
@@ -110,6 +110,23 @@ command.results // ValueListenable<CommandResult<TParam, TResult>>
 `CommandResult` combines `data`, `error`, `isRunning`, and `paramData` in one object. Perfect for comprehensive error/loading/success UI states.
 
 See [Command Results](command_results.md) for details.
+
+### Progress Control
+
+Track operation progress, display status messages, and allow cancellation with the built-in **Progress Control** feature:
+
+<<< @/../code_samples/lib/command_it/progress_upload_basic.dart#example
+
+```dart
+// In UI:
+watchValue((MyService s) => s.uploadCommand.progress)  // 0.0 to 1.0
+watchValue((MyService s) => s.uploadCommand.statusMessage)  // Status text
+uploadCommand.cancel()  // Request cancellation
+```
+
+**All commands** expose progress properties (even without `WithProgress` factory) - commands without progress simply return default values with zero overhead.
+
+See [Progress Control](progress_control.md) for details.
 
 ### Error Handling
 
@@ -191,7 +208,7 @@ Head to [Testing](testing.md) for:
 | Error handling and routing | [Error Handling](error_handling.md) |
 | Conditional execution | [Restrictions](restrictions.md) |
 | Testing patterns | [Testing](testing.md) |
-| Integration with watch_it | [Observing Commands with watch_it](/documentation/watch_it/observing_commands) |
+| Integration with `watch_it` | [Observing Commands with `watch_it`](/documentation/watch_it/observing_commands) |
 | Production patterns | [Best Practices](best_practices.md) |
 
 Ready to dive deeper? Pick a topic from the [Quick Reference](#quick-reference) above or follow one of the [Next Steps](#next-steps) learning paths!

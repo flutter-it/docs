@@ -200,7 +200,7 @@ Notifies when errors occur during execution:
 - Log errors to analytics
 - Simple error handling without filters
 
-**With watch_it:**
+**With `watch_it`:**
 
 ```dart
 class SaveWidget extends WatchingWidget {
@@ -226,7 +226,7 @@ class SaveWidget extends WatchingWidget {
 }
 ```
 
-**Without watch_it:** See [Using Commands without watch_it - Error Handling](/documentation/command_it/without_watch_it#error-handling)
+**Without `watch_it`:** See [Using Commands without `watch_it` - Error Handling](/documentation/command_it/without_watch_it#error-handling)
 
 ## results - All Data Combined
 
@@ -323,7 +323,7 @@ command.errors.listen((error, _) {
 });
 ```
 
-**With `registerHandler()` (watch_it):**
+**With `registerHandler()` (`watch_it`):**
 ```dart
 registerHandler((Manager m) => m.command.errors, (context, error, cancel) {
   showSnackBar(error!.error.toString()); // Shows once per error, never null

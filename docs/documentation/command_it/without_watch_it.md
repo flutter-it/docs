@@ -1,6 +1,6 @@
-# Using Commands without watch_it
+# Using Commands without `watch_it`
 
-All the examples in [Getting Started](getting_started.md) use **watch_it**, which is our recommended approach for production apps. However, commands work perfectly with plain `ValueListenableBuilder` or any state management solution that can observe a `Listenable` (like Provider or Riverpod).
+All the examples in [Getting Started](getting_started.md) use **`watch_it`**, which is our recommended approach for production apps. However, commands work perfectly with plain `ValueListenableBuilder` or any state management solution that can observe a `Listenable` (like Provider or Riverpod).
 
 ## Quick Navigation
 
@@ -12,20 +12,21 @@ All the examples in [Getting Started](getting_started.md) use **watch_it**, whic
 | [StatefulWidget + .listen()](#statefulwidget-patterns) | Side effects (dialogs, navigation) |
 | [Provider](#provider-integration) | Existing Provider apps |
 | [Riverpod](#riverpod-integration) | Existing Riverpod apps |
-| [flutter_hooks](#flutter_hooks-integration) | Direct watch-style calls (similar to watch_it!) |
+| [flutter_hooks](#flutter_hooks-integration) | Direct watch-style calls (similar to `watch_it`!) |
+| [Bloc/Cubit](#about-bloc-cubit) | Why commands replace Bloc for async state |
 
 ## When to Use ValueListenableBuilder
 
-Consider using `ValueListenableBuilder` instead of watch_it when:
+Consider using `ValueListenableBuilder` instead of `watch_it` when:
 - You're prototyping or learning and want to minimize dependencies
 - You have a simple widget that doesn't need dependency injection
 - You prefer explicit builder patterns over implicit observation
-- You're working on a project that doesn't use get_it
+- You're working on a project that doesn't use `get_it`
 
-For production apps, we still recommend [watch_it](/documentation/watch_it/observing_commands) for cleaner, more maintainable code.
+For production apps, we still recommend [`watch_it`](/documentation/watch_it/observing_commands) for cleaner, more maintainable code.
 
 ::: tip Easiest Approach: CommandBuilder
-If you want the simplest way to use commands without watch_it, consider `CommandBuilder` - a widget that handles all command states with minimal boilerplate. It's cleaner than manual `ValueListenableBuilder` patterns. Jump to [CommandBuilder example](#commandbuilder-easiest) or see [Command Builders](command_builders.md) for complete documentation.
+If you want the simplest way to use commands without `watch_it`, consider `CommandBuilder` - a widget that handles all command states with minimal boilerplate. It's cleaner than manual `ValueListenableBuilder` patterns. Jump to [CommandBuilder example](#commandbuilder-easiest) or see [Command Builders](command_builders.md) for complete documentation.
 :::
 
 ## Simple Counter Example
@@ -37,7 +38,7 @@ Here's the basic counter example using `ValueListenableBuilder`:
 **Key points:**
 - Use `ValueListenableBuilder` to observe the command
 - Use `StatelessWidget` instead of `WatchingWidget`
-- No need for get_it registration - service can be created directly in the widget
+- No need for `get_it` registration - service can be created directly in the widget
 - Command is still a `ValueListenable`, just observed differently
 
 ## Async Example with Loading States
@@ -49,16 +50,16 @@ Here's the weather example showing async commands with loading indicators:
 **Key points:**
 - Watch `isRunning` with a separate `ValueListenableBuilder` for loading state
 - Nested builders required - one for loading state, one for data
-- More verbose than watch_it but works without additional dependencies
+- More verbose than `watch_it` but works without additional dependencies
 - All command features (async, error handling, restrictions) still work
 
 ## Comparing the Approaches
 
-For watch_it examples, see [Observing Commands with watch_it](/documentation/watch_it/observing_commands).
+For `watch_it` examples, see [Observing Commands with `watch_it`](/documentation/watch_it/observing_commands).
 
-| Aspect | watch_it | ValueListenableBuilder |
+| Aspect | `watch_it` | ValueListenableBuilder |
 |--------|----------|------------------------|
-| **Dependencies** | Requires get_it + watch_it | No additional dependencies |
+| **Dependencies** | Requires `get_it` + `watch_it` | No additional dependencies |
 | **Widget Base** | `WatchingWidget` | `StatelessWidget` or `StatefulWidget` |
 | **Observation** | `watchValue((Service s) => s.command)` | `ValueListenableBuilder(valueListenable: command, ...)` |
 | **Multiple Properties** | Clean - separate `watchValue` calls | Nested builders required |
@@ -124,7 +125,7 @@ Here's how to handle errors and show dialogs using StatefulWidget:
 **Important:** Always cancel subscriptions in `dispose()` to prevent memory leaks!
 
 ::: tip Want Automatic Cleanup?
-For automatic subscription cleanup, consider using watch_it's `registerHandler` - see [Observing Commands with watch_it](/documentation/watch_it/observing_commands) for patterns that eliminate manual subscription management.
+For automatic subscription cleanup, consider using `watch_it`'s `registerHandler` - see [Observing Commands with `watch_it`](/documentation/watch_it/observing_commands) for patterns that eliminate manual subscription management.
 :::
 
 For more error handling patterns, see [Command Properties - Error Notifications](/documentation/command_it/command_properties#errors---error-notifications).
@@ -143,7 +144,7 @@ The `canRun` property automatically combines the command's restriction state and
 
 ## Choosing Your Approach
 
-When using commands without watch_it, you have several options:
+When using commands without `watch_it`, you have several options:
 
 ### CommandBuilder (Easiest)
 
@@ -239,12 +240,12 @@ class _MyWidgetState extends State<MyWidget> {
 4. Need fine-grained rebuilds? → Nested builders
 
 ::: tip Want Even Cleaner Code?
-watch_it's `registerHandler` provides automatic subscription cleanup. See [Observing Commands with watch_it](/documentation/watch_it/observing_commands) if you want to eliminate manual subscription management entirely.
+`watch_it`'s `registerHandler` provides automatic subscription cleanup. See [Observing Commands with `watch_it`](/documentation/watch_it/observing_commands) if you want to eliminate manual subscription management entirely.
 :::
 
 ## Integration with Other State Management Solutions
 
-Commands integrate well with other state management solutions (watch_it is ours). Since each command property (`isRunning`, `errors`, `results`, etc.) is itself a `ValueListenable`, any solution that can observe a `Listenable` can watch them with granular rebuilds.
+Commands integrate well with other state management solutions (`watch_it` is ours). Since each command property (`isRunning`, `errors`, `results`, etc.) is itself a `ValueListenable`, any solution that can observe a `Listenable` can watch them with granular rebuilds.
 
 ### Provider Integration
 
@@ -284,7 +285,7 @@ With Riverpod's `@riverpod` annotation, create providers for specific command pr
 
 ### flutter_hooks Integration
 
-flutter_hooks provides a direct watch-style pattern very similar to watch_it! Use `useValueListenable` for clean, declarative observation:
+flutter_hooks provides a direct watch-style pattern very similar to `watch_it`! Use `useValueListenable` for clean, declarative observation:
 
 **Manager setup:**
 
@@ -296,7 +297,7 @@ flutter_hooks provides a direct watch-style pattern very similar to watch_it! Us
 
 **Key points:**
 - `useValueListenable` provides direct watch-style calls - no nested builders!
-- Pattern is very similar to watch_it's `watchValue`
+- Pattern is very similar to `watch_it`'s `watchValue`
 - Each `useValueListenable` call observes a specific property for granular rebuilds
 - Requires `flutter_hooks` package
 
@@ -319,8 +320,8 @@ Commands and Bloc/Cubit solve the same problem - managing async operation state.
 
 Ready to learn more?
 
-- **Want to use watch_it?** See [Observing Commands with watch_it](/documentation/watch_it/observing_commands) for comprehensive patterns
+- **Want to use `watch_it`?** See [Observing Commands with `watch_it`](/documentation/watch_it/observing_commands) for comprehensive patterns
 - **Need more command features?** Check out [Command Properties](command_properties.md), [Error Handling](error_handling.md), and [Restrictions](restrictions.md)
 - **Building production apps?** Read [Best Practices](best_practices.md) for architecture guidance
 
-For more about watch_it and why we recommend it, see the [watch_it documentation](/documentation/watch_it/getting_started.md).
+For more about `watch_it` and why we recommend it, see the [`watch_it` documentation](/documentation/watch_it/getting_started.md).

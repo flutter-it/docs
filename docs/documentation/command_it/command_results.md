@@ -129,7 +129,7 @@ Error:      { data: [old results], error: Exception(), isRunning: false }  ← S
 
 ## Complete Example
 
-### With watch_it (Recommended)
+### With `watch_it` (Recommended)
 
 <<< @/../code_samples/lib/command_it/command_result_watch_it_example.dart#example
 
@@ -141,11 +141,11 @@ Error:      { data: [old results], error: Exception(), isRunning: false }  ← S
 5. Check `result.hasData` → show data
 6. Fallback → initial state
 
-### Without watch_it
+### Without `watch_it`
 
 <<< @/../code_samples/lib/command_it/command_result_example.dart#example
 
-Same logic using `ValueListenableBuilder` for users who prefer not to use watch_it.
+Same logic using `ValueListenableBuilder` for users who prefer not to use `watch_it`.
 
 ## Using .toWidget() with CommandResult
 
@@ -328,7 +328,7 @@ if (result.isSuccess && result.hasData) {
 
 ### Pattern 1: Progressive States
 
-**With watch_it:**
+**With `watch_it`:**
 
 ```dart
 class MyWidget extends WatchingWidget {
@@ -361,7 +361,7 @@ class MyWidget extends WatchingWidget {
 }
 ```
 
-**Without watch_it:**
+**Without `watch_it`:**
 
 ```dart
 ValueListenableBuilder<CommandResult<String, Data>>(
@@ -404,7 +404,7 @@ Command.createAsync<String, List<Item>>(
 );
 ```
 
-**With watch_it:**
+**With `watch_it`:**
 
 ```dart
 class SearchWidget extends WatchingWidget {
@@ -436,7 +436,7 @@ class SearchWidget extends WatchingWidget {
 }
 ```
 
-**Without watch_it:**
+**Without `watch_it`:**
 
 ```dart
 ValueListenableBuilder<CommandResult<String, List<Item>>>(

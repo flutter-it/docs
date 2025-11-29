@@ -1,41 +1,22 @@
 # Best Practices
 
-::: warning AI-Generated Content Under Review
-This documentation was generated with AI assistance and is currently under review. While we strive for accuracy, there may be errors or inconsistencies. Please report any issues you find.
-:::
-
-Production-ready patterns, anti-patterns, and guidelines for using command_it effectively.
+Production-ready patterns, anti-patterns, and guidelines for using `command_it` effectively.
 
 ## When to Use Commands
 
 ### ✅ Use Commands For
 
 **Async operations with UI feedback:**
-```dart
-late final loadDataCommand = Command.createAsyncNoParam<List<Data>>(
-  () => api.fetchData(),
-  initialValue: [],
-);
-// Automatic isRunning, error handling, UI integration
-```
+
+<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#async_ui_feedback
 
 **Operations that can fail:**
-```dart
-late final saveCommand = Command.createAsync<Data, void>(
-  (data) => api.save(data),
-  errorFilter: PredicatesErrorFilter([
-    (e, _) => errorFilter<ApiException>(e, ErrorReaction.localHandler),
-  ]),
-);
-```
+
+<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#operations_can_fail
 
 **User-triggered actions:**
-```dart
-late final submitCommand = Command.createAsync<FormData, void>(
-  (data) => api.submit(data),
-  restriction: formValid.map((valid) => !valid),
-);
-```
+
+<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#user_triggered
 
 **Operations needing state tracking:**
 - Button loading states
@@ -44,84 +25,38 @@ late final submitCommand = Command.createAsync<FormData, void>(
 - Network requests
 - File I/O
 
+### ✅ Use Sync Commands for Input with Operators
+
+When you need to apply operators (debounce, map, where) to user input before triggering other operations:
+
+<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#sync_input_operators
+
+This is different from simple getters/setters because:
+- It captures user input as a stream of values
+- It uses operators like `.debounce()` to process the stream
+- It chains to trigger other commands
+
+**See also:** The [weather example](https://github.com/flutter-it/command_it/blob/main/example/lib/weather_manager.dart) demonstrates this pattern with `textChangedCommand`.
+
 ### ❌️️ Don't Use Commands For
 
-**Simple getters/setters:**
-```dart
-// ❌️️ Overkill
-late final getNameCommand = Command.createSync<void, String>(
-  () => _name,
-  '',
-);
+**Simple getters/setters (without operators or chaining):**
 
-// ✅ Just use a ValueNotifier
-final name = ValueNotifier<String>('');
-```
+<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#dont_use_getter
 
 **Pure computations without side effects:**
-```dart
-// ❌️️ Unnecessary
-late final calculateCommand = Command.createSync<int, int>(
-  (n) => n * 2,
-  0,
-);
 
-// ✅ Just use a function
-int calculate(int n) => n * 2;
-```
+<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#dont_use_computation
 
 **Immediate state changes:**
-```dart
-// ❌️️ Overcomplicated
-late final toggleCommand = Command.createSync<void, bool>(
-  () => !_enabled,
-  false,
-);
 
-// ✅ Use ValueNotifier directly
-final enabled = ValueNotifier<bool>(false);
-enabled.value = !enabled.value;
-```
+<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#dont_use_toggle
 
 ## Organization Patterns
 
-### Pattern 1: Commands in Services/Managers
+### Pattern 1: Commands in Managers
 
-```dart
-class TodoService {
-  final ApiClient api;
-  final Database db;
-
-  TodoService(this.api, this.db);
-
-  // Group related commands
-  late final loadTodosCommand = Command.createAsyncNoParam<List<Todo>>(
-    () => api.fetchTodos(),
-    initialValue: [],
-  );
-
-  late final addTodoCommand = Command.createAsync<Todo, void>(
-    (todo) async {
-      await api.addTodo(todo);
-      loadTodosCommand.run(); // Reload after add
-    },
-  );
-
-  late final deleteTodoCommand = Command.createAsync<String, void>(
-    (id) async {
-      await api.deleteTodo(id);
-      loadTodosCommand.run(); // Reload after delete
-    },
-    restriction: loadTodosCommand.isRunningSync, // Can't delete while loading
-  );
-
-  void dispose() {
-    loadTodosCommand.dispose();
-    addTodoCommand.dispose();
-    deleteTodoCommand.dispose();
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/best_practices_organization.dart#managers_managers
 
 **Benefits:**
 - Centralized business logic
@@ -131,196 +66,29 @@ class TodoService {
 
 ### Pattern 2: Feature-Based Organization
 
-```dart
-// features/authentication/auth_service.dart
-class AuthService {
-  late final loginCommand = Command.createAsync<LoginData, User>(...);
-  late final logoutCommand = Command.createAsyncNoParam<void>(...);
-  late final refreshTokenCommand = Command.createAsyncNoParam<Token>(...);
-}
+<<< @/../code_samples/lib/command_it/best_practices_organization.dart#feature_based
 
-// features/profile/profile_service.dart
-class ProfileService {
-  final AuthService auth;
+### Pattern 3: Commands in Data Proxies
 
-  late final loadProfileCommand = Command.createAsyncNoParam<Profile>(
-    ...,
-    restriction: auth.loginCommand.map((user) => !user.isLoggedIn),
-  );
-}
-```
+Commands can also live in data objects that manage their own async operations. This is useful when each data item needs independent loading state:
 
-### Pattern 3: Layered Architecture
+<<< @/../code_samples/lib/command_it/best_practices_organization.dart#proxy_pattern
 
-```dart
-// Domain layer: Business logic
-class UpdateUserUseCase {
-  final UserRepository repo;
-
-  late final command = Command.createAsync<User, void>(
-    (user) => repo.update(user),
-  );
-}
-
-// Presentation layer: UI logic
-class ProfileViewModel {
-  final UpdateUserUseCase updateUser;
-
-  late final saveCommand = Command.createAsync<ProfileFormData, void>(
-    (formData) async {
-      final user = formData.toUser();
-      await updateUser.command(user);
-    },
-  );
-}
-```
-
-## Error Handling Best Practices
-
-### Global + Local Error Handling
-
-```dart
-// Set up global handler once at app startup
-void setupErrorHandling() {
-  Command.globalExceptionHandler = (error, stackTrace) {
-    // Log to service
-    loggingService.logError(error, stackTrace);
-
-    // Report to crash analytics (production only)
-    if (kReleaseMode) {
-      crashReporter.report(error, stackTrace);
-    }
-  };
-
-  // Default filter strategy
-  Command.errorFilterDefault = const ErrorHandlerGlobalIfNoLocal();
-}
-
-// Per-command error handling
-class DataService {
-  late final loadCommand = Command.createAsyncNoParam<Data>(
-    () => api.load(),
-    initialValue: Data.empty(),
-    errorFilter: PredicatesErrorFilter([
-      // User-facing errors: show in UI
-      (e, _) => errorFilter<ValidationException>(e, ErrorReaction.localHandler),
-
-      // Network errors: show + log
-      (e, _) => errorFilter<NetworkException>(e, ErrorReaction.localAndGlobalHandler),
-
-      // Critical errors: log only
-      (e, _) => ErrorReaction.globalHandler,
-    ]),
-  );
-}
-```
-
-### User-Friendly Error Messages
-
-```dart
-class DataService {
-  late final loadCommand = Command.createAsyncNoParam<Data>(
-    () => api.load(),
-    initialValue: Data.empty(),
-  );
-
-  // Listen to errors and translate to user-friendly messages
-  void setupErrorHandling() {
-    loadCommand.errors.where((e) => e != null).listen((error, _) {
-      final message = _getUserFriendlyMessage(error!.error);
-      showUserError(message);
-    });
-  }
-
-  String _getUserFriendlyMessage(Object error) {
-    if (error is NetworkException) {
-      return 'Network error. Please check your connection.';
-    }
-    if (error is ApiException) {
-      if (error.statusCode == 401) return 'Please log in again.';
-      if (error.statusCode == 403) return 'You don\'t have permission.';
-      if (error.statusCode == 404) return 'Data not found.';
-    }
-    return 'An unexpected error occurred. Please try again.';
-  }
-}
-```
+**Benefits:**
+- Each item has independent loading/error state
+- Caching logic lives with the data
+- UI can observe individual item state
+- Manager stays simple (just creates/caches proxies)
 
 ## When to Use runAsync()
 
 As explained in [Command Basics](/documentation/command_it/command_basics), the core command pattern is **fire-and-forget**: call `run()` and let your UI observe state changes reactively. However, there are legitimate cases where using `runAsync()` is appropriate and more expressive than alternatives.
 
-### ✅ Use runAsync() For Sequential Command Execution
+### ✅ Use runAsync() For Sequential Workflows
 
-When multiple commands need to execute in sequence as part of business logic:
+When commands are part of a larger async workflow mixed with other async operations:
 
-```dart
-class OnboardingService {
-  late final createAccountCommand = Command.createAsync<AccountData, User>(
-    (data) => api.createAccount(data),
-    initialValue: User.empty(),
-  );
-
-  late final setupProfileCommand = Command.createAsync<ProfileData, void>(
-    (profile) => api.setupProfile(profile),
-  );
-
-  late final sendWelcomeEmailCommand = Command.createAsyncNoParam<void>(
-    () => api.sendWelcomeEmail(),
-  );
-
-  // Sequential execution: Each step depends on the previous
-  Future<void> completeOnboarding(AccountData account, ProfileData profile) async {
-    // Create account first
-    final user = await createAccountCommand.runAsync(account);
-
-    // Then setup profile (needs user ID from previous step)
-    await setupProfileCommand.runAsync(profile.copyWith(userId: user.id));
-
-    // Finally send email
-    await sendWelcomeEmailCommand.runAsync();
-  }
-}
-```
-
-**Why not `.listen()`?** While you could chain these with listeners, `runAsync()` makes the sequential flow obvious and easier to reason about.
-
-### ✅ Use runAsync() Inside Async Functions
-
-When a command is part of a larger async operation:
-
-```dart
-class PaymentService {
-  late final validatePaymentCommand = Command.createAsync<PaymentInfo, bool>(
-    (info) => api.validatePayment(info),
-    initialValue: false,
-  );
-
-  late final processPaymentCommand = Command.createAsync<PaymentInfo, Receipt>(
-    (info) => api.processPayment(info),
-    initialValue: Receipt.empty(),
-  );
-
-  // Complex async workflow
-  Future<Receipt> completeCheckout(Cart cart, PaymentInfo payment) async {
-    // Step 1: Validate inventory (not a command, just async call)
-    final available = await api.checkInventory(cart.items);
-    if (!available) throw InsufficientInventoryException();
-
-    // Step 2: Validate payment (command)
-    final isValid = await validatePaymentCommand.runAsync(payment);
-    if (!isValid) throw InvalidPaymentException();
-
-    // Step 3: Process payment (command)
-    final receipt = await processPaymentCommand.runAsync(payment);
-
-    // Step 4: Update inventory (not a command)
-    await api.updateInventory(cart.items);
-
-    return receipt;
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/best_practices_run_async.dart#async_workflow
 
 **Why `runAsync()` here?** The command is part of a larger async function that mixes command execution with regular async calls. Using `runAsync()` keeps the code linear and readable.
 
@@ -328,52 +96,16 @@ class PaymentService {
 
 When interfacing with APIs that require a `Future`:
 
-```dart
-// RefreshIndicator requires Future<void>
-RefreshIndicator(
-  onRefresh: () => updateCommand.runAsync(),
-  child: ListView(...),
-)
-
-// Navigator.push with async result
-final result = await Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => ConfirmationScreen(
-      onConfirm: () => confirmCommand.runAsync(),
-    ),
-  ),
-);
-```
+<<< @/../code_samples/lib/command_it/best_practices_run_async.dart#api_futures
 
 ### ❌️ Don't Use runAsync() for Simple UI Updates
 
-```dart
-// ❌️️ BAD: Blocking UI thread waiting for result
-ElevatedButton(
-  onPressed: () async {
-    final result = await loadDataCommand.runAsync();
-    // Do nothing with result - just waiting
-  },
-  child: Text('Load'),
-)
-
-// ✅ GOOD: Fire and forget, let UI observe
-ElevatedButton(
-  onPressed: loadDataCommand.run,
-  child: Text('Load'),
-)
-
-// UI automatically reacts to state changes
-final isLoading = watchValue((Service s) => s.loadDataCommand.isRunning);
-if (isLoading) CircularProgressIndicator()
-```
+<<< @/../code_samples/lib/command_it/best_practices_run_async.dart#dont_use_runasync
 
 ### Summary
 
 **Use `runAsync()` when:**
-- ✅ Executing commands sequentially where each depends on the previous result
-- ✅ Commands are part of a larger async function/workflow
+- ✅ Commands are part of a larger async workflow
 - ✅ An API requires a Future to be returned
 - ✅ The sequential flow is clearer with `await` than with `.listen()`
 
@@ -384,465 +116,43 @@ if (isLoading) CircularProgressIndicator()
 
 ## Performance Best Practices
 
-### Use Appropriate Initial Values
-
-```dart
-// ❌️️ Wasteful: Large initial value that will be replaced
-late final loadCommand = Command.createAsyncNoParam<List<HeavyObject>>(
-  () => api.load(),
-  initialValue: List.generate(1000, (_) => HeavyObject()), // Immediately discarded!
-);
-
-// ✅ Lightweight initial value
-late final loadCommand = Command.createAsyncNoParam<List<HeavyObject>>(
-  () => api.load(),
-  initialValue: [], // Empty list is cheap
-);
-```
-
 ### Debounce Text Input
 
-```dart
-class SearchService {
-  late final searchTextCommand = Command.createSync<String, String>(
-    (text) => text,
-    initialValue: '',
-  );
-
-  late final searchCommand = Command.createAsync<String, List<Result>>(
-    (query) => api.search(query),
-    initialValue: [],
-  );
-
-  SearchService() {
-    // Debounce text changes
-    searchTextCommand.debounce(Duration(milliseconds: 300)).listen((text, _) {
-      if (text.isNotEmpty) {
-        searchCommand(text);
-      }
-    });
-  }
-}
-```
+<<< @/../code_samples/lib/command_it/best_practices_performance.dart#debounce
 
 ### Dispose Commands Properly
 
-```dart
-class DataManager {
-  late final command = Command.createAsyncNoParam<Data>(...);
-
-  // ✅ Always dispose in cleanup
-  void dispose() {
-    command.dispose();
-  }
-}
-
-// With StatefulWidget
-class MyWidget extends StatefulWidget {
-  @override
-  State<MyWidget> createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  final manager = DataManager();
-
-  @override
-  void dispose() {
-    manager.dispose();
-    super.dispose();
-  }
-}
-
-// With get_it scopes
-getIt.registerLazySingleton<DataManager>(
-  () => DataManager(),
-  dispose: (manager) => manager.dispose(),
-);
-```
+<<< @/../code_samples/lib/command_it/best_practices_performance.dart#dispose
 
 ### Avoid Unnecessary Rebuilds
 
-```dart
-// ❌️️ Rebuilds on every command property change
-ValueListenableBuilder(
-  valueListenable: command.results,
-  builder: (context, result, _) => Text(result.data?.toString() ?? ''),
-)
-
-// ✅ Only rebuilds when value changes
-ValueListenableBuilder(
-  valueListenable: command,
-  builder: (context, data, _) => Text(data.toString()),
-)
-```
+<<< @/../code_samples/lib/command_it/best_practices_performance.dart#rebuilds
 
 ## Restriction Best Practices
 
 ### Use isRunningSync for Command Dependencies
 
-```dart
-// ✅ Correct: Synchronous restriction
-late final saveCommand = Command.createAsync<Data, void>(
-  (data) => api.save(data),
-  restriction: loadCommand.isRunningSync, // Prevents race conditions
-);
-
-// ❌️️ Wrong: Async update can cause races
-late final saveCommand = Command.createAsync<Data, void>(
-  (data) => api.save(data),
-  restriction: loadCommand.isRunning, // Race condition possible!
-);
-```
+<<< @/../code_samples/lib/command_it/best_practices_restriction.dart#isrunningsync
 
 ### Restriction Logic is Inverted
 
-```dart
-// ❌️️ Common mistake: Restriction logic backwards
-final isLoggedIn = ValueNotifier<bool>(false);
-late final command = Command.createAsyncNoParam<Data>(
-  () => api.load(),
-  initialValue: Data.empty(),
-  restriction: isLoggedIn, // WRONG: Disabled when logged in!
-);
-
-// ✅ Correct: Negate the condition
-late final command = Command.createAsyncNoParam<Data>(
-  () => api.load(),
-  initialValue: Data.empty(),
-  restriction: isLoggedIn.map((logged) => !logged), // Disabled when NOT logged in
-);
-```
-
-## Testing Best Practices
-
-### Mock at the Service Level
-
-```dart
-// Service with injected dependency
-class DataService {
-  final ApiClient api;
-
-  DataService(this.api);
-
-  late final loadCommand = Command.createAsyncNoParam<Data>(
-    () => api.load(),
-    initialValue: Data.empty(),
-  );
-}
-
-// Test with mock
-test('loadCommand handles errors', () async {
-  final mockApi = MockApiClient();
-  when(mockApi.load()).thenThrow(Exception('Error'));
-
-  final service = DataService(mockApi);
-
-  expect(
-    () => service.loadCommand.runAsync(),
-    throwsA(isA<Exception>()),
-  );
-});
-```
-
-### Use Collector Pattern
-
-```dart
-test('Command state transitions', () async {
-  final collector = Collector<bool>();
-
-  final command = Command.createAsyncNoParam<String>(
-    () async {
-      await Future.delayed(Duration(milliseconds: 50));
-      return 'result';
-    },
-    initialValue: '',
-  );
-
-  command.isRunning.listen((running, _) => collector(running));
-
-  await command.runAsync();
-
-  expect(collector.values, [false, true, false]);
-});
-```
-
-### Test All States
-
-```dart
-test('Verify complete command flow', () async {
-  final states = <String>[];
-
-  command.results.listen((result, _) {
-    if (result.isRunning) states.add('running');
-    else if (result.hasError) states.add('error');
-    else if (result.hasData) states.add('success');
-  });
-
-  await command.runAsync();
-
-  expect(states, ['success', 'running', 'success']);
-});
-```
+<<< @/../code_samples/lib/command_it/best_practices_restriction.dart#inverted
 
 ## Common Anti-Patterns
 
-### ❌️️ Commands in Widgets
-
-```dart
-// ❌️️ BAD: Command created in widget
-class MyWidget extends StatelessWidget {
-  late final command = Command.createAsyncNoParam<Data>(
-    () => api.load(),
-    initialValue: Data.empty(),
-  );
-  // Memory leak! Never disposed
-}
-
-// ✅ GOOD: Command in service
-class DataService {
-  late final loadCommand = Command.createAsyncNoParam<Data>(...);
-  void dispose() => loadCommand.dispose();
-}
-```
-
 ### ❌️️ Not Listening to Errors
 
-```dart
-// ❌️️ BAD: Errors go nowhere
-late final command = Command.createAsyncNoParam<Data>(
-  () => api.load(),
-  initialValue: Data.empty(),
-  errorFilter: const ErrorHandlerLocal(),
-);
-// No error listener! Assertions in debug mode
+<<< @/../code_samples/lib/command_it/best_practices_antipatterns.dart#not_listening_errors
 
-// ✅ GOOD: Always listen to errors when using localHandler
-command.errors.listen((error, _) {
-  if (error != null) showError(error.error);
-});
-```
+### ❌️️ Try/Catch Inside Commands
 
-### ❌️️ Excessive State in CommandResult
+Don't use try/catch inside command functions - it defeats `command_it`'s error handling system:
 
-```dart
-// ❌️️ BAD: Always using .results when not needed
-ValueListenableBuilder(
-  valueListenable: command.results,
-  builder: (context, result, _) {
-    return Text(result.data?.toString() ?? '');
-  },
-)
-// Rebuilds on running, error, success
-
-// ✅ GOOD: Use .value for data-only updates
-ValueListenableBuilder(
-  valueListenable: command,
-  builder: (context, data, _) {
-    return Text(data.toString());
-  },
-)
-// Only rebuilds on successful completion
-```
-
-### ❌️️ Forgetting initialValue
-
-```dart
-// ❌️️ WRONG: Compile error
-late final command = Command.createAsyncNoParam<String>(
-  () => api.load(),
-  // Missing initialValue!
-);
-
-// ✅ CORRECT: Always provide initialValue
-late final command = Command.createAsyncNoParam<String>(
-  () => api.load(),
-  initialValue: '', // Required for non-void results
-);
-```
-
-### ❌️️ Sync Commands with isRunning
-
-```dart
-// ❌️️ WRONG: Sync commands don't have isRunning
-final command = Command.createSyncNoParam<String>(...);
-
-ValueListenableBuilder(
-  valueListenable: command.isRunning, // AssertionError!
-  builder: ...,
-);
-
-// ✅ CORRECT: Use async command if you need isRunning
-final command = Command.createAsyncNoParam<String>(...);
-```
-
-## Production Patterns
-
-### Pattern 1: Retry Logic
-
-```dart
-class DataService {
-  int retryCount = 0;
-  final maxRetries = 3;
-
-  late final loadCommand = Command.createAsyncNoParam<Data>(
-    () async {
-      try {
-        final data = await api.load();
-        retryCount = 0; // Reset on success
-        return data;
-      } catch (e) {
-        if (retryCount < maxRetries && e is NetworkException) {
-          retryCount++;
-          await Future.delayed(Duration(seconds: retryCount * 2));
-          return loadCommand.runAsync(); // Retry
-        }
-        rethrow;
-      }
-    },
-    initialValue: Data.empty(),
-  );
-}
-```
-
-### Pattern 2: Optimistic Updates
-
-```dart
-class TodoService {
-  final todos = ValueNotifier<List<Todo>>([]);
-
-  late final deleteTodoCommand = Command.createAsync<String, void>(
-    (id) async {
-      // Optimistic update
-      final oldTodos = todos.value;
-      todos.value = todos.value.where((t) => t.id != id).toList();
-
-      try {
-        await api.deleteTodo(id);
-      } catch (e) {
-        // Rollback on error
-        todos.value = oldTodos;
-        rethrow;
-      }
-    },
-  );
-}
-```
-
-### Pattern 3: Dependent Loading
-
-```dart
-class ProfileService {
-  late final loadUserCommand = Command.createAsyncNoParam<User>(
-    () => api.loadUser(),
-    initialValue: User.empty(),
-  );
-
-  late final loadSettingsCommand = Command.createAsyncNoParam<Settings>(
-    () async {
-      final userId = loadUserCommand.value.id;
-      return await api.loadSettings(userId);
-    },
-    initialValue: Settings.empty(),
-    restriction: loadUserCommand.map((user) => !user.isLoggedIn),
-  );
-
-  void init() {
-    // Load user first
-    loadUserCommand.run();
-
-    // Load settings after user loads
-    loadUserCommand.where((user) => user.isLoggedIn).listen((_, __) {
-      loadSettingsCommand.run();
-    });
-  }
-}
-```
-
-### Pattern 4: Cancellation Tokens
-
-```dart
-class SearchService {
-  CancellationToken? _currentSearch;
-
-  late final searchCommand = Command.createAsync<String, List<Result>>(
-    (query) async {
-      // Cancel previous search
-      _currentSearch?.cancel();
-
-      // Create new token
-      final token = CancellationToken();
-      _currentSearch = token;
-
-      try {
-        final results = await api.search(query, token);
-
-        if (token.isCancelled) {
-          throw CancelledException();
-        }
-
-        return results;
-      } finally {
-        if (_currentSearch == token) {
-          _currentSearch = null;
-        }
-      }
-    },
-    initialValue: [],
-  );
-}
-```
-
-### Pattern 5: Undoable Commands with Automatic Rollback
-
-For operations that need undo capability, use `UndoableCommand`. It automatically maintains an undo stack and can rollback on failure:
-
-```dart
-class TodoService {
-  final todos = ValueNotifier<List<Todo>>([]);
-
-  // Undoable command with automatic rollback on failure
-  late final deleteTodoCommand = Command.createUndoableNoResult<String, List<Todo>>(
-    (id, previousTodos) async {
-      // Optimistic update
-      todos.value = todos.value.where((t) => t.id != id).toList();
-
-      // Try to delete on server
-      await api.deleteTodo(id);
-      // If this throws, undo is called automatically
-    },
-    undo: (id) {
-      // Return the state snapshot needed to undo
-      return todos.value;
-    },
-    undoOnExecutionFailure: true, // Auto-rollback on error
-  );
-
-  // Manual undo
-  void undoLastDelete() {
-    if (deleteTodoCommand.canUndo) {
-      deleteTodoCommand.undo();
-    }
-  }
-}
-```
-
-**Compared to Pattern 2 (manual optimistic updates):**
-- ✅ Automatic undo stack management
-- ✅ Built-in `canUndo` / `canRedo` tracking
-- ✅ Auto-rollback on failure via `undoOnExecutionFailure`
-- ✅ Support for redo operations
-- ✅ Less boilerplate code
-
-**Use undoable commands when:**
-- Users can explicitly undo/redo actions (text editors, drawing apps)
-- Complex workflows need multi-step rollback
-- You want automatic error recovery with state restoration
-
-See [Command Types - Undoable Commands](/documentation/command_it/command_types#undoable-commands) for factory methods and [Error Handling - Auto-Undo](/documentation/command_it/error_handling#auto-undo-on-failure) for error recovery patterns.
+<<< @/../code_samples/lib/command_it/best_practices_antipatterns.dart#try_catch_inside
 
 ## See Also
 
 - [Command Basics](/documentation/command_it/command_basics) — Getting started
 - [Error Handling](/documentation/command_it/error_handling) — Error management
 - [Testing](/documentation/command_it/testing) — Testing patterns
-- [Observing Commands with watch_it](/documentation/watch_it/observing_commands) — Reactive UI patterns
+- [Observing Commands with `watch_it`](/documentation/watch_it/observing_commands) — Reactive UI patterns
