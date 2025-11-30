@@ -115,7 +115,7 @@ saveCommand.pipeToCommand(refreshCommand);  // Works! Calls refreshCommand.run()
 
 ## Combining with listen_it Operators
 
-The real power comes from combining `pipeToCommand` with `listen_it` operators:
+The real power comes from combining `pipeToCommand` with [listen_it operators](/documentation/listen_it/operators/overview) like `debounce`, `where`, and `map`:
 
 ### Search with Debounce
 
@@ -124,10 +124,6 @@ The real power comes from combining `pipeToCommand` with `listen_it` operators:
 ### Filter Before Piping
 
 <<< @/../code_samples/lib/command_it/command_chaining_operators.dart#filter_example
-
-### Map and Transform
-
-<<< @/../code_samples/lib/command_it/command_chaining_operators.dart#map_example
 
 ## Subscription Management
 

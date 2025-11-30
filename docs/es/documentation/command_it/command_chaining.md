@@ -115,7 +115,7 @@ saveCommand.pipeToCommand(refreshCommand);  // ¡Funciona! Llama refreshCommand.
 
 ## Combinando con Operadores de listen_it
 
-El verdadero poder viene de combinar `pipeToCommand` con operadores de `listen_it`:
+El verdadero poder viene de combinar `pipeToCommand` con [operadores de listen_it](/es/documentation/listen_it/operators/overview) como `debounce`, `where`, y `map`:
 
 ### Búsqueda con Debounce
 
@@ -124,10 +124,6 @@ El verdadero poder viene de combinar `pipeToCommand` con operadores de `listen_i
 ### Filtrar Antes de Pasar
 
 <<< @/../code_samples/lib/command_it/command_chaining_operators.dart#filter_example
-
-### Map y Transform
-
-<<< @/../code_samples/lib/command_it/command_chaining_operators.dart#map_example
 
 ## Gestión de Suscripciones
 
