@@ -202,6 +202,16 @@ When `true`, the handler is called on the first build with the current value of 
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#mistake_good
 
+### ❌ Handler in widget that gets destroyed
+
+If the widget containing the handler is destroyed during command execution, the handler is lost and misses state changes:
+
+<<< @/../code_samples/lib/watch_it/handler_lifecycle_example.dart#bad
+
+### ✅ Move handler to stable parent widget
+
+<<< @/../code_samples/lib/watch_it/handler_lifecycle_example.dart#good
+
 ## What's Next?
 
 Now you know when to rebuild (watch) vs when to run side effects (handlers). Next:

@@ -136,6 +136,18 @@ Ver [Colecciones de listen_it](/documentation/listen_it/collections/introduction
 
 <<< @/../code_samples/lib/watch_it/debugging_registerhandler.dart#handler_registered_before_return_good
 
+#### 2. Widget destruido durante la ejecución del command
+
+Si el widget que contiene el handler se destruye y reconstruye mientras el command se está ejecutando, el handler se re-registrará y puede perder cambios de estado.
+
+**Ejemplo:** Un botón dentro de un widget que se reconstruye al hacer hover:
+
+<<< @/../code_samples/lib/watch_it/handler_lifecycle_example.dart#bad
+
+**Solución:** Mueve el handler a un widget padre estable:
+
+<<< @/../code_samples/lib/watch_it/handler_lifecycle_example.dart#good
+
 ## Técnicas de Debugging
 
 ### Habilitar Tracing de `watch_it`

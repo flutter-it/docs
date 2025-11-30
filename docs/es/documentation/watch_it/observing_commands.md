@@ -67,6 +67,16 @@ Mientras `watch` es para reconstruir UI, usa `registerHandler` para efectos secu
 - Registrar error en reporte de crashes
 - Lógica de reintentar
 
+::: warning Ciclo de Vida del Handler
+Si dependes de que tu handler reaccione a todos los cambios de estado, asegúrate de que el widget donde está registrado el handler no sea destruido y reconstruido durante la ejecución del command.
+
+**Error común:** Un botón que registra un handler y llama a un command, pero el widget padre se reconstruye en un evento `onHover` - esto destruye y recrea el botón (y su handler), causando que se pierdan cambios de estado.
+
+**Solución:** Mueve el handler a un widget padre que vivirá durante toda la duración de la ejecución del command.
+
+**Nota:** Esto no aplica a las funciones `watch` - sus resultados solo se usan en la misma función build, por lo que las reconstrucciones del widget no causan problemas.
+:::
+
 ## Observando Resultados de Command
 
 La propiedad `results` proporciona un objeto `CommandResult` conteniendo todo el estado del command en un lugar:

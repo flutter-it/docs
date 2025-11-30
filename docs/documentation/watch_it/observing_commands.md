@@ -67,6 +67,16 @@ While `watch` is for rebuilding UI, use `registerHandler` for side effects like 
 - Log error to crash reporting
 - Retry logic
 
+::: warning Handler Lifecycle
+If you rely on your handler reacting to all state changes, ensure the widget where the handler is registered isn't destroyed and rebuilt during command execution.
+
+**Common pitfall:** A button that registers a handler and calls a command, but the parent widget rebuilds on an `onHover` event - this destroys and recreates the button (and its handler), causing missed state changes.
+
+**Solution:** Move the handler to a parent widget that will live for the entire duration of the command execution.
+
+**Note:** This doesn't apply to `watch` functions - their results are only used in the same build function, so widget rebuilds don't cause issues.
+:::
+
 ## Watching Command Results
 
 The `results` property provides a `CommandResult` object containing all command state in one place:

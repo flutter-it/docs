@@ -202,6 +202,16 @@ Cuando es `true`, el handler se llama en la primera construcción con el valor a
 
 <<< @/../code_samples/lib/watch_it/handler_patterns.dart#mistake_good
 
+### ❌ Handler en widget que se destruye
+
+Si el widget que contiene el handler se destruye durante la ejecución del command, el handler se pierde y no recibe los cambios de estado:
+
+<<< @/../code_samples/lib/watch_it/handler_lifecycle_example.dart#bad
+
+### ✅ Mover handler a widget padre estable
+
+<<< @/../code_samples/lib/watch_it/handler_lifecycle_example.dart#good
+
 ## ¿Qué Sigue?
 
 Ahora sabes cuándo reconstruir (watch) vs cuándo ejecutar efectos secundarios (handlers). Siguiente:

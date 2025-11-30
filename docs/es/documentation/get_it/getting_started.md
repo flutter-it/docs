@@ -65,6 +65,31 @@ dependencies:
 
 <strong>¡Eso es todo!</strong> Sin wrappers de Provider, sin InheritedWidgets, sin necesidad de BuildContext.
 
+---
+
+## Nombrando tu Instancia de GetIt
+
+El patrón estándar es crear una variable global:
+
+
+<<< @/../code_samples/lib/get_it/code_sample_866f5818.dart#example
+
+<strong>Nombres alternativos que podrías ver:</strong>
+- `final sl = GetIt.instance;` (service locator)
+- `final locator = GetIt.instance;`
+- `final di = GetIt.instance;` (dependency injection)
+- `GetIt.instance` o `GetIt.I` (usar directamente sin variable)
+
+<strong>Recomendación:</strong> Usa `getIt` o `di` - ambos son claros y ampliamente reconocidos en la comunidad Flutter.
+
+::: tip Usando con `watch_it`
+Si estás usando el paquete [`watch_it`](https://pub.dev/packages/watch_it), ya tienes disponible una instancia global `di` - no necesitas crear la tuya. Solo importa `watch_it` y usa `di` directamente.
+:::
+
+::: tip Uso entre Paquetes
+`GetIt.instance` devuelve el mismo singleton a través de todos los paquetes en tu proyecto. Crea tu variable global una vez en tu app principal e impórtala en otros lugares.
+:::
+
 ::: warning Seguridad con Isolates
 Las instancias de GetIt no son thread-safe y no pueden compartirse entre isolates. Cada isolate obtendrá su propia instancia de GetIt. Esto significa que los objetos registrados en un isolate no pueden accederse desde otro isolate.
 :::
@@ -73,7 +98,7 @@ Las instancias de GetIt no son thread-safe y no pueden compartirse entre isolate
 
 ## Cuándo Usar Cada Tipo de Registro
 
-get_it ofrece tres tipos principales de registro:
+`get_it` ofrece tres tipos principales de registro:
 
 | Tipo de Registro | Cuándo se Crea | Tiempo de Vida | Úsalo Cuando |
 |-------------------|--------------|----------|----------|
@@ -161,6 +186,93 @@ Mira [¿Dónde debería poner mi código de configuración de get_it?](/es/docum
 
 ---
 
+## ¿Quieres Menos Código Repetitivo? ¡Prueba Injectable!
+
+**Injectable** es un paquete de generación de código que automatiza tu configuración de `get_it`. Si te encuentras escribiendo mucho código de registro, injectable podría ser para ti.
+
+### Cómo Funciona
+
+En lugar de registrar manualmente cada servicio:
+
+```dart
+void configureDependencies() {
+  getIt.registerLazySingleton<ApiClient>(() => ApiClient());
+  getIt.registerLazySingleton<Database>(() => Database());
+  getIt.registerLazySingleton<AuthService>(() => AuthService(getIt(), getIt()));
+}
+```
+
+Solo anota tus clases:
+
+```dart
+@lazySingleton
+class ApiClient { }
+
+@lazySingleton
+class Database { }
+
+@lazySingleton
+class AuthService {
+  AuthService(ApiClient api, Database db); // ¡Auto-inyectado!
+}
+```
+
+Ejecuta build_runner e injectable genera todo el código de registro por ti.
+
+### Configuración Rápida
+
+1. Agrega dependencias:
+```yaml
+dependencies:
+  get_it: ^8.3.0
+  injectable: ^2.3.2
+
+dev_dependencies:
+  injectable_generator: ^2.6.1
+  build_runner: ^2.4.0
+```
+
+2. Anota tu configuración principal:
+```dart
+@InjectableInit()
+void configureDependencies() => getIt.init();
+```
+
+3. Ejecuta la generación de código:
+```bash
+flutter pub run build_runner build
+```
+
+### Cuándo Usar Injectable
+
+**Usa injectable si:**
+- Tienes muchos servicios para registrar
+- Quieres resolución automática de dependencias
+- Prefieres anotaciones sobre configuración manual
+- Te sientes cómodo con generación de código
+
+**Quédate con `get_it` simple si:**
+- Prefieres registro explícito y visible
+- Quieres evitar build_runner en tu flujo de trabajo
+- Tienes un número pequeño de servicios
+- Quieres control total sobre el orden y la lógica de registro
+
+¡Ambos enfoques usan la misma instancia de `GetIt` y tienen rendimiento en tiempo de ejecución idéntico!
+
+### Aprende Más
+
+Visita [injectable en pub.dev](https://pub.dev/packages/injectable) para documentación completa y características avanzadas como:
+- Registros específicos por ambiente (dev/prod)
+- Dependencias pre-resueltas
+- Registro de módulos
+- Anotaciones personalizadas
+
+::: tip Soporte de Injectable
+Injectable es un paquete separado mantenido por un autor diferente. Si encuentras problemas con injectable, por favor repórtalos en el [repositorio de GitHub de injectable](https://github.com/Milad-Akarie/injectable/issues).
+:::
+
+---
+
 ## Siguientes Pasos
 
 Ahora que entiendes los básicos, explora estos temas:
@@ -228,28 +340,3 @@ get_it implementa el patrón Service Locator - desacopla la interfaz (clase abst
 Para una comprensión más profunda, lee el artículo clásico de Martin Fowler: [Inversion of Control Containers and the Dependency Injection pattern](https://martinfowler.com/articles/injection.html)
 
 </details>
-
----
-
-## Nombrando tu Instancia de GetIt
-
-El patrón estándar es crear una variable global:
-
-
-<<< @/../code_samples/lib/get_it/code_sample_866f5818.dart#example
-
-<strong>Nombres alternativos que podrías ver:</strong>
-- `final sl = GetIt.instance;` (service locator)
-- `final locator = GetIt.instance;`
-- `final di = GetIt.instance;` (dependency injection)
-- `GetIt.instance` o `GetIt.I` (usar directamente sin variable)
-
-<strong>Recomendación:</strong> Usa `getIt` o `di` - ambos son claros y ampliamente reconocidos en la comunidad Flutter.
-
-::: tip Usando con `watch_it`
-Si estás usando el paquete [`watch_it`](https://pub.dev/packages/watch_it), ya tienes disponible una instancia global `di` - no necesitas crear la tuya. Solo importa `watch_it` y usa `di` directamente.
-:::
-
-::: tip Uso entre Paquetes
-`GetIt.instance` devuelve el mismo singleton a través de todos los paquetes en tu proyecto. Crea tu variable global una vez en tu app principal e impórtala en otros lugares.
-:::
