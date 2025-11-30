@@ -6,20 +6,15 @@ final api = ApiClient();
 
 // #region basic
 class DataManager {
-  // When saveCommand completes, automatically refresh
-  late final saveCommand = Command.createAsyncNoResult<Data>(
-    (data) => api.save(data),
-  );
-
   late final refreshCommand = Command.createAsyncNoParam<List<Data>>(
     () => api.fetchData(),
     initialValue: [],
   );
 
-  DataManager() {
-    // Pipe save results to trigger refresh
-    saveCommand.pipeToCommand(refreshCommand);
-  }
+  // When saveCommand completes, automatically refresh
+  late final saveCommand = Command.createAsyncNoResult<Data>(
+    (data) => api.save(data),
+  )..pipeToCommand(refreshCommand);
 
   void dispose() {
     saveCommand.dispose();
@@ -30,37 +25,25 @@ class DataManager {
 
 // #region from_isrunning
 class SpinnerManager {
-  late final longRunningCommand = Command.createAsyncNoParam<Data>(
-    () async {
-      await Future.delayed(Duration(seconds: 5));
-      return Data();
-    },
-    initialValue: Data.empty(),
-  );
-
   // Command that controls a global spinner
   late final showSpinnerCommand = Command.createSync<bool, bool>(
     (show) => show,
     initialValue: false,
   );
 
-  SpinnerManager() {
-    // When long command starts/stops, update spinner
-    longRunningCommand.isRunning.pipeToCommand(showSpinnerCommand);
-  }
+  // When long command starts/stops, update spinner
+  late final longRunningCommand = Command.createAsyncNoParam<Data>(
+    () async {
+      await Future.delayed(Duration(seconds: 5));
+      return Data();
+    },
+    initialValue: Data.empty(),
+  )..isRunning.pipeToCommand(showSpinnerCommand);
 }
 // #endregion from_isrunning
 
 // #region from_results
 class LoggingManager {
-  late final saveCommand = Command.createAsync<Data, Data>(
-    (data) async {
-      await api.save(data);
-      return data;
-    },
-    initialValue: Data.empty(),
-  );
-
   late final logCommand = Command.createSync<CommandResult<Data, Data>, void>(
     (result) {
       if (result.hasError) {
@@ -72,26 +55,27 @@ class LoggingManager {
     initialValue: null,
   );
 
-  LoggingManager() {
-    // Pipe all results (success/error) to logging
-    saveCommand.results.pipeToCommand(logCommand);
-  }
+  // Pipe all results (success/error) to logging
+  late final saveCommand = Command.createAsync<Data, Data>(
+    (data) async {
+      await api.save(data);
+      return data;
+    },
+    initialValue: Data.empty(),
+  )..results.pipeToCommand(logCommand);
 }
 // #endregion from_results
 
 // #region from_valuenotifier
 class FormManager {
-  final selectedUserId = ValueNotifier<String>('');
-
   late final loadUserCommand = Command.createAsync<String, User>(
     (userId) => api.login(userId, ''),
     initialValue: User.empty(),
   );
 
-  FormManager() {
-    // When user ID changes, load user details
-    selectedUserId.pipeToCommand(loadUserCommand);
-  }
+  // When user ID changes, load user details
+  late final selectedUserId = ValueNotifier<String>('')
+    ..pipeToCommand(loadUserCommand);
 
   void dispose() {
     selectedUserId.dispose();
