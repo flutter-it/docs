@@ -27,16 +27,7 @@ Patrones listos para producción, anti-patrones, y guías para usar `command_it`
 
 ### ✅ Usa Commands Sync para Input con Operadores
 
-Cuando necesitas aplicar operadores (debounce, map, where) a input de usuario antes de disparar otras operaciones:
-
-<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#sync_input_operators
-
-Esto es diferente de simples getters/setters porque:
-- Captura input de usuario como un stream de valores
-- Usa operadores como `.debounce()` para procesar el stream
-- Encadena para disparar otros commands
-
-**Ver también:** El [ejemplo de clima](https://github.com/flutter-it/command_it/blob/main/example/lib/weather_manager.dart) demuestra este patrón con `textChangedCommand`.
+Cuando necesitas aplicar operadores (debounce, map, where) a input de usuario antes de disparar otras operaciones, ver [Encadenamiento de Commands](command_chaining) para patrones usando `pipeToCommand` y operadores de listen_it.
 
 ### ❌️️ No Uses Commands Para
 

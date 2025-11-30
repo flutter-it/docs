@@ -27,16 +27,7 @@ Production-ready patterns, anti-patterns, and guidelines for using `command_it` 
 
 ### ✅ Use Sync Commands for Input with Operators
 
-When you need to apply operators (debounce, map, where) to user input before triggering other operations:
-
-<<< @/../code_samples/lib/command_it/best_practices_when_to_use.dart#sync_input_operators
-
-This is different from simple getters/setters because:
-- It captures user input as a stream of values
-- It uses operators like `.debounce()` to process the stream
-- It chains to trigger other commands
-
-**See also:** The [weather example](https://github.com/flutter-it/command_it/blob/main/example/lib/weather_manager.dart) demonstrates this pattern with `textChangedCommand`.
+When you need to apply operators (debounce, map, where) to user input before triggering other operations, see [Command Chaining](command_chaining) for patterns using `pipeToCommand` and listen_it operators.
 
 ### ❌️️ Don't Use Commands For
 
