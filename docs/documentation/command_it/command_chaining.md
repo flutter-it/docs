@@ -30,6 +30,26 @@ sourceCommand
 - Returns `ListenableSubscription` for easy cleanup
 - Works on any `ValueListenable`, not just commands
 
+## Inline Chaining with Cascade
+
+The cleanest pattern: use Dart's cascade operator `..` to chain directly on command definition:
+
+```dart
+class DataManager {
+  late final refreshCommand = Command.createAsyncNoParam<List<Data>>(
+    () => api.fetchData(),
+    initialValue: [],
+  );
+
+  // Chain directly on definition - no constructor needed!
+  late final saveCommand = Command.createAsyncNoResult<Data>(
+    (data) => api.save(data),
+  )..pipeToCommand(refreshCommand);
+}
+```
+
+This eliminates the need for a constructor just to set up pipes. The subscription is managed automatically when the command is disposed.
+
 ## Basic Usage
 
 `pipeToCommand` works on any `ValueListenable`:
