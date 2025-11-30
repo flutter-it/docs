@@ -127,15 +127,17 @@ The real power comes from combining `pipeToCommand` with [listen_it operators](/
 
 ## Subscription Management
 
-`pipeToCommand` returns a `ListenableSubscription`. Always store and cancel it to prevent memory leaks.
+`pipeToCommand` returns a `ListenableSubscription`. However, **you usually don't need to manage it manually**.
 
-### Basic Cleanup
+::: tip Automatic Cleanup
+When commands and pipes are in the same object (manager/service class), the subscription is automatically garbage collected when the containing object becomes unreachable. No manual cleanup needed!
+
+See [listen_it Memory Management](/documentation/listen_it/best_practices#understanding-chain-garbage-collection) for details.
+:::
+
+For cases where you do need manual control (e.g., dynamically created pipes with operators):
 
 <<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_basic
-
-### Multiple Subscriptions
-
-<<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_multiple
 
 ## Warning: Circular Pipes
 

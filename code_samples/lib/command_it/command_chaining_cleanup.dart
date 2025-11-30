@@ -31,53 +31,6 @@ class CleanupManager {
 }
 // #endregion cleanup_basic
 
-// #region cleanup_multiple
-class MultiPipeManager {
-  late final inputCommand = Command.createSync<String, String>(
-    (s) => s,
-    initialValue: '',
-  );
-
-  late final saveCommand = Command.createAsyncNoResult<String>(
-    (s) async => api.saveContent(s),
-  );
-
-  late final logCommand = Command.createSync<String, void>(
-    (s) => print('Logged: $s'),
-    initialValue: null,
-  );
-
-  late final analyticsCommand = Command.createSync<String, void>(
-    (s) => print('Analytics: $s'),
-    initialValue: null,
-  );
-
-  // Multiple subscriptions
-  final List<ListenableSubscription> _subscriptions = [];
-
-  MultiPipeManager() {
-    _subscriptions.addAll([
-      inputCommand.pipeToCommand(saveCommand),
-      inputCommand.pipeToCommand(logCommand),
-      inputCommand.pipeToCommand(analyticsCommand),
-    ]);
-  }
-
-  void dispose() {
-    // Cancel all subscriptions
-    for (final sub in _subscriptions) {
-      sub.cancel();
-    }
-    _subscriptions.clear();
-
-    inputCommand.dispose();
-    saveCommand.dispose();
-    logCommand.dispose();
-    analyticsCommand.dispose();
-  }
-}
-// #endregion cleanup_multiple
-
 void main() {
   // Examples compile but don't run
 }

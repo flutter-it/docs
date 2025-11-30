@@ -127,15 +127,17 @@ El verdadero poder viene de combinar `pipeToCommand` con [operadores de listen_i
 
 ## Gestión de Suscripciones
 
-`pipeToCommand` retorna un `ListenableSubscription`. Siempre guárdalo y cancélalo para prevenir memory leaks.
+`pipeToCommand` retorna un `ListenableSubscription`. Sin embargo, **usualmente no necesitas gestionarlo manualmente**.
 
-### Limpieza Básica
+::: tip Limpieza Automática
+Cuando los commands y pipes están en el mismo objeto (clase manager/servicio), la suscripción es automáticamente recolectada por el garbage collector cuando el objeto contenedor se vuelve inalcanzable. ¡No se necesita limpieza manual!
+
+Ver [Gestión de Memoria de listen_it](/es/documentation/listen_it/best_practices#understanding-chain-garbage-collection) para detalles.
+:::
+
+Para casos donde necesitas control manual (ej., pipes creados dinámicamente con operadores):
 
 <<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_basic
-
-### Múltiples Suscripciones
-
-<<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_multiple
 
 ## Advertencia: Pipes Circulares
 
