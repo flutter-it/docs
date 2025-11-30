@@ -78,37 +78,6 @@ class MultiPipeManager {
 }
 // #endregion cleanup_multiple
 
-// #region cleanup_conditional
-class ConditionalPipeManager {
-  late final sourceCommand = Command.createSync<String, String>(
-    (s) => s,
-    initialValue: '',
-  );
-
-  late final targetCommand = Command.createAsyncNoResult<String>(
-    (s) async => api.saveContent(s),
-  );
-
-  ListenableSubscription? _subscription;
-
-  void enablePipe() {
-    // Only create if not already active
-    _subscription ??= sourceCommand.pipeToCommand(targetCommand);
-  }
-
-  void disablePipe() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
-  void dispose() {
-    _subscription?.cancel();
-    sourceCommand.dispose();
-    targetCommand.dispose();
-  }
-}
-// #endregion cleanup_conditional
-
 void main() {
   // Examples compile but don't run
 }

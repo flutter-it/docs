@@ -137,12 +137,6 @@ El verdadero poder viene de combinar `pipeToCommand` con [operadores de listen_i
 
 <<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_multiple
 
-### Piping Condicional
-
-Habilita/deshabilita pipes en tiempo de ejecución:
-
-<<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_conditional
-
 ## Advertencia: Pipes Circulares
 
 ::: danger Evita Pipes Circulares

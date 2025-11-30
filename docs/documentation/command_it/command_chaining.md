@@ -137,12 +137,6 @@ The real power comes from combining `pipeToCommand` with [listen_it operators](/
 
 <<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_multiple
 
-### Conditional Piping
-
-Enable/disable pipes at runtime:
-
-<<< @/../code_samples/lib/command_it/command_chaining_cleanup.dart#cleanup_conditional
-
 ## Warning: Circular Pipes
 
 ::: danger Avoid Circular Pipes
