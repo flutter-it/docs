@@ -147,21 +147,6 @@ Never create circular pipe chains - they cause infinite loops:
 commandA.pipeToCommand(commandB);
 commandB.pipeToCommand(commandA);  // A triggers B triggers A triggers B...
 ```
-
-If you need bidirectional communication, use guards:
-
-```dart
-// ✅ Safe: Guard against loops
-bool _updating = false;
-
-commandA.listen((value, _) {
-  if (!_updating) {
-    _updating = true;
-    commandB(value);
-    _updating = false;
-  }
-});
-```
 :::
 
 ## API Reference
