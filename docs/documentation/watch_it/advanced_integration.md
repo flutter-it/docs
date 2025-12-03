@@ -51,6 +51,22 @@ Wait for all async dependencies to complete:
 
 <<< @/../code_samples/lib/watch_it/advanced_integration_patterns.dart#allready_multiple_dependencies
 
+::: warning Error Handling
+When using `timeout`, `allReady()` can throw `WaitingTimeOutException` if dependencies don't initialize in time. Additionally, if any async singleton's init function throws an exception, it propagates through `allReady()`.
+
+Use the `onError` callback to handle errors gracefully - otherwise exceptions will be thrown during widget build.
+:::
+
+### Alternative: watchFuture for Full Error Control
+
+If you expect initialization errors and need full control via `AsyncSnapshot`, use `watchFuture` with `di.allReady()` directly:
+
+<<< @/../code_samples/lib/watch_it/advanced_integration_patterns.dart#allready_watchfuture
+
+**When to use which:**
+- `allReady()` with `onError` — simple cases, just need ready/not ready state
+- `watchFuture(di.allReady())` — when you need the full `AsyncSnapshot` (hasError, error, connectionState)
+
 ### Watching Initialization Progress
 
 <<< @/../code_samples/lib/watch_it/advanced_integration_patterns.dart#watching_initialization_progress

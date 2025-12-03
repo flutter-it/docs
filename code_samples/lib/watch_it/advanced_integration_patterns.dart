@@ -142,9 +142,26 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) => Text('Loading...');
 }
 
+class ErrorScreen extends StatelessWidget {
+  final Object? error;
+  ErrorScreen({this.error});
+  @override
+  Widget build(BuildContext context) => Text('Error: $error');
+}
+
 class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text('Main App');
+}
+
+void showErrorDialog(BuildContext context, Object? error) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: Text('Error'),
+      content: Text('$error'),
+    ),
+  );
 }
 
 class HomeScreen extends StatelessWidget {
@@ -450,6 +467,11 @@ class AppAllReady extends WatchingWidget {
     // Wait for all async singletons
     final ready = allReady(
       timeout: Duration(seconds: 30),
+      onError: (context, error) {
+        // Handle timeout or initialization errors
+        // Without onError, exceptions would be thrown!
+        showErrorDialog(context, error);
+      },
     );
 
     if (!ready) {
@@ -464,6 +486,31 @@ class AppAllReady extends WatchingWidget {
   }
 }
 // #endregion allready_multiple_dependencies
+
+// #region allready_watchfuture
+class AppWithFullErrorHandling extends WatchingWidget {
+  @override
+  Widget build(BuildContext context) {
+    // watchFuture gives you an AsyncSnapshot for full error control
+    final snapshot = watchFuture<GetIt, void>(
+      (_) => di.allReady(timeout: Duration(seconds: 30)),
+      target: di,
+      initialValue: null,
+    );
+
+    if (snapshot.hasError) {
+      // Handle initialization errors (timeout or factory exceptions)
+      return ErrorScreen(error: snapshot.error);
+    }
+
+    if (snapshot.connectionState != ConnectionState.done) {
+      return SplashScreen();
+    }
+
+    return MainApp();
+  }
+}
+// #endregion allready_watchfuture
 
 // #region watching_initialization_progress
 class InitializationScreen extends WatchingWidget {
