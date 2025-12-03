@@ -493,7 +493,7 @@ class AppWithFullErrorHandling extends WatchingWidget {
   Widget build(BuildContext context) {
     // watchFuture gives you an AsyncSnapshot for full error control
     final snapshot = watchFuture<GetIt, void>(
-      (_) => di.allReady(timeout: Duration(seconds: 30)),
+      (getIt) => getIt.allReady(timeout: Duration(seconds: 30)),
       target: di,
       initialValue: null,
     );
