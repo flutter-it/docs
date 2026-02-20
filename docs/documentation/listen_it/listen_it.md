@@ -9,6 +9,10 @@ next:
   <h1 style="margin: 0;">listen_it</h1>
 </div>
 
+::: tip 🤖 AI-Assisted Development
+listen_it ships with **AI skill files** in its `skills/` directory. They help AI tools generate correct operator chains and collection patterns. [Learn more →](/misc/ai_skills)
+:::
+
 **Reactive primitives for Flutter** - observable collections and powerful operators for ValueListenable.
 
 ## Overview
@@ -23,10 +27,6 @@ These primitives work together to help you build reactive data flows in your Flu
 ![listen_it Data Flow](/images/listen-it-flow.svg)
 
 > Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
-
-::: tip AI-Assisted Development
-listen_it ships with **AI skill files** in its `skills/` directory. They help AI tools generate correct operator chains and collection patterns. [Learn more →](/misc/ai_skills)
-:::
 
 ## Installation
 

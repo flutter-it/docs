@@ -15,6 +15,10 @@ flutter_it es un **kit modular de herramientas** reactivas para Flutter. Elige l
   <img src="/images/main-logo.svg" alt="flutter_it" width="225" class="header-logo" />
 </div>
 
+::: tip 🤖 Desarrollo Asistido por IA
+Cada paquete de flutter_it incluye **archivos de skills de IA** que ayudan a Claude Code, Cursor, GitHub Copilot y otras herramientas de IA a generar código correcto. [Más información →](/es/misc/ai_skills)
+:::
+
 ## ¿Por qué flutter_it?
 
 <ul style="list-style: none; padding-left: 0;">
@@ -98,10 +102,6 @@ Operadores de transformación, filtrado, combinación y debounce para ValueNotif
 [Comienza →](/documentation/listen_it/listen_it) | [Ejemplos →](/examples/listen_it/listen_it)
 
 ---
-
-::: tip Desarrollo Asistido por IA
-Cada paquete de flutter_it incluye **archivos de skills de IA** que ayudan a Claude Code, Cursor, GitHub Copilot y otras herramientas de IA a generar código correcto. [Más información →](/es/misc/ai_skills)
-:::
 
 ## Primeros Pasos
 

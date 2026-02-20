@@ -13,6 +13,10 @@ next:
   <h1 style="margin: 0;">Primeros Pasos</h1>
 </div>
 
+::: tip 🤖 Desarrollo Asistido por IA
+get_it incluye **archivos de skills de IA** en su directorio `skills/`. Ayudan a los asistentes de código con IA a generar código correcto de get_it. [Más información →](/es/misc/ai_skills)
+:::
+
 <strong>get_it</strong> es un Service Locator simple y rápido para Dart y Flutter que te permite acceder a cualquier objeto que registres desde cualquier parte de tu app sin necesitar `BuildContext` o árboles de widgets complejos.
 
 <strong>Beneficios clave:</strong>
@@ -34,10 +38,6 @@ next:
 > Únete a nuestro servidor de Discord para soporte: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ---
-
-::: tip Desarrollo Asistido por IA
-get_it incluye **archivos de skills de IA** en su directorio `skills/`. Ayudan a los asistentes de código con IA a generar código correcto de get_it. [Más información →](/es/misc/ai_skills)
-:::
 
 ## Instalación
 

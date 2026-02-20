@@ -46,7 +46,8 @@ export default defineConfig({
               { text: 'get_it', link: '/es/documentation/get_it/getting_started' },
               { text: 'watch_it', link: '/es/documentation/watch_it/getting_started' },
               { text: 'command_it', link: '/es/documentation/command_it/getting_started' },
-              { text: 'listen_it', link: '/es/documentation/listen_it/listen_it' }
+              { text: 'listen_it', link: '/es/documentation/listen_it/listen_it' },
+              { text: '🤖 Skills de IA', link: '/es/misc/ai_skills' }
             ]
           },
           {
@@ -204,7 +205,8 @@ export default defineConfig({
           { text: 'get_it', link: '/documentation/get_it/getting_started.md' },
           { text: 'watch_it', link: '/documentation/watch_it/getting_started.md' },
           { text: 'command_it', link: '/documentation/command_it/getting_started.md' },
-          { text: 'listen_it', link: '/documentation/listen_it/listen_it.md' }
+          { text: 'listen_it', link: '/documentation/listen_it/listen_it.md' },
+          { text: '🤖 AI Skills', link: '/misc/ai_skills.md' }
         ]
       },
       {

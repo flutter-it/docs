@@ -26,6 +26,7 @@ Los archivos de skills siguen el estándar abierto [Agent Skills](https://github
 | **watch_it** | `watch-it-expert`, `get-it-expert`, `flutter-architecture-expert`, `feed-datasource-expert` |
 | **command_it** | `command-it-expert`, `listen-it-expert`, `flutter-architecture-expert`, `feed-datasource-expert` |
 | **listen_it** | `listen-it-expert`, `flutter-architecture-expert` |
+| **flutter_it** | Los 7 skills (paquete de conveniencia) |
 
 Cada paquete incluye los skills más relevantes para su uso, así obtienes el contexto correcto sin importar con qué paquete comiences.
 
@@ -39,40 +40,44 @@ Cada paquete incluye los skills más relevantes para su uso, así obtienes el co
 | `listen-it-expert` | Operadores de ValueListenable, colecciones reactivas, encadenamiento, transacciones |
 | `flutter-architecture-expert` | Arquitectura Flutter Pragmática (PFA) con Services/Managers/Views |
 | `feed-datasource-expert` | Feeds paginados, scroll infinito, ciclo de vida de proxies, conteo de referencias |
+| `flutter-it` | Descripción general del kit flutter_it, selección de paquetes, dependencias |
+
+## Descargar
+
+**[Descargar los 7 skills (zip)](/downloads/flutter_it_ai_skills.zip)**
+
+O clona desde el [repositorio flutter_it](https://github.com/flutter-it/flutter_it/tree/main/skills) que contiene todos los skills.
 
 ## Cómo Usar con tu Herramienta de IA
 
 ### Claude Code
 
-Los skills se **detectan automáticamente** del directorio `skills/` cuando abres un proyecto que contiene un paquete de flutter_it. No se necesita configuración adicional.
+Extrae el zip (o copia desde el repo) en tu directorio global de skills:
 
-También puedes copiar los skills a tu directorio global `~/.claude/skills/` para que estén disponibles en todos tus proyectos:
-
-```bash
-cp -r <paquete>/skills/* ~/.claude/skills/
 ```
+~/.claude/skills/
+├── get-it-expert/SKILL.md
+├── watch-it-expert/SKILL.md
+├── command-it-expert/SKILL.md
+├── listen-it-expert/SKILL.md
+├── flutter-architecture-expert/SKILL.md
+├── feed-datasource-expert/SKILL.md
+└── flutter-it/SKILL.md
+```
+
+Claude Code detectará automáticamente los skills de `~/.claude/skills/` en todos tus proyectos.
 
 ### Cursor
 
-Copia el contenido relevante de `SKILL.md` a tu archivo `.cursorrules` en la raíz del proyecto:
-
-```bash
-cat <paquete>/skills/get-it-expert/SKILL.md >> .cursorrules
-```
-
-O referencia los archivos de skills en la configuración de Cursor.
+Copia el contenido de los archivos `SKILL.md` relevantes en tu archivo `.cursorrules` en la raíz del proyecto. Elige los skills que correspondan a los paquetes que uses.
 
 ### GitHub Copilot
 
-Copia el contenido del skill a `.github/copilot-instructions.md`:
-
-```bash
-cat <paquete>/skills/get-it-expert/SKILL.md >> .github/copilot-instructions.md
-```
+Copia el contenido de los archivos `SKILL.md` relevantes en `.github/copilot-instructions.md` en tu repositorio.
 
 ### Otras Herramientas de IA
 
-Referencia los archivos `SKILL.md` directamente desde el directorio `skills/` de cada paquete. Los archivos son Markdown plano con frontmatter YAML y funcionan con cualquier herramienta que acepte archivos de contexto.
+Los archivos de skills son Markdown plano con frontmatter YAML. Copia su contenido en el mecanismo de contexto que soporte tu herramienta de IA.
 
 ## Archivos de Skills en GitHub
 
@@ -82,6 +87,7 @@ Puedes explorar los archivos de skills directamente en cada repositorio:
 - [Skills de watch_it](https://github.com/flutter-it/watch_it/tree/main/skills)
 - [Skills de command_it](https://github.com/flutter-it/command_it/tree/main/skills)
 - [Skills de listen_it](https://github.com/flutter-it/listen_it/tree/main/skills)
+- [Skills de flutter_it](https://github.com/flutter-it/flutter_it/tree/main/skills) (los 7 skills)
 
 ## Por Qué Esto Importa
 

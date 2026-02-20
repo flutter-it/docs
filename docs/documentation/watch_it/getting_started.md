@@ -9,6 +9,10 @@ next:
   <h1 style="margin: 0;">Getting Started</h1>
 </div>
 
+::: tip 🤖 AI-Assisted Development
+watch_it ships with **AI skill files** in its `skills/` directory. They teach AI tools critical rules like watch ordering. [Learn more →](/misc/ai_skills)
+:::
+
 <strong>`watch_it`</strong> makes your Flutter widgets automatically rebuild when data changes. No <code>setState</code>, no <code>StreamBuilder</code>, just simple reactive programming built on top of `get_it`.
 
 <strong>Key benefits:</strong>
@@ -32,10 +36,6 @@ next:
 > Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ---
-
-::: tip AI-Assisted Development
-watch_it ships with **AI skill files** in its `skills/` directory. They teach AI tools critical rules like watch ordering. [Learn more →](/misc/ai_skills)
-:::
 
 ## Installation
 

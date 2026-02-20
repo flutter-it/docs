@@ -15,6 +15,10 @@ flutter_it is a **modular construction set** of reactive tools for Flutter. Pick
   <img src="/images/main-logo.svg" alt="flutter_it" width="225" class="header-logo" />
 </div>
 
+::: tip 🤖 AI-Assisted Development
+Every flutter_it package ships with **AI skill files** that help Claude Code, Cursor, GitHub Copilot, and other AI tools generate correct code. [Learn more →](/misc/ai_skills)
+:::
+
 ## Why flutter_it?
 
 <ul style="list-style: none; padding-left: 0;">
@@ -98,10 +102,6 @@ Transform, filter, combine, and debounce operators for ValueNotifier—plus reac
 [Get started →](/documentation/listen_it/listen_it) | [Examples →](/examples/listen_it/listen_it)
 
 ---
-
-::: tip AI-Assisted Development
-Every flutter_it package ships with **AI skill files** that help Claude Code, Cursor, GitHub Copilot, and other AI tools generate correct code. [Learn more →](/misc/ai_skills)
-:::
 
 ## Getting Started
 

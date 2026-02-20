@@ -13,6 +13,10 @@ next:
   <h1 style="margin: 0;">Getting Started</h1>
 </div>
 
+::: tip 🤖 AI-Assisted Development
+get_it ships with **AI skill files** in its `skills/` directory. They help AI coding assistants generate correct get_it code. [Learn more →](/misc/ai_skills)
+:::
+
 <strong>get_it</strong> is a simple, fast service locator for Dart and Flutter that allows you to access any object that you register from anywhere in your app without needing `BuildContext` or complex widget trees.
 
 <strong>Key benefits:</strong>
@@ -34,10 +38,6 @@ next:
 > Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ---
-
-::: tip AI-Assisted Development
-get_it ships with **AI skill files** in its `skills/` directory. They help AI coding assistants generate correct get_it code. [Learn more →](/misc/ai_skills)
-:::
 
 ## Installation
 

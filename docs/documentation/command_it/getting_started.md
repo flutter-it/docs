@@ -3,13 +3,13 @@
   <h1 style="margin: 0;">Getting Started</h1>
 </div>
 
+::: tip 🤖 AI-Assisted Development
+command_it ships with **AI skill files** in its `skills/` directory. They help AI tools generate correct command patterns. [Learn more →](/misc/ai_skills)
+:::
+
 command_it is a way to manage your state based on `ValueListenable` and the `Command` design pattern. A `Command` is an object that wraps a function, making it callable while providing reactive state updates—perfect for bridging your UI and business logic.
 
 ![command_it Data Flow](/images/command-it-flow.svg)
-
-::: tip AI-Assisted Development
-command_it ships with **AI skill files** in its `skills/` directory. They help AI tools generate correct command patterns. [Learn more →](/misc/ai_skills)
-:::
 
 ## Installation
 

@@ -9,6 +9,10 @@ next:
   <h1 style="margin: 0;">listen_it</h1>
 </div>
 
+::: tip 🤖 Desarrollo Asistido por IA
+listen_it incluye **archivos de skills de IA** en su directorio `skills/`. Ayudan a las herramientas de IA a generar cadenas de operadores y patrones de colecciones correctos. [Más información →](/es/misc/ai_skills)
+:::
+
 **Primitivas reactivas para Flutter** - colecciones observables y operadores potentes para ValueListenable.
 
 ## Descripción General
@@ -23,10 +27,6 @@ Estas primitivas trabajan juntas para ayudarte a construir flujos de datos react
 ![Flujo de datos listen_it](/images/listen-it-flow.svg)
 
 > Únete a nuestro servidor de Discord para soporte: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
-
-::: tip Desarrollo Asistido por IA
-listen_it incluye **archivos de skills de IA** en su directorio `skills/`. Ayudan a las herramientas de IA a generar cadenas de operadores y patrones de colecciones correctos. [Más información →](/es/misc/ai_skills)
-:::
 
 ## Instalación
 

@@ -9,6 +9,10 @@ next:
   <h1 style="margin: 0;">Primeros Pasos</h1>
 </div>
 
+::: tip 🤖 Desarrollo Asistido por IA
+watch_it incluye **archivos de skills de IA** en su directorio `skills/`. Enseñan a las herramientas de IA reglas críticas como el orden de los watch. [Más información →](/es/misc/ai_skills)
+:::
+
 <strong>`watch_it`</strong> hace que tus widgets de Flutter se reconstruyan automáticamente cuando los datos cambian. Sin <code>setState</code>, sin <code>StreamBuilder</code>, solo programación reactiva simple construida sobre `get_it`.
 
 <strong>Beneficios clave:</strong>
@@ -32,10 +36,6 @@ next:
 > Únete a nuestro servidor de soporte en Discord: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
 ---
-
-::: tip Desarrollo Asistido por IA
-watch_it incluye **archivos de skills de IA** en su directorio `skills/`. Enseñan a las herramientas de IA reglas críticas como el orden de los watch. [Más información →](/es/misc/ai_skills)
-:::
 
 ## Instalación
 
