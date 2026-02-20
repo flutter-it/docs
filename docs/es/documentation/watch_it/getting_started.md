@@ -33,6 +33,10 @@ next:
 
 ---
 
+::: tip Desarrollo Asistido por IA
+watch_it incluye **archivos de skills de IA** en su directorio `skills/`. Enseñan a las herramientas de IA reglas críticas como el orden de los watch. [Más información →](/es/misc/ai_skills)
+:::
+
 ## Instalación
 
 Añade watch_it a tu `pubspec.yaml`:

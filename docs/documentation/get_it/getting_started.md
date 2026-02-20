@@ -35,6 +35,10 @@ next:
 
 ---
 
+::: tip AI-Assisted Development
+get_it ships with **AI skill files** in its `skills/` directory. They help AI coding assistants generate correct get_it code. [Learn more →](/misc/ai_skills)
+:::
+
 ## Installation
 
 Add get_it to your `pubspec.yaml`:

@@ -99,6 +99,10 @@ Operadores de transformación, filtrado, combinación y debounce para ValueNotif
 
 ---
 
+::: tip Desarrollo Asistido por IA
+Cada paquete de flutter_it incluye **archivos de skills de IA** que ayudan a Claude Code, Cursor, GitHub Copilot y otras herramientas de IA a generar código correcto. [Más información →](/es/misc/ai_skills)
+:::
+
 ## Primeros Pasos
 
 **¿Nuevo en flutter_it?** Empieza aquí:

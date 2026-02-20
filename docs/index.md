@@ -99,6 +99,10 @@ Transform, filter, combine, and debounce operators for ValueNotifier—plus reac
 
 ---
 
+::: tip AI-Assisted Development
+Every flutter_it package ships with **AI skill files** that help Claude Code, Cursor, GitHub Copilot, and other AI tools generate correct code. [Learn more →](/misc/ai_skills)
+:::
+
 ## Getting Started
 
 **New to flutter_it?** Start here:

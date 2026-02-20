@@ -162,6 +162,7 @@ export default defineConfig({
             collapsed: false,
             items: [
               { text: 'Artículos y Videos', link: '/es/misc/articles' },
+              { text: 'Skills de IA para Asistentes de Código', link: '/es/misc/ai_skills' },
               { text: 'How to contribute', link: '/misc/contribute' }
             ]
           }
@@ -319,6 +320,7 @@ export default defineConfig({
         collapsed: false,
         items: [
           { text: 'Articles & Videos', link: '/misc/articles.md' },
+          { text: 'AI Skills for Coding Assistants', link: '/misc/ai_skills.md' },
           { text: 'How to contribute', link: '/misc/contribute.md' }
         ]
       }

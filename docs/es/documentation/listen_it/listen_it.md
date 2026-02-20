@@ -24,6 +24,10 @@ Estas primitivas trabajan juntas para ayudarte a construir flujos de datos react
 
 > Únete a nuestro servidor de Discord para soporte: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
+::: tip Desarrollo Asistido por IA
+listen_it incluye **archivos de skills de IA** en su directorio `skills/`. Ayudan a las herramientas de IA a generar cadenas de operadores y patrones de colecciones correctos. [Más información →](/es/misc/ai_skills)
+:::
+
 ## Instalación
 
 Añade a tu `pubspec.yaml`:

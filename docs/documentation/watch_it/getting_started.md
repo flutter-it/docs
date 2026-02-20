@@ -33,6 +33,10 @@ next:
 
 ---
 
+::: tip AI-Assisted Development
+watch_it ships with **AI skill files** in its `skills/` directory. They teach AI tools critical rules like watch ordering. [Learn more →](/misc/ai_skills)
+:::
+
 ## Installation
 
 Add watch_it to your `pubspec.yaml`:

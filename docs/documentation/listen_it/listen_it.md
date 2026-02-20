@@ -24,6 +24,10 @@ These primitives work together to help you build reactive data flows in your Flu
 
 > Join our support Discord server: [https://discord.com/invite/Nn6GkYjzW](https://discord.com/invite/Nn6GkYjzW)
 
+::: tip AI-Assisted Development
+listen_it ships with **AI skill files** in its `skills/` directory. They help AI tools generate correct operator chains and collection patterns. [Learn more →](/misc/ai_skills)
+:::
+
 ## Installation
 
 Add to your `pubspec.yaml`:

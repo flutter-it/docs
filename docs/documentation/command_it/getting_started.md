@@ -7,6 +7,10 @@ command_it is a way to manage your state based on `ValueListenable` and the `Com
 
 ![command_it Data Flow](/images/command-it-flow.svg)
 
+::: tip AI-Assisted Development
+command_it ships with **AI skill files** in its `skills/` directory. They help AI tools generate correct command patterns. [Learn more →](/misc/ai_skills)
+:::
+
 ## Installation
 
 Add to your `pubspec.yaml`:

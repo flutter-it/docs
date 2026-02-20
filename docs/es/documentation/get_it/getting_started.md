@@ -35,6 +35,10 @@ next:
 
 ---
 
+::: tip Desarrollo Asistido por IA
+get_it incluye **archivos de skills de IA** en su directorio `skills/`. Ayudan a los asistentes de código con IA a generar código correcto de get_it. [Más información →](/es/misc/ai_skills)
+:::
+
 ## Instalación
 
 Añade get_it a tu `pubspec.yaml`:
