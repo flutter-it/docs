@@ -1,0 +1,38 @@
+# flutter_it
+
+> Build reactive Flutter apps the easy way — no codegen, no boilerplate, just code.
+> A modular construction set of reactive tools for Flutter by Thomas Burkhart (escamoteur).
+
+## About
+
+flutter_it is a family of open-source Dart/Flutter packages that work standalone or
+together. Pick what you need, combine as you grow. Each package ships with AI skill
+files that help Claude Code, Cursor, GitHub Copilot, and other AI tools generate
+correct code.
+
+## Packages
+
+- [get_it](https://pub.dev/packages/get_it): Service locator / dependency injection. 1.87M+ downloads per month.
+- [watch_it](https://pub.dev/packages/watch_it): Reactive widget state management on top of get_it.
+- [command_it](https://pub.dev/packages/command_it): Command pattern for async operations with loading/error states.
+- [listen_it](https://pub.dev/packages/listen_it): ValueListenable operators and reactive collections.
+
+## Key Pages
+
+- [Home](https://flutter-it.dev/): Overview of the construction set
+- [Which package to use](https://flutter-it.dev/getting_started/what_to_do_with_which_package): Choosing between the packages
+- [get_it Documentation](https://flutter-it.dev/documentation/get_it/getting_started): Service locator docs
+- [watch_it Documentation](https://flutter-it.dev/documentation/watch_it/getting_started): Reactive UI docs
+- [command_it Documentation](https://flutter-it.dev/documentation/command_it/getting_started): Command pattern docs
+- [listen_it Documentation](https://flutter-it.dev/documentation/listen_it/listen_it): ValueListenable operator docs
+- [AI Skills](https://flutter-it.dev/misc/ai_skills): AI skill files shipped with every package
+
+## Author
+
+Created and maintained by Thomas Burkhart (escamoteur) — available for Flutter
+consulting and contract work.
+
+- Website: https://escamoteur.dev/
+- Book a call: https://calendly.com/burkhartsengineering/30min
+- Email: apps@burkharts.net
+- GitHub: https://github.com/escamoteur

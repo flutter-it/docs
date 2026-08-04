@@ -11,6 +11,11 @@ title: Bienvenido a flutter_it
 
 flutter_it es un **kit modular de herramientas** reactivas para Flutter. Elige lo que necesites, combínalas a medida que creces, o úsalas todas juntas. Cada paquete funciona de forma independiente y se integra perfectamente con los demás.
 
+<div class="consulting-cta">
+  <a class="consulting-cta-primary" href="https://calendly.com/burkhartsengineering/30min" target="_blank" rel="noopener">📅 Agenda una llamada</a>
+  <a class="consulting-cta-secondary" href="mailto:apps@burkharts.net">✉️ Escríbeme</a>
+</div>
+
   </div>
   <img src="/images/main-logo.svg" alt="flutter_it" width="225" class="header-logo" />
 </div>

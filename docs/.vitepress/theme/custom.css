@@ -143,3 +143,105 @@ h1, h2, h3, h4, h5, h6 {
 .VPSidebar::-webkit-scrollbar-thumb:hover {
   background-color: rgba(128, 128, 128, 0.5);
 }
+
+/* Consulting banner (layout-top slot) */
+.consulting-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 2.5rem 0.5rem 1rem;
+  font-size: 0.85rem;
+  /* brand-soft is translucent; layer it over the solid page bg so
+     scrolled content never shows through the fixed banner */
+  background-color: var(--vp-c-bg);
+  background-image: linear-gradient(var(--vp-c-brand-soft), var(--vp-c-brand-soft));
+  color: var(--vp-c-text-1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40; /* above VPNav's z-index 30 */
+}
+
+.consulting-banner-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3fb984;
+  flex-shrink: 0;
+  animation: consulting-pulse 2s ease-in-out infinite;
+}
+
+@keyframes consulting-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0.6; }
+}
+
+.consulting-banner-link {
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+}
+
+.consulting-banner-link:hover {
+  text-decoration: underline;
+}
+
+.consulting-banner-close {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--vp-c-text-2);
+  font-size: 0.85rem;
+  padding: 0.25rem;
+}
+
+.consulting-banner-close:hover {
+  color: var(--vp-c-text-1);
+}
+
+/* Homepage consulting CTA */
+.consulting-cta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+.consulting-cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.3rem;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.consulting-cta a:hover {
+  transform: translateY(-2px);
+}
+
+.consulting-cta-primary {
+  background: var(--vp-c-brand-1);
+  color: var(--vp-c-white, #fff) !important;
+}
+
+.consulting-cta-primary:hover {
+  opacity: 0.9;
+}
+
+.consulting-cta-secondary {
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1) !important;
+  border: 1px solid var(--vp-c-divider);
+}

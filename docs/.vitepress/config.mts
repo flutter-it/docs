@@ -13,6 +13,20 @@ export default defineConfig({
   // Ensure proper file handling
   cleanUrls: true,
 
+  // Generate sitemap.xml at build time
+  sitemap: {
+    hostname: 'https://flutter-it.dev'
+  },
+
+  // Canonical URL per page (cleanUrls: true → no .html suffix)
+  transformHead({ pageData }) {
+    if (pageData.relativePath === '404.md') return []
+    const path = pageData.relativePath
+      .replace(/(^|\/)index\.md$/, '$1')
+      .replace(/\.md$/, '')
+    return [['link', { rel: 'canonical', href: `https://flutter-it.dev/${path}` }]]
+  },
+
   // Ignore dead links for documentation that's still being developed
   ignoreDeadLinks: [
     /\/documentation\/(watch_it|command_it)\/getting_started/
