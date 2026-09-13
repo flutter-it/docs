@@ -16,6 +16,8 @@ flutter_it es un **kit modular de herramientas** reactivas para Flutter. Elige l
   <a class="consulting-cta-secondary" href="mailto:apps@burkharts.net">✉️ Escríbeme</a>
 </div>
 
+Creado y mantenido por [Thomas Burkhart](https://escamoteur.dev) — desarrollador Flutter y creador de get_it y watch_it.
+
   </div>
   <img src="/images/main-logo.svg" alt="flutter_it" width="225" class="header-logo" />
 </div>
@@ -123,3 +125,4 @@ Operadores de transformación, filtrado, combinación y debounce para ValueNotif
 - **[GitHub](https://github.com/flutter-it)** - Código fuente e issues
 - **[Discord](https://discord.com/invite/Nn6GkYjzW)** - Chat y soporte
 - **[Twitter](https://x.com/ThomasBurkhartB)** - Actualizaciones y noticias
+- **[escamoteur.dev](https://escamoteur.dev)** - Thomas Burkhart, el desarrollador detrás de flutter_it

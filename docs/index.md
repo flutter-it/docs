@@ -16,6 +16,8 @@ flutter_it is a **modular construction set** of reactive tools for Flutter. Pick
   <a class="consulting-cta-secondary" href="mailto:apps@burkharts.net">✉️ Email me</a>
 </div>
 
+Built and maintained by [Thomas Burkhart](https://escamoteur.dev) — Flutter developer and creator of get_it and watch_it.
+
   </div>
   <img src="/images/main-logo.svg" alt="flutter_it" width="225" class="header-logo" />
 </div>
@@ -123,4 +125,5 @@ Join the flutter_it community:
 - **[GitHub](https://github.com/flutter-it)** - Source code and issues
 - **[Discord](https://discord.com/invite/Nn6GkYjzW)** - Chat and support
 - **[Twitter](https://x.com/ThomasBurkhartB)** - Updates and news
+- **[escamoteur.dev](https://escamoteur.dev)** - Thomas Burkhart, the developer behind flutter_it
 

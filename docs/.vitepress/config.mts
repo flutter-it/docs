@@ -7,7 +7,44 @@ export default defineConfig({
 
   // Favicon
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]
+    ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }],
+    // Entity graph: ties this site to Thomas' identity on escamoteur.dev, whose
+    // Person node uses the same @id and claims flutter-it.dev in its sameAs.
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Person',
+          '@id': 'https://escamoteur.dev/#thomas',
+          name: 'Thomas Burkhart',
+          alternateName: 'escamoteur',
+          url: 'https://escamoteur.dev/',
+          jobTitle: 'Flutter Developer & App Creator',
+          email: 'apps@burkharts.net',
+          // Mirrors the sameAs list on escamoteur.dev verbatim — two nodes sharing
+          // an @id must not publish conflicting property sets.
+          sameAs: [
+            'https://github.com/escamoteur',
+            'https://pub.dev/publishers/flutter-it.dev',
+            'https://x.com/ThomasBurkhartB',
+            'https://www.linkedin.com/in/thomas-burkhart-113767176/',
+            'https://blog.burkharts.net',
+            'https://flutter-it.dev',
+            'https://hashnode.com/@escamoteur',
+            'https://www.youtube.com/@escamoteur'
+          ]
+        },
+        {
+          '@type': 'WebSite',
+          '@id': 'https://flutter-it.dev/#website',
+          url: 'https://flutter-it.dev/',
+          name: 'flutter_it',
+          description: 'Build reactive Flutter apps the easy way - no codegen, no boilerplate, just code',
+          author: { '@id': 'https://escamoteur.dev/#thomas' },
+          publisher: { '@id': 'https://escamoteur.dev/#thomas' }
+        }
+      ]
+    })]
   ],
 
   // Ensure proper file handling
@@ -188,7 +225,7 @@ export default defineConfig({
           { icon: 'twitter', link: 'https://x.com/ThomasBurkhartB' }
         ],
         footer: {
-          message: 'Publicado bajo la Licencia MIT.',
+          message: 'Publicado bajo la Licencia MIT. Creado por <a href="https://escamoteur.dev">Thomas Burkhart</a>.',
           copyright: 'Copyright © 2024-presente flutter_it'
         },
         outline: {
@@ -349,7 +386,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'Released under the MIT License.',
+      message: 'Released under the MIT License. Built by <a href="https://escamoteur.dev">Thomas Burkhart</a>.',
       copyright: 'Copyright © 2024-present flutter_it'
     },
 
