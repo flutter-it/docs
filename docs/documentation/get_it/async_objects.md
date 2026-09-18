@@ -1,11 +1,5 @@
 ---
 title: Async Objects
-prev:
-  text: 'Object Registration'
-  link: '/documentation/get_it/object_registration'
-next:
-  text: 'Scopes'
-  link: '/documentation/get_it/scopes'
 ---
 
 # Async Objects
