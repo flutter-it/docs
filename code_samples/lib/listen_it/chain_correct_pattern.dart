@@ -24,7 +24,7 @@ class _MyWidgetState extends State<MyWidget> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<int>(
-      valueListenable: chain, // Same object every rebuild - NO LEAK
+      valueListenable: chain, // Same object every rebuild
       builder: (context, value, child) => Text('$value'),
     );
   }
@@ -69,7 +69,7 @@ class MyWidgetWithService extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<int>(
-      valueListenable: service.doubled, // Chain from data layer - NO LEAK
+      valueListenable: service.doubled, // Chain from data layer
       builder: (context, value, child) => Text('$value'),
     );
   }

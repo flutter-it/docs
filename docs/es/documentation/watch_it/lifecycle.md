@@ -109,6 +109,33 @@ AsyncSnapshot<T> createOnceAsync<T>(
 
 <<< @/../code_samples/lib/watch_it/watch_create_once_local_state.dart#example
 
+### Alternativa: Cached Factories con Parámetros
+
+`createOnce` liga el objeto a una instancia de widget. Cuando necesitas **un manager por entidad** (por estación, por chat, por id de producto) que además pueda compartirse con otros widgets o usarse fuera del árbol de widgets, regístralo en `get_it` con `registerCachedFactoryParam` y pasa el parámetro a la función watch:
+
+<<< @/../code_samples/lib/watch_it/cached_factory_param_example.dart#manager
+
+Compara las dos formas de usarlo en un widget:
+
+**Con `createOnce`** - el manager pertenece a este widget:
+
+<<< @/../code_samples/lib/watch_it/cached_factory_param_example.dart#with_create_once
+
+**Con `registerCachedFactoryParam` + `param1`** - el manager se resuelve desde `get_it`:
+
+<<< @/../code_samples/lib/watch_it/cached_factory_param_example.dart#with_cached_factory
+
+| | `createOnce` | `registerCachedFactoryParam` + `param1` |
+|---|---|---|
+| Propiedad | El widget - se dispone con él | `get_it` - se mantiene mientras exista alguna referencia, luego se recolecta |
+| Compartido entre widgets | No, cada widget tiene el suyo | Sí, mismo parámetro → misma instancia mientras esté viva |
+| Cambio de parámetro | Necesita una nueva instancia de widget (`key`) | watch_it se desuscribe de la instancia antigua y se suscribe a la nueva |
+| Accesible fuera de widgets | No | Sí, `di<StationManager>(param1: id)` |
+
+`param1`/`param2` están disponibles en todas las funciones watch y handler que resuelven su objeto desde `get_it` (`watchIt`, `watchValue`, `watchPropertyValue`, `watchStream`, `watchFuture`, `registerHandler`, ...). Solo son válidos para tipos registrados con `registerCachedFactoryParam`; pasarlos para otro tipo de registro lanza una excepción en modo debug. Los registros con `registerFactory` a secas no se pueden observar - cada build obtendría una instancia nueva - y también se rechazan en modo debug.
+
+[Aprende más sobre cached factories en get_it →](/es/documentation/get_it/object_registration#cached-factories)
+
 ## createOnceAsync
 
 Ideal para llamadas de función async de una sola vez para mostrar datos, por ejemplo desde algún endpoint backend.

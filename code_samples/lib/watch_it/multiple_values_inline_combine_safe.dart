@@ -32,7 +32,7 @@ class SafeInlineCombineWidget extends WatchingWidget {
         const SizedBox(height: 16),
         const Text(
           'The combineLatest chain is created once and cached.\n'
-          'No memory leaks, no repeated chain creation!',
+          'No repeated chain creation, no re-subscribing!',
           style: TextStyle(fontSize: 12, color: Colors.green),
           textAlign: TextAlign.center,
         ),
@@ -67,7 +67,7 @@ class UnsafeInlineCombineWidget extends WatchingWidget {
         const SizedBox(height: 16),
         const Text(
           '⚠️ This creates a NEW combineLatest chain on every build!\n'
-          'Memory leak! Performance issue!',
+          'Needless work on every rebuild!',
           style: TextStyle(fontSize: 12, color: Colors.red),
           textAlign: TextAlign.center,
         ),

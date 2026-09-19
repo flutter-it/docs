@@ -8,53 +8,59 @@ Guidelines for using listen_it effectively and avoiding common pitfalls.
 
 ## Chain Lifecycle
 
-### Eager Initialization with Persistent Subscriptions
+### Attach, Detach and Derived Values (v6.0.0+)
 
-Operator chains use eager initialization by default with persistent subscriptions:
+An operator chain (`source.map(...)`, `a.combineLatest(b, ...)`, ...) follows this lifecycle:
 
-1. **Chains subscribe to their source immediately** by default (eager initialization)
-2. For memory optimization, pass `lazy: true` to delay subscription until first listener is added
-3. **Once subscribed, chains stay subscribed** for efficiency, even when they have zero listeners
-4. Chains maintain their subscription until explicitly disposed
+1. **Attach** - the chain subscribes to its source(s) when it is created (default) or, with `lazy: true`, when it gets its first listener
+2. **Detach** - when the *last* listener is removed, the chain unsubscribes from its source(s). In a longer chain this cascades down to the original source
+3. **Re-attach** - the next `addListener` subscribes again and refreshes the stored value *before* the new listener is registered, so nothing is missed and no spurious notification is sent
 
-::: danger Memory Leak Risk
-Creating chains inline in build methods creates a **new chain on every rebuild**, each staying subscribed forever. This causes memory leaks!
+While a chain is detached its `.value` is **derived from the current source value on read**, so it is never stale:
+
+```dart
+final source = ValueNotifier<int>(1);
+final doubled = source.map((x) => x * 2);
+
+void listener() {}
+doubled.addListener(listener);
+doubled.removeListener(listener); // last listener gone -> detached
+
+source.value = 5;
+print(doubled.value); // 10 ✅ derived on read, no subscription needed
+
+doubled.addListener(listener); // re-attached, value already fresh
+```
+
+| Operator | `.value` while detached |
+|---|---|
+| `map`, `select` | transform / selector applied to the current source value |
+| `where` | current source value if it passes the filter, otherwise the last passing value |
+| `debounce`, `async` | current source value |
+| `combineLatest` | combiner applied to the current source values |
+| `mergeWith` | last received value (it can't know which source changed last) |
+
+::: warning Keep Transformations Pure
+Because the transformation may run on read while detached, transformation functions must be pure - no side effects, same input → same output.
 :::
 
-### Mixing Lazy and Eager in Chains
+### lazy: true
 
-Each operator in a chain is independent. You can mix lazy and eager, but this can lead to confusing behavior:
+`lazy: true` only changes step 1: the first subscription happens on the first listener instead of on creation. Before that, `.value` is derived on read exactly as for a detached chain, so `lazy: true` is a pure memory optimisation with no stale-value trade-off. Mixing lazy and eager operators in one chain is fine.
 
 ```dart
 final source = ValueNotifier<int>(5);
-final eager = source.map((x) => x * 2);           // Default: eager
-final lazy = eager.map((x) => x + 1, lazy: true); // Explicit: lazy
+final eager = source.map((x) => x * 2);           // attached on creation
+final lazy = eager.map((x) => x + 1, lazy: true); // attaches on first listener
 
 source.value = 7;
-print(eager.value); // 14 ✅ (eager subscribed, updates immediately)
-print(lazy.value);  // 11 ⚠️ (STALE! lazy not subscribed yet)
-
-lazy.addListener(() {}); // Subscribe lazy to eager
-print(lazy.value);  // 11 ⚠️ (STILL STALE! Doesn't retroactively update)
-
-source.value = 10;
-print(lazy.value);  // 21 ✅ (NOW updates on next change)
+print(eager.value); // 14 ✅
+print(lazy.value);  // 15 ✅ derived on read
 ```
-
-**Key behaviors:**
-
-- **Eager → Lazy**: Eager part updates, lazy part can be stale until listener added
-- **Lazy → Eager**: Eager subscribes to lazy immediately, which triggers lazy to initialize the whole chain
-- **All eager (default)**: Entire chain subscribes immediately, `.value` always correct ✅
-- **All lazy**: Chain doesn't subscribe until end gets a listener
-
-::: warning Don't Mix
-**Recommendation**: Don't mix. Use all-eager (default, simple) or all-lazy (memory optimization). Mixing can cause hard-to-debug stale values.
-:::
 
 ### ❌️️ WRONG: Chains in Build Methods
 
-Never create chains inline in build methods:
+Don't create chains inline in build methods:
 
 #### Build Method Inline
 
@@ -65,10 +71,11 @@ Never create chains inline in build methods:
 <<< @/../code_samples/lib/listen_it/chain_incorrect_pattern.dart#valueListenableBuilder_inline
 
 **Why this is wrong:**
-- New chain created on **every rebuild**
-- Each chain subscribes to source and **never unsubscribes**
-- Multiple rebuilds = multiple leaked chains
-- Memory usage grows indefinitely
+- A new chain object is created on **every rebuild**
+- Each chain attaches to the source and does work until it is discarded
+- It is wasteful and makes the widget's behaviour depend on rebuild timing
+
+Since v6.0.0 this is no longer a memory *leak* - a discarded chain detaches from the source as soon as its listeners are gone (or, if nobody ever listened to it, on the first notification it receives). It is still the wrong pattern.
 
 ### ✅ CORRECT: Create Chains Once
 
@@ -81,21 +88,20 @@ Create chains ensuring they're created only once. Here are three safe approaches
 - **Option 2**: `createOnce()` ensures chain is only created once even though it's in build
 - **Option 3**: Chain lives in your data layer (recommended for larger apps)
 - All options reuse the same chain object on every rebuild
-- No memory leaks
 
 ::: warning Don't Create in Constructor
-Never create chains in a StatelessWidget constructor or as field initializers - the constructor runs on **every rebuild**, causing the same memory leak as creating in build!
+Never create chains in a StatelessWidget constructor or as field initializers - the constructor runs on **every rebuild**, which is the same problem as creating in build!
 :::
 
 ### ✅ RECOMMENDED: Use watch_it
 
-The safest approach is using watch_it v2.0+, which provides automatic selector caching:
+The safest approach is using watch_it, which caches the selector and unsubscribes when the widget is disposed:
 
 <<< @/../code_samples/lib/listen_it/chain_watch_it_safe.dart#watchValue_safe
 
 **Why watch_it is best:**
-- Default `allowObservableChange: false` caches the selector
-- Chain created only once, even though it's inline
+- Default `allowObservableChange: false` caches the selector, so the chain is created only once per widget instance
+- When the widget is disposed, watch_it removes its listener and the chain detaches from `m.source`
 - No manual lifecycle management needed
 - Clean, concise code
 
@@ -103,17 +109,9 @@ The safest approach is using watch_it v2.0+, which provides automatic selector c
 
 ## Disposal
 
-### Understanding Chain Garbage Collection
+### Chains Usually Don't Need Disposal
 
-**Key Finding**: Chains create circular references with their source, but Dart's garbage collector handles this correctly when the entire cycle becomes unreachable from GC roots.
-
-**How it works**:
-- Chains register as listeners on their source (immediately if eager, or when first listener is added if lazy)
-- This creates a circular reference: `source → listener → chain → source`
-- When the containing object (widget state, service, etc.) becomes unreachable, **the entire cycle is automatically garbage collected**
-- No manual chain disposal needed in most cases!
-
-### When Chain Disposal is NOT Needed
+A chain without listeners holds no subscription on its source, so it is garbage collected as soon as nothing references it any more. And when the whole graph (source + chain) becomes unreachable, Dart's GC collects it regardless of subscriptions.
 
 **✅ You DON'T need to dispose chains when:**
 
@@ -130,29 +128,18 @@ The safest approach is using watch_it v2.0+, which provides automatic selector c
    }
    ```
 
-2. **Chain and source in different objects that both can be GC'd**
+2. **The source outlives the chain** (e.g. it is registered in get_it) - once the chain's listeners are gone it detaches from the source, so a discarded chain doesn't keep the source busy
    ```dart
-   class DataSource {
-     final data = ValueNotifier<int>(0);
-     void dispose() => data.dispose();
-   }
+   class TemporaryViewModel {
+     final globalSource = getIt<ValueNotifier<int>>(); // Long-lived source
+     late final chain = globalSource.map((x) => x * 2);
 
-   class DataProcessor {
-     final DataSource source;
-     late final processed = source.data.map((x) => x * 2);
-
-     DataProcessor(this.source);
-
-     // No chain disposal needed - when both DataProcessor AND DataSource
-     // become unreachable, the entire cycle is GC'd automatically
+     // No chain disposal needed: when the widget that watched `chain`
+     // is disposed, the chain loses its last listener and detaches
    }
    ```
 
-   **⚠️ CAREFUL**: This only works if **both objects** (the one owning the chain AND the one owning the source) can be garbage collected together. If the source is kept alive elsewhere (like in get_it), you must manually dispose the chain!
-
 3. **Using watch_it** - automatic lifecycle management
-
-**Why it's safe**: When the entire object graph (containing object + source + chain) becomes unreachable from GC roots, Dart's garbage collector traces reachability and collects everything in the cycle automatically.
 
 ### When You SHOULD Dispose the Source
 
@@ -172,23 +159,14 @@ class MyService {
 }
 ```
 
-### Exception: Long-Lived Sources
+### When to Dispose a Chain Explicitly
 
-**⚠️ Only dispose chains manually if:**
-- The source is registered in get_it or another service locator
-- The source is kept alive longer than the chain should be
-- You need to break the listener connection explicitly
+Call `dispose()` on a chain only when:
+- You want to end it explicitly **while it still has listeners**
+- You want to be sure a pending `debounce` timer or `async` update is cancelled
 
 ```dart
-class TemporaryViewModel {
-  final globalSource = getIt<ValueNotifier<int>>(); // Long-lived source
-  late final chain = globalSource.map((x) => x * 2);
-
-  void dispose() {
-    // Source stays alive in get_it, so manually remove chain listener
-    (chain as ChangeNotifier).dispose();
-  }
-}
+(chain as ChangeNotifier).dispose();
 ```
 
 ### Subscription Disposal
@@ -369,17 +347,17 @@ test('ListNotifier notifies on add', () {
 
 ### Clean Up in Tests
 
-Always dispose chains in tests to prevent memory leaks:
+Dispose the source in tests; dispose the chain too if it uses `debounce()` or `async()` so no timer outlives the test:
 
 ```dart
 test('example test', () {
   final source = ValueNotifier<int>(0);
-  final chain = source.map((x) => x * 2);
+  final chain = source.debounce(Duration(milliseconds: 100));
 
   // ... test code ...
 
   // Clean up
-  (chain as ChangeNotifier).dispose();
+  (chain as ChangeNotifier).dispose(); // cancels the pending timer
   source.dispose();
 });
 ```
@@ -434,37 +412,33 @@ chain.listen((value, _) {
 
 ## Common Pitfalls
 
-### 1. Forgetting to Dispose
-
-```dart
-// ❌️ WRONG: Chain never disposed
-class MyWidget extends StatefulWidget {
-  // ... chain created in initState but never disposed
-}
-
-// ✅ CORRECT: Always dispose
-@override
-void dispose() {
-  if (chain is ChangeNotifier) {
-    (chain as ChangeNotifier).dispose();
-  }
-  super.dispose();
-}
-```
-
-### 2. Creating Chains in Build
+### 1. Creating Chains in Build
 
 ```dart
 // ❌️ WRONG: New chain every build
 Widget build(BuildContext context) {
   return ValueListenableBuilder(
-    valueListenable: source.map((x) => x * 2), // LEAK!
+    valueListenable: source.map((x) => x * 2), // NEW CHAIN EVERY REBUILD!
     builder: (context, value, _) => Text('$value'),
   );
 }
 
 // ✅ CORRECT: Use watch_it or create chain once
 late final chain = source.map((x) => x * 2);
+```
+
+### 2. Side Effects in Transformations
+
+```dart
+// ❌️ WRONG: The transform may run on read while the chain is detached
+final logged = source.map((x) {
+  analytics.track('value', x); // side effect!
+  return x * 2;
+});
+
+// ✅ CORRECT: Keep transforms pure, do side effects in listen()
+final doubled = source.map((x) => x * 2);
+doubled.listen((x, _) => analytics.track('value', x));
 ```
 
 ### 3. Modifying Collection .value Directly
@@ -494,7 +468,7 @@ user.select<String>((u) => u.name).listen((name, _) => print(name));
 **Key takeaways:**
 
 1. ✅ **Never create chains in build methods** (or use watch_it for automatic caching)
-2. ✅ **Always dispose chains** when done (except with watch_it)
+2. ✅ **Keep transformation functions pure** - they may run on read while a chain is detached
 3. ✅ **Use transactions** for bulk collection operations
 4. ✅ **Use select()** when reacting to object properties
 5. ✅ **Prefer where()** over conditional logic in handlers
@@ -503,7 +477,7 @@ user.select<String>((u) => u.name).listen((name, _) => print(name));
 
 **Recommended approach:**
 - Use **watch_it** for widgets (automatic lifecycle management)
-- Use **model classes** for business logic (manual disposal)
+- Use **model classes** for business logic (dispose the source, not the chains)
 - Use **transactions** for bulk updates
 - Use **select()** for object properties
 

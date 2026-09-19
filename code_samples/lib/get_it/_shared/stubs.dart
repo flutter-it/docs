@@ -6,8 +6,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 export 'package:flutter/material.dart' show Key, ChangeNotifier;
 // ignore: unused_import
-import 'package:test/test.dart' hide Matcher, Description;
-export 'package:test/test.dart'
+import 'package:flutter_test/flutter_test.dart' hide Matcher, Description;
+export 'package:flutter_test/flutter_test.dart'
     show
         expect,
         test,
@@ -17,9 +17,7 @@ export 'package:test/test.dart'
         tearDownAll,
         group,
         isNotNull,
-        throwsStateError;
-export 'package:flutter_test/flutter_test.dart'
-    show
+        throwsStateError,
         testWidgets,
         WidgetTester,
         find,

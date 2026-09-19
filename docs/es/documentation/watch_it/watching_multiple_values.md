@@ -169,14 +169,15 @@ Puedes usar de forma segura operators de `listen_it` como `combineLatest()` dent
 2. El resultado se cachea automáticamente
 3. Construcciones subsiguientes: Se reutiliza la cadena cacheada
 4. Se lanza excepción si la identidad del observable cambia
-5. Sin memory leaks, sin creación repetida de cadenas
+5. Cuando el widget se dispone, watch_it se desuscribe y la cadena se desconecta de sus fuentes
+6. Sin creación repetida de cadenas
 
 **Cuándo establecer `allowObservableChange: true`:**
 Solo cuando el observable genuinamente necesita cambiar entre construcciones:
 
 <<< @/../code_samples/lib/watch_it/multiple_values_inline_combine_safe.dart#when_to_use_allow_change
 
-**Importante:** Establecer `allowObservableChange: true` innecesariamente causa que el selector se ejecute en **cada** construcción, creando nuevas cadenas de operators cada vez - ¡un memory leak!
+**Importante:** Establecer `allowObservableChange: true` innecesariamente causa que el selector se ejecute en **cada** construcción, creando una nueva cadena de operators y resuscribiéndose cada vez - trabajo innecesario en cada reconstrucción.
 
 ## Consideraciones de Rendimiento
 
@@ -218,7 +219,7 @@ Combinar proporciona beneficio mínimo cuando:
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_create_outside_selector
 
-**Problema:** ¡Crea nueva cadena en **cada** construcción - memory leak!
+**Problema:** Crea una nueva cadena en **cada** construcción - `watch()` tiene que cambiar de suscripción cada vez.
 
 **Solución:** Crea dentro del selector:
 

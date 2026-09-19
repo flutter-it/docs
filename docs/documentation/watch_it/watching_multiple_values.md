@@ -169,14 +169,15 @@ You can safely use `listen_it` operators like `combineLatest()` inside selector 
 2. Result is cached automatically
 3. Subsequent builds: Cached chain is reused
 4. Exception thrown if observable identity changes
-5. No memory leaks, no repeated chain creation
+5. When the widget is disposed, watch_it unsubscribes and the chain detaches from its sources
+6. No repeated chain creation
 
 **When to set `allowObservableChange: true`:**
 Only when the observable genuinely needs to change between builds:
 
 <<< @/../code_samples/lib/watch_it/multiple_values_inline_combine_safe.dart#when_to_use_allow_change
 
-**Important:** Setting `allowObservableChange: true` unnecessarily causes the selector to run on **every** build, creating new operator chains each time - a memory leak!
+**Important:** Setting `allowObservableChange: true` unnecessarily causes the selector to run on **every** build, creating a new operator chain and re-subscribing each time - needless work on every rebuild.
 
 ## Performance Considerations
 
@@ -218,7 +219,7 @@ Combining provides minimal benefit when:
 
 <<< @/../code_samples/lib/watch_it/multiple_values_antipatterns.dart#antipattern_create_outside_selector
 
-**Problem:** Creates new chain on **every build** - memory leak!
+**Problem:** Creates a new chain on **every build** - `watch()` has to switch subscriptions each time.
 
 **Solution:** Create inside selector:
 

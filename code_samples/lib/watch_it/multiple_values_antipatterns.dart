@@ -18,7 +18,8 @@ class AntipatternCreateOutsideSelector extends WatchingWidget {
     final manager = di<Manager>();
 
     // ❌ WRONG: Creating operator chain OUTSIDE selector
-    // This creates a NEW chain on every build - memory leak!
+    // This creates a NEW chain on every build and watch() has to
+    // unsubscribe from the old one and subscribe to the new one
     final combined = manager.value1.combineLatest(
       manager.value2,
       (v1, v2) => v1 + v2,
@@ -27,7 +28,7 @@ class AntipatternCreateOutsideSelector extends WatchingWidget {
     // Watching the chain that was just created
     final sum = watch(combined).value;
 
-    return Text('Sum: $sum (MEMORY LEAK!)');
+    return Text('Sum: $sum (new chain every build!)');
   }
 }
 // #endregion antipattern_create_outside_selector
@@ -60,7 +61,7 @@ class AntipatternUnnecessaryAllowChange extends WatchingWidget {
   Widget build(BuildContext context) {
     // ❌ WRONG: Setting allowObservableChange: true without reason
     // This causes the selector to run on EVERY build
-    // Creates new chain every time - memory leak!
+    // Creates a new chain and re-subscribes every time
     final sum = watchValue(
       (Manager m) => m.value1.combineLatest(
         m.value2,
@@ -69,7 +70,7 @@ class AntipatternUnnecessaryAllowChange extends WatchingWidget {
       allowObservableChange: true, // DON'T DO THIS!
     );
 
-    return Text('Sum: $sum (MEMORY LEAK!)');
+    return Text('Sum: $sum (new chain every build!)');
   }
 }
 // #endregion antipattern_unnecessary_allow_change

@@ -19,7 +19,8 @@ class SafeWatchItWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
     // ✅ SAFE: watch_it caches selectors by default
-    // Chain created ONCE on first build, reused on subsequent builds
+    // Chain created ONCE on first build, reused on subsequent builds,
+    // detaches from m.source when the widget is disposed
     final value = watchValue((Model m) => m.source.map((x) => x * 2));
     return Text('$value');
   }
@@ -47,8 +48,8 @@ class SafeRegisterHandlerWidget extends WatchingWidget {
 class UnsafeWatchItWidget extends WatchingWidget {
   @override
   Widget build(BuildContext context) {
-    // ❌ UNSAFE: Explicitly disabling cache!
-    // Creates NEW CHAIN every rebuild - MEMORY LEAK!
+    // ❌ WRONG: Explicitly disabling cache!
+    // Creates a NEW CHAIN and re-subscribes on every rebuild
     final value = watchValue(
       (Model m) => m.source.map((x) => x * 2),
       allowObservableChange: true, // DON'T DO THIS unless needed!

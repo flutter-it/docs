@@ -32,31 +32,31 @@ final stringNotifier = intNotifier.map<String>((i) => i.toString());
 // final badNotifier = intNotifier.map<String>((i) => i); // ❌️ Error
 ```
 
-### Eager Initialization
+### Chain Lifecycle
 
-By default, operator chains use **eager initialization** - they subscribe to their source immediately, ensuring `.value` is always correct even before adding listeners. This fixes stale value issues but uses slightly more memory.
+Operator chains subscribe to their source when they are created, **detach when their last listener is removed** and re-attach on the next listener. While detached, `.value` is derived from the current source value on read, so it is never stale:
 
 ```dart
 final source = ValueNotifier<int>(5);
-final mapped = source.map((x) => x * 2); // Subscribes immediately
+final mapped = source.map((x) => x * 2);
 
-print(mapped.value); // Always correct: 10
+print(mapped.value); // 10
 
 source.value = 7;
-print(mapped.value); // Immediately updated: 14 ✅
+print(mapped.value); // 14 ✅ - correct with or without listeners
 ```
 
-For memory-constrained scenarios, pass `lazy: true` to delay subscription until the first listener is added:
+Pass `lazy: true` to delay the first subscription until the first listener is added - a pure memory optimisation, `.value` stays correct:
 
 ```dart
 final lazy = source.map((x) => x * 2, lazy: true);
-// Doesn't subscribe until addListener() is called
+print(lazy.value); // derived on read, no subscription yet
 ```
 
-::: warning Chain Lifecycle
-Once initialized (either eagerly or after first listener), operator chains maintain their subscription to the source even when they have zero listeners. This persistent subscription is by design for efficiency, but **can cause memory leaks if chains are created inline in build methods**.
+::: tip Keep Transformations Pure
+The transformation may run on read while the chain is detached, so transformation functions must not have side effects.
 
-See the [best practices guide](/documentation/listen_it/best_practices) for safe patterns.
+See the [best practices guide](/documentation/listen_it/best_practices#chain-lifecycle) for the full lifecycle.
 :::
 
 ## Available Operators
@@ -121,11 +121,9 @@ transformed.listen((value, subscription) {
 
 ### With watch_it
 
-watch_it v2.0+ provides automatic selector caching, making inline chain creation completely safe:
+watch_it caches the selector, so creating a chain inline in a selector is safe - it is created once per widget instance and detaches from its source when the widget is disposed:
 
 <<< @/../code_samples/lib/listen_it/operators_watch_it.dart#example
-
-The default `allowObservableChange: false` caches the selector, so the chain is created only once!
 
 [Learn more about watch_it integration →](/documentation/watch_it/getting_started)
 
@@ -169,8 +167,8 @@ source1
 
 ## Memory Management
 
-::: danger Important
-**Always** create chains outside build methods or use watch_it for automatic caching.
+::: warning Important
+Create chains once - outside build methods or inside a watch_it selector. A chain created in `build()` is a new object on every rebuild; it detaches once its listeners are gone, so it doesn't leak, but it does needless work.
 
 **❌️ DON'T:**
 ```dart

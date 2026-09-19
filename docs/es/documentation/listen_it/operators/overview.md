@@ -32,31 +32,31 @@ final stringNotifier = intNotifier.map<String>((i) => i.toString());
 // final badNotifier = intNotifier.map<String>((i) => i); // ❌️ Error
 ```
 
-### Inicialización Eager
+### Ciclo de Vida de la Cadena
 
-Por defecto, las cadenas de operators usan **inicialización eager** - se suscriben a su fuente inmediatamente, asegurando que `.value` siempre sea correcto incluso antes de añadir listeners. Esto soluciona problemas de valores obsoletos pero usa ligeramente más memoria.
+Las cadenas de operators se suscriben a su fuente al crearse, **se desconectan cuando se elimina su último listener** y se reconectan con el siguiente. Mientras están desconectadas, `.value` se deriva del valor actual de la fuente al leerlo, así que nunca está obsoleto:
 
 ```dart
 final source = ValueNotifier<int>(5);
-final mapped = source.map((x) => x * 2); // Se suscribe inmediatamente
+final mapped = source.map((x) => x * 2);
 
-print(mapped.value); // Siempre correcto: 10
+print(mapped.value); // 10
 
 source.value = 7;
-print(mapped.value); // Actualizado inmediatamente: 14 ✅
+print(mapped.value); // 14 ✅ - correcto con o sin listeners
 ```
 
-Para escenarios con limitaciones de memoria, pasa `lazy: true` para retrasar la suscripción hasta que se añada el primer listener:
+Pasa `lazy: true` para retrasar la primera suscripción hasta que se añada el primer listener - una optimización pura de memoria, `.value` sigue siendo correcto:
 
 ```dart
 final lazy = source.map((x) => x * 2, lazy: true);
-// No se suscribe hasta que se llame a addListener()
+print(lazy.value); // derivado al leer, aún sin suscripción
 ```
 
-::: warning Ciclo de Vida de la Cadena
-Una vez inicializadas (ya sea eager o después del primer listener), las cadenas de operators mantienen su suscripción a la fuente incluso cuando tienen cero listeners. Esta suscripción persistente es por diseño para eficiencia, pero **puede causar fugas de memoria si las cadenas se crean inline en métodos build**.
+::: tip Mantén las Transformaciones Puras
+La transformación puede ejecutarse al leer mientras la cadena está desconectada, así que las funciones de transformación no deben tener efectos secundarios.
 
-Mira la [guía de mejores prácticas](/documentation/listen_it/best_practices) para patrones seguros.
+Mira la [guía de mejores prácticas](/es/documentation/listen_it/best_practices#ciclo-de-vida-de-cadenas) para el ciclo de vida completo.
 :::
 
 ## Operators Disponibles
@@ -121,11 +121,9 @@ transformed.listen((value, subscription) {
 
 ### Con watch_it
 
-watch_it v2.0+ proporciona caché automático de selectores, haciendo la creación de cadenas inline completamente segura:
+watch_it cachea el selector, así que crear una cadena inline en un selector es seguro - se crea una vez por instancia de widget y se desconecta de su fuente cuando el widget se dispone:
 
 <<< @/../code_samples/lib/listen_it/operators_watch_it.dart#example
-
-El valor por defecto `allowObservableChange: false` cachea el selector, ¡así que la cadena se crea solo una vez!
 
 [Aprende más sobre integración con watch_it →](/documentation/watch_it/getting_started)
 
@@ -169,8 +167,8 @@ source1
 
 ## Gestión de Memoria
 
-::: danger Importante
-**Siempre** crea cadenas fuera de métodos build o usa watch_it para caché automático.
+::: warning Importante
+Crea las cadenas una sola vez - fuera de métodos build o dentro de un selector de watch_it. Una cadena creada en `build()` es un objeto nuevo en cada reconstrucción; se desconecta en cuanto pierde sus listeners, así que no hay fuga, pero hace trabajo innecesario.
 
 **❌️ NO HAGAS:**
 ```dart

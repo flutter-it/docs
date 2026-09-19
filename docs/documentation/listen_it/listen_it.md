@@ -153,8 +153,8 @@ All three collection types (ListNotifier, MapNotifier, SetNotifier) extend their
 Operators create transformation chains:
 
 - **Chainable** - Each operator returns a new ValueListenable
-- **Lazy Initialization** - Chains subscribe only when listeners are added
-- **Hot Subscription** - Once subscribed, chains stay subscribed
+- **Detach When Unobserved** - Chains release their source when the last listener is removed and re-attach on the next one
+- **Never Stale** - `.value` is derived from the source on read while a chain is detached
 - **Type Safe** - Full compile-time type checking
 
 [Learn more about operators →](/documentation/listen_it/operators/overview)
@@ -220,11 +220,9 @@ Combining operators and collections for reactive search:
 
 ### With watch_it (Recommended!)
 
-watch_it v2.0+ provides **automatic selector caching**, making inline chain creation completely safe:
+watch_it caches the selector, so creating a chain inline in a selector is safe - it is created once per widget instance and detaches from its source when the widget is disposed:
 
 <<< @/../code_samples/lib/listen_it/chain_watch_it_safe.dart#watchValue_safe
-
-The default `allowObservableChange: false` caches the selector, so the chain is created only once!
 
 [Learn more about watch_it integration →](/documentation/watch_it/getting_started)
 

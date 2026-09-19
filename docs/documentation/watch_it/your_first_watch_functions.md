@@ -35,6 +35,8 @@ R watchValue<T extends Object, R>(
   bool allowObservableChange = false,
   String? instanceName,
   GetIt? getIt,
+  dynamic param1,
+  dynamic param2,
 })
 ```
 

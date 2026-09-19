@@ -153,8 +153,8 @@ Los tres tipos de colección (ListNotifier, MapNotifier, SetNotifier) extienden 
 Los operadores crean cadenas de transformación:
 
 - **Encadenables** - Cada operador devuelve un nuevo ValueListenable
-- **Inicialización Lazy** - Las cadenas se suscriben solo cuando se añaden listeners
-- **Suscripción Hot** - Una vez suscritas, las cadenas permanecen suscritas
+- **Se Desconectan Sin Observadores** - Las cadenas liberan su fuente cuando se elimina el último listener y se reconectan con el siguiente
+- **Nunca Obsoletas** - `.value` se deriva de la fuente al leerlo mientras una cadena está desconectada
 - **Tipado Seguro** - Verificación completa de tipos en tiempo de compilación
 
 [Aprende más sobre operadores →](/documentation/listen_it/operators/overview)
@@ -220,11 +220,9 @@ Combinando operadores y colecciones para búsqueda reactiva:
 
 ### Con watch_it (¡Recomendado!)
 
-watch_it v2.0+ proporciona **caché automático de selectores**, haciendo la creación de cadenas inline completamente segura:
+watch_it cachea el selector, así que crear una cadena inline en un selector es seguro - se crea una vez por instancia de widget y se desconecta de su fuente cuando el widget se dispone:
 
 <<< @/../code_samples/lib/listen_it/chain_watch_it_safe.dart#watchValue_safe
-
-El valor por defecto `allowObservableChange: false` cachea el selector, ¡así que la cadena se crea solo una vez!
 
 [Aprende más sobre integración con watch_it →](/documentation/watch_it/getting_started)
 

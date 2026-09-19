@@ -16,43 +16,63 @@ Los archivos de skills de IA son archivos de conocimiento estructurado que ense�
 - **Patrones de integración** entre paquetes
 - **Guía de arquitectura** para estructurar apps Flutter
 
-Los archivos de skills siguen el estándar abierto [Agent Skills](https://github.com/agentskills) — un formato basado en directorios con un archivo `SKILL.md` y frontmatter YAML que funciona con diferentes herramientas de IA.
+Los archivos de skills siguen el estándar abierto [Agent Skills](https://agentskills.io) — un formato basado en directorios con un archivo `SKILL.md` y frontmatter YAML que funciona con diferentes herramientas de IA — y se distribuyen como recomienda Dart para los [package skills](https://dart.dev/tools/pub/package-skills): en un directorio `skills/` en la raíz de cada paquete.
+
+## Instalar con el CLI `skills` de Dart (Recomendado)
+
+Añade los paquetes que uses a tu `pubspec.yaml` y luego ejecuta en el directorio de tu proyecto:
+
+```bash
+dart run skills@ get
+```
+
+Esto revisa tus dependencias **directas** en busca de skills incluidos y los instala en tu proyecto (por ejemplo en `.claude/skills/`, `.agents/skills/` o lo que lea tu herramienta de IA — el CLI te pregunta la primera vez). Vuelve a ejecutarlo después de actualizar un paquete para obtener la última versión de los skills.
+
+::: tip Solo dependencias directas
+El CLI `skills` solo mira los paquetes listados directamente en tu `pubspec.yaml`. Si dependes de `watch_it` y también quieres el skill de `get_it`, añade `get_it` como dependencia directa (la necesitarás de todos modos para `di.registerX(...)`). O depende de `flutter_it`, que incluye los siete skills.
+:::
+
+También puedes instalarlos directamente desde el repositorio, independientemente de tus dependencias:
+
+```bash
+dart run skills@ add flutter-it/flutter_it
+```
 
 ## ¿Qué Skills Incluye Cada Paquete?
 
 | Paquete | Skills Incluidos |
 |---------|-----------------|
-| **get_it** | `get-it-expert`, `flutter-architecture-expert` |
-| **watch_it** | `watch-it-expert`, `get-it-expert`, `flutter-architecture-expert`, `feed-datasource-expert` |
-| **command_it** | `command-it-expert`, `listen-it-expert`, `flutter-architecture-expert`, `feed-datasource-expert` |
-| **listen_it** | `listen-it-expert`, `flutter-architecture-expert` |
-| **flutter_it** | Los 7 skills (paquete de conveniencia) |
+| **get_it** | `get-it-expert` |
+| **watch_it** | `watch-it-expert` |
+| **command_it** | `command-it-expert` |
+| **listen_it** | `listen-it-expert` |
+| **flutter_it** | Los 7 skills como `flutter-it-overview`, `flutter-it-architecture`, `flutter-it-feed-datasource`, `flutter-it-get-it`, `flutter-it-watch-it`, `flutter-it-command-it`, `flutter-it-listen-it` |
 
-Cada paquete incluye los skills más relevantes para su uso, así obtienes el contexto correcto sin importar con qué paquete comiences.
+Cada paquete incluye solo su propio skill (el CLI `skills` de Dart exige que los nombres de los skills lleven el nombre del paquete como prefijo). El paquete de conveniencia `flutter_it` los incluye todos, así que depender de él te da el conjunto completo — incluidos los skills de arquitectura y feeds que no pertenecen a un solo paquete.
 
 ## Los 7 Skills
 
 | Skill | Descripción |
 |-------|-------------|
-| `get-it-expert` | Registro del service locator, scopes, inicialización async, testing |
-| `watch-it-expert` | Widgets reactivos, funciones watch, handlers, ciclo de vida, reglas de orden |
+| `get-it-expert` | Registro del service locator, scopes, inicialización async, cached factories, testing |
+| `watch-it-expert` | Widgets reactivos, funciones watch, handlers, ciclo de vida, reglas de orden, parámetros de cached factories |
 | `command-it-expert` | Patrón command, operaciones async, manejo de errores, restricciones |
-| `listen-it-expert` | Operadores de ValueListenable, colecciones reactivas, encadenamiento, transacciones |
+| `listen-it-expert` | Operadores de ValueListenable, ciclo de vida de cadenas, colecciones reactivas, transacciones |
 | `flutter-architecture-expert` | Arquitectura Flutter Pragmática (PFA) con Services/Managers/Views |
 | `feed-datasource-expert` | Feeds paginados, scroll infinito, ciclo de vida de proxies, conteo de referencias |
 | `flutter-it` | Descripción general del kit flutter_it, selección de paquetes, dependencias |
 
-## Descargar
+## Instalación Manual
+
+Si no quieres usar el CLI:
 
 **[Descargar los 7 skills (zip)](/downloads/flutter_it_ai_skills.zip)**
 
 O clona desde el [repositorio flutter_it](https://github.com/flutter-it/flutter_it/tree/main/skills) que contiene todos los skills.
 
-## Cómo Usar con tu Herramienta de IA
-
 ### Claude Code
 
-Extrae el zip (o copia desde el repo) en tu directorio global de skills:
+Extrae el zip en tu directorio global de skills para tenerlos disponibles en todos tus proyectos:
 
 ```
 ~/.claude/skills/
@@ -65,7 +85,7 @@ Extrae el zip (o copia desde el repo) en tu directorio global de skills:
 └── flutter-it/SKILL.md
 ```
 
-Claude Code detectará automáticamente los skills de `~/.claude/skills/` en todos tus proyectos.
+O en `.claude/skills/` dentro de un proyecto para usarlos solo ahí — que es también donde los deja `dart run skills@ get`.
 
 ### Cursor
 
@@ -96,6 +116,6 @@ Los asistentes de código con IA son potentes, pero pueden generar patrones inco
 - Usar `isRunningSync` para actualizaciones de UI en lugar de `isRunning` (command_it)
 - Envolver llamadas watch en condicionales, rompiendo la regla de orden (watch_it)
 - Usar `copyWith` en DTOs en lugar de campos override en proxies (arquitectura)
-- Crear cadenas de operadores inline en `build()` sin caché (listen_it)
+- Crear cadenas de operadores en cada `build()` en lugar de una sola vez (listen_it)
 
 Los archivos de skills previenen estos errores enseñando a la herramienta de IA los patrones correctos desde el inicio.

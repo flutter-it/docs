@@ -11,7 +11,7 @@ class BadWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ❌ WRONG: Chain created in build - NEW CHAIN EVERY REBUILD!
-    final chain = source.map((x) => x * 2); // MEMORY LEAK!
+    final chain = source.map((x) => x * 2); // wasteful, never reused
     return Text('${chain.value}');
   }
 }
@@ -27,7 +27,7 @@ class BadWidgetValueListenable extends StatelessWidget {
   Widget build(BuildContext context) {
     // ❌ WRONG: Chain created inline - NEW CHAIN EVERY REBUILD!
     return ValueListenableBuilder<int>(
-      valueListenable: source.map((x) => x * 2), // MEMORY LEAK!
+      valueListenable: source.map((x) => x * 2), // wasteful, never reused
       builder: (context, value, child) => Text('$value'),
     );
   }
